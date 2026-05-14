@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "sumup": {
+      "command": "npx",
+      "args": ["-y", "@sumup/mcp"],
+      "env": {
+        "SUMUP_API_KEY": "${SUMUP_API_KEY}"
+      }
+    }
+  }
+}

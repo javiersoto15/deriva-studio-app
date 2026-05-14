@@ -1,0 +1,16 @@
+{
+  "splash": { "tagline": "", "eyebrow": "", "cta_primary": "", "cta_secondary": "" },
+  "signup": {
+    "phone_title": "",
+    "phone_caption": "",
+    "continue": "",
+    "verify_title": "",
+    "resend_in": "",
+    "confirm": "",
+    "consent_title": "",
+    "create_account": "",
+    "privacy_link": ""
+  },
+  "home": { "good_morning": "" },
+  "tabs": { "carta": "", "codigo": "", "cartera": "", "estudio": "" }
+}

@@ -1,0 +1,28 @@
+{
+  "splash": {
+    "tagline": "Tu Deriva, recordada.",
+    "eyebrow": "DERIVA · COMPANION",
+    "cta_primary": "Comenzar",
+    "cta_secondary": "Ya tengo cuenta · iniciar sesión"
+  },
+  "signup": {
+    "phone_title": "¿Cuál es tu número?",
+    "phone_caption": "Te enviamos un código por SMS",
+    "continue": "Continuar",
+    "verify_title": "Confirma con el código",
+    "resend_in": "Reenviar en",
+    "confirm": "Confirmar",
+    "consent_title": "Antes de empezar",
+    "create_account": "Crear cuenta",
+    "privacy_link": "Política de privacidad · términos"
+  },
+  "home": {
+    "good_morning": "Buenos días"
+  },
+  "tabs": {
+    "carta": "Carta",
+    "codigo": "Código",
+    "cartera": "Cartera",
+    "estudio": "Studio"
+  }
+}
