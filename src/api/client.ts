@@ -42,11 +42,16 @@ function buildTraceparent(): string | undefined {
 
 const tracingMiddleware: Middleware = {
   async onRequest({ request }) {
-    request.headers.set("X-Request-Id", generateRequestId());
-    const traceparent = buildTraceparent();
-    if (traceparent) {
-      request.headers.set("traceparent", traceparent);
-    }
+    // Temporarily disabled in production: the Cloud Run backend's CORS
+    // preflight response does not yet include X-Request-Id (nor traceparent)
+    // in Access-Control-Allow-Headers, so the browser rejects requests that
+    // carry them. Re-enable both lines once the backend allowlists these.
+    //
+    // request.headers.set("X-Request-Id", generateRequestId());
+    // const traceparent = buildTraceparent();
+    // if (traceparent) request.headers.set("traceparent", traceparent);
+    void generateRequestId;
+    void buildTraceparent;
     return request;
   }
 };
