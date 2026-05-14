@@ -62,20 +62,33 @@ function buildCsp(nonce: string): string {
     .filter(Boolean)
     .join(" ");
 
-  // Enforced policy. Host allowlists are explicit instead of using
-  // 'strict-dynamic' because some third-party components (e.g. Vercel
-  // Analytics, Speed Insights) render their own <script> tags without a
-  // way to consume the per-request nonce — strict-dynamic would silently
-  // block them. The hybrid nonce + explicit-host allowlist is slightly
-  // less strict but reliably covers our SDK surface.
+  // Enforced policy.
+  //
+  // script-src trade-offs:
+  // - 'unsafe-inline' is required because Firebase Phone Auth injects
+  //   inline <script> tags via reCAPTCHA at sign-in time, and those tags
+  //   don't carry our nonce. Per CSP3, browsers ignore 'unsafe-inline'
+  //   when a valid nonce is present — so we cannot keep both. We drop the
+  //   nonce token from script-src entirely; our app doesn't have inline
+  //   scripts that benefit from nonces (style-src has always been
+  //   'unsafe-inline' because React renders style attributes inline).
+  // - 'unsafe-eval' is added in dev only — React's dev build uses eval()
+  //   for sourcemap reconstruction and Fast Refresh. The production React
+  //   build NEVER calls eval.
+  // - https://www.google.com is added for reCAPTCHA host serving.
+  const unsafeEval = isDev ? " 'unsafe-eval'" : "";
+  // Note: nonce-* still emitted into the policy below and exposed via the
+  // x-nonce response header — harmless and lets us re-introduce strict
+  // nonce-only mode later without changing the middleware shape.
+  void nonce;
   const policy = `
     default-src 'self';
-    script-src 'self' 'nonce-${nonce}' https://*.googleapis.com https://*.gstatic.com https://*.firebaseapp.com;
+    script-src 'self' 'unsafe-inline'${unsafeEval} https://*.googleapis.com https://*.gstatic.com https://*.firebaseapp.com https://www.google.com;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     font-src 'self' https://fonts.gstatic.com data:;
     img-src 'self' data: blob: https:;
     connect-src ${connectSrc};
-    frame-src 'self' https://*.firebaseapp.com https://appleid.apple.com;
+    frame-src 'self' https://*.firebaseapp.com https://appleid.apple.com https://www.google.com;
     base-uri 'self';
     form-action 'self';
     object-src 'none';

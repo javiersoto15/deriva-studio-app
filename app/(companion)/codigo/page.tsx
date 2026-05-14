@@ -2,7 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { useCurrentMember, useMemberQrToken, usePointsBalance } from "../../../src/api/hooks";
+import {
+  useCurrentMember,
+  useMemberQrToken,
+  useMyRewards,
+  usePointsBalance
+} from "../../../src/api/hooks";
 import { useAuth } from "../../../src/auth/use-auth";
 import { colors } from "../../../src/design/tokens";
 import { QrMockCard } from "../../../src/ui/QrMockCard";
@@ -14,6 +19,14 @@ export default function CodigoPage() {
   const { status: authStatus } = useAuth();
   const { data: member } = useCurrentMember();
   const { data: balance } = usePointsBalance();
+  // /me/balance.next_reward.name is NOT locale-aware (backend gap — see
+  // followup). Derive next reward from /me/rewards instead, which IS
+  // localized via ?locale. Pick the cheapest unredeemed reward — same
+  // selection the backend uses for next_reward, but with localized copy.
+  const { data: rewardsResponse } = useMyRewards();
+  const derivedNext = rewardsResponse?.rewards
+    .filter((r) => !r.available)
+    .sort((a, b) => a.points_cost - b.points_cost)[0];
   const tokenMutation = useMemberQrToken();
   const [qr, setQr] = useState<{ token: string; backup: string } | null>(null);
   // Mint exactly one QR per page mount. Without this guard, a re-render from
@@ -56,7 +69,16 @@ export default function CodigoPage() {
   }, []);
 
   const displayName = member?.name;
-  const next = balance?.next_reward;
+  // Prefer the localized reward name from /me/rewards. Fall back to the
+  // non-localized balance.next_reward only as a last-resort (e.g., empty
+  // catalog or transient state where rewards haven't loaded yet).
+  const next = derivedNext
+    ? {
+        name: derivedNext.name,
+        threshold_points: derivedNext.points_cost,
+        points_remaining: Math.max(0, derivedNext.points_cost - (balance?.balance ?? 0))
+      }
+    : balance?.next_reward ?? null;
 
   return (
     <main
