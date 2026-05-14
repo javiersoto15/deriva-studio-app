@@ -27,7 +27,11 @@ const SHARED_INFRA_PREFIXES = [
   "/favicon.ico",
   "/icon.svg",
   "/apple-icon.png",
-  "/opengraph-image"
+  "/opengraph-image",
+  // Static assets served from public/ that both surfaces reference (logos,
+  // isotipos, OG fallbacks, email artwork). Any new top-level public/ folder
+  // accessed from both hosts needs to be added here.
+  "/brand"
 ] as const;
 
 // Top-level path segments owned by the landing surface (apex host).
