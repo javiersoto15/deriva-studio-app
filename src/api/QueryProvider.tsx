@@ -50,6 +50,20 @@ function extractMessage(error: unknown): string | null {
 // Global error → toast mapping per Phase 1B spec.
 // Mutations/queries that surface their own inline error UX can opt out via
 // `meta: { silent: true }`.
+// Onboarding routes where a 403 is the EXPECTED outcome for a fresh Firebase
+// identity that doesn't yet have a Deriva user_profile. The pages here handle
+// the 403 themselves (verificar probes /me to decide between /carta and
+// /ingresar/email) — the global session-end ramp must not preempt them.
+const ONBOARDING_403_OK_PREFIXES = ["/ingresar", "/inicio"];
+
+function isOnOnboardingPath(): boolean {
+  if (typeof window === "undefined") return false;
+  const path = window.location.pathname;
+  return ONBOARDING_403_OK_PREFIXES.some(
+    (p) => path === p || path.startsWith(`${p}/`)
+  );
+}
+
 function handleGlobalError(error: unknown, silent?: boolean): void {
   const status = extractStatus(error);
 
@@ -62,14 +76,22 @@ function handleGlobalError(error: unknown, silent?: boolean): void {
     return;
   }
 
-  // 403 on a non-silent call means Firebase still believes we're signed in
-  // but the Deriva backend rejected the bearer — usually because the
-  // user_profile is gone, revoked, or was never created. Without this
-  // branch the app stays "logged in" while every /me/* query 403s forever
-  // and the UI hangs on skeletons. Silent mutations (e.g., useConfirmPhone
-  // where 403 = token missing phone_number claim) handle their own 403
-  // inline and shouldn't trip this ramp — they're recoverable in context.
-  if (status === 403 && !silent) {
+  // 403 on a non-silent call OUTSIDE the onboarding flow means Firebase
+  // still believes we're signed in but the Deriva backend rejected the
+  // bearer — usually because the user_profile is gone, revoked, or was
+  // never created post-signup. We sign them out so the app doesn't hang
+  // on skeletons.
+  //
+  // INSIDE the onboarding flow (/ingresar/*, /inicio), a 403 is the
+  // EXPECTED response for a brand-new Firebase identity that hasn't yet
+  // completed POST /members. The verificar/consentimiento pages probe
+  // /me to discriminate "returning user" from "new user" and react
+  // locally — preempting with a session-end here would loop the user
+  // back to /inicio mid-signup.
+  //
+  // Silent mutations (e.g. useConfirmPhone where 403 = token missing
+  // phone_number claim) handle their own 403 inline regardless of path.
+  if (status === 403 && !silent && !isOnOnboardingPath()) {
     void endSessionAndReturnToInicio({ reason: "forbidden" });
     return;
   }
