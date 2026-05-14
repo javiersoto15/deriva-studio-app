@@ -1,8 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import { colors } from "../../../src/design/tokens";
 import { Button } from "../../../src/ui/Button";
+import { LogoLockup } from "../../../src/ui/LogoLockup";
 import { RedirectIfAuthed } from "./_components/RedirectIfAuthed";
 
 // Splash — matches Paper artboard "INICIO Redesign · Variant C".
@@ -24,13 +24,7 @@ export default function SplashPage() {
     >
       <RedirectIfAuthed />
 
-      <Image
-        src="/brand/logo-con-isotipo.svg"
-        alt="Deriva Coffee Studio"
-        width={200}
-        height={68}
-        priority
-      />
+      <LogoLockup />
 
       <div
         style={{
