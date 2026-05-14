@@ -48,6 +48,9 @@ function buildCsp(nonce: string): string {
     "https://*.firebaseapp.com",
     "https://identitytoolkit.googleapis.com",
     "https://securetoken.googleapis.com",
+    // reCAPTCHA verification XHRs go to www.google.com/recaptcha/api2/*.
+    // Firebase phone auth needs this on connect-src in addition to script-src.
+    "https://www.google.com",
     "https://*.ingest.sentry.io",
     "https://vitals.vercel-insights.com",
     "https://va.vercel-analytics.com",
@@ -83,7 +86,7 @@ function buildCsp(nonce: string): string {
   void nonce;
   const policy = `
     default-src 'self';
-    script-src 'self' 'unsafe-inline'${unsafeEval} https://*.googleapis.com https://*.gstatic.com https://*.firebaseapp.com https://www.google.com;
+    script-src 'self' 'unsafe-inline'${unsafeEval} https://*.googleapis.com https://apis.google.com https://*.gstatic.com https://*.firebaseapp.com https://www.google.com;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     font-src 'self' https://fonts.gstatic.com data:;
     img-src 'self' data: blob: https:;
