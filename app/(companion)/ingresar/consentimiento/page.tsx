@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { Member } from "../../../../src/api/hooks";
 import { RedeemCampaignTokenError, useAddEmail, useRedeemCampaignToken } from "../../../../src/api/hooks";
+import { setEmailVerificationReturn } from "../../../../src/lib/emailVerificationReturn";
 import { useAuth } from "../../../../src/auth/use-auth";
 import { colors } from "../../../../src/design/tokens";
 import type { MemberWithFirstName } from "../../../../src/lib/member";
@@ -156,6 +157,7 @@ export default function ConsentPage() {
       // splash transition.
       if (capturedEmail) {
         try {
+          setEmailVerificationReturn("/carta");
           await addEmail.mutateAsync({ email: capturedEmail });
         } catch (err) {
           // eslint-disable-next-line no-console

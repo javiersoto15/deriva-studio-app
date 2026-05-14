@@ -2,6 +2,7 @@
 
 import { type FormEvent, useEffect, useState } from "react";
 import { parseIdentityConflict, useAddEmail, type IdentityConflict } from "../api/hooks";
+import { setEmailVerificationReturn } from "../lib/emailVerificationReturn";
 import { colors } from "../design/tokens";
 import { Button } from "./Button";
 import { Input } from "./Input";
@@ -49,6 +50,7 @@ export function EmailAddSheet({ open, onClose, initialEmail }: EmailAddSheetProp
     if (!EMAIL_RE.test(value)) return;
     setState({ kind: "submitting" });
     try {
+      setEmailVerificationReturn("/estudio");
       await addEmail.mutateAsync({ email: value });
       setState({ kind: "queued", email: value });
     } catch (err) {

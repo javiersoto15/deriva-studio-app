@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { useAuth } from "../../../src/auth/use-auth";
 import { colors } from "../../../src/design/tokens";
+import { consumeEmailVerificationReturn } from "../../../src/lib/emailVerificationReturn";
 
 // Firebase action-code landing.
 //
@@ -36,6 +37,15 @@ function VerifyEmailInner() {
   const params = useSearchParams();
   const { completeEmailLink, applyActionCode } = useAuth();
   const [stage, setStage] = useState<Stage>({ kind: "checking" });
+  const [returnPath, setReturnPath] = useState<string>("/carta");
+
+  // Drain the localStorage hint exactly once, on mount. Setting it in state
+  // means the Continue button reflects the caller's context (signup → /carta,
+  // settings sheet → /estudio) even after the success surface re-renders.
+  useEffect(() => {
+    const hint = consumeEmailVerificationReturn();
+    if (hint) setReturnPath(hint);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -80,7 +90,7 @@ function VerifyEmailInner() {
     };
   }, [params, completeEmailLink, applyActionCode]);
 
-  return <Surface stage={stage} onContinue={() => router.push("/carta")} />;
+  return <Surface stage={stage} onContinue={() => router.push(returnPath)} />;
 }
 
 export default function VerificarEmailPage() {

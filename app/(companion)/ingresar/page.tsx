@@ -303,8 +303,8 @@ export default function IngresarPage() {
       </div>
 
       <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: 12 }}>
-        <SsoButton provider="google.com" onClick={() => onSso("google.com")} loading={submitting === "google.com"} />
-        <SsoButton provider="apple.com" onClick={() => onSso("apple.com")} loading={submitting === "apple.com"} />
+        <SsoButton provider="google.com" onClick={() => onSso("google.com")} loading={submitting === "google.com"} disabled />
+        <SsoButton provider="apple.com" onClick={() => onSso("apple.com")} loading={submitting === "apple.com"} disabled />
       </div>
 
       {error && (
@@ -393,21 +393,35 @@ export default function IngresarPage() {
 function SsoButton({
   provider,
   onClick,
-  loading
+  loading,
+  disabled = false
 }: {
   provider: "google.com" | "apple.com";
   onClick: () => void;
   loading: boolean;
+  disabled?: boolean;
 }) {
   const isGoogle = provider === "google.com";
   const bg = isGoogle ? colors.beige100 : colors.brown900;
   const fg = isGoogle ? colors.brown900 : colors.beige100;
   const border = isGoogle ? colors.brown700 : colors.brown900;
+  const inactive = disabled || loading;
+  const label = disabled
+    ? isGoogle
+      ? "Google · Próximamente"
+      : "Apple · Próximamente"
+    : loading
+      ? "Conectando…"
+      : isGoogle
+        ? "Continuar con Google"
+        : "Continuar con Apple";
   return (
     <button
       type="button"
-      onClick={onClick}
-      disabled={loading}
+      onClick={disabled ? undefined : onClick}
+      disabled={inactive}
+      aria-disabled={disabled || undefined}
+      title={disabled ? "Próximamente — por ahora ingresa con tu teléfono" : undefined}
       style={{
         display: "flex",
         alignItems: "center",
@@ -418,9 +432,10 @@ function SsoButton({
         backgroundColor: bg,
         border: `1px solid ${border}`,
         borderRadius: 999,
-        boxShadow: `3px 4px 0 ${isGoogle ? "rgba(94, 35, 15, 0.12)" : "rgba(40, 26, 18, 0.18)"}`,
-        cursor: loading ? "not-allowed" : "pointer",
-        opacity: loading ? 0.7 : 1,
+        boxShadow: disabled ? "none" : `3px 4px 0 ${isGoogle ? "rgba(94, 35, 15, 0.12)" : "rgba(40, 26, 18, 0.18)"}`,
+        cursor: inactive ? "not-allowed" : "pointer",
+        opacity: disabled ? 0.45 : loading ? 0.7 : 1,
+        filter: disabled ? "grayscale(1)" : "none",
         fontFamily: "var(--font-tracked), 'Poppins', sans-serif",
         fontWeight: 600,
         fontSize: 12,
@@ -430,7 +445,7 @@ function SsoButton({
       }}
     >
       {isGoogle ? <GoogleMark /> : <AppleMark color={fg} />}
-      <span>{loading ? "Conectando…" : isGoogle ? "Continuar con Google" : "Continuar con Apple"}</span>
+      <span>{label}</span>
     </button>
   );
 }
