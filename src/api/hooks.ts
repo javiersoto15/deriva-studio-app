@@ -320,13 +320,35 @@ export function useRemoveFavorite() {
   });
 }
 
+// ---- Localized content fetch helpers ----
+//
+// Backend owns localized copy for menu and rewards (item names, descriptions,
+// tasting notes, allergens, reward labels, etc.). The frontend MUST NOT
+// translate these fields — pass the active locale to the endpoint and render
+// the response verbatim. UI chrome (buttons, nav, empty states) stays on
+// next-intl client-side translation.
+//
+// Backend uses BCP-47 ("es-CL", "en"); frontend's i18n module uses short
+// codes ("es", "en"). The mapper bridges them. New locales added here must
+// also be added to the backend enum in openapi.yaml.
+
+export type BackendLocale = "es-CL" | "en";
+export const DEFAULT_BACKEND_LOCALE: BackendLocale = "es-CL";
+
+export function toBackendLocale(short?: string | null): BackendLocale {
+  if (short === "en") return "en";
+  return DEFAULT_BACKEND_LOCALE;
+}
+
 // Backend: wired. Note: canonical /menu returns MenuItem[] (flat array). The
 // UI groups by section client-side via useMenu() below.
-export function useMenuItems() {
+export function useMenuItems(locale: BackendLocale = DEFAULT_BACKEND_LOCALE) {
   return useQuery({
-    queryKey: ["menu"],
+    queryKey: ["menu", locale],
     queryFn: async () => {
-      const { data, error } = await apiClient.GET("/menu");
+      const { data, error } = await apiClient.GET("/menu", {
+        params: { query: { locale } }
+      });
       if (error) throw error;
       return data;
     },
@@ -344,14 +366,16 @@ export function useMenuItems() {
 export type MenuFilters = {
   category?: NonNullable<MenuItem["category_id"]>;
   section?: NonNullable<MenuItem["section_id"]>;
+  locale?: BackendLocale;
 };
 
 export function useMenu(filters: MenuFilters = {}) {
+  const locale = filters.locale ?? DEFAULT_BACKEND_LOCALE;
   return useQuery<MenuView>({
-    queryKey: ["menu", "view", filters.category ?? null, filters.section ?? null],
+    queryKey: ["menu", "view", locale, filters.category ?? null, filters.section ?? null],
     queryFn: async () => {
       const { data, error } = await apiClient.GET("/menu", {
-        params: { query: filters }
+        params: { query: { ...filters, locale } }
       });
       if (error) throw error;
       const items = (data ?? []) as MenuItem[];
@@ -364,11 +388,12 @@ export function useMenu(filters: MenuFilters = {}) {
   });
 }
 
-// Backend: wired.
-export function useMenuItem(id: string) {
+// Backend: wired. ?locale picks the localized name/description/tasting_notes/
+// allergens copy on the response.
+export function useMenuItem(id: string, locale: BackendLocale = DEFAULT_BACKEND_LOCALE) {
   return useQuery<ItemDetail>({
-    queryKey: ["menu", "item", id],
-    queryFn: () => fetchJson(`/menu/items/${id}`),
+    queryKey: ["menu", "item", locale, id],
+    queryFn: () => fetchJson(`/menu/items/${id}?locale=${locale}`),
     enabled: Boolean(id),
     staleTime: 5 * 60_000
   });
@@ -581,11 +606,12 @@ export function useUnlinkProvider() {
 // through fetchJson; UI view-only routes remain MSW-served in dev.
 // =============================================================================
 
-// Backend: wired.
-export function useMyRewards() {
+// Backend: wired. ?locale picks the localized reward name + label copy on
+// the response. The frontend renders those fields verbatim.
+export function useMyRewards(locale: BackendLocale = DEFAULT_BACKEND_LOCALE) {
   return useQuery<{ rewards: RewardDetailed[]; total: number }>({
-    queryKey: ["me", "rewards"],
-    queryFn: () => fetchJson("/me/rewards"),
+    queryKey: ["me", "rewards", locale],
+    queryFn: () => fetchJson(`/me/rewards?locale=${locale}`),
     staleTime: 30_000,
     refetchOnWindowFocus: true
   });

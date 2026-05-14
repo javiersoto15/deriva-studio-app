@@ -38,11 +38,14 @@ export const SECTION_ORDER: ReadonlyArray<NonNullable<MenuItem["section_id"]>> =
   "bakes"
 ];
 
-// Spanish display labels keyed by the backend's canonical slug. Used in
-// preference to the backend's `category_label` / `section_label` (which the
-// current contract returns in English). When a backend ships a new id we
-// haven't translated yet, the lookup falls back to the backend label so the
-// UI still renders something readable.
+// Display labels for legacy items lacking a backend-localized label. New
+// items SHOULD ship with `category_label` / `section_label` already
+// localized (the backend honors ?locale=es-CL|en) — these maps exist only
+// as a safety net for old fixtures, partial backfills, or any item whose
+// label arrives null. They are NOT a translation layer.
+//
+// Per the localization contract (Dec 2025), the frontend MUST NOT translate
+// menu fields. If a backend label is present, use it verbatim.
 export const CATEGORY_LABELS_ES: Record<NonNullable<MenuItem["category_id"]>, string> = {
   coffee: "Café",
   beverage: "Bebidas",
@@ -58,6 +61,7 @@ export const SECTION_LABELS_ES: Record<NonNullable<MenuItem["section_id"]>, stri
   "cold-coffee": "Café frío",
   mate: "Mate",
   breakfast: "Desayuno",
+  empanadas: "Empanadas",
   croissants: "Croissants",
   baguettes: "Baguettes",
   toasts: "Tostadas",
@@ -78,10 +82,12 @@ export function groupMenuItems(items: MenuItem[]): MenuCategory[] {
 
   for (const item of items) {
     const catKey = item.category_id ?? "__uncategorized";
-    // Spanish label > backend label > "Menú" fallback.
+    // Backend label (already localized per ?locale) > legacy ES map fallback
+    // > "Menú" placeholder. Per the localization contract the frontend does
+    // NOT translate these strings; the maps are a safety net only.
     const catLabel =
-      (item.category_id && CATEGORY_LABELS_ES[item.category_id]) ??
       item.category_label ??
+      (item.category_id && CATEGORY_LABELS_ES[item.category_id]) ??
       "Menú";
     if (!categoryLabels.has(catKey)) categoryLabels.set(catKey, catLabel);
 
@@ -90,8 +96,8 @@ export function groupMenuItems(items: MenuItem[]): MenuCategory[] {
 
     const secKey = item.section_id ?? item.section;
     const secLabel =
-      (item.section_id && SECTION_LABELS_ES[item.section_id]) ??
       item.section_label ??
+      (item.section_id && SECTION_LABELS_ES[item.section_id]) ??
       item.section;
     const bucket = sections.get(secKey) ?? { label: secLabel, items: [] };
     bucket.items.push(item);

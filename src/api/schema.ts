@@ -596,6 +596,8 @@ export interface paths {
             parameters: {
                 query?: {
                     status?: "active" | "expired" | "redeemed";
+                    /** @description Resolve backend-driven reward copy for this locale. Defaults to es-CL and falls back to es-CL when unsupported. */
+                    locale?: "es-CL" | "en";
                 };
                 header?: never;
                 path?: never;
@@ -1319,7 +1321,9 @@ export interface paths {
                     /** @description Filter active menu items by normalized category id. */
                     category?: "coffee" | "beverage" | "breakfast" | "savory" | "entree" | "dessert";
                     /** @description Filter active menu items by normalized section id. */
-                    section?: "espresso" | "filtered" | "cold-coffee" | "mate" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "cakes-pies" | "bakes";
+                    section?: "espresso" | "filtered" | "cold-coffee" | "mate" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "cakes-pies" | "bakes";
+                    /** @description Resolve backend-driven menu copy for this locale. Defaults to es-CL and falls back to es-CL when unsupported. */
+                    locale?: "es-CL" | "en";
                 };
                 header?: never;
                 path?: never;
@@ -1360,7 +1364,10 @@ export interface paths {
          */
         get: {
             parameters: {
-                query?: never;
+                query?: {
+                    /** @description Resolve backend-driven menu item copy for this locale. Defaults to es-CL and falls back to es-CL when unsupported. */
+                    locale?: "es-CL" | "en";
+                };
                 header?: never;
                 path: {
                     item_id: components["parameters"]["ItemID"];
@@ -2495,6 +2502,8 @@ export interface components {
         };
         MyReward: {
             id: string;
+            /** @enum {string} */
+            locale?: "es-CL" | "en";
             name: string;
             threshold_points: number;
             icon: string;
@@ -2655,6 +2664,8 @@ export interface components {
         };
         MenuItem: {
             id: string;
+            /** @enum {string} */
+            locale?: "es-CL" | "en";
             /**
              * @description Normalized high-level menu category id.
              * @enum {string}
@@ -2665,7 +2676,7 @@ export interface components {
              * @description Normalized menu section id.
              * @enum {string}
              */
-            section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "cakes-pies" | "bakes";
+            section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "cakes-pies" | "bakes";
             section_label?: string;
             /** @description Legacy/display section value kept for backward compatibility. */
             section: string;
@@ -2686,6 +2697,8 @@ export interface components {
         };
         MenuItemView: {
             id: string;
+            /** @enum {string} */
+            locale?: "es-CL" | "en";
             /**
              * @description Normalized high-level menu category id.
              * @enum {string}
@@ -2696,7 +2709,7 @@ export interface components {
              * @description Normalized menu section id.
              * @enum {string}
              */
-            section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "cakes-pies" | "bakes";
+            section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "cakes-pies" | "bakes";
             section_label?: string;
             /** @description Legacy/display section value kept for backward compatibility. */
             section: string;
@@ -2720,7 +2733,7 @@ export interface components {
             /** @enum {string} */
             category_id?: "coffee" | "beverage" | "breakfast" | "savory" | "entree" | "dessert";
             /** @enum {string} */
-            section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "cakes-pies" | "bakes";
+            section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "cakes-pies" | "bakes";
             section?: string;
             name?: string;
             description?: string;
