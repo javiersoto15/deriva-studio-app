@@ -27,8 +27,8 @@ export default function SplashPage() {
       <Image
         src="/brand/logo-con-isotipo.svg"
         alt="Deriva Coffee Studio"
-        width={148}
-        height={50}
+        width={200}
+        height={68}
         priority
       />
 
