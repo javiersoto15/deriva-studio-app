@@ -14,7 +14,7 @@ import { ItemSaveButton, ItemUsualCta } from "./_components/ItemActions";
 
 const FALLBACK_SPEC = [
   { label: "TUESTE", value: "Medio · house blend" },
-  { label: "ORIGEN", value: "Rotativo · ver carta" },
+  { label: "ORIGEN", value: "House Blend · DACH" },
   { label: "LECHE", value: "Entera Colún" },
   { label: "EXTRACCIÓN", value: "18g · 30s · 36g" },
   { label: "VOLUMEN", value: "170 ml" }
@@ -36,12 +36,12 @@ export default async function ItemDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  // Backend returns 501 today; MSW covers dev. `getMenuItem` returns null on
-  // failure so the page still prerenders for crawlers + shared links.
+  // `getMenuItem` returns null on failure so the page still prerenders for
+  // crawlers + shared links.
   const data = await getMenuItem(id);
 
   const spec = data?.spec ?? FALLBACK_SPEC;
-  const allergens = data?.allergens ?? ["Lactosa"];
+  const allergens = data?.allergens ?? [];
 
   return (
     <main
@@ -179,13 +179,27 @@ export default async function ItemDetailPage({
         >
           Contiene
         </span>
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-          {allergens.map((a) => (
-            <Chip key={a} selected={false}>
-              {a}
-            </Chip>
-          ))}
-        </div>
+        {allergens.length > 0 ? (
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {allergens.map((a) => (
+              <Chip key={a} selected={false}>
+                {a}
+              </Chip>
+            ))}
+          </div>
+        ) : (
+          <span
+            style={{
+              fontFamily: "var(--font-display), serif",
+              fontStyle: "italic",
+              fontWeight: 300,
+              fontSize: 15,
+              color: colors.inkMuted
+            }}
+          >
+            Sin alérgenos declarados.
+          </span>
+        )}
       </section>
 
       <p

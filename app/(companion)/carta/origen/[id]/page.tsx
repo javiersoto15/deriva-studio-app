@@ -32,17 +32,19 @@ export default async function OriginCardPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  // Returns null on backend failure (501 stub today); fall through to the
-  // placeholder content so the route still renders.
+  // Returns null on backend failure; fall through to the placeholder content
+  // so the route still renders.
   const data = await getOriginCard(id);
 
+  // Fallback values mirror the current House Blend rotation so the route still
+  // reads correctly when the backend is unreachable at prerender time.
   const specRows = [
-    { label: "país", value: data?.country ?? "Guatemala" },
-    { label: "región", value: data?.region ?? "Huehuetenango · La Esperanza" },
-    { label: "productor", value: data?.producer ?? "Familia Mérida" },
-    { label: "variedad", value: data?.variety ?? "Bourbon, Caturra" },
-    { label: "proceso", value: data?.process ?? "Lavado" },
-    { label: "método", value: data?.method ?? "V60 · 20g / 300ml" }
+    { label: "país", value: data?.country ?? "Nicaragua · Colombia · Kenia" },
+    { label: "región", value: data?.region ?? "Mezcla de origen · DACH" },
+    { label: "productor", value: data?.producer ?? "DACH" },
+    { label: "variedad", value: data?.variety ?? "Atuai, Castillo, Caturra, Batian" },
+    { label: "proceso", value: data?.process ?? "Lavado y Natural" },
+    { label: "método", value: data?.method ?? "Espresso · 18g / 36g" }
   ];
 
   return (
@@ -104,9 +106,9 @@ export default async function OriginCardPage({
           color: colors.ink900
         }}
       >
-        {data?.name_a ?? "Huehuetenango,"}
+        {data?.name_a ?? "House Blend,"}
         <br />
-        {data?.name_b ?? "La Esperanza"}
+        {data?.name_b ?? "DACH"}
       </h1>
 
       <p
@@ -119,7 +121,7 @@ export default async function OriginCardPage({
         }}
       >
         {data?.body ??
-          "Microlote de altura, finca familiar a 1.700 msnm. Caramelo masticable, mandarina, y un cierre limpio de cacao oscuro."}
+          "Blend de la casa de DACH — Nicaragua, Colombia y Kenia, cosecha 2024-2025 a 1.850 msnm promedio. Chocolate, fruta tropical y caramelo sobre un cuerpo redondo y cremoso."}
       </p>
 
       {/* Spec sheet — hairline rows */}
@@ -187,7 +189,7 @@ export default async function OriginCardPage({
           }}
         >
           {data?.barista_note ??
-            "\"Lo recomendamos como filtro suave para la mañana — pide V60 si lo quieres más floral, Chemex si lo prefieres con cuerpo.\""}
+            "\"Es nuestro caballito de batalla — equilibrado, dulce, perdona pequeños cambios de receta sin perder carácter.\""}
         </p>
         <span
           style={{
@@ -199,7 +201,7 @@ export default async function OriginCardPage({
             color: colors.inkMuted
           }}
         >
-          — {data?.barista_attrib ?? "TOMÁS, BARRA · 02 MAY"}
+          — {data?.barista_attrib ?? "BARRA DERIVA · 14 MAY"}
         </span>
       </section>
 

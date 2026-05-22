@@ -3,6 +3,7 @@
 import { useMemo, useRef, useState, useEffect } from "react";
 
 import type { MenuView } from "../../../../src/api/hooks";
+import { FRONTEND_REDIRECT_SECTIONS } from "../../../../src/api/menu-grouping";
 import { Chip } from "../../../../src/ui/Chip";
 import { MenuRow } from "../../../../src/ui/MenuRow";
 import { colors } from "../../../../src/design/tokens";
@@ -115,43 +116,134 @@ export function MenuSections({ menu }: { menu: MenuView }) {
             touchAction: "pan-x"
           }}
         >
-          {activeCategory?.sections.map((s) => (
-            <Chip
-              key={s.id}
-              selected={s.id === (activeSection?.id ?? "")}
-              onClick={() => setSectionId(s.id)}
-            >
-              {s.name}
-            </Chip>
-          ))}
+          {activeCategory?.sections.map((s) => {
+            const isRedirect = s.id in FRONTEND_REDIRECT_SECTIONS;
+            const isActive = s.id === (activeSection?.id ?? "");
+            return (
+              <Chip
+                key={s.id}
+                selected={isActive}
+                onClick={() => setSectionId(s.id)}
+                style={isRedirect && !isActive ? { opacity: 0.45 } : undefined}
+              >
+                {s.name}
+              </Chip>
+            );
+          })}
         </div>
       )}
 
-      <ul
-        ref={listRef}
+      {activeSection && activeSection.id in FRONTEND_REDIRECT_SECTIONS ? (
+        <SectionRedirectCard
+          sectionName={activeSection.name}
+          alternatives={(FRONTEND_REDIRECT_SECTIONS[activeSection.id] ?? [])
+            .map((altId) => activeCategory?.sections.find((s) => s.id === altId))
+            .filter((s): s is NonNullable<typeof s> => Boolean(s))}
+          onPick={(id) => setSectionId(id)}
+        />
+      ) : (
+        <ul
+          ref={listRef}
+          style={{
+            listStyle: "none",
+            margin: 0,
+            padding: 0,
+            paddingBottom: "calc(env(safe-area-inset-bottom) + 96px)",
+            flex: 1,
+            minHeight: 0,
+            overflowY: "auto",
+            WebkitOverflowScrolling: "touch",
+            overscrollBehaviorY: "contain"
+          }}
+        >
+          {(activeSection?.items ?? []).map((item) => (
+            <li key={item.id}>
+              <MenuRow
+                href={`/carta/${item.id}`}
+                name={item.name}
+                spec={item.description}
+                priceClp={item.price_clp}
+                available={item.available}
+              />
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+function SectionRedirectCard({
+  sectionName,
+  alternatives,
+  onPick
+}: {
+  sectionName: string;
+  alternatives: ReadonlyArray<{ id: string; name: string }>;
+  onPick: (id: string) => void;
+}) {
+  return (
+    <div
+      style={{
+        flex: 1,
+        minHeight: 0,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        gap: 20,
+        paddingTop: 32,
+        paddingBottom: "calc(env(safe-area-inset-bottom) + 96px)"
+      }}
+    >
+      <span
         style={{
-          listStyle: "none",
-          margin: 0,
-          padding: 0,
-          paddingBottom: "calc(env(safe-area-inset-bottom) + 96px)",
-          flex: 1,
-          minHeight: 0,
-          overflowY: "auto",
-          WebkitOverflowScrolling: "touch",
-          overscrollBehaviorY: "contain"
+          fontFamily: "var(--font-tracked), 'Poppins', sans-serif",
+          fontWeight: 600,
+          fontSize: 10,
+          letterSpacing: "0.22em",
+          textTransform: "uppercase",
+          color: colors.inkMuted
         }}
       >
-        {(activeSection?.items ?? []).map((item) => (
-          <li key={item.id}>
-            <MenuRow
-              href={`/carta/${item.id}`}
-              name={item.name}
-              spec={item.description}
-              priceClp={item.price_clp}
-            />
-          </li>
-        ))}
-      </ul>
+        Vuelve pronto
+      </span>
+      <p
+        style={{
+          margin: 0,
+          fontFamily: "var(--font-display), serif",
+          fontStyle: "italic",
+          fontWeight: 400,
+          fontSize: 28,
+          lineHeight: 1.2,
+          letterSpacing: "-0.01em",
+          color: colors.ink900
+        }}
+      >
+        {sectionName} llega más adelante.
+      </p>
+      {alternatives.length > 0 && (
+        <>
+          <p
+            style={{
+              margin: 0,
+              fontFamily: "Poppins, sans-serif",
+              fontWeight: 400,
+              fontSize: 14,
+              lineHeight: "20px",
+              color: colors.inkMuted
+            }}
+          >
+            Mientras tanto, prueba nuestras
+          </p>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {alternatives.map((alt) => (
+              <Chip key={alt.id} onClick={() => onPick(alt.id)}>
+                {alt.name}
+              </Chip>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }
