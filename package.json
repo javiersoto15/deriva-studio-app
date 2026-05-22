@@ -11,6 +11,9 @@
     "typecheck": "tsc --noEmit",
     "email:build": "tsx scripts/build-emails.ts",
     "email:test-send": "tsx scripts/send-test-apertura.ts",
+    "send:apertura": "tsx scripts/send-apertura-codes.ts",
+    "send:apertura:dry": "tsx scripts/send-apertura-codes.ts --dry-run",
+    "photos:upload": "tsx scripts/upload-photos.ts",
     "api:types": "openapi-typescript ../13_companion_backend/docs/openapi.yaml -o src/api/schema.ts",
     "msw:init": "msw init public/ --save",
     "firebase:emulator": "firebase emulators:start --only auth --project deriva-studio-production"

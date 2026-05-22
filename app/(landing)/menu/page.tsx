@@ -3,9 +3,12 @@ import { Suspense } from "react";
 import { connection } from "next/server";
 import Link from "next/link";
 import { menuSections, PRICING_OPEN_AT } from "../../../src/data/menu";
+import { getTemporarilyUnavailableItemIds } from "../../../src/data/apertura-windows";
+import { getCurrentSchedule, isClosedToday, matchesSchedule, type Schedule } from "../../../src/data/menu-schedule";
+import { getMenuEjecutivoDateLabel } from "../../../src/data/menu-ejecutivo";
 import { MenuChipNav } from "../../../src/components/menu/MenuChipNav";
 import { MenuSection } from "../../../src/components/menu/MenuSection";
-import { WaitlistForm } from "../../../src/components/WaitlistForm";
+import { SiteNav } from "../../../src/components/landing/SiteNav";
 
 const siteUrl = "https://derivastudio.cl";
 const pageUrl = `${siteUrl}/menu`;
@@ -44,10 +47,31 @@ const menuJsonLd = {
   }))
 };
 
-function MenuSectionsList({ showPrices }: { showPrices: boolean }) {
+function MenuSectionsList({
+  showPrices,
+  temporarilyUnavailableIds,
+  currentSchedule,
+  closedToday = false,
+  menuEjecutivoDateLabel
+}: {
+  showPrices: boolean;
+  temporarilyUnavailableIds: ReadonlySet<string>;
+  currentSchedule?: Schedule;
+  closedToday?: boolean;
+  menuEjecutivoDateLabel?: string;
+}) {
+  const visibleSections = currentSchedule
+    ? menuSections.filter((s) => matchesSchedule(currentSchedule, s.schedule))
+    : menuSections;
   return (
     <>
-      {menuSections.map((section) => (
+      {closedToday ? (
+        <aside className="menu-closed-today" aria-label="Aviso de cierre">
+          <span className="menu-closed-today__rule" aria-hidden="true" />
+          <span className="menu-closed-today__label">CERRADO HOY · ABRIMOS MAÑANA</span>
+        </aside>
+      ) : null}
+      {visibleSections.map((section) => (
         <div key={section.id}>
           {section.id === "tostadas" ? (
             <aside className="menu-chapter" aria-label="Pausa editorial">
@@ -59,7 +83,13 @@ function MenuSectionsList({ showPrices }: { showPrices: boolean }) {
               <span className="menu-chapter__rule" aria-hidden="true" />
             </aside>
           ) : null}
-          <MenuSection section={section} showPrices={showPrices} />
+          <MenuSection
+            section={section}
+            showPrices={showPrices}
+            temporarilyUnavailableIds={temporarilyUnavailableIds}
+            currentSchedule={currentSchedule}
+            menuEjecutivoDateLabel={menuEjecutivoDateLabel}
+          />
         </div>
       ))}
     </>
@@ -75,29 +105,34 @@ async function PricedMenuSections() {
   // before the apertura cutoff. In production this env var stays unset.
   const forceShow = process.env.DERIVA_SHOW_PRICES === "1";
   const showPrices = forceShow || Date.now() >= PRICING_OPEN_AT.getTime();
-  return <MenuSectionsList showPrices={showPrices} />;
+  const now = new Date();
+  const temporarilyUnavailableIds = getTemporarilyUnavailableItemIds(now);
+  const currentSchedule = getCurrentSchedule(now);
+  const closedToday = isClosedToday(now);
+  const menuEjecutivoDateLabel = getMenuEjecutivoDateLabel(now);
+  return (
+    <MenuSectionsList
+      showPrices={showPrices}
+      temporarilyUnavailableIds={temporarilyUnavailableIds}
+      currentSchedule={currentSchedule}
+      closedToday={closedToday}
+      menuEjecutivoDateLabel={menuEjecutivoDateLabel}
+    />
+  );
 }
 
 export default function MenuPage() {
   return (
-    <main className="menu-page" aria-labelledby="menu-title">
-      <script
-        type="application/ld+json"
-        // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(menuJsonLd) }}
-      />
+    <>
+      <SiteNav active="carta" variant="solid" />
+      <main className="menu-page menu-page--with-nav" aria-labelledby="menu-title">
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(menuJsonLd) }}
+        />
 
-      <div className="menu-outer">
-        <header className="menu-outer__caption" aria-hidden="true">
-          <span>
-            <Link href="/">Deriva Coffee Studio</Link>
-          </span>
-          <span className="menu-outer__center">
-            <i className="menu-diamond" />
-            Apertura 18 mayo 2026
-          </span>
-          <span>La carta</span>
-        </header>
+        <div className="menu-outer">
 
         <div className="menu-sheet">
           <section className="menu-hero">
@@ -117,7 +152,7 @@ export default function MenuPage() {
                 Una mesa simple para café, mate y cocina. Método, origen y ritual, sin exceso.
               </p>
               <p className="menu-hero__fineprint">
-                Carta vigente al servicio. Precios definitivos publicados en local desde el 18 de mayo.
+                Carta vigente al servicio. Precios definitivos en local.
               </p>
             </div>
           </section>
@@ -172,31 +207,37 @@ export default function MenuPage() {
             </aside>
 
             <div className="menu-column">
-              <Suspense fallback={<MenuSectionsList showPrices={false} />}>
+              <Suspense
+                fallback={
+                  <MenuSectionsList
+                    showPrices={false}
+                    temporarilyUnavailableIds={new Set()}
+                  />
+                }
+              >
                 <PricedMenuSections />
               </Suspense>
             </div>
           </div>
 
-          <section className="menu-closing" aria-label="Reserva tu lugar">
+          <section className="menu-closing" aria-label="Estamos abiertos">
             <div className="menu-closing__left">
               <div className="menu-eyebrow">
                 <span className="menu-diamond" aria-hidden="true" />
-                <span>Apertura · 18 mayo 2026</span>
+                <span>Abiertos · Magnere 1570</span>
               </div>
               <h2 className="menu-closing__headline">
-                El primer café
+                Ya estamos
                 <br />
-                <em>te lo invitamos.</em>
+                <em>en barra.</em>
               </h2>
               <p className="menu-closing__lede">
-                Suscríbete y guardamos tu invitación. Llega el lunes 18 de mayo desde las 08:00, Magnere 1570 Local 105.
+                Magnere 1570 Local 105, Providencia. Desde las 08:00.
               </p>
             </div>
             <div className="menu-closing__right">
-              <WaitlistForm />
               <p className="menu-closing__fineprint">
-                Carta vigente al servicio. Precios definitivos publicados en local desde el 18 de mayo.
+                Carta vigente al servicio. Precios definitivos en local.
               </p>
             </div>
           </section>
@@ -232,7 +273,8 @@ export default function MenuPage() {
             2026
           </span>
         </footer>
-      </div>
-    </main>
+        </div>
+      </main>
+    </>
   );
 }

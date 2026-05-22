@@ -1,0 +1,49 @@
+DNS RECORD TO ADD AT VERCEL
+============================
+
+Domain:   derivastudio.cl
+Subdomain to create: media.derivastudio.cl
+
+Record:
+  Type:   A
+  Name:   media
+  Value:  8.232.64.198
+  TTL:    60   (or default)
+
+
+WHERE TO ADD
+------------
+Vercel dashboard → Domains → derivastudio.cl → DNS Records → Add Record
+
+URL: https://vercel.com/javiersoto15s-projects/~/domains
+
+
+WHAT THIS DOES
+--------------
+Points the media.* subdomain at the Google Cloud HTTPS Load Balancer
+that fronts the private GCS bucket `deriva-photos` with Cloud CDN.
+
+After the record propagates (~5–30 min):
+  1. The managed SSL cert finishes provisioning (auto)
+  2. https://media.derivastudio.cl/v1/<slug>-<width>.<format> starts serving
+  3. The cinematic landing's <picture> srcsets resolve correctly
+
+
+VERIFICATION COMMANDS
+---------------------
+# 1) DNS resolves
+dig +short media.derivastudio.cl
+   → expect: 8.232.64.198
+
+# 2) Cert is ACTIVE (was PROVISIONING)
+gcloud compute ssl-certificates describe deriva-cdn-cert --global \
+  --project=deriva-studio-production \
+  --format="value(managed.status,managed.domainStatus)"
+   → expect: ACTIVE    media.derivastudio.cl=ACTIVE
+
+# 3) Photo serves with correct headers
+curl -sI https://media.derivastudio.cl/v1/storefront-960.avif
+   → expect: HTTP/2 200
+             content-type: image/avif
+             cache-control: public, max-age=31536000, immutable
+             via: 1.1 google
