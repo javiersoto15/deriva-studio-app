@@ -72,6 +72,32 @@ export const SECTION_LABELS_ES: Record<NonNullable<MenuItem["section_id"]>, stri
   bakes: "Queques & Brownies"
 };
 
+// Frontend-side "coming soon" overrides — used when the backend `available`
+// flag hasn't been flipped yet for items we know aren't ready for service.
+// Apertura 2026-05-18: baguettes section and Tiradito de Salmón aren't on the
+// opening menu. Remove entries here once the backend marks them unavailable.
+export const FRONTEND_UNAVAILABLE_ITEM_IDS: ReadonlySet<string> = new Set([
+  "tiradito-salmon",
+  "sobrecostilla",
+  "sopa-cebolla",
+  "croquetas"
+]);
+
+// Sections that aren't on the apertura menu but stay visible in the chip
+// strip so the published structure is preserved. Selecting one shows a
+// "vuelve pronto" card pointing customers to the listed alternatives
+// (matched by section_id). The chip itself is rendered muted.
+export const FRONTEND_REDIRECT_SECTIONS: Record<string, readonly string[]> = {
+  baguettes: ["focaccias", "croissants"]
+};
+
+export function isItemAvailable(item: MenuItem): boolean {
+  if (item.available === false) return false;
+  if (FRONTEND_UNAVAILABLE_ITEM_IDS.has(item.id)) return false;
+  if (item.section_id && item.section_id in FRONTEND_REDIRECT_SECTIONS) return false;
+  return true;
+}
+
 // Groups a flat MenuItem[] into the nested category → section shape the UI
 // consumes. Items missing category_id fall into a single synthetic "Menú"
 // category so the page still renders during the backend seed-backfill
@@ -80,7 +106,10 @@ export function groupMenuItems(items: MenuItem[]): MenuCategory[] {
   const byCategory = new Map<string, Map<string, { label: string; items: MenuItem[] }>>();
   const categoryLabels = new Map<string, string>();
 
-  for (const item of items) {
+  for (const rawItem of items) {
+    const item: MenuItem = isItemAvailable(rawItem)
+      ? rawItem
+      : { ...rawItem, available: false };
     const catKey = item.category_id ?? "__uncategorized";
     // Backend label (already localized per ?locale) > legacy ES map fallback
     // > "Menú" placeholder. Per the localization contract the frontend does

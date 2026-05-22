@@ -1,18 +1,46 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { MenuSection } from "../../data/menu";
+import { getCurrentSchedule, matchesSchedule } from "../../data/menu-schedule";
 
 type Props = {
   sections: MenuSection[];
 };
 
+// Friendlier labels per section id — falls back to the section title with the
+// trailing "." stripped.
+const SECTION_CHIP_LABELS: Record<string, string> = {
+  cafeteria: "Cafetería",
+  "desayunos-weekday": "Desayunos",
+  "desayunos-weekend": "Desayunos y Once",
+  pasteleria: "Pastelería",
+  "menu-ejecutivo": "Menu Ejecutivo",
+  onces: "Onces"
+};
+
+function chipLabel(section: MenuSection): string {
+  return SECTION_CHIP_LABELS[section.id] ?? section.title.replace(/\.$/, "");
+}
+
 export function MenuChipNav({ sections }: Props) {
-  const [activeId, setActiveId] = useState<string>(sections[0]?.id ?? "");
+  // Filter to today's schedule on the client so chip count matches the
+  // sections actually rendered. SSR renders all sections briefly (no
+  // hydration mismatch since the initial state matches the SSR snapshot),
+  // then the effect re-filters.
+  const [visibleSections, setVisibleSections] = useState<MenuSection[]>(sections);
+  useEffect(() => {
+    const schedule = getCurrentSchedule(new Date());
+    setVisibleSections(
+      sections.filter((s) => matchesSchedule(schedule, s.schedule))
+    );
+  }, [sections]);
+
+  const [activeId, setActiveId] = useState<string>(visibleSections[0]?.id ?? "");
+  const trackedIds = useMemo(() => visibleSections.map((s) => s.id), [visibleSections]);
 
   useEffect(() => {
-    const ids = sections.map((s) => s.id);
-    const elements = ids
+    const elements = trackedIds
       .map((id) => document.getElementById(`section-${id}`))
       .filter((el): el is HTMLElement => el !== null);
 
@@ -36,7 +64,7 @@ export function MenuChipNav({ sections }: Props) {
 
     elements.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, [sections]);
+  }, [trackedIds]);
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
@@ -49,7 +77,7 @@ export function MenuChipNav({ sections }: Props) {
   return (
     <nav className="menu-chipnav" aria-label="Categorías de la carta">
       <div className="menu-chipnav__row">
-        {sections.map((section) => (
+        {visibleSections.map((section) => (
           <a
             key={section.id}
             href={`#section-${section.id}`}
@@ -57,11 +85,7 @@ export function MenuChipNav({ sections }: Props) {
             className={`menu-chip ${activeId === section.id ? "menu-chip--active" : ""}`}
             aria-current={activeId === section.id ? "true" : undefined}
           >
-            {section.id === "desayunos"
-              ? "Desayunos"
-              : section.id === "pasteleria"
-                ? "Pastelería"
-                : section.title.replace(".", "")}
+            {chipLabel(section)}
           </a>
         ))}
       </div>

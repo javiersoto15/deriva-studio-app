@@ -25,7 +25,13 @@ export type DietaryTag =
   | "300 ml"
   | "330 ml"
   | "3 × 90 ml"
-  | "Porción · 3 unid.";
+  | "Porción · 3 unid."
+  | "Porción · 5 unid."
+  | "Por unidad"
+  | "Variedad"
+  | "Para 2 · ampliable";
+
+export type Schedule = "weekday" | "weekend";
 
 export type MenuItem = {
   id: string;
@@ -36,6 +42,8 @@ export type MenuItem = {
   priceLabel?: string;
   signature?: boolean;
   tastingNote?: string;
+  unavailable?: boolean;
+  schedule?: readonly Schedule[];
 };
 
 export type MenuAddons = {
@@ -49,8 +57,13 @@ export type MenuSubgroup = {
   label: string;
   items: MenuItem[];
   addons?: MenuAddons;
+  schedule?: readonly Schedule[];
 };
 
+// Optional service window for sections served at specific hours
+// (Desayunos y Once, Cocina). Rendered as a small typographic chip in
+// MenuSection. Bread sections (Croissants, Baguettes, etc.) run all day
+// and leave this undefined.
 export type MenuSection = {
   id: string;
   numeral: string;
@@ -60,6 +73,16 @@ export type MenuSection = {
   emphasis: "hero" | "primary" | "utility";
   lede: string;
   ledeItalic?: boolean;
+  serviceWindow?: string;
+  // When `addons` is set, by default they render after all subgroups. Set
+  // this to a subgroup id (e.g. "infusiones") to render the addons just
+  // before that subgroup — useful when addons apply only to the preceding
+  // subgroups (Cafetería: Extras/Leches apply to coffee, not to Té).
+  addonsBefore?: string;
+  schedule?: readonly Schedule[];
+  // Overrides the "N ítems" count chip in the section header — used by the
+  // Menu Ejecutivo to show "HOY · MIÉ 20 MAY" instead of an item count.
+  countOverride?: string;
   items?: MenuItem[];
   subgroups?: MenuSubgroup[];
   addons?: MenuAddons | MenuAddons[];
@@ -212,8 +235,22 @@ export const menuSections: MenuSection[] = [
             description: "Espresso sobre leche fría y hielo. Suave, lechoso y fácil de tomar."
           }
         ]
+      },
+      {
+        id: "infusiones",
+        label: "Infusiones",
+        items: [
+          {
+            id: "te-variedad",
+            name: "Té",
+            meta: "Variedad",
+            priceClp: 2500,
+            description: "Selección rotativa de tés e infusiones de hoja: negro, verde, rojo y herbales. Pregunta por la opción del día."
+          }
+        ]
       }
     ],
+    addonsBefore: "infusiones",
     addons: [
       {
         label: "+ Extras",
@@ -228,22 +265,23 @@ export const menuSections: MenuSection[] = [
     ]
   },
   {
-    id: "desayunos",
+    id: "desayunos-weekend",
     numeral: "01",
     title: "Desayunos y",
-    italicWord: "Brunch.",
+    italicWord: "Once.",
     emphasis: "primary",
+    schedule: ["weekend"],
+    serviceWindow: "Desayuno 08:00 – 11:30 · Once 17:00 hasta cierre",
     lede:
-      "Todos los desayunos incluyen café y jugo. El Brunch reúne las tres líneas en porciones para compartir.",
+      "Los desayunos incluyen café y jugo natural. La once incluye café y un dulce del mostrador. El Brunch reúne la línea completa en porciones para compartir.",
     items: [
       {
         id: "campesino",
         name: "Desayuno Campesino",
-        meta: "Incluye café y jugo",
         priceClp: 11900,
         signature: true,
         description:
-          "Dos huevos a elección con tocino crocante, tostadas de masa madre y fruta de estación. Base salada abundante."
+          "Dos huevos a elección con tocino crocante y tostadas de masa madre."
       },
       {
         id: "bowl-natural",
@@ -251,7 +289,7 @@ export const menuSections: MenuSection[] = [
         meta: "Vegetariano",
         priceClp: 10900,
         description:
-          "Yogurt natural, granola crocante, fruta de estación y miel. Acompañado de croissant, café y jugo."
+          "Yogurt natural, granola crocante, fruta de estación y miel. Acompañado de croissant."
       },
       {
         id: "dulce-deriva",
@@ -259,7 +297,7 @@ export const menuSections: MenuSection[] = [
         meta: "Vegetariano",
         priceClp: 9900,
         description:
-          "French toast dorado con fruta de estación, miel o mermelada y mantequilla. Café y jugo incluidos."
+          "French toast dorado con fruta de estación, miel o mermelada y mantequilla."
       },
       {
         id: "huevos-pochados",
@@ -277,8 +315,78 @@ export const menuSections: MenuSection[] = [
         priceClp: 16900,
         signature: true,
         description:
-          "Brunch completo para una persona: una versión abundante de la línea salada, fresca y dulce. Café y jugo incluidos."
+          "Brunch abundante para una persona que reúne las tres líneas de desayuno: huevos a elección con tocino crocante, tostadas de masa madre, yogurt con granola y fruta de estación, french toast, croissant y untables dulces."
       },
+    ],
+    addons: {
+      label: "+ Agregados",
+      hint: "Mantequilla sin costo. Otros agregados con cargo según opción.",
+      chips: [
+        "Mantequilla",
+        "Queso",
+        "Jamón",
+        "Palta",
+        "Tomate",
+        "Salmón gravlax",
+        "Coppa",
+        "Tocino extra",
+        "Huevo"
+      ]
+    }
+  },
+  {
+    id: "desayunos-weekday",
+    numeral: "01",
+    title: "Desayunos.",
+    fullItalic: true,
+    emphasis: "primary",
+    schedule: ["weekday"],
+    serviceWindow: "Servicio 08:00 – 12:00",
+    lede:
+      "Los desayunos incluyen café y jugo natural. El Brunch reúne la línea completa en porciones para compartir.",
+    items: [
+      {
+        id: "campesino",
+        name: "Desayuno Campesino",
+        priceClp: 11900,
+        signature: true,
+        description:
+          "Dos huevos a elección con tocino crocante y tostadas de masa madre."
+      },
+      {
+        id: "bowl-natural",
+        name: "Bowl Natural",
+        meta: "Vegetariano",
+        priceClp: 10900,
+        description:
+          "Yogurt natural, granola crocante, fruta de estación y miel. Acompañado de croissant."
+      },
+      {
+        id: "dulce-deriva",
+        name: "Desayuno Dulce Deriva",
+        meta: "Vegetariano",
+        priceClp: 9900,
+        description:
+          "French toast dorado con fruta de estación, miel o mermelada y mantequilla."
+      },
+      {
+        id: "huevos-pochados",
+        name: "Huevos Pochados Deriva",
+        meta: "Vegetariano · base",
+        priceClp: 9900,
+        signature: true,
+        description:
+          "Huevos pochados sobre masa madre, palta, tomate asado, hojas verdes y limoneta. Yema cremosa de firma."
+      },
+      {
+        id: "brunch",
+        name: "Brunch Deriva Studio",
+        meta: "Full size · 1 pax",
+        priceClp: 16900,
+        signature: true,
+        description:
+          "Brunch abundante para una persona que reúne las tres líneas de desayuno: huevos a elección con tocino crocante, tostadas de masa madre, yogurt con granola y fruta de estación, french toast, croissant y untables dulces."
+      }
     ],
     addons: {
       label: "+ Agregados",
@@ -308,24 +416,27 @@ export const menuSections: MenuSection[] = [
         name: "Deli Pastrami",
         meta: "Pastrami",
         priceClp: 9900,
-        description: "Pastrami de la casa, queso semiduro, mostaza dijon y pepinillos en croissant tibio."
+        description: "Croissant tostado con pastrami, ricotta, rúcula, tomate asado y pesto."
       },
       {
         id: "kasler-house",
         name: "Kasler House",
         meta: "Cerdo ahumado",
         priceClp: 8900,
-        description: "Kasler artesanal, queso fundido, cebolla caramelizada y rúcula. Servido al horno."
+        description: "Croissant con lomo kasler, hummus, palta, hojas verdes y cebolla encurtida."
       },
       {
         id: "clasico",
         name: "Clásico",
-        meta: "Vegetariano · opt.",
         priceClp: 6900,
-        description:
-          "Jamón, queso y manteca apenas tibia. Hojaldre crocante, miga aireada. Versión simple, bien hecha."
+        description: "Croissant con jamón y queso, con opción de tomate asado o pesto."
       }
-    ]
+    ],
+    addons: {
+      label: "+ Agregados al pan",
+      hint: "Suma a cualquier sándwich, tostada o focaccia.",
+      chips: ["Pesto", "Tomate cherry"]
+    }
   },
   {
     id: "baguettes",
@@ -339,17 +450,23 @@ export const menuSections: MenuSection[] = [
         name: "Roast Beef de la Casa",
         meta: "Carne lenta",
         priceClp: 9900,
-        description: "Roast beef en cocción lenta, cebolla asada, rúcula y mayonesa de mostaza. Baguette caliente."
+        unavailable: true,
+        description: "Baguette con roast beef, rúcula, pepino encurtido, queso fundido y mostaza miel merkén."
       },
       {
         id: "huerta-asada",
         name: "Huerta Asada",
         meta: "Vegetariano",
         priceClp: 8500,
-        description:
-          "Berenjena, zucchini y pimentón al horno con pesto, queso fresco y hojas verdes. Vegetal al centro."
+        unavailable: true,
+        description: "Baguette vegetariana con crema de zapallo, verduras asadas, hojas verdes y limoneta."
       }
-    ]
+    ],
+    addons: {
+      label: "+ Agregados al pan",
+      hint: "Suma a cualquier sándwich, tostada o focaccia.",
+      chips: ["Pesto", "Tomate cherry"]
+    }
   },
   {
     id: "tostadas",
@@ -362,18 +479,29 @@ export const menuSections: MenuSection[] = [
       {
         id: "mediterranea",
         name: "Mediterránea",
-        meta: "Vegetariano",
         priceClp: 8900,
-        description: "Hummus de la casa, tomate confitado, pepino, aceitunas y feta. Aceite de oliva y orégano."
+        description: "Tostada de masa madre con palta, coppa, tomate asado y cebolla encurtida."
       },
       {
         id: "italiana",
         name: "Italiana",
         meta: "Vegetariano",
         priceClp: 7900,
-        description: "Burrata fresca, tomate de estación, albahaca y reducción de balsam. Pan apenas tibio."
+        description: "Tostada de masa madre con ricotta o mascarpone, rúcula, tomate cherry, limón, aceto y aceituna verde."
+      },
+      {
+        id: "masa-madre-duo",
+        name: "Masa Madre Duo",
+        priceClp: 5990,
+        description:
+          "Dos tostadas de masa madre a elección, con un agregado libre: tomate, huevos, jamón o palta."
       }
-    ]
+    ],
+    addons: {
+      label: "+ Agregados al pan",
+      hint: "Suma a cualquier sándwich, tostada o focaccia.",
+      chips: ["Pesto", "Tomate cherry"]
+    }
   },
   {
     id: "focaccias",
@@ -387,17 +515,21 @@ export const menuSections: MenuSection[] = [
         name: "Fugazzeta Gourmet",
         meta: "Vegetariano",
         priceClp: 9900,
-        description:
-          "Cebolla blanca confitada, queso fundido y aceite de orégano. Tradición rioplatense en versión de la casa."
+        description: "Focaccia con mozzarella, queso ahumado, cebolla pluma, aceitunas y chimichurri."
       },
       {
         id: "pastrami-cream",
         name: "Pastrami Cream",
         meta: "Pastrami",
         priceClp: 10900,
-        description: "Pastrami caliente, crema agria, cebollin y pickle dill. Pan recién horneado, dulzor de la masa."
+        description: "Focaccia con pastrami, tomate fresco, rúcula, mix de queso crema y pepino, y mayo."
       }
-    ]
+    ],
+    addons: {
+      label: "+ Agregados al pan",
+      hint: "Suma a cualquier sándwich, tostada o focaccia.",
+      chips: ["Pesto", "Tomate cherry"]
+    }
   },
   {
     id: "cocina",
@@ -405,6 +537,7 @@ export const menuSections: MenuSection[] = [
     title: "Cocina",
     fullItalic: true,
     emphasis: "hero",
+    serviceWindow: "Servicio 13:00 – 17:00",
     lede: "Entradas y fondos preparados al momento, materia prima de temporada.",
     ledeItalic: true,
     subgroups: [
@@ -413,42 +546,34 @@ export const menuSections: MenuSection[] = [
         label: "Entradas",
         items: [
           {
-            id: "crema-verduras",
-            name: "Crema de Verduras Asadas",
+            id: "crema-del-dia",
+            name: "Crema del Día",
             meta: "Vegetariano",
             priceClp: 5900,
-            description:
-              "Zapallo, zanahoria y pimientón asados con caldo de la casa. Servida tibia, hierbas frescas."
-          },
-          {
-            id: "sopa-cebolla",
-            name: "Sopa de Cebolla Caramelizada",
-            meta: "Para compartir · opt.",
-            priceClp: 6500,
-            description:
-              "Cebolla en cocción larga, caldo oscuro y crouton gratinado con queso. Perfil dulce-tostado."
+            description: "Crema rotativa de verduras de temporada, preparada al horno."
           },
           {
             id: "ensalada-estacion",
             name: "Ensalada de Estación Proteica",
             meta: "Con proteína",
             priceClp: 10900,
-            description:
-              "Hojas de la huerta, granos cocidos, semillas, vegetal de estación y proteína del día con aderezo de la casa."
+            description: "Hojas verdes, frutos secos, queso, proteína a elección y limoneta."
           },
           {
-            id: "tiradito-salmon",
-            name: "Tiradito de Salmón",
-            meta: "Pescado crudo",
-            priceClp: 12900,
-            signature: true,
-            description: "Salmón laminado, leche de tigre cítrica, cítricos y aceite de cilantro. Para abrir mesa, fresco."
+            id: "croquetas",
+            name: "Croquetas de la Casa",
+            meta: "Para compartir",
+            priceClp: 6900,
+            schedule: ["weekend"],
+            unavailable: true,
+            description: "Croquetas con relleno del día, salsa de tomate y aceite verde."
           }
         ]
       },
       {
         id: "fondos",
         label: "Fondos",
+        schedule: ["weekend"],
         items: [
           {
             id: "sobrecostilla",
@@ -456,30 +581,21 @@ export const menuSections: MenuSection[] = [
             meta: "Cocción lenta",
             priceClp: 13900,
             signature: true,
-            description:
-              "Sobrecostilla en cocción de horas con jugo reducido, puré rústico y vegetal asado. Plato de domingo."
+            description: "Sobrecostilla de cocción lenta con reducción de jugos, risotto de azafrán y setas."
           },
           {
             id: "noquis",
             name: "Ñoquis de la Casa",
-            meta: "Vegetariano · opt.",
+            meta: "Vegetariano",
             priceClp: 10900,
-            description: "Ñoquis frescos de papa con salsa de la semana: pomodoro, mantequilla y salvia, o ragú lento."
+            description: "Ñoquis vegetarianos con mantequilla especiada, puré de berenjena y queso curado."
           },
           {
             id: "brochetas",
             name: "Brochetas Mixtas",
             meta: "Para compartir",
             priceClp: 9900,
-            description: "Brochetas a la parrilla con carnes y vegetales del día. Ahumado leve, salsa chimichurri de la casa."
-          },
-          {
-            id: "croquetas",
-            name: "Croquetas de la Casa",
-            meta: "Para compartir",
-            priceClp: 6900,
-            description:
-              "Croquetas crocantes con relleno rotativo (jamón, queso, hongos). Bechamel densa, fritura limpia."
+            description: "Brochetas de vacuno y pollo con chimichurri y puré mixto de papa y camote."
           }
         ]
       },
@@ -491,25 +607,63 @@ export const menuSections: MenuSection[] = [
             id: "empanada-pino",
             name: "Empanadas de Pino",
             meta: "Porción · 3 unid.",
-            priceClp: 2800,
+            priceClp: 4000,
             description:
-              "Porción de tres empanadas individuales. Pino jugoso de carne, cebolla pochada, huevo y aceituna. Masa horneada, dorada al momento."
+              "Porción de tres empanadas horneadas de pino: carne, cebolla pochada, huevo y aceituna. Masa dorada al momento."
           },
           {
             id: "empanada-queso",
             name: "Empanadas de Queso",
             meta: "Porción · 3 unid.",
-            priceClp: 2500,
+            priceClp: 3800,
             description:
-              "Porción de tres empanadas individuales. Queso fundido envuelto en masa crocante. Para picar entre café y café."
+              "Porción de tres empanadas horneadas de queso fundido envuelto en masa crocante. Para picar entre café y café."
           }
         ]
       }
     ]
   },
   {
-    id: "pasteleria",
+    id: "menu-ejecutivo",
     numeral: "07",
+    title: "Menu Ejecutivo.",
+    fullItalic: true,
+    emphasis: "primary",
+    schedule: ["weekday"],
+    serviceWindow: "13:00 – 16:00 · LUN A VIE",
+    lede: "Cuatro momentos. Una cuenta. Sólo entre la una y las cuatro."
+  },
+  {
+    id: "onces",
+    numeral: "08",
+    title: "Onces.",
+    fullItalic: true,
+    emphasis: "primary",
+    schedule: ["weekday"],
+    serviceWindow: "Servicio 17:00 hasta cierre",
+    lede:
+      "Dos formatos pensados para la tarde, con café incluido. Once Deriva combina focaccia y dulce; Como en Casa, dos tostadas con agregados libres.",
+    items: [
+      {
+        id: "once-deriva",
+        name: "Once Deriva",
+        priceClp: 10900,
+        signature: true,
+        description:
+          "Café del día, focaccia a elección de la carta y un dulce del mostrador. Nuestro 11 Deriva para cerrar la jornada."
+      },
+      {
+        id: "como-en-casa",
+        name: "Como en Casa",
+        priceClp: 9900,
+        description:
+          "Dos tostadas de masa madre con dos agregados libres, acompañadas de café. La once de la casa, sencilla y a la mesa."
+      }
+    ]
+  },
+  {
+    id: "pasteleria",
+    numeral: "09",
     title: "Pastelería y",
     italicWord: "Dulces.",
     emphasis: "utility",
@@ -565,7 +719,8 @@ export const menuSections: MenuSection[] = [
           {
             id: "oreo-cheesecake",
             name: "Oreo Cheesecake",
-            meta: "Precio pendiente",
+            meta: "Precio fijo",
+            priceClp: 4900,
             description: "Cheesecake cremoso sobre base de galleta de cacao, terminado con trozos de Oreo. Postre de mesa larga."
           }
         ]
@@ -609,6 +764,13 @@ export const menuSections: MenuSection[] = [
             priceClp: 2000,
             priceLabel: "$2.000 c/u",
             description: "Variedades rotativas de la casa: tradicional con manjar, frambuesa, nuez, chocochip y ediciones de temporada."
+          },
+          {
+            id: "seleccion-galletas",
+            name: "Selección de Galletas",
+            meta: "Porción · 5 unid.",
+            priceClp: 2500,
+            description: "Porción surtida de cinco galletas de la casa: avena, chocochip, mantequilla y ediciones rotativas. Para picar con café."
           }
         ]
       }

@@ -13,6 +13,8 @@ import {
   fixtureMenuItems,
   fixtureOriginCanonical,
   fixtureOriginCardView,
+  fixtureOriginsCanonical,
+  fixtureOriginViews,
   fixtureReconciledMember,
   fixtureRewardsDetailed
 } from "./data";
@@ -55,8 +57,12 @@ const canonicalHandlers = [
     return HttpResponse.json(item);
   }),
 
-  // /menu/origins/{id} — canonical OriginCard.
-  http.get(pattern("/menu/origins/:id"), () => HttpResponse.json(fixtureOriginCanonical)),
+  // /menu/origins/{id} — canonical OriginCard. Looks up by id; falls back to the
+  // House Blend default so legacy callers (or stale ids in caches) keep working.
+  http.get(pattern("/menu/origins/:id"), ({ params }) => {
+    const id = String(params.id ?? "");
+    return HttpResponse.json(fixtureOriginsCanonical[id] ?? fixtureOriginCanonical);
+  }),
 
   // /me — canonical MemberSelfProfile (Member + user_id + linked_providers).
   http.get(url("/me"), () =>
@@ -368,7 +374,10 @@ const uiOnlyHandlers = [
     if (detail) return HttpResponse.json(detail);
     return new HttpResponse(null, { status: 404 });
   }),
-  http.get(pattern("/menu/origins/:id/view"), () => HttpResponse.json(fixtureOriginCardView)),
+  http.get(pattern("/menu/origins/:id/view"), ({ params }) => {
+    const id = String(params.id ?? "");
+    return HttpResponse.json(fixtureOriginViews[id] ?? fixtureOriginCardView);
+  }),
 
   // Member self-service surfaces beyond the canonical /me.
   http.get(url("/me/profile"), () => HttpResponse.json(fixtureMemberProfileView)),

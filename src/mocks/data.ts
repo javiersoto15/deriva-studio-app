@@ -106,20 +106,54 @@ export const fixtureBalance: BalanceResponse = {
   expires_oldest: "2026-09-09T00:00:00Z"
 };
 
-// ---- Canonical OriginCard ----
-export const fixtureOriginCanonical: components["schemas"]["OriginCard"] = {
-  id: "origin_huehue",
-  name: "Huehuetenango · La Esperanza",
-  country: "Guatemala",
-  region: "Huehuetenango",
-  producer: "Familia Mérida",
-  process: "Lavado",
-  varietal: "Bourbon, Caturra",
-  tasting_notes: "Caramelo masticable, mandarina, cierre limpio de cacao oscuro.",
-  brew_method: "V60 · 20g / 300ml",
-  staff_note:
-    "Lo recomendamos como filtro suave para la mañana — pide V60 si lo quieres más floral, Chemex si lo prefieres con cuerpo."
+// ---- Canonical OriginCard map (current DACH rotation) ----
+// IDs match backend seeds: orig_house_blend_dach (all-purpose), orig_mexico_descafeinado_dach
+// (decaf), orig_etiopia_yirgacheffe_dach (specialty rotation).
+export const fixtureOriginsCanonical: Record<string, components["schemas"]["OriginCard"]> = {
+  orig_house_blend_dach: {
+    id: "orig_house_blend_dach",
+    name: "House Blend · DACH",
+    country: "Nicaragua · Colombia · Kenia",
+    region: "Mezcla de origen",
+    producer: "DACH",
+    process: "Lavado y Natural",
+    varietal: "Atuai rojo y amarillo, Castillo, Caturra, Batian",
+    tasting_notes: "Chocolate, fruta tropical, durazno, avellana, caramelo, té negro.",
+    brew_method: "Espresso · 18g / 36g",
+    staff_note:
+      "Blend de la casa, redondo y dulce — funciona en cualquier preparación con espresso o leche."
+  },
+  orig_mexico_descafeinado_dach: {
+    id: "orig_mexico_descafeinado_dach",
+    name: "Mexico Descafeinado · DACH",
+    country: "México",
+    region: "Chiapas",
+    producer: "DACH",
+    process: "Lavado · Descafeinado Mountain Water",
+    varietal: "Bourbon, Catimor, Garnica, Typica",
+    tasting_notes: "Canela, tabaco, vainilla, azúcar de caña, caramelo claro, especias.",
+    brew_method: "V60 · 18g / 300ml",
+    staff_note:
+      "Descafeinado al agua — cuerpo cremoso y dulce especiado. Perfecto para la sobremesa."
+  },
+  orig_etiopia_yirgacheffe_dach: {
+    id: "orig_etiopia_yirgacheffe_dach",
+    name: "Etiopia Yirgacheffe · DACH",
+    country: "Etiopía",
+    region: "Yirgacheffe",
+    producer: "DACH",
+    process: "Lavado",
+    varietal: "Heirloom",
+    tasting_notes: "Chocolate negro, jazmín, té negro, acidez málica/cítrica, cuerpo cremoso.",
+    brew_method: "V60 · 20g / 300ml",
+    staff_note:
+      "Rotación de filtrado actual — pide V60 si lo quieres más floral, Chemex para más cuerpo."
+  }
 };
+
+// Default origin in barra (used for /menu/origins/:id calls that hit MSW without a
+// specific id and for the carta `today_origin` slot).
+export const fixtureOriginCanonical = fixtureOriginsCanonical.orig_house_blend_dach;
 
 // ---- Canonical points ledger (LedgerEntry[]) ----
 export const fixtureLedgerEntries: components["schemas"]["LedgerEntry"][] = [
@@ -268,22 +302,74 @@ export const fixtureFavorites = {
   ]
 };
 
-// UI-only rich origin-card view (for /menu/origins/{id}/view).
-export const fixtureOriginCardView = {
-  id: "origin_huehue",
-  country: "Guatemala",
-  region: "Huehuetenango · La Esperanza",
-  producer: "Familia Mérida",
-  variety: "Bourbon, Caturra",
-  process: "Lavado",
-  method: "V60 · 20g / 300ml",
-  name_a: "Huehuetenango,",
-  name_b: "La Esperanza",
-  body: "Microlote de altura, finca familiar a 1.700 msnm. Caramelo masticable, mandarina, y un cierre limpio de cacao oscuro.",
-  barista_note:
-    "\"Lo recomendamos como filtro suave para la mañana — pide V60 si lo quieres más floral, Chemex si lo prefieres con cuerpo.\"",
-  barista_attrib: "TOMÁS, BARRA · 02 MAY"
+// UI-only rich origin-card view (for /menu/origins/{id}/view). Mirrors the
+// MenuItemView origin rotation so each origin link renders distinct copy.
+export const fixtureOriginViews: Record<
+  string,
+  {
+    id: string;
+    country: string;
+    region: string;
+    producer: string;
+    variety: string;
+    process: string;
+    method: string;
+    name_a: string;
+    name_b: string;
+    body: string;
+    barista_note: string;
+    barista_attrib: string;
+  }
+> = {
+  orig_house_blend_dach: {
+    id: "orig_house_blend_dach",
+    country: "Nicaragua · Colombia · Kenia",
+    region: "Mezcla de origen · DACH",
+    producer: "DACH",
+    variety: "Atuai rojo y amarillo, Castillo, Caturra, Batian",
+    process: "Lavado y Natural",
+    method: "Espresso · 18g / 36g",
+    name_a: "House Blend,",
+    name_b: "DACH",
+    body: "Blend de la casa, cosecha 2024-2025 a 1.850 msnm promedio. Chocolate, fruta tropical, durazno y avellana sobre un cierre dulce de caramelo y té negro. Cuerpo completo y cremoso para cualquier espresso o bebida con leche.",
+    barista_note:
+      "\"Es nuestro caballito de batalla — equilibrado, dulce, perdona pequeños cambios de receta sin perder carácter.\"",
+    barista_attrib: "BARRA DERIVA · 14 MAY"
+  },
+  orig_mexico_descafeinado_dach: {
+    id: "orig_mexico_descafeinado_dach",
+    country: "México",
+    region: "Chiapas",
+    producer: "DACH",
+    variety: "Bourbon, Catimor, Garnica, Typica",
+    process: "Lavado · Descafeinado Mountain Water",
+    method: "V60 · 18g / 300ml",
+    name_a: "Mexico,",
+    name_b: "Descafeinado",
+    body: "Descafeinado al agua (Mountain Water), cosecha 2023-2024 entre 1.100 y 1.300 msnm. Canela, tabaco, vainilla y caramelo claro sobre un cuerpo aceitoso y cremoso. La opción cuando quieres café sin cafeína pero con personalidad.",
+    barista_note:
+      "\"Para la sobremesa o pedidos tarde — el dulzor especiado aguanta bien en filtrado y en espresso.\"",
+    barista_attrib: "BARRA DERIVA · 14 MAY"
+  },
+  orig_etiopia_yirgacheffe_dach: {
+    id: "orig_etiopia_yirgacheffe_dach",
+    country: "Etiopía",
+    region: "Yirgacheffe",
+    producer: "DACH",
+    variety: "Heirloom",
+    process: "Lavado",
+    method: "V60 · 20g / 300ml",
+    name_a: "Etiopia,",
+    name_b: "Yirgacheffe",
+    body: "Lavado de Yirgacheffe, cosecha 2023-2024 entre 1.700 y 2.200 msnm. Chocolate negro, jazmín y té negro sobre una acidez málica/cítrica viva y un cuerpo cremoso envolvente. Nuestra rotación actual de filtrado.",
+    barista_note:
+      "\"Pídelo en V60 si lo quieres más floral, Chemex para realzar el cuerpo. Brilla en el Coffee Flight.\"",
+    barista_attrib: "BARRA DERIVA · 14 MAY"
+  }
 };
+
+// Default view (House Blend) for callers that don't disambiguate by id.
+export const fixtureOriginCardView = fixtureOriginViews.orig_house_blend_dach;
 
 // UI-only rich item-detail (for /menu/items/{id}/view).
 export const fixtureItemDetailView: Record<
@@ -298,24 +384,202 @@ export const fixtureItemDetailView: Record<
     allergens: string[];
     barista_note: string;
   }
-> = {
-  "flat-white": {
-    id: "flat-white",
-    name: "Flat White",
-    section_eyebrow: "ESPRESSO · CON LECHE",
-    size_note: "6 OZ · MICROESPUMA SEDOSA",
-    price_clp: 3500,
-    spec: [
-      { label: "TUESTE", value: "Medio · house blend" },
-      { label: "ORIGEN", value: "Rotativo · ver carta" },
-      { label: "LECHE", value: "Entera Colún" },
-      { label: "EXTRACCIÓN", value: "18g · 30s · 36g" },
-      { label: "VOLUMEN", value: "170 ml" }
-    ],
-    allergens: ["Lactosa"],
-    barista_note: "Pídelo más caliente si vienes de la calle — la microespuma aguanta."
-  }
-};
+> = (() => {
+  const HOUSE = "House Blend · DACH";
+  const DECAF = "Mexico Descafeinado · DACH";
+  const ROTATION = "Etiopia Yirgacheffe · DACH";
+  const dairy = ["Lácteos"];
+  const espressoSpec = (volume: string, extract = "18g · 30s · 36g") => [
+    { label: "TUESTE", value: "Medio · house blend" },
+    { label: "ORIGEN", value: HOUSE },
+    { label: "EXTRACCIÓN", value: extract },
+    { label: "VOLUMEN", value: volume }
+  ];
+  const milkSpec = (volume: string) => [
+    { label: "TUESTE", value: "Medio · house blend" },
+    { label: "ORIGEN", value: HOUSE },
+    { label: "LECHE", value: "Entera Colún" },
+    { label: "EXTRACCIÓN", value: "18g · 30s · 36g" },
+    { label: "VOLUMEN", value: volume }
+  ];
+  return {
+    espresso: {
+      id: "espresso",
+      name: "Espresso",
+      section_eyebrow: "ESPRESSO · DOBLE",
+      size_note: "60 ML · CAPA DE CREMA AVELLANA",
+      price_clp: 3000,
+      spec: espressoSpec("60 ml"),
+      allergens: [],
+      barista_note: "Tómalo en los primeros 30 segundos — el dulzor está en la primera mitad."
+    },
+    cortado: {
+      id: "cortado",
+      name: "Cortado",
+      section_eyebrow: "ESPRESSO · CON LECHE",
+      size_note: "90 ML · LECHE APENAS TEXTURIZADA",
+      price_clp: 3200,
+      spec: milkSpec("90 ml"),
+      allergens: dairy,
+      barista_note: "Pídelo más fuerte si vienes con sed de café — la base es doble shot."
+    },
+    cappuccino: {
+      id: "cappuccino",
+      name: "Cappuccino",
+      section_eyebrow: "ESPRESSO · CON LECHE",
+      size_note: "180 ML · ESPUMA FIRME",
+      price_clp: 3200,
+      spec: milkSpec("180 ml"),
+      allergens: dairy,
+      barista_note: "Servido clásico: espuma firme y café presente. Ideal de mañana."
+    },
+    latte: {
+      id: "latte",
+      name: "Latte",
+      section_eyebrow: "ESPRESSO · CON LECHE",
+      size_note: "240 ML · LECHE LARGA Y SEDOSA",
+      price_clp: 3400,
+      spec: milkSpec("240 ml"),
+      allergens: dairy,
+      barista_note: "Para los que quieren café suave y largo — la microespuma queda sedosa."
+    },
+    "flat-white": {
+      id: "flat-white",
+      name: "Flat White",
+      section_eyebrow: "ESPRESSO · CON LECHE",
+      size_note: "180 ML · MICROESPUMA SEDOSA",
+      price_clp: 3500,
+      spec: milkSpec("180 ml"),
+      allergens: dairy,
+      barista_note: "Pídelo más caliente si vienes de la calle — la microespuma aguanta."
+    },
+    americano: {
+      id: "americano",
+      name: "Americano",
+      section_eyebrow: "ESPRESSO · LARGADO",
+      size_note: "240 ML · CUERPO REDONDO",
+      price_clp: 3200,
+      spec: espressoSpec("240 ml + agua caliente"),
+      allergens: [],
+      barista_note: "Para tomar pausado — el agua se agrega después del shot para no perder crema."
+    },
+    mocha: {
+      id: "mocha",
+      name: "Mocha",
+      section_eyebrow: "ESPRESSO · CON CHOCOLATE",
+      size_note: "240 ML · CHOCOLATE SEMIAMARGO",
+      price_clp: 3900,
+      spec: milkSpec("240 ml"),
+      allergens: dairy,
+      barista_note: "Chocolate de la casa, semiamargo — equilibra el dulzor con la acidez del blend."
+    },
+    pourover: {
+      id: "pourover",
+      name: "Pour Over",
+      section_eyebrow: "FILTRADO · ROTACIÓN ACTUAL",
+      size_note: "300 ML · TAZA LIMPIA",
+      price_clp: 3800,
+      spec: [
+        { label: "TUESTE", value: "Claro · rotación" },
+        { label: "ORIGEN", value: ROTATION },
+        { label: "MÉTODO", value: "V60 · 20g / 300ml" },
+        { label: "VOLUMEN", value: "300 ml" }
+      ],
+      allergens: [],
+      barista_note: "Pídelo en V60 para acentuar lo floral, Chemex si lo prefieres con más cuerpo."
+    },
+    "decaf-filter": {
+      id: "decaf-filter",
+      name: "Decaf Filter",
+      section_eyebrow: "FILTRADO · DESCAFEINADO",
+      size_note: "300 ML · DULZOR ESPECIADO",
+      price_clp: 4200,
+      spec: [
+        { label: "TUESTE", value: "Medio · descafeinado" },
+        { label: "ORIGEN", value: DECAF },
+        { label: "MÉTODO", value: "V60 · 18g / 300ml" },
+        { label: "VOLUMEN", value: "300 ml" }
+      ],
+      allergens: [],
+      barista_note: "Descafeinado al agua (Mountain Water). Sabor pleno, sin cafeína."
+    },
+    "coffee-flight": {
+      id: "coffee-flight",
+      name: "Coffee Flight",
+      section_eyebrow: "FILTRADO · TRES PASADAS",
+      size_note: "3 × 90 ML · ESPRESSO, FILTRADO Y LECHE",
+      price_clp: 5500,
+      spec: [
+        { label: "TUESTE", value: "Claro · rotación" },
+        { label: "ORIGEN", value: ROTATION },
+        { label: "MÉTODO", value: "Espresso + V60 + cortado" },
+        { label: "VOLUMEN", value: "3 × 90 ml" }
+      ],
+      allergens: dairy,
+      barista_note: "Tres preparaciones del mismo grano para entender cómo cambia en cada formato."
+    },
+    "espresso-tonic": {
+      id: "espresso-tonic",
+      name: "Espresso Tonic",
+      section_eyebrow: "FRÍO · CON CAFÉ",
+      size_note: "300 ML · BURBUJA Y CÍTRICO",
+      price_clp: 4900,
+      spec: [
+        { label: "TUESTE", value: "Medio · house blend" },
+        { label: "ORIGEN", value: HOUSE },
+        { label: "BASE", value: "Tónica fría + cáscara de naranja" },
+        { label: "VOLUMEN", value: "300 ml" }
+      ],
+      allergens: [],
+      barista_note: "Revuelve suave una vez — el espresso baja y se mezcla solo con la tónica."
+    },
+    "citrus-espresso-soda": {
+      id: "citrus-espresso-soda",
+      name: "Citrus Espresso Soda",
+      section_eyebrow: "FRÍO · CON CAFÉ",
+      size_note: "330 ML · POMELO Y SODA",
+      price_clp: 4900,
+      spec: [
+        { label: "TUESTE", value: "Medio · house blend" },
+        { label: "ORIGEN", value: HOUSE },
+        { label: "BASE", value: "Soda artesanal + reducción de pomelo" },
+        { label: "VOLUMEN", value: "330 ml" }
+      ],
+      allergens: [],
+      barista_note: "Fresco y seco — la reducción de pomelo se queda en el fondo, busca el final."
+    },
+    "iced-macchiato": {
+      id: "iced-macchiato",
+      name: "Iced Macchiato",
+      section_eyebrow: "FRÍO · CON LECHE",
+      size_note: "300 ML · MARCA DE CAFÉ AL FINAL",
+      price_clp: 4500,
+      spec: [
+        { label: "TUESTE", value: "Medio · house blend" },
+        { label: "ORIGEN", value: HOUSE },
+        { label: "LECHE", value: "Entera Colún" },
+        { label: "VOLUMEN", value: "300 ml" }
+      ],
+      allergens: dairy,
+      barista_note: "La capa de espresso va arriba: revuelve antes de la primera bajada."
+    },
+    "iced-latte": {
+      id: "iced-latte",
+      name: "Iced Latte",
+      section_eyebrow: "FRÍO · CON LECHE",
+      size_note: "330 ML · SUAVE Y LECHOSO",
+      price_clp: 4500,
+      spec: [
+        { label: "TUESTE", value: "Medio · house blend" },
+        { label: "ORIGEN", value: HOUSE },
+        { label: "LECHE", value: "Entera Colún" },
+        { label: "VOLUMEN", value: "330 ml" }
+      ],
+      allergens: dairy,
+      barista_note: "Para tomar lento — el hielo derrite y el café se va abriendo en la taza."
+    }
+  };
+})();
 
 // UI-only claim-status surface (canonical only exposes POST /missing-points-claims).
 export const fixtureClaims = [
