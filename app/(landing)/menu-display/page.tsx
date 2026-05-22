@@ -347,7 +347,7 @@ function MenuDisplayShell({
           <span className="md-mast__claim">la carta del día.</span>
         </div>
         <div className="md-mast__service">
-          <span className="md-mast__where">Magnere 1570 · Local 105 · Concepción</span>
+          <span className="md-mast__where">Magnere 1570 · Local 105 · Providencia</span>
           <span className="md-mast__hours">08:00 — cierre</span>
         </div>
       </header>
