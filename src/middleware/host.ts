@@ -40,6 +40,7 @@ const SHARED_INFRA_PREFIXES = [
 // (e.g. /menu/foo) ride along under their parent prefix.
 const LANDING_PREFIXES = [
   "/menu",
+  "/menu-display",
   "/privacidad",
   "/unsubscribe"
 ] as const;

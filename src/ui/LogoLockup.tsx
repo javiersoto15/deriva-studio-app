@@ -28,8 +28,26 @@ const SIZE = {
   gap: 12
 } as const;
 
-export function LogoLockup() {
-  const s = SIZE;
+type LogoLockupProps = {
+  isotipo?: number;
+  wordmarkSize?: number;
+  wordmarkLine?: number;
+  subSize?: number;
+  gap?: number;
+  isotipoColor?: string;
+  wordmarkColor?: string;
+};
+
+export function LogoLockup(props: LogoLockupProps = {}) {
+  const s = {
+    isotipo: props.isotipo ?? SIZE.isotipo,
+    wordmarkSize: props.wordmarkSize ?? SIZE.wordmarkSize,
+    wordmarkLine: props.wordmarkLine ?? SIZE.wordmarkLine,
+    subSize: props.subSize ?? SIZE.subSize,
+    gap: props.gap ?? SIZE.gap
+  };
+  const isotipoColor = props.isotipoColor ?? colors.brown700;
+  const wordmarkColor = props.wordmarkColor ?? colors.brown800;
   return (
     <div
       role="img"
@@ -41,7 +59,7 @@ export function LogoLockup() {
         height={s.isotipo}
         viewBox="0 0 1080 1080"
         xmlns="http://www.w3.org/2000/svg"
-        fill={colors.brown700}
+        fill={isotipoColor}
         aria-hidden
         style={{ flexShrink: 0 }}
       >
@@ -61,7 +79,7 @@ export function LogoLockup() {
             fontSize: s.wordmarkSize,
             lineHeight: `${s.wordmarkLine}px`,
             letterSpacing: "0.02em",
-            color: colors.brown800
+            color: wordmarkColor
           }}
         >
           ĐERIVA
@@ -73,7 +91,7 @@ export function LogoLockup() {
             fontSize: s.subSize,
             lineHeight: `${Math.round(s.subSize * 1.4)}px`,
             letterSpacing: "0.28em",
-            color: colors.brown800,
+            color: wordmarkColor,
             marginTop: 4
           }}
         >
