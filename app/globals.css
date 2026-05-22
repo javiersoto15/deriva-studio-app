@@ -2704,6 +2704,11 @@ address {
     width: 100%;
     padding: 16px;
   }
+  /* Stacked CTAs already anchor the bottom of the mobile hero — hide the
+     scroll cue so it doesn't collide with the "Ver la carta" button. */
+  .landing-hero__cue {
+    display: none;
+  }
   .landing-panel,
   .landing-panel--casa {
     grid-template-columns: 1fr;
