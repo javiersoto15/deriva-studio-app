@@ -1,3 +1,14 @@
+/* Brand wordmark font. Self-hosted from /public/brand/ so the ĐERIVA lockup
+   renders identically across iOS/macOS/Windows/Android — previously the
+   stack relied on Baskerville which only exists on Apple devices. */
+@font-face {
+  font-family: "CrownAvenue";
+  src: url("/brand/CrownAvenue-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --field-light: #f2ebdd;
   --field: #e8e2d6;

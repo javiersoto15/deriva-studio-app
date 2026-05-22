@@ -74,7 +74,7 @@ export function LogoLockup(props: LogoLockupProps = {}) {
       <div style={{ display: "flex", flexDirection: "column", lineHeight: 1 }}>
         <span
           style={{
-            fontFamily: "Baskerville, 'Big Caslon', 'Hoefler Text', Georgia, serif",
+            fontFamily: "CrownAvenue, Baskerville, 'Big Caslon', 'Hoefler Text', Georgia, serif",
             fontWeight: 400,
             fontSize: s.wordmarkSize,
             lineHeight: `${s.wordmarkLine}px`,
