@@ -69,8 +69,10 @@ export async function getMenuItems(): Promise<
 // ----- UI-shaped MenuView (derived) -----------------------------------------
 // /carta wants a sectioned MenuView; the canonical contract only exposes the
 // flat /menu MenuItem[]. Group by `section` here so we don't depend on a
-// MSW-only /menu/view path. `today_origin` has no canonical source yet — left
-// empty; the consuming page already handles the falsy id branch.
+// MSW-only /menu/view path. `today_origin` points at the house blend (the
+// all-purpose default origin per /12_menu/coffee_origins/README.md). The
+// specialty rotation and decaf live on their own origin cards reachable from
+// the item detail spec sheet.
 export async function getMenuView(): Promise<MenuView | null> {
   "use cache";
   cacheLife("hours");
@@ -79,7 +81,7 @@ export async function getMenuView(): Promise<MenuView | null> {
   if (!items) return null;
   return {
     categories: groupMenuItems(items),
-    today_origin: { id: "", label: "" }
+    today_origin: { id: "orig_house_blend_dach", label: "House Blend · DACH" }
   };
 }
 

@@ -357,7 +357,9 @@ export function useMenuItems(locale: BackendLocale = DEFAULT_BACKEND_LOCALE) {
 }
 
 // UI convenience: groups canonical MenuItem[] into MenuView (categories →
-// sections). today_origin has no canonical source yet — left empty.
+// sections). today_origin defaults to the House Blend (the all-purpose origin
+// per /12_menu/coffee_origins/README.md). Specialty rotation + decaf live on
+// their own /menu/origins/{id} cards reachable from item detail.
 //
 // Filter params map directly onto the new /menu?category=&?section= contract.
 // When the backend hasn't backfilled taxonomy fields yet, items collapse into
@@ -381,7 +383,7 @@ export function useMenu(filters: MenuFilters = {}) {
       const items = (data ?? []) as MenuItem[];
       return {
         categories: groupMenuItems(items),
-        today_origin: { id: "", label: "" }
+        today_origin: { id: "orig_house_blend_dach", label: "House Blend · DACH" }
       };
     },
     staleTime: 5 * 60_000

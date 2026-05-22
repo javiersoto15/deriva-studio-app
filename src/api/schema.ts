@@ -1016,110 +1016,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/staff/welcome-codes/{code}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Look up a welcome code
-         * @description Staff lookup for the out-of-app welcome perk. Lookup does not mutate state.
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    code: components["parameters"]["WelcomeCode"];
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Welcome code state. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["WelcomeCodeStatusResponse"];
-                    };
-                };
-                401: components["responses"]["Unauthorized"];
-                403: components["responses"]["Forbidden"];
-                404: components["responses"]["NotFound"];
-                500: components["responses"]["InternalServerError"];
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/staff/welcome-codes/{code}/redeem": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Redeem a welcome code
-         * @description Single-use latch for the Apertura out-of-app welcome perk. No points or ledger entries are created.
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    code: components["parameters"]["WelcomeCode"];
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["RedeemWelcomeCodeRequest"];
-                };
-            };
-            responses: {
-                /** @description Welcome code redeemed. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["RedeemWelcomeCodeResponse"];
-                    };
-                };
-                400: components["responses"]["BadRequest"];
-                401: components["responses"]["Unauthorized"];
-                403: components["responses"]["Forbidden"];
-                404: components["responses"]["NotFound"];
-                /** @description Welcome code is expired or already redeemed. */
-                410: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["WelcomeCodeStatusResponse"];
-                    };
-                };
-                500: components["responses"]["InternalServerError"];
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/members": {
         parameters: {
             query?: never;
@@ -1933,18 +1829,50 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/welcome-codes/issue": {
+    "/admin/campaign-codes": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * List external reward campaign codes
+         * @description Paginated owner/manager listing for dashboards and CSV export across any external-code campaign. Use this endpoint to prepare offline staff verification lists; there is intentionally no real-time staff lookup or redeem endpoint.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    campaign_id?: string;
+                    redeemed?: boolean;
+                    cursor?: string;
+                    limit?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Campaign code page. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CampaignCodeListResponse"];
+                    };
+                };
+                400: components["responses"]["BadRequest"];
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                500: components["responses"]["InternalServerError"];
+            };
+        };
         put?: never;
         /**
-         * Issue Apertura welcome codes
-         * @description Bulk issues idempotent out-of-app welcome perk codes. Welcome codes are the only MVP perk outside the in-app rewards economy.
+         * Issue idempotent codes for any external reward campaign
+         * @description Bulk issues 12-char Crockford codes bound to (campaign_id, email) for any campaign that distributes a per-recipient external perk — pre-launch waitlists, partnerships, win-back, anniversaries, press lists, etc. Codes are designed for offline verification; staff check a printed/exported CSV at point of sale, and post-hoc redemption is recorded through the bulk redeem endpoint.
          */
         post: {
             parameters: {
@@ -1955,17 +1883,64 @@ export interface paths {
             };
             requestBody: {
                 content: {
-                    "application/json": components["schemas"]["IssueWelcomeCodesRequest"];
+                    "application/json": components["schemas"]["IssueCampaignCodesRequest"];
                 };
             };
             responses: {
-                /** @description Welcome codes issued or returned for each valid unique email. */
+                /** @description Campaign codes issued or returned for each valid unique email. */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["WelcomeCodesIssueResponse"];
+                        "application/json": components["schemas"]["CampaignCodesResponse"];
+                    };
+                };
+                400: components["responses"]["BadRequest"];
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                500: components["responses"]["InternalServerError"];
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/campaign-codes/redeem": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Bulk reconcile offline campaign-code redemptions
+         * @description Owner/manager post-hoc reconciliation path for external campaign codes that staff verified from printed/exported CSVs at point of sale. Each code is processed independently so opening events, partnerships, win-back campaigns, anniversaries, and press-list perks can reuse the same offline workflow.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["BulkRedeemCampaignCodesRequest"];
+                };
+            };
+            responses: {
+                /** @description Per-code redemption results and aggregate summary. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["BulkRedeemCampaignCodesResponse"];
                     };
                 };
                 400: components["responses"]["BadRequest"];
@@ -2409,42 +2384,62 @@ export interface components {
             /** @enum {string} */
             conflict_field: "email" | "phone" | "provider";
         };
-        IssueWelcomeCodesRequest: {
-            audience_id: string;
+        IssueCampaignCodesRequest: {
+            campaign_id: string;
             emails: string[];
             /** @default 30 */
             expires_in_days: number;
         };
-        WelcomeCodesIssueResponse: {
-            codes: components["schemas"]["WelcomeCode"][];
+        CampaignCodesResponse: {
+            codes: components["schemas"]["CampaignCode"][];
         };
-        WelcomeCode: {
+        CampaignCodeListResponse: {
+            codes: components["schemas"]["CampaignCode"][];
+            next_cursor?: string;
+        };
+        CampaignCode: {
             code: string;
+            display_code?: string;
+            campaign_id: string;
             /** Format: email */
             email: string;
-            audience_id: string;
             /** Format: date-time */
             issued_at: string;
             /** Format: date-time */
-            expires_at: string;
+            expires_at?: string;
             /** Format: date-time */
             redeemed_at?: string;
-            redeemed_by_staff_id?: string;
-            redemption_note?: string;
-            already_existed?: boolean;
-        };
-        WelcomeCodeStatusResponse: components["schemas"]["WelcomeCode"] & {
-            /** @enum {string} */
-            status: "active" | "redeemed" | "expired";
-        };
-        RedeemWelcomeCodeRequest: {
-            note?: string;
-        };
-        RedeemWelcomeCodeResponse: {
-            code: string;
+            redeemed_by_actor_id?: string;
+            redemption_notes?: string;
+            signup_member_id?: string;
             /** Format: date-time */
-            redeemed_at: string;
-            redeemed_by_staff_id: string;
+            signup_linked_at?: string;
+        };
+        BulkRedeemCampaignCodesRequest: {
+            codes: {
+                /** @description Accepts stored, hyphenated, lowercase, or whitespace-padded operator input. */
+                code: string;
+                notes?: string;
+            }[];
+        };
+        BulkRedeemCampaignCodesResponse: {
+            results: components["schemas"]["CampaignCodeRedeemResult"][];
+            summary: {
+                redeemed: number;
+                skipped: number;
+                total: number;
+            };
+        };
+        CampaignCodeRedeemResult: {
+            code: string;
+            /** @enum {string} */
+            status: "redeemed" | "not_found" | "expired" | "already_redeemed";
+            campaign_id?: string;
+            /** Format: email */
+            email?: string;
+            /** Format: date-time */
+            redeemed_at?: string;
+            error?: string;
         };
         CreateMemberRequest: {
             name: string;
@@ -2990,7 +2985,6 @@ export interface components {
         OriginID: string;
         RewardID: string;
         OrderID: string;
-        WelcomeCode: string;
     };
     requestBodies: never;
     headers: never;
