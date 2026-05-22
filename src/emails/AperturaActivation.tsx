@@ -1,7 +1,6 @@
 import * as React from "react";
 import {
   Body,
-  Button,
   Container,
   Head,
   Heading,
@@ -14,7 +13,6 @@ import {
 } from "@react-email/components";
 
 const SITE = "https://derivastudio.cl";
-const APP = "https://app.derivastudio.cl";
 
 const c = {
   field: "#e8e2d6",
@@ -23,14 +21,14 @@ const c = {
   hairline: "#c9b896",
   hairlineLight: "#e0d6c0",
   copper: "#c9a57a",
-  ink: "#2a2622",
-  muted: "#6b5f52",
-  green: "#2e4034",
+  cornerCopper: "#b87333",
+  ink: "#201812",
+  muted: "#67594d",
+  green: "#00311f",
   roast: "#7a3a1f",
   espresso: "#281A12",
   cream: "#f5ede0",
   mutedDark: "#a89784",
-  link: "#2e4034",
 } as const;
 
 const fontSerif =
@@ -41,24 +39,19 @@ const fontMono =
   "'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
 
 export type AperturaActivationProps = {
-  /** Bearer welcome code (e.g. `DRV-WLC-7K42`) per §3.6 — redeemed at the bar. */
-  welcomeCode: string;
-  /** Reconciliation token per §3.5, embedded in the deep-link URL. */
-  reconciliationToken: string;
+  /** Pre-formatted 12-char Crockford code from backend `display_code`, e.g. `K3M9-FQ7X-2VWP`. */
+  displayCode: string;
 };
 
 export const AperturaActivationSubject =
-  "Tu código de bienvenida — Lunes 18 de mayo";
+  "Tu invitación — Lunes 18 de mayo";
 
 export const AperturaActivationPreview =
-  "Trae este código a la barra el día de la apertura y tu primer café va por la casa.";
+  "Trae este código a la barra el día de la apertura y tu primer café de la carta va por la casa.";
 
 export default function AperturaActivation({
-  welcomeCode = "DRV-WLC-7K42",
-  reconciliationToken = "fake-reconciliation-token-for-preview",
+  displayCode = "K3M9-FQ7X-2VWP",
 }: AperturaActivationProps) {
-  const activateUrl = `${APP}/ingresar?ct=${encodeURIComponent(reconciliationToken)}`;
-
   return (
     <Html lang="es">
       <Head>
@@ -99,13 +92,14 @@ export default function AperturaActivation({
                   <td
                     align="left"
                     style={{
-                      padding: "0 8px 12px",
+                      padding: "0 6px 12px",
                       fontFamily: fontMono,
-                      fontSize: "10px",
-                      letterSpacing: "0.22em",
+                      fontSize: "9px",
+                      letterSpacing: "0.14em",
                       textTransform: "uppercase",
                       color: c.muted,
-                      width: "33%",
+                      width: "38%",
+                      whiteSpace: "nowrap",
                     }}
                   >
                     Deriva Coffee Studio
@@ -113,13 +107,14 @@ export default function AperturaActivation({
                   <td
                     align="center"
                     style={{
-                      padding: "0 8px 12px",
+                      padding: "0 6px 12px",
                       fontFamily: fontMono,
-                      fontSize: "10px",
-                      letterSpacing: "0.22em",
+                      fontSize: "9px",
+                      letterSpacing: "0.18em",
                       textTransform: "uppercase",
                       color: c.muted,
-                      width: "34%",
+                      width: "30%",
+                      whiteSpace: "nowrap",
                     }}
                   >
                     <span
@@ -136,13 +131,14 @@ export default function AperturaActivation({
                   <td
                     align="right"
                     style={{
-                      padding: "0 8px 12px",
+                      padding: "0 6px 12px",
                       fontFamily: fontMono,
-                      fontSize: "10px",
-                      letterSpacing: "0.22em",
+                      fontSize: "9px",
+                      letterSpacing: "0.14em",
                       textTransform: "uppercase",
                       color: c.muted,
-                      width: "33%",
+                      width: "32%",
+                      whiteSpace: "nowrap",
                     }}
                   >
                     Magnere · 1570
@@ -154,381 +150,330 @@ export default function AperturaActivation({
 
           {/* Email card */}
           <table
-            role="presentation"
-            cellPadding={0}
-            cellSpacing={0}
-            border={0}
-            width="100%"
-            style={{
-              borderCollapse: "collapse",
-              maxWidth: "600px",
-              backgroundColor: c.paper,
-              border: `1px solid ${c.hairline}`,
-            }}
-          >
-            <tbody>
-              <tr>
-                <td
-                  align="center"
-                  style={{
-                    padding: "44px 32px 32px",
-                    backgroundColor: c.paper,
-                  }}
-                >
-                  {/* Header lockup */}
-                  <table
-                    role="presentation"
+              role="presentation"
+              cellPadding={0}
+              cellSpacing={0}
+              border={0}
+              width="100%"
+              style={{
+                borderCollapse: "collapse",
+                maxWidth: "600px",
+                backgroundColor: c.paper,
+                border: `1px solid ${c.hairline}`,
+              }}
+            >
+              <tbody>
+                <tr>
+                  <td
                     align="center"
-                    cellPadding={0}
-                    cellSpacing={0}
-                    border={0}
-                    style={{ borderCollapse: "collapse", margin: "0 auto" }}
-                  >
-                    <tbody>
-                      <tr>
-                        <td align="center" style={{ textAlign: "center" }}>
-                          <img
-                            src={`${SITE}/brand/isotipo-verde@2x.png`}
-                            alt=""
-                            width={48}
-                            height={48}
-                            style={{
-                              display: "block",
-                              width: "48px",
-                              height: "48px",
-                              border: 0,
-                              outline: "none",
-                              textDecoration: "none",
-                            }}
-                          />
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <Heading
-                    as="h1"
                     style={{
-                      margin: "12px 0 0",
-                      fontFamily: fontSerif,
-                      fontSize: "26px",
-                      fontWeight: 400,
-                      letterSpacing: "0.06em",
-                      lineHeight: "28px",
-                      color: c.ink,
-                      textAlign: "center",
+                      padding: "44px 32px 32px",
+                      backgroundColor: c.paper,
                     }}
                   >
-                    ÐERIVA
-                  </Heading>
-                  <Text
-                    style={{
-                      margin: "4px 0 0",
-                      fontFamily: fontMono,
-                      fontSize: "8px",
-                      fontWeight: 500,
-                      letterSpacing: "0.4em",
-                      textTransform: "uppercase",
-                      color: c.muted,
-                      textAlign: "center",
-                      lineHeight: "10px",
-                    }}
-                  >
-                    Coffee Studio
-                  </Text>
+                    {/* Logo lockup — full brand mark */}
+                    <table
+                      role="presentation"
+                      align="center"
+                      cellPadding={0}
+                      cellSpacing={0}
+                      border={0}
+                      style={{ borderCollapse: "collapse", margin: "0 auto" }}
+                    >
+                      <tbody>
+                        <tr>
+                          <td align="center" style={{ textAlign: "center" }}>
+                            <img
+                              src={`${SITE}/brand/logo-con-isotipo@3x.png`}
+                              alt="Deriva Coffee Studio"
+                              width={112}
+                              height={112}
+                              style={{
+                                display: "block",
+                                width: "112px",
+                                height: "112px",
+                                border: 0,
+                                outline: "none",
+                                textDecoration: "none",
+                              }}
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
 
-                  {/* Eyebrow */}
-                  <Text
-                    style={{
-                      margin: "28px 0 0",
-                      fontFamily: fontMono,
-                      fontSize: "10px",
-                      fontWeight: 500,
-                      letterSpacing: "0.42em",
-                      textTransform: "uppercase",
-                      color: c.muted,
-                      textAlign: "center",
-                      lineHeight: "14px",
-                    }}
-                  >
-                    <span
+                    {/* Inner masthead eyebrow */}
+                    <Text
                       style={{
-                        fontFamily: "Arial, sans-serif",
-                        color: c.copper,
+                        margin: "24px 0 0",
+                        fontFamily: fontMono,
+                        fontSize: "10px",
+                        fontWeight: 400,
+                        letterSpacing: "0.32em",
+                        textTransform: "uppercase",
+                        color: c.muted,
+                        textAlign: "center",
+                        lineHeight: "12px",
                       }}
                     >
-                      ◆
-                    </span>
-                    {"  "}Apertura · Magnere 1570
-                  </Text>
+                      Carta de activación{"  "}
+                      <span
+                        style={{
+                          fontFamily: "Arial, sans-serif",
+                          color: c.cornerCopper,
+                          fontSize: "9px",
+                        }}
+                      >
+                        ◆
+                      </span>
+                      {"  "}Apertura 18.05
+                    </Text>
 
-                  {/* Hero italic */}
-                  <Heading
-                    as="h2"
-                    style={{
-                      margin: "18px 0 0",
-                      fontFamily: fontSerif,
-                      fontSize: "44px",
-                      fontStyle: "italic",
-                      fontWeight: 400,
-                      lineHeight: "48px",
-                      letterSpacing: "-0.005em",
-                      color: c.ink,
-                      textAlign: "center",
-                    }}
-                  >
-                    Tu Deriva,
-                    <br />
-                    ya casi lista.
-                  </Heading>
+                    {/* Hero — two-line crescendo: Regular ink + Italic green */}
+                    <Heading
+                      as="h1"
+                      style={{
+                        margin: "18px 0 0",
+                        fontFamily: fontSerif,
+                        fontSize: "42px",
+                        fontWeight: 400,
+                        fontStyle: "normal",
+                        lineHeight: "98%",
+                        letterSpacing: "-0.01em",
+                        color: c.ink,
+                        textAlign: "center",
+                      }}
+                    >
+                      Déjate llevar
+                    </Heading>
+                    <Heading
+                      as="h2"
+                      style={{
+                        margin: "2px 0 0",
+                        fontFamily: fontSerif,
+                        fontSize: "50px",
+                        fontWeight: 400,
+                        fontStyle: "italic",
+                        lineHeight: "98%",
+                        letterSpacing: "-0.01em",
+                        color: c.green,
+                        textAlign: "center",
+                      }}
+                    >
+                      a la Deriva.
+                    </Heading>
 
-                  {/* Copper rule */}
-                  <Hr
-                    style={{
-                      width: "44px",
-                      height: "1px",
-                      margin: "24px auto 0",
-                      backgroundColor: c.copper,
-                      border: 0,
-                      borderTop: `1px solid ${c.copper}`,
-                    }}
-                  />
+                    {/* Copper rule */}
+                    <Hr
+                      style={{
+                        width: "44px",
+                        height: "1px",
+                        margin: "24px auto 0",
+                        backgroundColor: c.copper,
+                        border: 0,
+                        borderTop: `1px solid ${c.copper}`,
+                      }}
+                    />
 
-                  {/* Body copy block */}
-                  <Text
-                    style={{
-                      margin: "24px auto 0",
-                      maxWidth: "440px",
-                      fontFamily: fontBody,
-                      fontSize: "15px",
-                      fontWeight: 400,
-                      lineHeight: "22px",
-                      color: c.ink,
-                      textAlign: "left",
-                    }}
-                  >
-                    Hola,
-                  </Text>
-                  <Text
-                    style={{
-                      margin: "14px auto 0",
-                      maxWidth: "440px",
-                      fontFamily: fontBody,
-                      fontSize: "15px",
-                      fontWeight: 400,
-                      lineHeight: "22px",
-                      color: c.ink,
-                      textAlign: "left",
-                    }}
-                  >
-                    El lunes 18 de mayo abrimos en Providencia. Te sumaste antes
-                    de que existiéramos — esto es para ti.
-                  </Text>
-                  <Text
-                    style={{
-                      margin: "14px auto 0",
-                      maxWidth: "440px",
-                      fontFamily: fontBody,
-                      fontSize: "15px",
-                      fontWeight: 400,
-                      lineHeight: "22px",
-                      color: c.muted,
-                      textAlign: "left",
-                    }}
-                  >
-                    Trae este código a la barra el día de la apertura y tu primer
-                    café va por la casa.
-                  </Text>
+                    {/* Body copy block */}
+                    <Text
+                      style={{
+                        margin: "24px auto 0",
+                        maxWidth: "440px",
+                        fontFamily: fontBody,
+                        fontSize: "15px",
+                        fontWeight: 400,
+                        lineHeight: "22px",
+                        color: c.ink,
+                        textAlign: "left",
+                      }}
+                    >
+                      Hola,
+                    </Text>
+                    <Text
+                      style={{
+                        margin: "14px auto 0",
+                        maxWidth: "440px",
+                        fontFamily: fontBody,
+                        fontSize: "15px",
+                        fontWeight: 400,
+                        lineHeight: "22px",
+                        color: c.ink,
+                        textAlign: "left",
+                      }}
+                    >
+                      El lunes 18 de mayo abrimos en Providencia. Te sumaste antes
+                      de que existiéramos — esto es para ti.
+                    </Text>
+                    <Text
+                      style={{
+                        margin: "14px auto 0",
+                        maxWidth: "440px",
+                        fontFamily: fontBody,
+                        fontSize: "15px",
+                        fontWeight: 400,
+                        lineHeight: "22px",
+                        color: c.muted,
+                        textAlign: "left",
+                      }}
+                    >
+                      Trae este código a la barra el día de la apertura y tu
+                      primer café de la carta va por la casa.
+                    </Text>
 
-                  {/* Welcome code ticket — the hero artifact */}
-                  <table
-                    role="presentation"
-                    cellPadding={0}
-                    cellSpacing={0}
-                    border={0}
-                    width="100%"
-                    style={{
-                      borderCollapse: "collapse",
-                      margin: "32px auto 0",
-                      maxWidth: "480px",
-                      backgroundColor: c.ticket,
-                      border: `1px solid ${c.hairline}`,
-                    }}
-                  >
-                    <tbody>
-                      <tr>
-                        <td
-                          align="left"
-                          valign="top"
-                          style={{
-                            padding: "24px 24px 22px",
-                            textAlign: "left",
-                          }}
-                        >
-                          <Text
+                    {/* Welcome code ticket — the hero artifact */}
+                    <table
+                      role="presentation"
+                      cellPadding={0}
+                      cellSpacing={0}
+                      border={0}
+                      width="100%"
+                      style={{
+                        borderCollapse: "collapse",
+                        margin: "32px auto 0",
+                        maxWidth: "480px",
+                        backgroundColor: c.ticket,
+                        border: `1px solid ${c.hairline}`,
+                      }}
+                    >
+                      <tbody>
+                        <tr>
+                          <td
+                            align="left"
+                            valign="top"
                             style={{
-                              margin: 0,
-                              fontFamily: fontMono,
-                              fontSize: "10px",
-                              fontWeight: 500,
-                              letterSpacing: "0.22em",
-                              textTransform: "uppercase",
-                              color: c.muted,
-                              lineHeight: "14px",
+                              padding: "24px 24px 22px",
+                              textAlign: "left",
                             }}
                           >
-                            <span
+                            <Text
                               style={{
-                                fontFamily: "Arial, sans-serif",
-                                color: c.copper,
-                                fontSize: "9px",
+                                margin: 0,
+                                fontFamily: fontMono,
+                                fontSize: "10px",
+                                fontWeight: 500,
+                                letterSpacing: "0.22em",
+                                textTransform: "uppercase",
+                                color: c.muted,
+                                lineHeight: "14px",
                               }}
                             >
-                              ◆
-                            </span>
-                            {"  "}Tu código de bienvenida
-                          </Text>
-                          <Text
+                              <span
+                                style={{
+                                  fontFamily: "Arial, sans-serif",
+                                  color: c.copper,
+                                  fontSize: "9px",
+                                }}
+                              >
+                                ◆
+                              </span>
+                              {"  "}Tu código de bienvenida
+                            </Text>
+                            <Text
+                              style={{
+                                margin: "12px 0 0",
+                                fontFamily: fontMono,
+                                fontSize: "28px",
+                                fontWeight: 600,
+                                letterSpacing: "0.16em",
+                                color: c.roast,
+                                lineHeight: "34px",
+                              }}
+                            >
+                              {displayCode}
+                            </Text>
+                            <Text
+                              style={{
+                                margin: "12px 0 0",
+                                fontFamily: fontMono,
+                                fontSize: "11px",
+                                lineHeight: "16px",
+                                color: c.muted,
+                              }}
+                            >
+                              Muestra este código en la barra el día de la
+                              apertura. No es necesario imprimirlo.
+                            </Text>
+                          </td>
+                          {/* Perforation stub */}
+                          <td
+                            width={1}
                             style={{
-                              margin: "12px 0 0",
-                              fontFamily: fontMono,
-                              fontSize: "28px",
-                              fontWeight: 600,
-                              letterSpacing: "0.16em",
-                              color: c.roast,
-                              lineHeight: "34px",
+                              backgroundColor: c.hairline,
+                              lineHeight: 0,
+                              fontSize: 0,
+                              borderLeft: `1px dashed ${c.hairline}`,
                             }}
                           >
-                            {welcomeCode}
-                          </Text>
-                          <Text
-                            style={{
-                              margin: "12px 0 0",
-                              fontFamily: fontMono,
-                              fontSize: "11px",
-                              lineHeight: "16px",
-                              color: c.muted,
-                            }}
+                            {" "}
+                          </td>
+                          <td
+                            align="center"
+                            valign="middle"
+                            width={56}
+                            style={{ padding: "0 12px", textAlign: "center" }}
                           >
-                            Muestra este código en la barra el día de la
-                            apertura. No es necesario imprimirlo.
-                          </Text>
-                        </td>
-                        {/* Perforation stub */}
-                        <td
-                          width={1}
-                          style={{
-                            backgroundColor: c.hairline,
-                            lineHeight: 0,
-                            fontSize: 0,
-                            borderLeft: `1px dashed ${c.hairline}`,
-                          }}
-                        >
-                          {" "}
-                        </td>
-                        <td
-                          align="center"
-                          valign="middle"
-                          width={56}
-                          style={{ padding: "0 12px", textAlign: "center" }}
-                        >
-                          <Text
-                            style={{
-                              margin: 0,
-                              fontFamily: fontMono,
-                              fontSize: "9px",
-                              fontWeight: 500,
-                              letterSpacing: "0.4em",
-                              textTransform: "uppercase",
-                              color: c.muted,
-                              lineHeight: "12px",
-                            }}
-                          >
-                            18.05
-                          </Text>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                            <Text
+                              style={{
+                                margin: 0,
+                                fontFamily: fontMono,
+                                fontSize: "9px",
+                                fontWeight: 500,
+                                letterSpacing: "0.4em",
+                                textTransform: "uppercase",
+                                color: c.muted,
+                                lineHeight: "12px",
+                              }}
+                            >
+                              18.05
+                            </Text>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
 
-                  {/* CTA */}
-                  <Section style={{ margin: "36px 0 0", textAlign: "center" }}>
-                    <Button
-                      href={activateUrl}
+                    {/* Day-of details */}
+                    <table
+                      role="presentation"
+                      cellPadding={0}
+                      cellSpacing={0}
+                      border={0}
+                      width="100%"
                       style={{
-                        display: "inline-block",
-                        backgroundColor: c.roast,
-                        color: c.cream,
-                        fontFamily: fontBody,
-                        fontWeight: 600,
-                        fontSize: "12px",
-                        letterSpacing: "0.22em",
-                        textTransform: "uppercase",
-                        textDecoration: "none",
-                        padding: "14px 28px",
-                        border: 0,
+                        borderCollapse: "collapse",
+                        margin: "40px 0 0",
+                        borderTop: `1px solid ${c.hairline}`,
                       }}
                     >
-                      Activa tu cuenta{"  "}
-                      <span style={{ color: c.copper, fontFamily: "Arial, sans-serif" }}>→</span>
-                    </Button>
-                  </Section>
-                  <Text
-                    style={{
-                      margin: "14px auto 0",
-                      maxWidth: "380px",
-                      fontFamily: fontMono,
-                      fontSize: "11px",
-                      lineHeight: "16px",
-                      color: c.muted,
-                      textAlign: "center",
-                    }}
-                  >
-                    Para llevar tu Deriva contigo. Tu código sigue valiendo aunque
-                    no descargues la app.
-                  </Text>
+                      <tbody>
+                        <DetailRow label="Dirección" value="Magnere 1570, Local 105 — Providencia" />
+                        <DetailRow label="Apertura" value="Lunes 18 de mayo, 08:00" />
+                        <DetailRow
+                          label="Primera ronda"
+                          value="Tu primer café de la carta, por la casa."
+                          last
+                        />
+                      </tbody>
+                    </table>
 
-                  {/* Day-of details */}
-                  <table
-                    role="presentation"
-                    cellPadding={0}
-                    cellSpacing={0}
-                    border={0}
-                    width="100%"
-                    style={{
-                      borderCollapse: "collapse",
-                      margin: "40px 0 0",
-                      borderTop: `1px solid ${c.hairline}`,
-                    }}
-                  >
-                    <tbody>
-                      <DetailRow label="Dirección" value="Magnere 1570, Local 105 — Providencia" />
-                      <DetailRow label="Apertura" value="Lunes 18 de mayo, 08:00" />
-                      <DetailRow
-                        label="Programa"
-                        value="Café filtrado de bienvenida desde las 08:00; ronda de mate a las 10:00."
-                        last
-                      />
-                    </tbody>
-                  </table>
-
-                  {/* Signoff */}
-                  <Text
-                    style={{
-                      margin: "36px 0 0",
-                      fontFamily: fontSerif,
-                      fontSize: "18px",
-                      fontStyle: "italic",
-                      color: c.roast,
-                      textAlign: "center",
-                      lineHeight: "22px",
-                    }}
-                  >
-                    — Equipo Deriva
-                  </Text>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                    {/* Signoff */}
+                    <Text
+                      style={{
+                        margin: "36px 0 0",
+                        fontFamily: fontSerif,
+                        fontSize: "18px",
+                        fontStyle: "italic",
+                        color: c.roast,
+                        textAlign: "center",
+                        lineHeight: "22px",
+                      }}
+                    >
+                      — Equipo Deriva
+                    </Text>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
 
           {/* Footer dark band */}
           <table
@@ -571,9 +516,9 @@ export default function AperturaActivation({
                         </FooterCol>
                         <FooterCol label="Horario">
                           <Text style={footerBody}>
-                            Lun–Vie 08:00 — 20:00
+                            Lun–Vie 08:00 — 21:00
                             <br />
-                            Sábado 09:00 — 17:00
+                            Sábado 10:00 — 21:00
                           </Text>
                         </FooterCol>
                         <FooterCol label="Social" last>
@@ -790,6 +735,5 @@ function DetailRow({
 }
 
 AperturaActivation.PreviewProps = {
-  welcomeCode: "DRV-WLC-7K42",
-  reconciliationToken: "fake-reconciliation-token-for-preview",
+  displayCode: "K3M9-FQ7X-2VWP",
 } satisfies AperturaActivationProps;
