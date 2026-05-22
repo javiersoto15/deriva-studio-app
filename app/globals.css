@@ -1908,6 +1908,16 @@ address {
   --landing-fg-faint: rgba(242, 235, 221, 0.55);
   --landing-copper: #c9a57a;
   --landing-sage: #1f3d2e;
+  /* Height of the fixed SiteNav. Other sticky elements (menu chip nav,
+     menu sidebar) offset their `top:` by this so they pin below the nav
+     instead of sliding under it. */
+  --landing-nav-h: 56px;
+}
+
+@media (max-width: 900px) {
+  :root {
+    --landing-nav-h: 48px;
+  }
 }
 
 .landing {
@@ -2671,9 +2681,16 @@ address {
   }
 }
 
-/* Menu page sits behind the fixed SiteNav — push outer caption down */
+/* Menu page sits behind the fixed SiteNav — push outer caption down +
+   nudge sticky elements (chip nav, sidebar) to pin below the nav. */
 .menu-page--with-nav .menu-outer {
-  padding-top: 72px;
+  padding-top: calc(var(--landing-nav-h) + 16px);
+}
+.menu-page--with-nav .menu-chipnav {
+  top: var(--landing-nav-h);
+}
+.menu-page--with-nav .menu-sidebar {
+  top: calc(var(--landing-nav-h) + 16px);
 }
 
 /* — Mobile ————————————————————————————————————————————————————— */
@@ -2792,8 +2809,5 @@ address {
     padding: 32px 24px;
     text-align: center;
     font-size: 10px;
-  }
-  .menu-page--with-nav .menu-outer {
-    padding-top: 56px;
   }
 }
