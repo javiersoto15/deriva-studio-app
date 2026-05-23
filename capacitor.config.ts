@@ -76,11 +76,14 @@ const config: CapacitorConfig = {
       // keeps the web JS SDK as the single source of truth for auth state,
       // onAuthStateChanged, and getIdToken across both web + native.
       skipNativeAuth: true,
-      // Only phone is included here. SSO providers (google.com, apple.com)
-      // still go through the web SDK popup flow; they don't depend on
-      // reCAPTCHA and currently work in the WebView. Add later if iOS popup
-      // friction surfaces.
-      providers: ["phone"]
+      // Phone: required because Google's reCAPTCHA backend 401s the
+      //        capacitor://localhost WebView origin.
+      // Google: required because Google blocks OAuth sign-in from WebViews
+      //         (disallowed_useragent policy). Native plugin uses GIDSignIn
+      //         on iOS / Google Sign-In SDK on Android — bypasses the popup.
+      // Apple: deferred — needs Services ID + Sign in with Apple Xcode
+      //        capability + entitlement file before it can ship.
+      providers: ["phone", "google.com"]
     }
   }
 };

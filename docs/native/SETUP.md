@@ -89,9 +89,32 @@ npx cap open android  # build → upload to Play Console
         receive APNS pushes — phone auth will fail in Sim no matter what).
 
    **iOS Simulator note:** Phone auth requires APNS, which the Simulator can't
-   receive. To test in Sim, sign in via Google or Apple SSO instead (those
-   work over the web SDK popup flow). Phone auth must be tested on a real
-   device via Xcode (Run on connected iPhone) or TestFlight.
+   receive. Phone auth must be tested on a real device via Xcode (Run on
+   connected iPhone) or TestFlight.
+
+1b. **Google SSO inside WebView** — ✅ code swap done. Google blocks OAuth
+   sign-in from WebViews (disallowed_useragent policy), so the web SDK popup
+   throws there. `signInWithGoogle` + `linkProvider("google.com")` branch on
+   `isNative` and call `FirebaseAuthentication.signInWithGoogle()` (native
+   GIDSignIn on iOS), then sign in to the web JS SDK with the returned
+   OAuth credential.
+
+   **Manual prerequisites for iOS Google sign-in to actually work:**
+
+   a. **Register an iOS app in Firebase Console** (Project Settings → Your
+      apps → Add app → iOS) with bundle ID `cl.derivastudio.companion`.
+   b. **Download `GoogleService-Info.plist`** from the Firebase Console.
+   c. **Add to Xcode**: in Xcode, drag the plist into `ios/App/App/`. Check
+      "Copy items if needed" + add to the App target. Commit the file.
+   d. **URL Scheme**: open the plist, copy the value of `REVERSED_CLIENT_ID`
+      (looks like `com.googleusercontent.apps.XXXX-XXXX`). In Xcode → App
+      target → Info tab → URL Types → +, paste it as the URL Scheme.
+   e. Rebuild. The OAuth iOS client ID auto-provisions when you add the iOS
+      app — no extra step in Firebase Console Google provider settings.
+
+   **Apple SSO** is intentionally still on the web-popup path. To swap, add
+   Sign in with Apple capability + Services ID + entitlement file. Defer
+   until there's demand.
 2. **Backend CORS** — `.env.example` files in `13_companion_backend/` are
    updated, but the live Cloud Run env var still needs the change:
 

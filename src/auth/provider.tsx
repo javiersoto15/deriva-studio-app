@@ -389,6 +389,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // friction point, swap to signInWithRedirect + getRedirectResult.
   const signInWithGoogle = useCallback(async (): Promise<AuthResult> => {
     try {
+      if (isNative) {
+        // Native Google Sign-In (GIDSignIn on iOS, Google Sign-In SDK on
+        // Android). Returns an OAuth credential we hand to the web JS SDK so
+        // auth.currentUser updates the same way as the web popup flow.
+        const result = await FirebaseAuthentication.signInWithGoogle({
+          skipNativeAuth: true
+        });
+        const idToken = result.credential?.idToken;
+        if (!idToken) {
+          return {
+            ok: false,
+            code: "auth/no-id-token",
+            message: "No pudimos obtener tu sesión de Google. Inténtalo de nuevo."
+          };
+        }
+        const credential = GoogleAuthProvider.credential(idToken);
+        await signInWithCredential(getFirebaseAuth(), credential);
+        return { ok: true };
+      }
       await signInWithPopup(getFirebaseAuth(), new GoogleAuthProvider());
       return { ok: true };
     } catch (err) {
@@ -506,6 +525,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             code: "auth/no-current-user",
             message: "Inicia sesión antes de conectar otro método."
           };
+        }
+        // On native, use the plugin path for Google (WebView popup is blocked
+        // by Google's disallowed_useragent policy). Apple still goes through
+        // the web popup until we wire Sign in with Apple natively.
+        if (isNative && provider === "google.com") {
+          const result = await FirebaseAuthentication.signInWithGoogle({
+            skipNativeAuth: true
+          });
+          const idToken = result.credential?.idToken;
+          if (!idToken) {
+            return {
+              ok: false,
+              code: "auth/no-id-token",
+              message: "No pudimos obtener tu sesión de Google. Inténtalo de nuevo."
+            };
+          }
+          const oauthCredential = GoogleAuthProvider.credential(idToken);
+          const linkResult = await linkWithCredential(current, oauthCredential);
+          await current.getIdToken(true);
+          const linked = linkResult.user.providerData.find((p) => p.providerId === provider);
+          const credential: ProviderCredentialMeta = {
+            provider,
+            credential_subject: linked?.uid ?? linked?.email ?? result.user?.email ?? "",
+            credential_verified: true,
+            claims: {
+              email: linked?.email ?? result.user?.email ?? undefined,
+              display_name: linked?.displayName ?? result.user?.displayName ?? undefined,
+              provider_id: provider
+            }
+          };
+          return { ok: true, credential };
         }
         const fbProvider =
           provider === "google.com" ? new GoogleAuthProvider() : new OAuthProvider("apple.com");
