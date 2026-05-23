@@ -115,6 +115,10 @@ html, body { background: var(--ab-plaster); margin: 0; }
   width: 280px; height: 280px; border-radius: 50%;
   overflow: hidden; background: var(--ab-medallion-bg);
 }
+/* Pour-over master is a 1:1 framed Chemex; the circle mask was eating the
+   corners of the device. Render this slot as a square so the whole brewer
+   is visible. */
+.ab-med__circle--square { border-radius: 0; }
 .ab-med__circle img {
   width: 100%; height: 100%; object-fit: cover; display: block;
 }

@@ -124,7 +124,7 @@ async function AbiertoDisplay() {
       {/* Three medallions */}
       <section className="ab-trio" aria-label="Destacados">
         <article className="ab-med">
-          <div className="ab-med__circle">
+          <div className="ab-med__circle ab-med__circle--square">
             <DerivaImage slug="pour-over" alt="Pour Over en Chemex" sizes="280px" />
           </div>
           <div className="ab-med__cap">
