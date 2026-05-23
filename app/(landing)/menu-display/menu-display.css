@@ -24,6 +24,10 @@ html, body { background: var(--md-plaster); }
   flex-direction: column;
   font-family: var(--font-tracked), Poppins, sans-serif;
   overflow: hidden;
+  /* Shop browser resets to 150% page-zoom on every deploy. Pre-shrink the
+     stage by 1/1.5 so the default 150% zoom renders at the intended size
+     (what manually flipping to 100% used to give us). */
+  zoom: 0.6667;
 }
 
 /* === Masthead === */
