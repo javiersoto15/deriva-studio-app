@@ -50,7 +50,8 @@ export default function IngresarEmailPage() {
         flex: 1,
         display: "flex",
         flexDirection: "column",
-        padding: "48px 28px 32px",
+        padding:
+          "max(48px, calc(env(safe-area-inset-top) + 24px)) 28px max(32px, calc(env(safe-area-inset-bottom) + 24px))",
         maxWidth: 480,
         width: "100%",
         marginInline: "auto"

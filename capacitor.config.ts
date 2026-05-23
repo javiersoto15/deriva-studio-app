@@ -33,7 +33,14 @@ const config: CapacitorConfig = {
   ios: {
     // Use the modern WKWebView content inset so safe-area-inset env() vars
     // resolve correctly on notched devices.
-    contentInset: "always"
+    contentInset: "always",
+    // Paint the native view beige-100 so the status-bar and home-indicator
+    // areas don't flash white before/around the WebView's HTML paint.
+    backgroundColor: "#F4EDE6"
+  },
+  android: {
+    // Same rationale as iOS — keep the native surface beige under the WebView.
+    backgroundColor: "#F4EDE6"
   },
   plugins: {
     SplashScreen: {
@@ -42,7 +49,7 @@ const config: CapacitorConfig = {
       // usually <1s on LTE.
       launchShowDuration: 0,
       launchAutoHide: true,
-      backgroundColor: "#F0E8D7", // beige-100
+      backgroundColor: "#F4EDE6", // beige-100
       androidScaleType: "CENTER_CROP",
       showSpinner: false
     },
@@ -52,7 +59,7 @@ const config: CapacitorConfig = {
       // real status-bar height so our editorial top padding is preserved.
       overlaysWebView: true,
       style: "DARK",       // dark text on the beige background
-      backgroundColor: "#F0E8D7"
+      backgroundColor: "#F4EDE6"
     },
     Keyboard: {
       // "native" = the WebView resizes on keyboard open (matches mobile Safari

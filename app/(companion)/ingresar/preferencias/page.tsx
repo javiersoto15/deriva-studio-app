@@ -42,7 +42,8 @@ export default function PreferencesPage() {
     <main
       style={{
         flex: 1,
-        padding: "24px 24px 32px",
+        padding:
+          "max(24px, calc(env(safe-area-inset-top) + 16px)) 24px max(32px, calc(env(safe-area-inset-bottom) + 24px))",
         display: "flex",
         flexDirection: "column",
         gap: 24

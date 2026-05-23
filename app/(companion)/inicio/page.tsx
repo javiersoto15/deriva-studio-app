@@ -15,7 +15,8 @@ export default function SplashPage() {
         flex: 1,
         display: "flex",
         flexDirection: "column",
-        padding: "56px 28px 40px",
+        padding:
+          "max(56px, calc(env(safe-area-inset-top) + 24px)) 28px max(40px, calc(env(safe-area-inset-bottom) + 24px))",
         maxWidth: 480,
         width: "100%",
         marginInline: "auto",
