@@ -41,6 +41,7 @@ const SHARED_INFRA_PREFIXES = [
 const LANDING_PREFIXES = [
   "/menu",
   "/menu-display",
+  "/abierto",
   "/privacidad",
   "/unsubscribe"
 ] as const;

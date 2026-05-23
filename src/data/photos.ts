@@ -18,6 +18,7 @@ export type PhotoSlug =
   | "croissant-kasler"
   | "filtrado"
   | "interior"
+  | "latte"
   | "pour-over"
   | "storefront"
   | "tostada-italiana";
@@ -34,6 +35,7 @@ export const derivaPhotos: Record<PhotoSlug, PhotoEntry> = {
   "croissant-kasler": { slug: "croissant-kasler", aspect: 0.6667, widths: [480, 960, 1440, 1920] },
   "filtrado": { slug: "filtrado", aspect: 0.6667, widths: [480, 960, 1440, 1920] },
   "interior": { slug: "interior", aspect: 1.5000, widths: [480, 960, 1440, 1920] },
+  "latte": { slug: "latte", aspect: 0.6667, widths: [480, 960, 1440, 1920] },
   "pour-over": { slug: "pour-over", aspect: 0.6666, widths: [480, 960, 1440, 1920] },
   "storefront": { slug: "storefront", aspect: 1.5000, widths: [480, 960, 1440, 1920] },
   "tostada-italiana": { slug: "tostada-italiana", aspect: 0.6667, widths: [480, 960, 1440, 1920] },

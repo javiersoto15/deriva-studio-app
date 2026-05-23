@@ -1,0 +1,223 @@
+/* Vertical "ABIERTO" announcement display — 1080×1920 portrait.
+   Mirrors Paper artboard 7TJ-0 (Variant D · Editorial Broadside, Medallions).
+   Plaster ground × ink × single green moment on EN ESTA EDICIÓN rule. */
+
+:root {
+  --ab-plaster: #F4EFE6;
+  --ab-ink: #241B14;
+  --ab-sub: #3F2E22;
+  --ab-mute: #8B7B6C;
+  --ab-hairline: #C9C2B5;
+  --ab-green: #00311F;
+  --ab-medallion-bg: #E5DECF;
+}
+
+html, body { background: var(--ab-plaster); margin: 0; }
+
+.ab-stage {
+  width: 1080px;
+  height: 1920px;
+  margin: 0 auto;
+  background: var(--ab-plaster);
+  color: var(--ab-ink);
+  display: flex;
+  flex-direction: column;
+  padding: 52px 56px 44px;
+  font-family: var(--font-tracked), Poppins, sans-serif;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* === Masthead === */
+.ab-mast { display: flex; flex-direction: column; gap: 12px; }
+.ab-mast__row {
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 500; font-size: 18px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--ab-sub);
+}
+.ab-mast__row > span:last-child { color: var(--ab-mute); }
+.ab-mast__rule { display: block; width: 100%; height: 2px; background: var(--ab-ink); }
+
+/* === Hero spread (asymmetric) === */
+.ab-hero {
+  display: flex; gap: 32px; align-items: flex-start;
+  padding-top: 36px; padding-bottom: 24px;
+}
+.ab-hero__type { flex: 1; display: flex; flex-direction: column; }
+.ab-hero__eyebrow {
+  font-family: var(--font-tracked), Poppins, sans-serif;
+  font-weight: 600; font-size: 18px; letter-spacing: 0.4em;
+  text-transform: uppercase; color: var(--ab-sub);
+}
+.ab-hero__word {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic; font-weight: 500;
+  font-size: 230px; line-height: 0.92;
+  letter-spacing: -0.025em; color: var(--ab-ink);
+  padding-top: 16px;
+  white-space: nowrap;
+  margin: 0;
+}
+.ab-hero__word-period { color: var(--ab-green); }
+.ab-hero__manifesto {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic; font-weight: 400;
+  font-size: 32px; line-height: 1.22;
+  color: var(--ab-sub);
+  padding-top: 24px;
+  max-width: 520px;
+}
+.ab-feature {
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+  padding-top: 8px;
+}
+.ab-feature__med {
+  width: 340px; height: 340px; border-radius: 50%;
+  overflow: hidden; background: var(--ab-medallion-bg);
+}
+.ab-feature__med img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.ab-feature__cap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.ab-feature__num {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 600; font-size: 14px; letter-spacing: 0.32em;
+  text-transform: uppercase; color: var(--ab-mute);
+}
+.ab-feature__name {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic; font-weight: 500; font-size: 54px;
+  color: var(--ab-ink); line-height: 1;
+}
+
+/* === Hours band === */
+.ab-hours {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 0;
+  border-top: 2px solid var(--ab-ink);
+  border-bottom: 1px solid var(--ab-hairline);
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 500; font-size: 24px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--ab-ink);
+}
+.ab-hours__label, .ab-hours__sep { color: var(--ab-mute); }
+
+/* === Three medallions === */
+.ab-trio { display: flex; gap: 24px; padding: 42px 0 14px; }
+.ab-med { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.ab-med__circle {
+  width: 280px; height: 280px; border-radius: 50%;
+  overflow: hidden; background: var(--ab-medallion-bg);
+}
+.ab-med__circle img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.ab-med__cap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.ab-med__num {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 600; font-size: 12px; letter-spacing: 0.32em;
+  text-transform: uppercase; color: var(--ab-mute);
+}
+.ab-med__name {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic; font-weight: 500; font-size: 44px;
+  color: var(--ab-ink); line-height: 1;
+}
+.ab-med__note {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic; font-weight: 400; font-size: 20px;
+  color: var(--ab-sub); line-height: 1.2; text-align: center;
+  padding-top: 4px;
+}
+
+/* === Especialidad (Cafetería + Orígenes) === */
+.ab-esp {
+  display: flex; gap: 40px;
+  padding: 32px 0 28px;
+  border-top: 2px solid var(--ab-ink);
+}
+.ab-esp__col { flex: 1; display: flex; flex-direction: column; gap: 16px; }
+.ab-esp__divider { width: 1px; background: var(--ab-hairline); }
+.ab-esp__head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding-bottom: 8px; border-bottom: 1px solid var(--ab-hairline);
+}
+.ab-esp__head-left { display: flex; gap: 14px; align-items: baseline; }
+.ab-esp__section {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 600; font-size: 16px; letter-spacing: 0.24em;
+  color: var(--ab-mute);
+}
+.ab-esp__title {
+  font-family: var(--font-tracked), Poppins, sans-serif;
+  font-weight: 600; font-size: 24px; letter-spacing: 0.3em;
+  text-transform: uppercase; color: var(--ab-ink);
+}
+.ab-esp__caption {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic; font-weight: 400; font-size: 20px;
+  color: var(--ab-mute);
+}
+.ab-esp__list { display: flex; flex-direction: column; gap: 10px; padding-top: 6px; }
+.ab-esp__item {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-weight: 500; font-size: 32px; line-height: 1.05;
+  color: var(--ab-ink);
+}
+.ab-esp__origin { display: flex; flex-direction: column; gap: 4px; }
+.ab-esp__origin-name {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic; font-weight: 500; font-size: 32px; line-height: 1.05;
+  color: var(--ab-ink);
+}
+.ab-esp__origin-notes {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 400; font-size: 14px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--ab-sub);
+}
+.ab-esp__list-origins { display: flex; flex-direction: column; gap: 14px; padding-top: 6px; }
+.ab-esp__foot {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic; font-weight: 400; font-size: 18px;
+  color: var(--ab-mute); padding-top: 6px;
+}
+
+/* === Pull quote === */
+.ab-spacer { flex: 1; min-height: 0; }
+.ab-quote {
+  display: flex; flex-direction: column; align-items: center; gap: 18px;
+  padding: 32px 0;
+}
+.ab-quote__rule { display: flex; align-items: center; gap: 24px; width: 100%; }
+.ab-quote__rule-line { flex: 1; height: 1px; background: var(--ab-hairline); }
+.ab-quote__edition {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 600; font-size: 14px; letter-spacing: 0.36em;
+  text-transform: uppercase; color: var(--ab-green);
+}
+.ab-quote__body {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic; font-weight: 400; font-size: 46px; line-height: 1.15;
+  color: var(--ab-ink); text-align: center; max-width: 860px;
+  padding: 8px 0;
+  margin: 0;
+}
+.ab-quote__sign { display: flex; align-items: center; gap: 14px; }
+.ab-quote__sign-line { width: 48px; height: 1px; background: var(--ab-mute); }
+.ab-quote__sign-text {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 500; font-size: 13px; letter-spacing: 0.3em;
+  text-transform: uppercase; color: var(--ab-mute);
+}
+
+/* === Colophon === */
+.ab-colophon { display: flex; flex-direction: column; gap: 10px; padding-top: 4px; }
+.ab-colophon__rule { display: block; width: 100%; height: 1px; background: var(--ab-hairline); }
+.ab-colophon__row {
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 500; font-size: 14px; letter-spacing: 0.24em;
+  text-transform: uppercase; color: var(--ab-sub);
+}
+.ab-colophon__row > span:nth-child(2) { color: var(--ab-mute); }
