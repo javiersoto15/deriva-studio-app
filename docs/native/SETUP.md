@@ -68,9 +68,18 @@ npx cap open android  # build → upload to Play Console
    uses APNS silent push and Android uses Play Integrity. This is the single
    biggest engineering item. Touches `src/auth/provider.tsx` and the
    `/ingresar/telefono` + `/ingresar/verificar` screens.
-2. **Backend CORS** — Cloud Run must allow `capacitor://localhost` (iOS) and
-   `https://localhost` (Android) origins, plus the existing custom headers
-   (`X-Request-Id`, `traceparent`). Update `13_companion_backend/`.
+2. **Backend CORS** — `.env.example` files in `13_companion_backend/` are
+   updated, but the live Cloud Run env var still needs the change:
+
+   ```bash
+   gcloud run services update deriva-companion-api \
+     --region southamerica-west1 \
+     --update-env-vars 'DERIVA_CORS_ALLOWED_ORIGINS=http://localhost:3000,capacitor://localhost,https://localhost'
+   ```
+
+   The backend's domain-suffix CORS path rejects non-http(s) schemes
+   (`internal/http/server.go:211`), so `capacitor://localhost` MUST go in the
+   exact-origins env var, not `DERIVA_CORS_ALLOWED_DOMAINS`.
 3. **Deep links** — serve `apple-app-site-association` (no extension,
    `application/json`) from `derivastudio.cl/.well-known/` and
    `assetlinks.json` likewise. Both need the real Team ID + SHA-256 cert

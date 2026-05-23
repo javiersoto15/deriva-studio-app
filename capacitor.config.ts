@@ -34,6 +34,33 @@ const config: CapacitorConfig = {
     // Use the modern WKWebView content inset so safe-area-inset env() vars
     // resolve correctly on notched devices.
     contentInset: "always"
+  },
+  plugins: {
+    SplashScreen: {
+      // Show the launch storyboard until the WebView's first paint, then fade
+      // out. We don't want to hold the splash long — livehost first-paint is
+      // usually <1s on LTE.
+      launchShowDuration: 0,
+      launchAutoHide: true,
+      backgroundColor: "#F0E8D7", // beige-100
+      androidScaleType: "CENTER_CROP",
+      showSpinner: false
+    },
+    StatusBar: {
+      // overlay = WebView draws under the status bar; combined with
+      // contentInset:"always" above, env(safe-area-inset-top) resolves to the
+      // real status-bar height so our editorial top padding is preserved.
+      overlaysWebView: true,
+      style: "DARK",       // dark text on the beige background
+      backgroundColor: "#F0E8D7"
+    },
+    Keyboard: {
+      // "native" = the WebView resizes on keyboard open (matches mobile Safari
+      // behavior). Required so the OTP grid and phone-number input don't get
+      // covered.
+      resize: "native",
+      style: "DEFAULT"
+    }
   }
 };
 
