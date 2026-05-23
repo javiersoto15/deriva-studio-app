@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { PHOTO_BASE_URL } from "../../../src/data/photos";
+import { LogoLockup } from "../../../src/ui/LogoLockup";
 import "./abierto.css";
 
 export const metadata: Metadata = {
@@ -54,7 +55,6 @@ function getEditionLabels(now: Date) {
   return {
     eyebrow: `— Hoy · ${cap(weekday)} ${day} · ${roman} —`,
     masthead: {
-      brand: "— DERIVA COFFEE STUDIO —",
       edition: `VOL. 001 · ${season.toUpperCase()} MMXXVI · № ${issueNum}`
     },
     cap: cap(`${weekday} ${day} de ${month}`)
@@ -70,8 +70,16 @@ async function AbiertoDisplay() {
       {/* Masthead */}
       <header className="ab-mast">
         <div className="ab-mast__row">
-          <span>{labels.masthead.brand}</span>
-          <span>{labels.masthead.edition}</span>
+          <LogoLockup
+            isotipo={56}
+            wordmarkSize={34}
+            wordmarkLine={32}
+            subSize={10}
+            gap={14}
+            isotipoColor="#241B14"
+            wordmarkColor="#241B14"
+          />
+          <span className="ab-mast__edition">{labels.masthead.edition}</span>
         </div>
         <span className="ab-mast__rule" aria-hidden="true" />
       </header>
@@ -84,7 +92,7 @@ async function AbiertoDisplay() {
             Abierto<span className="ab-hero__word-period">.</span>
           </h1>
           <p className="ab-hero__manifesto">
-            Café de tueste propio, panes de hornada y sándwiches todo el día.
+            Café de especialidad, una pausa sin apuro, un rato a la deriva.
           </p>
         </div>
         <div className="ab-feature">
@@ -167,7 +175,7 @@ async function AbiertoDisplay() {
               <span className="ab-esp__section">§ 02</span>
               <span className="ab-esp__title">Orígenes</span>
             </div>
-            <span className="ab-esp__caption">tueste propio</span>
+            <span className="ab-esp__caption">café de origen</span>
           </div>
           <div className="ab-esp__list-origins">
             {[

@@ -32,11 +32,12 @@ html, body { background: var(--ab-plaster); margin: 0; }
 .ab-mast { display: flex; flex-direction: column; gap: 12px; }
 .ab-mast__row {
   display: flex; justify-content: space-between; align-items: center;
+}
+.ab-mast__edition {
   font-family: var(--font-mono), "IBM Plex Mono", monospace;
   font-weight: 500; font-size: 18px; letter-spacing: 0.2em;
-  text-transform: uppercase; color: var(--ab-sub);
+  text-transform: uppercase; color: var(--ab-mute);
 }
-.ab-mast__row > span:last-child { color: var(--ab-mute); }
 .ab-mast__rule { display: block; width: 100%; height: 2px; background: var(--ab-ink); }
 
 /* === Hero spread (asymmetric) === */
