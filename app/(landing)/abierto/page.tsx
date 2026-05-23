@@ -98,12 +98,14 @@ async function AbiertoDisplay() {
         </div>
       </section>
 
-      {/* Hours band */}
+      {/* Hours band — canonical schedule from src/lib/open-now.ts */}
       <div className="ab-hours">
         <span className="ab-hours__label">HORARIO</span>
-        <span>LUN — DOM</span>
+        <span>LUN–VIE 08:00 → 21:00</span>
         <span className="ab-hours__sep">·</span>
-        <span>08:00 → 20:00</span>
+        <span>SÁB 10:00 → 21:00</span>
+        <span className="ab-hours__sep">·</span>
+        <span>DOM CERRADO</span>
       </div>
 
       {/* Three medallions */}

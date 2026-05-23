@@ -94,11 +94,11 @@ html, body { background: var(--ab-plaster); margin: 0; }
 /* === Hours band === */
 .ab-hours {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 12px 0;
+  padding: 14px 0;
   border-top: 2px solid var(--ab-ink);
   border-bottom: 1px solid var(--ab-hairline);
   font-family: var(--font-mono), "IBM Plex Mono", monospace;
-  font-weight: 500; font-size: 24px; letter-spacing: 0.22em;
+  font-weight: 500; font-size: 19px; letter-spacing: 0.18em;
   text-transform: uppercase; color: var(--ab-ink);
 }
 .ab-hours__label, .ab-hours__sep { color: var(--ab-mute); }
