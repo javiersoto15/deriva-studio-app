@@ -22,7 +22,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 
 const BUCKET = "deriva-photos";
-const VERSION_PREFIX = "v1";
+const VERSION_PREFIX = "v2";
 const CDN_HOST = "media.derivastudio.cl";
 const WIDTHS = [480, 960, 1440, 1920] as const;
 const FORMATS = [

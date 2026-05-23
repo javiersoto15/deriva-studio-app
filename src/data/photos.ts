@@ -2,7 +2,7 @@
 // Run `npm run photos:upload <masters-dir>` to regenerate.
 
 export const PHOTO_BASE_URL =
-  "https://media.derivastudio.cl/v1";
+  "https://media.derivastudio.cl/v2";
 
 export const PHOTO_WIDTHS = [480, 960, 1440, 1920] as const;
 
@@ -36,7 +36,7 @@ export const derivaPhotos: Record<PhotoSlug, PhotoEntry> = {
   "filtrado": { slug: "filtrado", aspect: 0.6667, widths: [480, 960, 1440, 1920] },
   "interior": { slug: "interior", aspect: 1.5000, widths: [480, 960, 1440, 1920] },
   "latte": { slug: "latte", aspect: 0.6667, widths: [480, 960, 1440, 1920] },
-  "pour-over": { slug: "pour-over", aspect: 0.6666, widths: [480, 960, 1440, 1920] },
+  "pour-over": { slug: "pour-over", aspect: 1.0000, widths: [480, 960, 1440, 1920] },
   "storefront": { slug: "storefront", aspect: 1.5000, widths: [480, 960, 1440, 1920] },
   "tostada-italiana": { slug: "tostada-italiana", aspect: 0.6667, widths: [480, 960, 1440, 1920] },
 };
