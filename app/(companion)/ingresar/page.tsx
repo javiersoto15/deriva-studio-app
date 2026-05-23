@@ -304,7 +304,7 @@ export default function IngresarPage() {
       </div>
 
       <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: 12 }}>
-        <SsoButton provider="google.com" onClick={() => onSso("google.com")} loading={submitting === "google.com"} disabled />
+        <SsoButton provider="google.com" onClick={() => onSso("google.com")} loading={submitting === "google.com"} />
         <SsoButton provider="apple.com" onClick={() => onSso("apple.com")} loading={submitting === "apple.com"} disabled />
       </div>
 
