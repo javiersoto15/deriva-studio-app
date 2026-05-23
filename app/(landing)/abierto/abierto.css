@@ -27,8 +27,9 @@ html, body { background: var(--ab-plaster); margin: 0; }
   overflow: hidden;
   box-sizing: border-box;
   /* Shop browser resets to 150% page-zoom on every deploy. Pre-shrink the
-     stage by 1/1.5 so the default 150% zoom renders at the intended size. */
-  zoom: 0.6667;
+     stage so the default 150% zoom renders close to the intended size.
+     0.833 ≈ 0.6667 × 1.25 — bumped up so the page fills more of the screen. */
+  zoom: 0.833;
 }
 
 /* === Masthead === */
