@@ -1,5 +1,6 @@
 import UIKit
 import Capacitor
+import FirebaseCore
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -7,7 +8,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        // Initialize the Firebase iOS SDK. Required for
+        // @capacitor-firebase/authentication — Capacitor's plugin does NOT
+        // auto-init; without this, every native FirebaseAuthentication call
+        // logs "default Firebase app has not yet been configured" and silently
+        // no-ops. The plist is read from GoogleService-Info.plist in the
+        // App target bundle (added 2026-05-23).
+        FirebaseApp.configure()
         return true
     }
 
