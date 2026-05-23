@@ -67,6 +67,20 @@ const config: CapacitorConfig = {
       // covered.
       resize: "native",
       style: "DEFAULT"
+    },
+    FirebaseAuthentication: {
+      // skipNativeAuth=true lets the native plugin handle ONLY the
+      // platform-specific challenges (APNS silent push on iOS, Play Integrity
+      // on Android) — it returns a credential, then we sign in to the web
+      // Firebase JS SDK with that credential via signInWithCredential. This
+      // keeps the web JS SDK as the single source of truth for auth state,
+      // onAuthStateChanged, and getIdToken across both web + native.
+      skipNativeAuth: true,
+      // Only phone is included here. SSO providers (google.com, apple.com)
+      // still go through the web SDK popup flow; they don't depend on
+      // reCAPTCHA and currently work in the WebView. Add later if iOS popup
+      // friction surfaces.
+      providers: ["phone"]
     }
   }
 };

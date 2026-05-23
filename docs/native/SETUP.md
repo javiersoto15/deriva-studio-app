@@ -62,12 +62,36 @@ npx cap open android  # build → upload to Play Console
 
 ## Open engineering items before TestFlight
 
-1. **Firebase Phone Auth inside WebView** — the current CSP-tuned web reCAPTCHA
-   flow (see `feedback_csp_and_firebase_phone_auth.md`) does NOT work in a
-   Capacitor WebView. Replace with `@capacitor-firebase/authentication` so iOS
-   uses APNS silent push and Android uses Play Integrity. This is the single
-   biggest engineering item. Touches `src/auth/provider.tsx` and the
-   `/ingresar/telefono` + `/ingresar/verificar` screens.
+1. **Firebase Phone Auth inside WebView** — ✅ code swap done. `@capacitor-firebase/authentication`
+   is installed; `src/auth/provider.tsx` branches on `Capacitor.isNativePlatform()`
+   for all 4 phone methods (signIn/verify + link/verifyLink). Native path uses
+   `skipNativeAuth:true` so the web JS SDK stays authoritative for auth state.
+
+   **3 manual prerequisites before native phone auth actually works:**
+
+   a. **Generate APNS Authentication Key** (developer.apple.com):
+      - Account → Certificates, Identifiers & Profiles → **Keys** → +
+      - Name: "Deriva APNS Auth Key"
+      - Check **Apple Push Notifications service (APNs)**
+      - Download the `.p8` file (you can only download ONCE; back it up)
+      - Note the **Key ID** and your **Team ID** (`7XGTNY336J`)
+
+   b. **Upload APNS key to Firebase Console**:
+      - Project Settings → **Cloud Messaging** tab → iOS app configuration
+      - Under **APNs Authentication Key** → Upload the `.p8`
+      - Enter Key ID + Team ID
+
+   c. **Add iOS capabilities in Xcode**:
+      - `npx cap open ios` → App target → **Signing & Capabilities**
+      - **+ Capability** → **Push Notifications**
+      - **+ Capability** → **Background Modes** → check **Remote notifications**
+      - Rebuild + reinstall on a real iPhone (the iOS Simulator can NOT
+        receive APNS pushes — phone auth will fail in Sim no matter what).
+
+   **iOS Simulator note:** Phone auth requires APNS, which the Simulator can't
+   receive. To test in Sim, sign in via Google or Apple SSO instead (those
+   work over the web SDK popup flow). Phone auth must be tested on a real
+   device via Xcode (Run on connected iPhone) or TestFlight.
 2. **Backend CORS** — `.env.example` files in `13_companion_backend/` are
    updated, but the live Cloud Run env var still needs the change:
 

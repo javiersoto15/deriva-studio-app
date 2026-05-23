@@ -7,19 +7,24 @@ import {
   type User,
   GoogleAuthProvider,
   OAuthProvider,
+  PhoneAuthProvider,
   RecaptchaVerifier,
   applyActionCode as fbApplyActionCode,
   isSignInWithEmailLink,
+  linkWithCredential,
   linkWithPhoneNumber,
   linkWithPopup,
   onAuthStateChanged,
   sendSignInLinkToEmail,
+  signInWithCredential,
   signInWithEmailLink as fbSignInWithEmailLink,
   signInWithPhoneNumber,
   signInWithPopup,
   signOut as fbSignOut,
   unlink as fbUnlink
 } from "firebase/auth";
+import { Capacitor } from "@capacitor/core";
+import { FirebaseAuthentication } from "@capacitor-firebase/authentication";
 import {
   type ReactNode,
   createContext,
@@ -142,6 +147,53 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 const RECAPTCHA_CONTAINER_ID = "deriva-recaptcha-container";
 
+const isNative = Capacitor.isNativePlatform();
+
+// Native phone-verification helper. Wraps the plugin's event-based API into a
+// Promise that resolves with the verificationId once Firebase has dispatched
+// the SMS (or attested via APNS-silent-push on iOS / Play Integrity on
+// Android). Caller uses the verificationId with PhoneAuthProvider.credential()
+// + signInWithCredential/linkWithCredential on the web JS SDK so onAuthStateChanged
+// fires as usual.
+//
+// signInWithPhoneNumber and linkWithPhoneNumber on the native plugin emit the
+// same `phoneCodeSent` event, so this works for both flows.
+async function requestNativeVerificationId(phoneNumber: string): Promise<string> {
+  let sentListener: { remove: () => Promise<void> } | undefined;
+  let failedListener: { remove: () => Promise<void> } | undefined;
+  const cleanup = async () => {
+    await sentListener?.remove();
+    await failedListener?.remove();
+  };
+
+  return new Promise<string>((resolve, reject) => {
+    FirebaseAuthentication.addListener("phoneCodeSent", async (event) => {
+      await cleanup();
+      resolve(event.verificationId);
+    }).then((handle) => {
+      sentListener = handle;
+    });
+    FirebaseAuthentication.addListener("phoneVerificationFailed", async (event) => {
+      await cleanup();
+      // Surface the plugin's error message — describeAuthError will pass it
+      // through unchanged if it doesn't match a known Firebase code.
+      reject(new Error(event.message ?? "phone-verification-failed"));
+    }).then((handle) => {
+      failedListener = handle;
+    });
+
+    FirebaseAuthentication.signInWithPhoneNumber({
+      phoneNumber,
+      // skipNativeAuth=true is set globally in capacitor.config.ts but pass
+      // it again here to be defensive against config drift.
+      skipNativeAuth: true
+    }).catch(async (err) => {
+      await cleanup();
+      reject(err);
+    });
+  });
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [status, setStatus] = useState<AuthStatus>("loading");
@@ -152,6 +204,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // session — unlikely but cheap to isolate.
   const linkConfirmationRef = useRef<ConfirmationResult | null>(null);
   const verifierRef = useRef<RecaptchaVerifier | null>(null);
+  // Native plugin emits verificationId via event; we hold it here until the
+  // verify step runs. Mirrors the role of confirmationRef on web.
+  const nativeSignInVerificationIdRef = useRef<string | null>(null);
+  const nativeLinkVerificationIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     try {
@@ -170,6 +226,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signInWithPhone = useCallback(async (phone: string): Promise<AuthResult> => {
     try {
+      if (isNative) {
+        // Native: APNS-silent-push (iOS) or Play Integrity (Android) handle
+        // verification. No reCAPTCHA — Google's reCAPTCHA backend rejects the
+        // capacitor://localhost origin with 401.
+        nativeSignInVerificationIdRef.current = await requestNativeVerificationId(phone);
+        return { ok: true };
+      }
       const auth = getFirebaseAuth();
       if (!verifierRef.current) {
         verifierRef.current = new RecaptchaVerifier(auth, RECAPTCHA_CONTAINER_ID, {
@@ -191,6 +254,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const verifyOtp = useCallback(async (code: string): Promise<AuthResult> => {
     try {
+      if (isNative) {
+        const verificationId = nativeSignInVerificationIdRef.current;
+        if (!verificationId) {
+          return {
+            ok: false,
+            code: "auth/no-pending-confirmation",
+            message: "No hay un código pendiente de verificación. Solicita uno nuevo."
+          };
+        }
+        // Build a phone credential from (verificationId, smsCode) and sign in
+        // via the web JS SDK so onAuthStateChanged + auth.currentUser update
+        // exactly as in the web flow.
+        const credential = PhoneAuthProvider.credential(verificationId, code);
+        await signInWithCredential(getFirebaseAuth(), credential);
+        nativeSignInVerificationIdRef.current = null;
+        return { ok: true };
+      }
       if (!confirmationRef.current) {
         return {
           ok: false,
@@ -218,6 +298,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           message: "Inicia sesión antes de sumar un teléfono."
         };
       }
+      if (isNative) {
+        // Same native verification path as sign-in; we hand the verificationId
+        // to linkWithCredential(currentUser, ...) at confirm time so the link
+        // attaches to the existing session instead of starting a new one.
+        nativeLinkVerificationIdRef.current = await requestNativeVerificationId(phone);
+        return { ok: true };
+      }
       if (!verifierRef.current) {
         verifierRef.current = new RecaptchaVerifier(auth, RECAPTCHA_CONTAINER_ID, {
           size: "invisible"
@@ -238,6 +325,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const verifyLinkOtp = useCallback(async (code: string): Promise<AuthResult> => {
     try {
+      if (isNative) {
+        const verificationId = nativeLinkVerificationIdRef.current;
+        if (!verificationId) {
+          return {
+            ok: false,
+            code: "auth/no-pending-link",
+            message: "No hay un código pendiente para sumar el teléfono. Pide otro."
+          };
+        }
+        const current = getFirebaseAuth().currentUser;
+        if (!current) {
+          return {
+            ok: false,
+            code: "auth/no-current-user",
+            message: "Inicia sesión antes de sumar un teléfono."
+          };
+        }
+        const credential = PhoneAuthProvider.credential(verificationId, code);
+        await linkWithCredential(current, credential);
+        nativeLinkVerificationIdRef.current = null;
+        // Same token-refresh contract as the web path.
+        await current.getIdToken(true);
+        return { ok: true };
+      }
       if (!linkConfirmationRef.current) {
         return {
           ok: false,
