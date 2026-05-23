@@ -19,6 +19,9 @@
     "firebase:emulator": "firebase emulators:start --only auth --project deriva-studio-production"
   },
   "dependencies": {
+    "@capacitor/android": "^8.3.4",
+    "@capacitor/core": "^8.3.4",
+    "@capacitor/ios": "^8.3.4",
     "@react-email/components": "^1.0.12",
     "@react-email/render": "^2.0.8",
     "@sentry/nextjs": "^10.52.0",
@@ -44,6 +47,8 @@
     "zustand": "^5.0.13"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^8.3.4",
     "@types/node": "25.6.0",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
