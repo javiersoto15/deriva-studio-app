@@ -26,6 +26,9 @@ html, body { background: var(--ab-plaster); margin: 0; }
   font-family: var(--font-tracked), Poppins, sans-serif;
   overflow: hidden;
   box-sizing: border-box;
+  /* Shop browser resets to 150% page-zoom on every deploy. Pre-shrink the
+     stage by 1/1.5 so the default 150% zoom renders at the intended size. */
+  zoom: 0.6667;
 }
 
 /* === Masthead === */

@@ -1,8 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { connection } from "next/server";
-import { Suspense } from "react";
-import { PHOTO_BASE_URL } from "../../../src/data/photos";
+import { Fragment, Suspense } from "react";
+import { DerivaImage } from "../../../src/components/landing/DerivaImage";
 import { LogoLockup } from "../../../src/ui/LogoLockup";
+import { menuSections, type MenuAddons } from "../../../src/data/menu";
+import { HOURS_LINES, isOpenNow } from "../../../src/lib/open-now";
+import { getEditionMarkUppercase } from "../../../src/lib/edition";
 import "./abierto.css";
 
 export const metadata: Metadata = {
@@ -13,26 +16,9 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = { themeColor: "#F4EFE6" };
 
-const PHOTOS = {
-  latte: `${PHOTO_BASE_URL}/latte-1920.jpg`,
-  pourOver: `${PHOTO_BASE_URL}/pour-over-1920.jpg`,
-  kasler: `${PHOTO_BASE_URL}/croissant-kasler-1920.jpg`,
-  italiana: `${PHOTO_BASE_URL}/tostada-italiana-1920.jpg`
-} as const;
-
 const ROMAN_MONTHS = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
 
-const SEASON_BY_MONTH: Record<number, string> = {
-  0: "Verano",  1: "Verano",  2: "Otoño",
-  3: "Otoño",   4: "Otoño",   5: "Invierno",
-  6: "Invierno",7: "Invierno",8: "Primavera",
-  9: "Primavera",10:"Primavera",11:"Verano"
-};
-
-const ISSUE_PER_DAY = 1;
-const ISSUE_EPOCH = new Date("2026-05-01T00:00:00-04:00");
-
-function getEditionLabels(now: Date) {
+function getDayLabels(now: Date) {
   const dateFmt = new Intl.DateTimeFormat("es-CL", {
     weekday: "long",
     day: "numeric",
@@ -42,28 +28,36 @@ function getEditionLabels(now: Date) {
   const parts = dateFmt.formatToParts(now);
   const weekday = parts.find((p) => p.type === "weekday")?.value ?? "";
   const day = parts.find((p) => p.type === "day")?.value ?? "";
-  const month = parts.find((p) => p.type === "month")?.value ?? "";
   const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-
-  const monthIdx = now.getMonth();
-  const season = SEASON_BY_MONTH[monthIdx];
+  const monthIdx = new Date(
+    new Intl.DateTimeFormat("en-CA", { timeZone: "America/Santiago" }).format(now)
+  ).getMonth();
   const roman = ROMAN_MONTHS[monthIdx];
+  return { eyebrow: `— Hoy · ${cap(weekday)} ${day} · ${roman} —` };
+}
 
-  const issueNum =
-    Math.floor((now.getTime() - ISSUE_EPOCH.getTime()) / (1000 * 60 * 60 * 24)) * ISSUE_PER_DAY + 1;
-
-  return {
-    eyebrow: `— Hoy · ${cap(weekday)} ${day} · ${roman} —`,
-    masthead: {
-      edition: `VOL. 001 · ${season.toUpperCase()} MMXXVI · № ${issueNum}`
-    },
-    cap: cap(`${weekday} ${day} de ${month}`)
-  };
+// Canonical cafetería items + addons, sourced from src/data/menu.ts so the
+// signage never drifts from the printed/digital carta.
+function getCafeteriaData(): { itemNames: string[]; addons: MenuAddons[] } {
+  const cafe = menuSections.find((s) => s.id === "cafeteria");
+  const espresso = cafe?.subgroups?.find((g) => g.id === "espresso");
+  const itemNames = espresso?.items.map((i) => i.name) ?? [];
+  const espressoAddons = espresso?.addons ? [espresso.addons] : [];
+  const sectionAddons = cafe?.addons
+    ? Array.isArray(cafe.addons)
+      ? cafe.addons
+      : [cafe.addons]
+    : [];
+  return { itemNames, addons: [...espressoAddons, ...sectionAddons] };
 }
 
 async function AbiertoDisplay() {
   await connection();
-  const labels = getEditionLabels(new Date());
+  const now = new Date();
+  const labels = getDayLabels(now);
+  const editionMark = getEditionMarkUppercase(now);
+  const open = isOpenNow(now);
+  const cafeteria = getCafeteriaData();
 
   return (
     <main className="ab-stage" aria-label="Pantalla abierto">
@@ -79,25 +73,33 @@ async function AbiertoDisplay() {
             isotipoColor="#241B14"
             wordmarkColor="#241B14"
           />
-          <span className="ab-mast__edition">{labels.masthead.edition}</span>
+          <span className="ab-mast__edition">{editionMark}</span>
         </div>
         <span className="ab-mast__rule" aria-hidden="true" />
       </header>
 
-      {/* Hero — asymmetric Abierto. + Latte medallion */}
+      {/* Hero — asymmetric Abierto./Cerrado. + Latte medallion */}
       <section className="ab-hero">
         <div className="ab-hero__type">
           <div className="ab-hero__eyebrow">{labels.eyebrow}</div>
           <h1 className="ab-hero__word">
-            Abierto<span className="ab-hero__word-period">.</span>
+            {open ? "Abierto" : "Cerrado"}
+            <span className="ab-hero__word-period">.</span>
           </h1>
           <p className="ab-hero__manifesto">
-            Café de especialidad, una pausa sin apuro, un rato a la deriva.
+            {open
+              ? "Café de especialidad, una pausa sin apuro, un rato a la deriva."
+              : "Volvemos mañana. Te esperamos a la deriva."}
           </p>
         </div>
         <div className="ab-feature">
           <div className="ab-feature__med">
-            <img src={PHOTOS.latte} alt="Latte servido en taza roja" />
+            <DerivaImage
+              slug="latte"
+              alt="Latte servido en taza roja"
+              sizes="340px"
+              priority
+            />
           </div>
           <div className="ab-feature__cap">
             <span className="ab-feature__num">№ 01 · DE LA BARRA</span>
@@ -109,18 +111,21 @@ async function AbiertoDisplay() {
       {/* Hours band — canonical schedule from src/lib/open-now.ts */}
       <div className="ab-hours">
         <span className="ab-hours__label">HORARIO</span>
-        <span>LUN–VIE 08:00 → 21:00</span>
-        <span className="ab-hours__sep">·</span>
-        <span>SÁB 10:00 → 21:00</span>
-        <span className="ab-hours__sep">·</span>
-        <span>DOM CERRADO</span>
+        {HOURS_LINES.map((line, i) => (
+          <Fragment key={line}>
+            <span>{line}</span>
+            {i < HOURS_LINES.length - 1 ? (
+              <span className="ab-hours__sep">·</span>
+            ) : null}
+          </Fragment>
+        ))}
       </div>
 
       {/* Three medallions */}
       <section className="ab-trio" aria-label="Destacados">
         <article className="ab-med">
           <div className="ab-med__circle">
-            <img src={PHOTOS.pourOver} alt="Pour Over en Chemex" />
+            <DerivaImage slug="pour-over" alt="Pour Over en Chemex" sizes="280px" />
           </div>
           <div className="ab-med__cap">
             <span className="ab-med__num">№ 02 · FILTRADO</span>
@@ -130,7 +135,7 @@ async function AbiertoDisplay() {
         </article>
         <article className="ab-med">
           <div className="ab-med__circle">
-            <img src={PHOTOS.kasler} alt="Croissant Kasler House" />
+            <DerivaImage slug="croissant-kasler" alt="Croissant Kasler House" sizes="280px" />
           </div>
           <div className="ab-med__cap">
             <span className="ab-med__num">№ 03 · A TODA HORA</span>
@@ -140,7 +145,7 @@ async function AbiertoDisplay() {
         </article>
         <article className="ab-med">
           <div className="ab-med__circle">
-            <img src={PHOTOS.italiana} alt="Tostada Italiana" />
+            <DerivaImage slug="tostada-italiana" alt="Tostada Italiana" sizes="280px" />
           </div>
           <div className="ab-med__cap">
             <span className="ab-med__num">№ 04 · MASA MADRE</span>
@@ -150,8 +155,8 @@ async function AbiertoDisplay() {
         </article>
       </section>
 
-      {/* Especialidad: Cafetería + Orígenes */}
-      <section className="ab-esp" aria-label="Cafetería y orígenes">
+      {/* Especialidad: Cafetería (canonical items) + Acompaña (canonical addons) */}
+      <section className="ab-esp" aria-label="Cafetería y acompañamientos">
         <div className="ab-esp__col">
           <div className="ab-esp__head">
             <div className="ab-esp__head-left">
@@ -161,7 +166,7 @@ async function AbiertoDisplay() {
             <span className="ab-esp__caption">de la barra</span>
           </div>
           <ul className="ab-esp__list" style={{ listStyle: "none", margin: 0, padding: 0 }}>
-            {["Espresso", "Cortado", "Cappuccino", "Flat White", "Latte", "Mocha", "Pour Over"].map((name) => (
+            {cafeteria.itemNames.map((name) => (
               <li key={name} className="ab-esp__item">{name}</li>
             ))}
           </ul>
@@ -173,22 +178,18 @@ async function AbiertoDisplay() {
           <div className="ab-esp__head">
             <div className="ab-esp__head-left">
               <span className="ab-esp__section">§ 02</span>
-              <span className="ab-esp__title">Orígenes</span>
+              <span className="ab-esp__title">Acompaña</span>
             </div>
-            <span className="ab-esp__caption">café de origen</span>
+            <span className="ab-esp__caption">para tu café</span>
           </div>
           <div className="ab-esp__list-origins">
-            {[
-              { name: "House Blend", notes: "PANELA · CACAO · NUEZ" },
-              { name: "Etiopía Yirgacheffe", notes: "JAZMÍN · DURAZNO · BERGAMOTA" },
-              { name: "México Chiapas", notes: "CHOCOLATE · MANDARINA · MIEL" }
-            ].map((origin) => (
-              <div key={origin.name} className="ab-esp__origin">
-                <span className="ab-esp__origin-name">{origin.name}</span>
-                <span className="ab-esp__origin-notes">{origin.notes}</span>
+            {cafeteria.addons.map((addon) => (
+              <div key={addon.label} className="ab-esp__origin">
+                <span className="ab-esp__origin-name">{addon.label}</span>
+                <span className="ab-esp__origin-notes">{addon.chips.join(" · ")}</span>
               </div>
             ))}
-            <span className="ab-esp__foot">— rotación semanal —</span>
+            <span className="ab-esp__foot">— pregunta al barista —</span>
           </div>
         </div>
       </section>
@@ -205,7 +206,7 @@ async function AbiertoDisplay() {
         <p className="ab-quote__body">«Pasa, pide, quédate. La carta cambia con la hornada del día.»</p>
         <div className="ab-quote__sign">
           <span className="ab-quote__sign-line" />
-          <span className="ab-quote__sign-text">DESDE 2026 · CONCEPCIÓN</span>
+          <span className="ab-quote__sign-text">DESDE 2026 · PROVIDENCIA</span>
           <span className="ab-quote__sign-line" />
         </div>
       </section>

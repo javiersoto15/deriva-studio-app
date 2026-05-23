@@ -23,6 +23,7 @@ import {
   getMenuEjecutivoDateLabel
 } from "../../../src/data/menu-ejecutivo";
 import { LogoLockup } from "../../../src/ui/LogoLockup";
+import { getEditionMark } from "../../../src/lib/edition";
 import "./menu-display.css";
 
 export const metadata: Metadata = {
@@ -48,24 +49,6 @@ const DENSE_PASTRY_ID = "pasteleria";
 
 function chileNow(): Date {
   return new Date();
-}
-
-function chileEditionMark(now: Date): string {
-  // Two-digit ISO week number gives us a stable "edition" identifier for
-  // the masthead. Vol/season are pinned to the current run.
-  const ymd = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/Santiago",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit"
-  }).format(now);
-  const [y, m, d] = ymd.split("-").map((n) => parseInt(n, 10));
-  const dt = new Date(Date.UTC(y, m - 1, d));
-  const day = dt.getUTCDay() || 7;
-  dt.setUTCDate(dt.getUTCDate() + 4 - day);
-  const yearStart = new Date(Date.UTC(dt.getUTCFullYear(), 0, 1));
-  const weekNum = Math.ceil(((+dt - +yearStart) / 86400000 + 1) / 7);
-  return `Vol. 001 · Otoño · № ${String(weekNum).padStart(2, "0")}`;
 }
 
 function filterItems(
@@ -400,7 +383,7 @@ async function LiveMenuDisplay() {
   const unavailable = getTemporarilyUnavailableItemIds(now);
   const dateLabel = getMenuEjecutivoDateLabel(now);
   const closedToday = isClosedToday(now);
-  const editionMark = chileEditionMark(now);
+  const editionMark = getEditionMark(now);
   return (
     <MenuDisplayShell
       showPrices={showPrices}

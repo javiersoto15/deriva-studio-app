@@ -5,6 +5,14 @@
 
 const CHILE_TZ = "America/Santiago";
 
+// Canonical hours strings for signage. Anything that displays hours should
+// import these — keep open-now.ts as the single source of truth.
+export const HOURS_LINES = [
+  "LUN–VIE 08:00 → 21:00",
+  "SÁB 10:00 → 21:00",
+  "DOM CERRADO"
+] as const;
+
 export function isOpenNow(now: Date = new Date()): boolean {
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone: CHILE_TZ,
