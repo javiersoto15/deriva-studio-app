@@ -786,6 +786,61 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/me/receipt-claims": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Submit a SumUp receipt transaction for automatic points
+         * @description Verifies the SumUp transaction server-side, derives purchase time and CLP amount from SumUp, creates an approved missing-points claim, and awards Deriva Points when the transaction is successful and unclaimed.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateReceiptClaimRequest"];
+                };
+            };
+            responses: {
+                /** @description SumUp transaction verified and points awarded. */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ReceiptClaimResponse"];
+                    };
+                };
+                400: components["responses"]["BadRequest"];
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                404: components["responses"]["NotFound"];
+                500: components["responses"]["InternalServerError"];
+                /** @description SumUp verification is not configured. */
+                503: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/me/redeem-campaign-token": {
         parameters: {
             query?: never;
@@ -1203,6 +1258,51 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/public/menu": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get the public landing menu view
+         * @description Backend-owned menu presentation view for the public landing menu. Keeps /menu as the flat companion item list while exposing the canonical weekday/weekend landing structure, including Menu Ejecutivo on weekdays and the regular weekend menu split. The public view is generated from the current backend catalog so the live site does not silently inherit stale persisted menu rows.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description Resolve backend-driven menu copy for this locale. Defaults to es-CL and falls back to es-CL when unsupported. */
+                    locale?: "es-CL" | "en";
+                    /** @description Preview the day-specific landing structure. Defaults to the current Santiago schedule; Friday/Saturday are weekend, Sunday is closed but returns weekday structure. */
+                    schedule?: components["schemas"]["PublicMenuSchedule"];
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Public menu presentation view. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PublicMenuView"];
+                    };
+                };
+                500: components["responses"]["InternalServerError"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/menu": {
         parameters: {
             query?: never;
@@ -1217,7 +1317,7 @@ export interface paths {
                     /** @description Filter active menu items by normalized category id. */
                     category?: "coffee" | "beverage" | "breakfast" | "savory" | "entree" | "dessert";
                     /** @description Filter active menu items by normalized section id. */
-                    section?: "espresso" | "filtered" | "cold-coffee" | "mate" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "cakes-pies" | "bakes";
+                    section?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "cakes-pies" | "bakes";
                     /** @description Resolve backend-driven menu copy for this locale. Defaults to es-CL and falls back to es-CL when unsupported. */
                     locale?: "es-CL" | "en";
                 };
@@ -2657,6 +2757,79 @@ export interface components {
         StaffLookupResponse: {
             matches: components["schemas"]["Member"][];
         };
+        /** @enum {string} */
+        PublicMenuSchedule: "weekday" | "weekend";
+        PublicMenuView: {
+            /** @enum {string} */
+            locale?: "es-CL" | "en";
+            name: string;
+            season: string;
+            current_schedule: components["schemas"]["PublicMenuSchedule"];
+            closed_today: boolean;
+            closed_label?: string;
+            sections: components["schemas"]["PublicMenuSection"][];
+        };
+        PublicMenuSection: {
+            id: string;
+            numeral: string;
+            title: string;
+            italic_word?: string;
+            full_italic?: boolean;
+            /** @enum {string} */
+            emphasis: "hero" | "primary" | "utility";
+            lede: string;
+            lede_italic?: boolean;
+            service_window?: string;
+            schedule?: components["schemas"]["PublicMenuSchedule"][];
+            items?: components["schemas"]["PublicMenuItem"][];
+            subgroups?: components["schemas"]["PublicMenuSubgroup"][];
+            addons?: components["schemas"]["PublicMenuAddon"][];
+            addons_before?: string;
+            executive_menu?: components["schemas"]["ExecutiveMenu"];
+        };
+        PublicMenuSubgroup: {
+            id: string;
+            label: string;
+            items: components["schemas"]["PublicMenuItem"][];
+            addons?: components["schemas"]["PublicMenuAddon"];
+            schedule?: components["schemas"]["PublicMenuSchedule"][];
+        };
+        ExecutiveMenu: {
+            price_clp: number;
+            price_label: string;
+            hours: string;
+            hero: string;
+            subline: string;
+            date_label: string;
+            courses: components["schemas"]["ExecutiveMenuCourse"][];
+        };
+        ExecutiveMenuCourse: {
+            /** @enum {string} */
+            id: "bebida" | "entrada" | "fondo" | "queque";
+            numeral: string;
+            tag: string;
+            name: string;
+            note?: string;
+        };
+        PublicMenuAddon: {
+            label: string;
+            hint?: string;
+            chips: string[];
+        };
+        PublicMenuItem: {
+            id: string;
+            name: string;
+            description: string;
+            meta?: string;
+            price_clp?: number;
+            price_label?: string;
+            signature?: boolean;
+            tasting_note?: string;
+            available: boolean;
+            tags?: string[];
+            allergens?: string[];
+            schedule?: components["schemas"]["PublicMenuSchedule"][];
+        };
         MenuItem: {
             id: string;
             /** @enum {string} */
@@ -2671,7 +2844,7 @@ export interface components {
              * @description Normalized menu section id.
              * @enum {string}
              */
-            section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "cakes-pies" | "bakes";
+            section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "cakes-pies" | "bakes";
             section_label?: string;
             /** @description Legacy/display section value kept for backward compatibility. */
             section: string;
@@ -2685,6 +2858,17 @@ export interface components {
         MenuOriginSummary: {
             id: string;
             name: string;
+            /** @description Short display label for UI surfaces, without supplier suffixes. */
+            display_name?: string;
+            /** @description Operational role of this coffee origin. */
+            role?: string;
+            /** @description Recommended or applicable brew method; current house, decaf, and specialty rotation coffees can be served through the espresso machine. */
+            method?: string;
+            country?: string;
+            region?: string;
+            tasting_notes?: string[];
+            /** @description True when this origin is the default origin for the item. */
+            default?: boolean;
         };
         MenuItemSpecRow: {
             label: string;
@@ -2704,7 +2888,7 @@ export interface components {
              * @description Normalized menu section id.
              * @enum {string}
              */
-            section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "cakes-pies" | "bakes";
+            section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "cakes-pies" | "bakes";
             section_label?: string;
             /** @description Legacy/display section value kept for backward compatibility. */
             section: string;
@@ -2715,6 +2899,8 @@ export interface components {
             tasting_notes: string[];
             pairings: string[];
             origin?: components["schemas"]["MenuOriginSummary"];
+            /** @description Display-ready coffee origin options for the item; includes the default origin plus current house, decaf, and specialty rotation origins when applicable. Frontends should render these as selectable/displayable origin choices for coffee detail views. */
+            origin_options?: components["schemas"]["MenuOriginSummary"][];
             prep_time_min?: number;
             caffeine_mg?: number;
             single_green: boolean;
@@ -2728,7 +2914,7 @@ export interface components {
             /** @enum {string} */
             category_id?: "coffee" | "beverage" | "breakfast" | "savory" | "entree" | "dessert";
             /** @enum {string} */
-            section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "cakes-pies" | "bakes";
+            section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "cakes-pies" | "bakes";
             section?: string;
             name?: string;
             description?: string;
@@ -2858,6 +3044,14 @@ export interface components {
              */
             purchase_at: string;
             amount_clp: number;
+        };
+        CreateReceiptClaimRequest: {
+            /** @description SumUp receipt transaction code printed on the receipt. */
+            transaction_code: string;
+        };
+        ReceiptClaimResponse: {
+            claim: components["schemas"]["MissingPointsClaim"];
+            ledger_entry: components["schemas"]["LedgerEntry"];
         };
         MissingPointsClaim: components["schemas"]["CreateMissingPointsClaimRequest"] & {
             id: string;

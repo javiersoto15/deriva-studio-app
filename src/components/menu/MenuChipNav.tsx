@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import type { MenuSection } from "../../data/menu";
-import { getCurrentSchedule, matchesSchedule } from "../../data/menu-schedule";
+import type { PublicMenuSection } from "../../api/server";
 
 type Props = {
-  sections: MenuSection[];
+  sections: PublicMenuSection[];
 };
 
 // Friendlier labels per section id — falls back to the section title with the
@@ -19,25 +18,13 @@ const SECTION_CHIP_LABELS: Record<string, string> = {
   onces: "Onces"
 };
 
-function chipLabel(section: MenuSection): string {
+function chipLabel(section: PublicMenuSection): string {
   return SECTION_CHIP_LABELS[section.id] ?? section.title.replace(/\.$/, "");
 }
 
 export function MenuChipNav({ sections }: Props) {
-  // Filter to today's schedule on the client so chip count matches the
-  // sections actually rendered. SSR renders all sections briefly (no
-  // hydration mismatch since the initial state matches the SSR snapshot),
-  // then the effect re-filters.
-  const [visibleSections, setVisibleSections] = useState<MenuSection[]>(sections);
-  useEffect(() => {
-    const schedule = getCurrentSchedule(new Date());
-    setVisibleSections(
-      sections.filter((s) => matchesSchedule(schedule, s.schedule))
-    );
-  }, [sections]);
-
-  const [activeId, setActiveId] = useState<string>(visibleSections[0]?.id ?? "");
-  const trackedIds = useMemo(() => visibleSections.map((s) => s.id), [visibleSections]);
+  const [activeId, setActiveId] = useState<string>(sections[0]?.id ?? "");
+  const trackedIds = useMemo(() => sections.map((s) => s.id), [sections]);
 
   useEffect(() => {
     const elements = trackedIds
@@ -77,7 +64,7 @@ export function MenuChipNav({ sections }: Props) {
   return (
     <nav className="menu-chipnav" aria-label="Categorías de la carta">
       <div className="menu-chipnav__row">
-        {visibleSections.map((section) => (
+        {sections.map((section) => (
           <a
             key={section.id}
             href={`#section-${section.id}`}

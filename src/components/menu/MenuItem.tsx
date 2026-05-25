@@ -1,13 +1,12 @@
-import type { MenuItem as MenuItemType } from "../../data/menu";
+import type { PublicMenuItem } from "../../api/server";
 
 type Props = {
-  item: MenuItemType;
+  item: PublicMenuItem;
   showPrices?: boolean;
-  temporarilyUnavailable?: boolean;
 };
 
-export function MenuItem({ item, showPrices = false, temporarilyUnavailable = false }: Props) {
-  const unavailable = item.unavailable === true || temporarilyUnavailable;
+export function MenuItem({ item, showPrices = false }: Props) {
+  const unavailable = item.available === false;
   return (
     <article className={`menu-item ${unavailable ? "menu-item--unavailable" : ""}`}>
       <header className="menu-item__title-row">
@@ -20,18 +19,20 @@ export function MenuItem({ item, showPrices = false, temporarilyUnavailable = fa
           ) : (
             <>
               {item.meta ? <span className="menu-item__meta">{item.meta}</span> : null}
-              {showPrices && typeof item.priceClp === "number" ? (
-                <span className="menu-item__price">$ {item.priceClp.toLocaleString("es-CL")}</span>
+              {showPrices && typeof item.price_clp === "number" ? (
+                <span className="menu-item__price">
+                  {item.price_label ?? `$ ${item.price_clp.toLocaleString("es-CL")}`}
+                </span>
               ) : null}
             </>
           )}
         </span>
       </header>
       <p className="menu-item__description">{item.description}</p>
-      {item.tastingNote && !unavailable ? (
+      {item.tasting_note && !unavailable ? (
         <aside className="menu-item__note" aria-label="Notas de cata">
           <span className="menu-item__note-bar" aria-hidden="true" />
-          <p>{item.tastingNote}</p>
+          <p>{item.tasting_note}</p>
         </aside>
       ) : null}
     </article>

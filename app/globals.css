@@ -1604,6 +1604,46 @@ address {
   white-space: nowrap;
 }
 
+/* ── Closed-today banner ── */
+.menu-closed-today {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  padding: 36px 24px 40px;
+  margin-bottom: 24px;
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.menu-closed-today__rule {
+  width: 48px;
+  height: 1px;
+  background: var(--ink);
+}
+
+.menu-closed-today__label {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.menu-closed-today__body {
+  margin: 0;
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: -0.005em;
+  color: var(--label);
+  max-width: 36ch;
+}
+
 /* ── Chapter break ── */
 .menu-chapter {
   display: flex;

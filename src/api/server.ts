@@ -102,3 +102,32 @@ export async function getOriginCard(id: string): Promise<OriginCardView | null> 
   cacheTag("menu", `menu-origin-${id}`);
   return tryGetJson<OriginCardView>(`/menu/origins/${id}`);
 }
+
+// ----- Landing /menu — backend-owned PublicMenuView -------------------------
+// Powers derivastudio.cl/menu. The backend resolves schedule (weekday vs
+// weekend), closed_today, sections, subgroups, addons, executive_menu, and
+// item availability — frontend renders verbatim. See ~/.claude/skills/
+// deriva-webapp § "Menu rendering contract".
+//
+// `schedule` is optional: omit to let the backend resolve the current
+// Santiago schedule; pass "weekday" or "weekend" only for preview/testing.
+export type PublicMenuView = components["schemas"]["PublicMenuView"];
+export type PublicMenuSection = components["schemas"]["PublicMenuSection"];
+export type PublicMenuSubgroup = components["schemas"]["PublicMenuSubgroup"];
+export type PublicMenuItem = components["schemas"]["PublicMenuItem"];
+export type PublicMenuAddon = components["schemas"]["PublicMenuAddon"];
+export type ExecutiveMenu = components["schemas"]["ExecutiveMenu"];
+export type PublicMenuSchedule = components["schemas"]["PublicMenuSchedule"];
+
+export async function getPublicMenuView(opts?: {
+  schedule?: PublicMenuSchedule;
+  locale?: "es-CL" | "en";
+}): Promise<PublicMenuView | null> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("menu", "public-menu");
+  const params = new URLSearchParams();
+  params.set("locale", opts?.locale ?? "es-CL");
+  if (opts?.schedule) params.set("schedule", opts.schedule);
+  return tryGetJson<PublicMenuView>(`/public/menu?${params.toString()}`);
+}

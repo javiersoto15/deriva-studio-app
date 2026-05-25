@@ -1,25 +1,18 @@
 import { Fragment } from "react";
-import type { MenuSection as MenuSectionType } from "../../data/menu";
-import {
-  MENU_EJECUTIVO_FIXED,
-  MENU_EJECUTIVO_TODAY,
-  type MenuEjecutivoCourse
-} from "../../data/menu-ejecutivo";
-import { matchesSchedule, type Schedule } from "../../data/menu-schedule";
+import type {
+  PublicMenuSection,
+  PublicMenuAddon,
+  ExecutiveMenu
+} from "../../api/server";
 import { MenuItem } from "./MenuItem";
 
 type Props = {
-  section: MenuSectionType;
+  section: PublicMenuSection;
   showPrices?: boolean;
-  temporarilyUnavailableIds?: ReadonlySet<string>;
-  currentSchedule?: Schedule;
-  menuEjecutivoDateLabel?: string;
 };
 
-
 // Apertura redirect map: section id → ids of sections to recommend instead.
-// Mirrors the companion app's FRONTEND_REDIRECT_SECTIONS so both surfaces tell
-// customers the same story.
+// Triggers when every item in the section is backend-marked unavailable.
 const SECTION_REDIRECTS: Record<string, ReadonlyArray<{ id: string; label: string }>> = {
   baguettes: [
     { id: "focaccias", label: "Focaccias" },
@@ -27,35 +20,18 @@ const SECTION_REDIRECTS: Record<string, ReadonlyArray<{ id: string; label: strin
   ]
 };
 
-function isFullyUnavailable(section: MenuSectionType): boolean {
+function isFullyUnavailable(section: PublicMenuSection): boolean {
   const items = section.items ?? section.subgroups?.flatMap((g) => g.items) ?? [];
-  return items.length > 0 && items.every((i) => i.unavailable === true);
+  return items.length > 0 && items.every((i) => i.available === false);
 }
 
-export function MenuSection({
-  section,
-  showPrices = false,
-  temporarilyUnavailableIds,
-  currentSchedule,
-  menuEjecutivoDateLabel
-}: Props) {
-  const isMenuEjecutivo = section.id === "menu-ejecutivo";
-  // Filter subgroups + items by day-of-week schedule when one is known.
-  const visibleSubgroups = currentSchedule
-    ? (section.subgroups ?? [])
-        .filter((g) => matchesSchedule(currentSchedule, g.schedule))
-        .map((g) => ({
-          ...g,
-          items: g.items.filter((i) => matchesSchedule(currentSchedule, i.schedule))
-        }))
-        .filter((g) => g.items.length > 0)
-    : section.subgroups;
-  const visibleItems = currentSchedule
-    ? section.items?.filter((i) => matchesSchedule(currentSchedule, i.schedule))
-    : section.items;
+export function MenuSection({ section, showPrices = false }: Props) {
+  const executive = section.executive_menu;
+  const isMenuEjecutivo = executive != null;
+  const items = section.items ?? [];
+  const subgroups = section.subgroups ?? [];
   const count =
-    (visibleItems?.length ?? 0) +
-    (visibleSubgroups?.reduce((acc, g) => acc + g.items.length, 0) ?? 0);
+    items.length + subgroups.reduce((acc, g) => acc + g.items.length, 0);
   const emphasisClass = `menu-section menu-section--${section.emphasis}`;
   const redirects = SECTION_REDIRECTS[section.id];
   const showRedirect = redirects && isFullyUnavailable(section);
@@ -68,21 +44,20 @@ export function MenuSection({
             {section.numeral}
           </span>
           <span className="menu-section__count">
-            {section.countOverride ??
-              (isMenuEjecutivo
-                ? menuEjecutivoDateLabel ?? ""
-                : showRedirect
-                  ? "vuelve pronto"
-                  : `${count} ítem${count === 1 ? "" : "s"}`)}
+            {isMenuEjecutivo
+              ? executive.date_label
+              : showRedirect
+                ? "vuelve pronto"
+                : `${count} ítem${count === 1 ? "" : "s"}`}
           </span>
         </div>
         <div className={isMenuEjecutivo ? "menu-section__title-row" : undefined}>
           <h2 id={`heading-${section.id}`} className="menu-section__title">
-            {section.fullItalic ? (
+            {section.full_italic ? (
               <em>{section.title}</em>
-            ) : section.italicWord ? (
+            ) : section.italic_word ? (
               <>
-                {section.title} <em>{section.italicWord}</em>
+                {section.title} <em>{section.italic_word}</em>
               </>
             ) : (
               section.title
@@ -90,35 +65,26 @@ export function MenuSection({
           </h2>
           {isMenuEjecutivo && showPrices ? (
             <span className="menu-section__title-price">
-              $ {MENU_EJECUTIVO_FIXED.priceClp.toLocaleString("es-CL")}
+              {executive.price_label ?? `$ ${executive.price_clp.toLocaleString("es-CL")}`}
             </span>
           ) : null}
         </div>
         {isMenuEjecutivo ? (
-          <p className="menu-section__hero-phrase">{MENU_EJECUTIVO_FIXED.hero}</p>
+          <p className="menu-section__hero-phrase">{executive.hero}</p>
         ) : null}
-        <p className={`menu-section__lede ${section.ledeItalic ? "menu-section__lede--italic" : ""}`}>
+        <p className={`menu-section__lede ${section.lede_italic ? "menu-section__lede--italic" : ""}`}>
           {section.lede}
         </p>
-        {section.serviceWindow ? (
+        {section.service_window ? (
           <p className="menu-section__hours" aria-label="Horario de servicio">
             <span className="menu-section__hours-rule" aria-hidden="true" />
-            {section.serviceWindow}
+            {section.service_window}
           </p>
         ) : null}
       </header>
 
       {isMenuEjecutivo ? (
-        <ol className="menu-ejecutivo-courses">
-          {(["bebida", "entrada", "fondo", "queque"] as const).map((key, idx) => (
-            <EjecutivoCourse
-              key={key}
-              numeral={["i", "ii", "iii", "iv"][idx]}
-              course={MENU_EJECUTIVO_TODAY.courses[key]}
-              tag={MENU_EJECUTIVO_FIXED.courseTags[key]}
-            />
-          ))}
-        </ol>
+        <ExecutiveCourses executive={executive} />
       ) : showRedirect ? (
         <div className="menu-section__redirect">
           <p className="menu-section__redirect-lede">
@@ -134,22 +100,17 @@ export function MenuSection({
             ))}
           </ul>
         </div>
-      ) : visibleItems && visibleItems.length > 0 ? (
+      ) : items.length > 0 ? (
         <div className="menu-section__items">
-          {visibleItems.map((item) => (
-            <MenuItem
-              key={item.id}
-              item={item}
-              showPrices={showPrices}
-              temporarilyUnavailable={temporarilyUnavailableIds?.has(item.id) ?? false}
-            />
+          {items.map((item) => (
+            <MenuItem key={item.id} item={item} showPrices={showPrices} />
           ))}
         </div>
       ) : null}
 
-      {visibleSubgroups?.map((group) => (
+      {subgroups.map((group) => (
         <Fragment key={group.id}>
-          {section.addonsBefore === group.id ? renderSectionAddons(section.addons) : null}
+          {section.addons_before === group.id ? renderSectionAddons(section.addons) : null}
           <div className="menu-subgroup">
             <div className="menu-subgroup__label">
               <span className="menu-diamond menu-diamond--green" aria-hidden="true" />
@@ -157,67 +118,61 @@ export function MenuSection({
             </div>
             <div className="menu-section__items">
               {group.items.map((item) => (
-                <MenuItem
-                  key={item.id}
-                  item={item}
-                  showPrices={showPrices}
-                  temporarilyUnavailable={temporarilyUnavailableIds?.has(item.id) ?? false}
-                />
+                <MenuItem key={item.id} item={item} showPrices={showPrices} />
               ))}
             </div>
-            {group.addons ? (
-              <aside className="menu-addons" aria-label={group.addons.label}>
-                <div className="menu-addons__label">{group.addons.label}</div>
-                {group.addons.hint ? <p className="menu-addons__hint">{group.addons.hint}</p> : null}
-                <ul className="menu-addons__chips">
-                  {group.addons.chips.map((chip) => (
-                    <li key={chip} className="menu-addons__chip">
-                      {chip}
-                    </li>
-                  ))}
-                </ul>
-              </aside>
-            ) : null}
+            {group.addons ? renderAddon(group.addons) : null}
           </div>
         </Fragment>
       ))}
 
-      {section.addonsBefore ? null : renderSectionAddons(section.addons)}
+      {section.addons_before ? null : renderSectionAddons(section.addons)}
     </section>
   );
 }
 
-function EjecutivoCourse({
-  numeral,
-  course,
-  tag
-}: {
-  numeral: string;
-  course: MenuEjecutivoCourse;
-  tag: string;
-}) {
+function ExecutiveCourses({ executive }: { executive: ExecutiveMenu }) {
   return (
-    <li className="menu-ejecutivo-course">
-      <span className="menu-ejecutivo-course__numeral" aria-hidden="true">
-        {numeral}.
-      </span>
-      <div className="menu-ejecutivo-course__body">
-        <span className="menu-ejecutivo-course__name">{course.name}</span>
-        {course.note ? (
-          <span className="menu-ejecutivo-course__note">{course.note}</span>
-        ) : null}
-        <span className="menu-ejecutivo-course__tag">{tag}</span>
-      </div>
-    </li>
+    <ol className="menu-ejecutivo-courses">
+      {executive.courses.map((course) => (
+        <li key={course.id} className="menu-ejecutivo-course">
+          <span className="menu-ejecutivo-course__numeral" aria-hidden="true">
+            {course.numeral}.
+          </span>
+          <div className="menu-ejecutivo-course__body">
+            <span className="menu-ejecutivo-course__name">{course.name}</span>
+            {course.note ? (
+              <span className="menu-ejecutivo-course__note">{course.note}</span>
+            ) : null}
+            <span className="menu-ejecutivo-course__tag">{course.tag}</span>
+          </div>
+        </li>
+      ))}
+    </ol>
   );
 }
 
-function renderSectionAddons(addons: MenuSectionType["addons"]) {
-  const list = Array.isArray(addons) ? addons : addons ? [addons] : [];
-  if (list.length === 0) return null;
+function renderAddon(addon: PublicMenuAddon) {
+  return (
+    <aside className="menu-addons" aria-label={addon.label}>
+      <div className="menu-addons__label">{addon.label}</div>
+      {addon.hint ? <p className="menu-addons__hint">{addon.hint}</p> : null}
+      <ul className="menu-addons__chips">
+        {addon.chips.map((chip) => (
+          <li key={chip} className="menu-addons__chip">
+            {chip}
+          </li>
+        ))}
+      </ul>
+    </aside>
+  );
+}
+
+function renderSectionAddons(addons: PublicMenuSection["addons"]) {
+  if (!addons || addons.length === 0) return null;
   return (
     <>
-      {list.map((addon) => (
+      {addons.map((addon) => (
         <aside key={addon.label} className="menu-addons menu-addons--section" aria-label={addon.label}>
           <div className="menu-addons__label">{addon.label}</div>
           {addon.hint ? <p className="menu-addons__hint">{addon.hint}</p> : null}

@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { connection } from "next/server";
-import Link from "next/link";
-import { menuSections, PRICING_OPEN_AT } from "../../../src/data/menu";
-import { getTemporarilyUnavailableItemIds } from "../../../src/data/apertura-windows";
-import { getCurrentSchedule, isClosedToday, matchesSchedule, type Schedule } from "../../../src/data/menu-schedule";
-import { getMenuEjecutivoDateLabel } from "../../../src/data/menu-ejecutivo";
+import { PRICING_OPEN_AT } from "../../../src/data/menu";
+import { getPublicMenuView, type PublicMenuView } from "../../../src/api/server";
 import { MenuChipNav } from "../../../src/components/menu/MenuChipNav";
 import { MenuSection } from "../../../src/components/menu/MenuSection";
 import { SiteNav } from "../../../src/components/landing/SiteNav";
@@ -27,97 +24,118 @@ export const metadata: Metadata = {
   }
 };
 
-const menuJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Menu",
-  "@id": `${pageUrl}#menu`,
-  name: "Carta Deriva Coffee Studio · Otoño 2026",
-  inLanguage: "es-CL",
-  url: pageUrl,
-  provider: { "@id": `${siteUrl}/#cafe` },
-  hasMenuSection: menuSections.map((section) => ({
-    "@type": "MenuSection",
-    name: section.title.replace(".", ""),
-    description: section.lede,
-    hasMenuItem: (section.items ?? section.subgroups?.flatMap((g) => g.items) ?? []).map((item) => ({
-      "@type": "MenuItem",
-      name: item.name,
-      description: item.description
+function buildMenuJsonLd(menu: PublicMenuView): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Menu",
+    "@id": `${pageUrl}#menu`,
+    name: `${menu.name} · ${menu.season}`,
+    inLanguage: menu.locale ?? "es-CL",
+    url: pageUrl,
+    provider: { "@id": `${siteUrl}/#cafe` },
+    hasMenuSection: menu.sections.map((section) => ({
+      "@type": "MenuSection",
+      name: section.title.replace(/\.$/, ""),
+      description: section.lede,
+      hasMenuItem: [
+        ...(section.items ?? []),
+        ...(section.subgroups?.flatMap((g) => g.items) ?? [])
+      ].map((item) => ({
+        "@type": "MenuItem",
+        name: item.name,
+        description: item.description
+      }))
     }))
-  }))
-};
-
-function MenuSectionsList({
-  showPrices,
-  temporarilyUnavailableIds,
-  currentSchedule,
-  closedToday = false,
-  menuEjecutivoDateLabel
-}: {
-  showPrices: boolean;
-  temporarilyUnavailableIds: ReadonlySet<string>;
-  currentSchedule?: Schedule;
-  closedToday?: boolean;
-  menuEjecutivoDateLabel?: string;
-}) {
-  const visibleSections = currentSchedule
-    ? menuSections.filter((s) => matchesSchedule(currentSchedule, s.schedule))
-    : menuSections;
-  return (
-    <>
-      {closedToday ? (
-        <aside className="menu-closed-today" aria-label="Aviso de cierre">
-          <span className="menu-closed-today__rule" aria-hidden="true" />
-          <span className="menu-closed-today__label">CERRADO HOY · ABRIMOS MAÑANA</span>
-        </aside>
-      ) : null}
-      {visibleSections.map((section) => (
-        <div key={section.id}>
-          {section.id === "tostadas" ? (
-            <aside className="menu-chapter" aria-label="Pausa editorial">
-              <span className="menu-chapter__rule" aria-hidden="true" />
-              <p className="menu-chapter__quote">
-                «Cuando el pan está bien hecho, el resto de la mesa se ordena solo.»
-              </p>
-              <p className="menu-chapter__caption">Panadería · Cocina</p>
-              <span className="menu-chapter__rule" aria-hidden="true" />
-            </aside>
-          ) : null}
-          <MenuSection
-            section={section}
-            showPrices={showPrices}
-            temporarilyUnavailableIds={temporarilyUnavailableIds}
-            currentSchedule={currentSchedule}
-            menuEjecutivoDateLabel={menuEjecutivoDateLabel}
-          />
-        </div>
-      ))}
-    </>
-  );
+  };
 }
 
-// Resolves the real price-reveal flag at request time. Wrapped in <Suspense>
-// at the call-site so the surrounding shell can prerender; the fallback
-// renders the same list with prices hidden, which matches pre-cutoff behavior.
-async function PricedMenuSections() {
+// Renders the live menu chrome (chipnav + sections) from the backend
+// /public/menu payload. Wrapped in <Suspense> so the marketing shell paints
+// while the menu fetch resolves. `connection()` keeps the price-reveal gate
+// dynamic — same behavior as before, only the source data swapped.
+async function LiveMenu() {
   await connection();
-  // Local override — set DERIVA_SHOW_PRICES=1 in .env.local to preview prices
-  // before the apertura cutoff. In production this env var stays unset.
+  const menu = await getPublicMenuView();
+  if (!menu) {
+    return null;
+  }
   const forceShow = process.env.DERIVA_SHOW_PRICES === "1";
   const showPrices = forceShow || Date.now() >= PRICING_OPEN_AT.getTime();
-  const now = new Date();
-  const temporarilyUnavailableIds = getTemporarilyUnavailableItemIds(now);
-  const currentSchedule = getCurrentSchedule(now);
-  const closedToday = isClosedToday(now);
-  const menuEjecutivoDateLabel = getMenuEjecutivoDateLabel(now);
   return (
-    <MenuSectionsList
-      showPrices={showPrices}
-      temporarilyUnavailableIds={temporarilyUnavailableIds}
-      currentSchedule={currentSchedule}
-      closedToday={closedToday}
-      menuEjecutivoDateLabel={menuEjecutivoDateLabel}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildMenuJsonLd(menu)) }}
+      />
+      <MenuChipNav sections={menu.sections} />
+      <div className="menu-content">
+        <aside className="menu-sidebar" aria-hidden="true">
+          <div className="menu-sidebar__group">
+            <p className="menu-sidebar__label">Bebidas</p>
+            <ul className="menu-sidebar__list menu-sidebar__list--active">
+              <li>
+                <a href="#section-cafeteria">
+                  <span className="menu-diamond" aria-hidden="true" />
+                  Cafetería
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div className="menu-sidebar__group">
+            <p className="menu-sidebar__label">Cocina</p>
+            <ul className="menu-sidebar__list">
+              <li><a href="#section-desayunos">Desayunos y Brunch</a></li>
+              <li><a href="#section-croissants">Croissants</a></li>
+              <li><a href="#section-baguettes">Baguettes</a></li>
+              <li><a href="#section-tostadas">Tostadas Gourmet</a></li>
+              <li><a href="#section-focaccias">Focaccias</a></li>
+              <li><a href="#section-cocina">Cocina</a></li>
+              <li><a href="#section-pasteleria">Pastelería y Dulces</a></li>
+            </ul>
+          </div>
+          <div className="menu-sidebar__group">
+            <p className="menu-sidebar__label">Servicio</p>
+            <p className="menu-sidebar__service">
+              Lun–Vie 08:00–21:00
+              <br />
+              Sáb 10:00–21:00
+              <br />
+              Magnere 1570 Local 105
+            </p>
+          </div>
+        </aside>
+
+        <div className="menu-column">
+          {menu.closed_today ? (
+            <aside className="menu-closed-today" aria-label="Aviso de cierre">
+              <span className="menu-closed-today__rule" aria-hidden="true" />
+              <span className="menu-closed-today__label">
+                CERRADO HOY · TE MOSTRAMOS LA CARTA DEL LUNES
+              </span>
+              <p className="menu-closed-today__body">
+                Hoy descansamos. Esta carta queda visible para que puedas planificar tu visita de mañana.
+              </p>
+            </aside>
+          ) : null}
+          {menu.sections.map((section) => (
+            <div key={section.id}>
+              {section.id === "tostadas" ? (
+                <aside className="menu-chapter" aria-label="Pausa editorial">
+                  <span className="menu-chapter__rule" aria-hidden="true" />
+                  <p className="menu-chapter__quote">
+                    «Cuando el pan está bien hecho, el resto de la mesa se ordena solo.»
+                  </p>
+                  <p className="menu-chapter__caption">Panadería · Cocina</p>
+                  <span className="menu-chapter__rule" aria-hidden="true" />
+                </aside>
+              ) : null}
+              <MenuSection section={section} showPrices={showPrices} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
   );
 }
 
@@ -126,12 +144,6 @@ export default function MenuPage() {
     <>
       <SiteNav active="carta" variant="solid" />
       <main className="menu-page menu-page--with-nav" aria-labelledby="menu-title">
-        <script
-          type="application/ld+json"
-          // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(menuJsonLd) }}
-        />
-
         <div className="menu-outer">
 
         <div className="menu-sheet">
@@ -167,58 +179,9 @@ export default function MenuPage() {
             <p className="menu-preamble__sign">— El equipo de Deriva</p>
           </section>
 
-          <MenuChipNav sections={menuSections} />
-
-          <div className="menu-content">
-            <aside className="menu-sidebar" aria-hidden="true">
-              <div className="menu-sidebar__group">
-                <p className="menu-sidebar__label">Bebidas</p>
-                <ul className="menu-sidebar__list menu-sidebar__list--active">
-                  <li>
-                    <a href="#section-cafeteria">
-                      <span className="menu-diamond" aria-hidden="true" />
-                      Cafetería
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              <div className="menu-sidebar__group">
-                <p className="menu-sidebar__label">Cocina</p>
-                <ul className="menu-sidebar__list">
-                  <li><a href="#section-desayunos">Desayunos y Brunch</a></li>
-                  <li><a href="#section-croissants">Croissants</a></li>
-                  <li><a href="#section-baguettes">Baguettes</a></li>
-                  <li><a href="#section-tostadas">Tostadas Gourmet</a></li>
-                  <li><a href="#section-focaccias">Focaccias</a></li>
-                  <li><a href="#section-cocina">Cocina</a></li>
-                  <li><a href="#section-pasteleria">Pastelería y Dulces</a></li>
-                </ul>
-              </div>
-              <div className="menu-sidebar__group">
-                <p className="menu-sidebar__label">Servicio</p>
-                <p className="menu-sidebar__service">
-                  Lun–Vie 08:00–21:00
-                  <br />
-                  Sáb 10:00–21:00
-                  <br />
-                  Magnere 1570 Local 105
-                </p>
-              </div>
-            </aside>
-
-            <div className="menu-column">
-              <Suspense
-                fallback={
-                  <MenuSectionsList
-                    showPrices={false}
-                    temporarilyUnavailableIds={new Set()}
-                  />
-                }
-              >
-                <PricedMenuSections />
-              </Suspense>
-            </div>
-          </div>
+          <Suspense fallback={null}>
+            <LiveMenu />
+          </Suspense>
 
           <section className="menu-closing" aria-label="Estamos abiertos">
             <div className="menu-closing__left">
