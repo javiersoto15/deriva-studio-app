@@ -71,10 +71,11 @@ export function MenuSection({ section, showPrices = false }: Props) {
         </div>
         {isMenuEjecutivo ? (
           <p className="menu-section__hero-phrase">{executive.hero}</p>
-        ) : null}
-        <p className={`menu-section__lede ${section.lede_italic ? "menu-section__lede--italic" : ""}`}>
-          {section.lede}
-        </p>
+        ) : (
+          <p className={`menu-section__lede ${section.lede_italic ? "menu-section__lede--italic" : ""}`}>
+            {section.lede}
+          </p>
+        )}
         {section.service_window ? (
           <p className="menu-section__hours" aria-label="Horario de servicio">
             <span className="menu-section__hours-rule" aria-hidden="true" />

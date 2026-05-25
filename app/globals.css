@@ -1604,6 +1604,102 @@ address {
   white-space: nowrap;
 }
 
+/* ── Menu Ejecutivo (editorial set-menu block) ── */
+.menu-section__title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.menu-section__title-price {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.menu-section__hero-phrase {
+  margin: 8px 0 0;
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 22px;
+  line-height: 28px;
+  letter-spacing: -0.005em;
+  color: var(--ink);
+}
+
+.menu-ejecutivo-courses {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-ejecutivo-course {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  align-items: baseline;
+  gap: 14px;
+  padding: 18px 0;
+  border-top: 1px solid var(--hairline);
+}
+
+.menu-ejecutivo-course:last-child {
+  border-bottom: 1px solid var(--hairline);
+}
+
+.menu-ejecutivo-course__numeral {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--label);
+  text-transform: lowercase;
+}
+
+.menu-ejecutivo-course__body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.menu-ejecutivo-course__name {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 19px;
+  line-height: 24px;
+  letter-spacing: -0.005em;
+  color: var(--ink);
+}
+
+.menu-ejecutivo-course__note {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--muted);
+}
+
+.menu-ejecutivo-course__tag {
+  margin-top: 2px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--green);
+}
+
 /* ── Closed-today banner ── */
 .menu-closed-today {
   display: flex;
