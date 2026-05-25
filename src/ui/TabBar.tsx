@@ -12,13 +12,14 @@ import {
 } from "react";
 import { colors } from "../design/tokens";
 
-export type TabKey = "carta" | "codigo" | "cartera" | "estudio";
+export type TabKey = "hoy" | "carta" | "codigo" | "cartera" | "estudio";
 
 export type TabBarProps = {
   active: TabKey;
 };
 
 const TABS: { key: TabKey; label: string; href: string }[] = [
+  { key: "hoy", label: "Hoy", href: "/hoy" },
   { key: "carta", label: "Carta", href: "/carta" },
   { key: "codigo", label: "Código", href: "/codigo" },
   { key: "cartera", label: "Cartera", href: "/cartera" },

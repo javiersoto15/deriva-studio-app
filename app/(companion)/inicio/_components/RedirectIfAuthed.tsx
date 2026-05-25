@@ -15,7 +15,7 @@ export function RedirectIfAuthed() {
 
   useEffect(() => {
     if (status === "authenticated") {
-      router.replace("/carta");
+      router.replace("/hoy");
     }
   }, [status, router]);
 

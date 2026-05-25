@@ -9,6 +9,7 @@ import { TabBar, type TabKey } from "./TabBar";
 // startsWith() matching below. Keep keys sorted by specificity — the first
 // match wins.
 const ROUTE_TABS: ReadonlyArray<{ prefix: string; tab: TabKey }> = [
+  { prefix: "/hoy", tab: "hoy" },
   { prefix: "/favoritos", tab: "carta" },
   { prefix: "/feedback", tab: "carta" },
   { prefix: "/actividad", tab: "cartera" },
@@ -42,7 +43,7 @@ function activeTabFor(pathname: string): TabKey | null {
 
 // Tier 5 — Routes worth pre-warming the moment the user lands on any companion
 // page. Tab switches should hit a warm RSC cache and feel near-instant.
-const PREFETCH_TARGETS = ["/carta", "/codigo", "/cartera", "/estudio"];
+const PREFETCH_TARGETS = ["/hoy", "/carta", "/codigo", "/cartera", "/estudio"];
 
 // Persistent TabBar — rendered once at the companion layout level so it
 // survives client-side navigation between tabs. Eliminates the unmount /
