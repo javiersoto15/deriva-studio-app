@@ -315,7 +315,7 @@ export const menuSections: MenuSection[] = [
         priceClp: 16900,
         signature: true,
         description:
-          "Brunch abundante para una persona que reúne las tres líneas de desayuno: huevos a elección con tocino crocante, tostadas de masa madre, yogurt con granola y fruta de estación, french toast, croissant y untables dulces."
+          "Brunch abundante para una persona que reúne las tres líneas de desayuno: huevos a elección con tocino crocante, tostadas de masa madre, yogurt con granola y fruta de estación, y french toast."
       },
     ],
     addons: {
@@ -385,7 +385,7 @@ export const menuSections: MenuSection[] = [
         priceClp: 16900,
         signature: true,
         description:
-          "Brunch abundante para una persona que reúne las tres líneas de desayuno: huevos a elección con tocino crocante, tostadas de masa madre, yogurt con granola y fruta de estación, french toast, croissant y untables dulces."
+          "Brunch abundante para una persona que reúne las tres líneas de desayuno: huevos a elección con tocino crocante, tostadas de masa madre, yogurt con granola y fruta de estación, y french toast."
       }
     ],
     addons: {
@@ -667,7 +667,7 @@ export const menuSections: MenuSection[] = [
     title: "Pastelería y",
     italicWord: "Dulces.",
     emphasis: "utility",
-    lede: "Selección de pastelería artesanal de proveedor, con precios fijos según carta vigente.",
+    lede: "Selección de pastelería artesanal de proveedor. Consulta con el equipo qué dulces hay disponibles hoy: la vitrina rota a diario y no siempre están todos.",
     subgroups: [
       {
         id: "pies-tortas",
@@ -679,6 +679,27 @@ export const menuSections: MenuSection[] = [
             meta: "Precio fijo",
             priceClp: 3200,
             description: "Crema cítrica de limón sobre masa quebrada, terminada con merengue dorado a la llama."
+          },
+          {
+            id: "pie-frambuesa",
+            name: "Pie de Frambuesa",
+            meta: "Precio fijo",
+            priceClp: 3200,
+            description: "Frambuesas de temporada sobre masa quebrada, con dulzor preciso y final ácido."
+          },
+          {
+            id: "tres-leches",
+            name: "Torta Tres Leches",
+            meta: "Precio fijo",
+            priceClp: 4800,
+            description: "Bizcocho empapado en tres leches con crema pastelera. Húmedo, fresco, dulzor controlado."
+          },
+          {
+            id: "cuatro-leches",
+            name: "Torta Cuatro Leches",
+            meta: "Precio fijo",
+            priceClp: 5000,
+            description: "Versión generosa del clásico: bizcocho empapado en cuatro leches, miga densa y dulzor profundo."
           },
           {
             id: "kuchen-nuez",
@@ -715,13 +736,6 @@ export const menuSections: MenuSection[] = [
             priceClp: 3500,
             description:
               "Bizcocho cítrico con glaseado de limón fresco. Miga húmeda, final aromático y dulzor preciso."
-          },
-          {
-            id: "oreo-cheesecake",
-            name: "Oreo Cheesecake",
-            meta: "Precio fijo",
-            priceClp: 4900,
-            description: "Cheesecake cremoso sobre base de galleta de cacao, terminado con trozos de Oreo. Postre de mesa larga."
           }
         ]
       },
@@ -756,6 +770,20 @@ export const menuSections: MenuSection[] = [
             meta: "Precio fijo",
             priceClp: 2900,
             description: "Chocolate denso de corteza fina y centro fundente, con chips que se rinden al primer mordisco."
+          },
+          {
+            id: "muffin-arandano",
+            name: "Muffin de Arándano",
+            meta: "Precio fijo",
+            priceClp: 2500,
+            description: "Miga aireada con arándanos enteros que estallan al horno. Acidez fresca contra el café del día."
+          },
+          {
+            id: "muffin-chips",
+            name: "Muffin Chips",
+            meta: "Precio fijo",
+            priceClp: 2500,
+            description: "Muffin de vainilla con chips de chocolate semiamargo. Compañía clásica para un filtrado de media tarde."
           },
           {
             id: "seleccion-alfajores",
