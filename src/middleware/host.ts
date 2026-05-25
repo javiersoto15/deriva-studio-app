@@ -50,6 +50,7 @@ const LANDING_PREFIXES = [
 // Mirrors directories under app/(companion)/.
 const COMPANION_PREFIXES = [
   "/inicio",
+  "/hoy",
   "/carta",
   "/cartera",
   "/codigo",
