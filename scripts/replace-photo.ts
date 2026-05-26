@@ -9,10 +9,10 @@
 // Usage:
 //   npx tsx scripts/replace-photo.ts <slug> <master-path>
 //
-// Note: the bucket sets Cache-Control: immutable, so existing CDN edges
-// and browsers may serve the old image until their cache expires. For
-// guaranteed propagation, bump VERSION_PREFIX in upload-photos.ts and
-// re-upload all masters.
+// Note: the bucket sets Cache-Control: public, max-age=300 (no immutable),
+// so overwrites propagate to browsers within ~5 minutes. For guaranteed
+// instant propagation (e.g. a hero swap), bump VERSION_PREFIX in
+// upload-photos.ts and re-upload all masters.
 
 import sharp from "sharp";
 import { promises as fs } from "node:fs";
@@ -64,7 +64,7 @@ async function uploadOne(
       tmp,
       `gs://${BUCKET}/${key}`,
       `--content-type=${contentType}`,
-      "--cache-control=public, max-age=31536000, immutable",
+      "--cache-control=public, max-age=300",
       "--quiet"
     ]);
   } finally {

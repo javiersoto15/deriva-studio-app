@@ -8,8 +8,9 @@
 //   <slug>-<w>.webp   (same widths)
 //   <slug>-<w>.jpg    (same widths)
 //
-// Each upload sets Cache-Control: public, max-age=31536000, immutable.
-// Bumps to a new prefix (v2, v3, …) when re-cropping or replacing photos.
+// Each upload sets Cache-Control: public, max-age=300 (short TTL, no
+// immutable), so overwrites propagate within ~5 minutes. Bump to a new
+// prefix (v2, v3, …) only when you need guaranteed instant propagation.
 //
 // At the end writes src/data/photos.ts — a typed manifest the rest of the
 // app reads to render <picture> / srcset. The bucket URL is never hardcoded
@@ -105,7 +106,7 @@ async function upload(file: GeneratedFile): Promise<void> {
       tmp,
       `gs://${BUCKET}/${key}`,
       `--content-type=${file.contentType}`,
-      "--cache-control=public, max-age=31536000, immutable",
+      "--cache-control=public, max-age=300",
       "--quiet"
     ]);
   } finally {
