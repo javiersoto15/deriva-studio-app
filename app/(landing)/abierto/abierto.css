@@ -22,9 +22,9 @@ html, body { background: var(--ab-plaster); margin: 0; }
 
    Crossfade is CSS-driven (kiosk TVs throttle JS timers, so animations
    on the compositor are far more reliable). Cycle = 65s total:
-     0  → 19.2s : Abierto solo                              (29.54%)
-     19.2 → 20s : crossfade Abierto → Menu Ejecutivo         (30.77%)
-     20 → 64.2s : Menu Ejecutivo solo                        (98.77%)
+     0  → 44.2s : Abierto solo                              (67.69%)
+     44.2 → 45s : crossfade Abierto → Menu Ejecutivo         (69.23%)
+     45 → 64.2s : Menu Ejecutivo solo                        (98.77%)
      64.2 → 65s : crossfade Menu Ejecutivo → Abierto         (100%) */
 .ab-rotator {
   position: relative;
@@ -55,13 +55,13 @@ html, body { background: var(--ab-plaster); margin: 0; }
 }
 
 @keyframes ab-rotator-fade-0 {
-  0%, 29.54% { opacity: 1; }
-  30.77%, 98.77% { opacity: 0; }
+  0%, 67.69% { opacity: 1; }
+  69.23%, 98.77% { opacity: 0; }
   100% { opacity: 1; }
 }
 @keyframes ab-rotator-fade-1 {
-  0%, 29.54% { opacity: 0; }
-  30.77%, 98.77% { opacity: 1; }
+  0%, 67.69% { opacity: 0; }
+  69.23%, 98.77% { opacity: 1; }
   100% { opacity: 0; }
 }
 
