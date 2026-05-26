@@ -18,27 +18,31 @@ RESEND_AUDIENCE_ID=...
 RESEND_FROM_EMAIL=hola@derivastudio.cl
 RESEND_FROM_NAME=Deriva Coffee Studio
 BACKEND_API_BASE_URL=https://<cloud-run-host>           # script-only, full URL
-BACKEND_ADMIN_TOKEN=<fresh Firebase ID token, see §2>
 ```
+
+**Do NOT put `BACKEND_ADMIN_TOKEN` in `.env.local`.** Admin tokens are minted per-run by the `:agent` npm scripts via the operations-agent helper in the backend repo (see §2). The token never touches disk. If you find a stale `BACKEND_ADMIN_TOKEN=…` line in `.env.local` from earlier workflows, delete it.
 
 **Why `BACKEND_API_BASE_URL` and not `NEXT_PUBLIC_API_BASE_URL`:** the runtime webapp's `NEXT_PUBLIC_API_BASE_URL` is set to `/api` (the Next.js rewrite path used by the browser), which a Node.js script can't proxy through. The script needs the direct Cloud Run hostname. The script will refuse to run if `BACKEND_API_BASE_URL` is missing or not a full `https://` URL. Get the current Cloud Run hostname from `reference_deriva_companion_deploy.md` in auto-memory or from the Vercel production env (under `NEXT_PUBLIC_API_BASE_URL`).
 
-### 2. Obtain a fresh `BACKEND_ADMIN_TOKEN`
+### 2. Admin auth via the operations-agent (no manual token paste)
 
-Firebase ID tokens expire in ~1 hour. Get a fresh one right before running:
+Backend `/admin/*` calls are authenticated as `menu-agent@derivastudio.cl` (the Deriva operations agent). The agent's password lives in macOS Keychain on the operator's machine. The `:agent` npm scripts shell out to `13_companion_backend/scripts/menu_agent_token.sh` via `bash scripts/with-admin-token.sh`, mint a fresh Firebase ID token, export it as `BACKEND_ADMIN_TOKEN` only for the child process, and never write it to disk or print it.
 
-1. Sign in to the companion app at `https://app.derivastudio.cl` as an owner-role user (Firebase manager/owner roles authorize `/admin/campaign-codes`).
-2. Open browser devtools → Application → Local Storage → find the Firebase key matching the project (looks like `firebase:authUser:...`).
-3. Copy the `stsTokenManager.accessToken` value. That's your Firebase ID token.
-4. Paste it into `.env.local` as `BACKEND_ADMIN_TOKEN=...`
+Prereqs (one-time per machine):
 
-If the token expires mid-run, the script will fail. Re-obtain and re-run with `--only=<failed emails>` (codes are idempotent, so retries are safe).
+1. Clone `13_companion_backend` as a sibling of `10_webapp/`.
+2. Store the operations-agent password in Keychain under service `deriva-menu-agent`, account `menu-agent@derivastudio.cl`. The backend repo's setup notes cover this.
+3. Confirm: `cd ../13_companion_backend && make --silent menu-agent-env | head -1` prints an `export DERIVA_OPERATIONS_AGENT_EMAIL=…` line (the token itself is on the next line — don't print it).
+
+Firebase ID tokens still expire in ~1 hour, but each `:agent` invocation mints a fresh one, so the expiry is per-command rather than per-shell-session. There is no manual token paste. The legacy devtools-localStorage flow is deprecated and should not be used.
 
 ### 3. Dry run against production backend
 
 ```bash
-npm run send:apertura:dry -- --campaign-id=apertura-2026-05
+npm run send:apertura:agent:dry -- --campaign-id=apertura-2026-05
 ```
+
+The `:agent` variant is the canonical path. The non-`:agent` scripts (`send:apertura:dry`, etc.) still exist for emergencies where the agent helper is unavailable, but they require manually setting `BACKEND_ADMIN_TOKEN` in the current shell — never paste it into `.env.local`.
 
 What this does:
 - Pulls all contacts from the Resend audience
@@ -60,7 +64,7 @@ Open `tmp/apertura-sample-*.html` in a browser. Check:
 ### 5. Send live to 2-3 test addresses
 
 ```bash
-npm run send:apertura -- --campaign-id=apertura-2026-05 --only=javier@personal.cl,test2@personal.cl
+npm run send:apertura:agent -- --campaign-id=apertura-2026-05 --only=javier@personal.cl,test2@personal.cl
 ```
 
 Verify in:
@@ -86,14 +90,15 @@ WHERE campaign_id = 'apertura-2026-05'
 - [ ] Backend healthcheck: `curl ${NEXT_PUBLIC_API_BASE_URL}/health` returns 200
 - [ ] Resend dashboard: domain still verified, no recent bounce spike
 - [ ] `git pull` confirms script + template haven't drifted from rehearsal
-- [ ] `.env.local` populated; **`BACKEND_ADMIN_TOKEN` re-obtained within the last hour**
+- [ ] `.env.local` populated with Resend keys + `BACKEND_API_BASE_URL` only (no `BACKEND_ADMIN_TOKEN`)
+- [ ] `make --silent menu-agent-env` in the backend repo succeeds (proves Keychain + helper work)
 - [ ] `npm run typecheck` passes
 - [ ] `npm run email:build` succeeds (sanity check, not strictly required since send script renders inline)
 
 ### The send
 
 ```bash
-npm run send:apertura -- --campaign-id=apertura-2026-05
+npm run send:apertura:agent -- --campaign-id=apertura-2026-05
 ```
 
 Script output will report batch progress and a final summary. Expected runtime: <30s for a few hundred contacts.
@@ -140,8 +145,10 @@ For batches, the bulk endpoint handles up to ~500 in one call. If a recipient si
 
 | Symptom | Fix |
 |---|---|
-| Backend 401 | `BACKEND_ADMIN_TOKEN` expired. Re-obtain (§2) and re-run with `--only=<remaining emails>`. |
-| Backend 403 | Token is for a non-owner/manager user. Sign in as owner and re-obtain. |
+| Backend 401 | Token expired (rare with `:agent` variant since each run mints fresh). Simply re-run with `--only=<remaining emails>`. |
+| Backend 403 | The operations-agent user lost owner/manager role on Firebase. Restore the role; do not work around. |
+| `with-admin-token: failed to mint operations-agent token` | Keychain entry missing or backend helper broken. Re-add the agent password (`security add-generic-password -a menu-agent@derivastudio.cl -s deriva-menu-agent -w`) or rerun the backend helper directly to see its stderr. |
+| `companion backend not found next to webapp` | Clone `13_companion_backend` as a sibling of `10_webapp/`. The `:agent` scripts resolve it via relative path. |
 | Resend rate limit (429) | Wait 60s, re-run with `--only=<failed emails from CSV>`. Codes are idempotent. |
 | Partial batch failure | Audit CSV records `status=failed` per email. Re-run script with `--only=<comma-separated failed emails>`. |
 | Sent to wrong audience | There is no recall. Send a correction immediately; don't try to silently fix. |
@@ -158,7 +165,9 @@ For batches, the bulk endpoint handles up to ~500 in one call. If a recipient si
 4. **Duplicate the send script**: copy `scripts/send-apertura-codes.ts` → `scripts/send-<campaign-id>.ts`. Change the email-template import. Everything else stays.
 5. **Mirror this runbook** at `docs/email/<campaign-id>-runbook.md`. Update the campaign-id, send window, copy details. The structure (pre-flight, dry-run, send, post-send, recovery) is reusable.
 6. **Backend-side, nothing new is needed.** The campaign-codes endpoint accepts any `campaign_id` string. Issuance is idempotent on `(campaign_id, email)`, so re-running is safe.
-7. **Add an npm script** to `package.json` pointing at the new send script (`send:<campaign>` + `send:<campaign>:dry`).
+7. **Add npm scripts** to `package.json` pointing at the new send script. Always add four variants:
+   - `send:<campaign>` and `send:<campaign>:dry` — direct invocations (require `BACKEND_ADMIN_TOKEN` in the shell, not in `.env.local`)
+   - `send:<campaign>:agent` and `send:<campaign>:agent:dry` — wrapped via `bash scripts/with-admin-token.sh` so the operations-agent mints the token per-run. **The `:agent` variants are the default path; the direct variants are emergency-only.**
 
 The architectural decision (set 2026-05-14): **all external-code reward distribution goes through `campaign-codes`.** No parallel systems. No real-time staff lookup/redeem endpoints. Verification is always offline-CSV at point of sale; recording is always post-hoc bulk redeem.
 

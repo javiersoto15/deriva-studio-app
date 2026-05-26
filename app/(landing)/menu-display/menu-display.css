@@ -142,6 +142,16 @@ html, body { background: var(--md-plaster); }
   font-family: var(--font-mono), "IBM Plex Mono", monospace;
   font-weight: 500; font-size: 13px; color: var(--md-ink);
 }
+/* "— pregunta en vitrina —" tail line under the capped Pastelería list. */
+.md-pastry__more {
+  display: block;
+  padding-top: 8px;
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic; font-weight: 400;
+  font-size: 14px; line-height: 18px;
+  color: var(--md-faint);
+  text-align: center;
+}
 
 /* === Menu Ejecutivo boxed module === */
 .md-ejec { display: flex; flex-direction: column; padding: 20px 22px; background: var(--md-box); border: 1px solid var(--md-hairline); }

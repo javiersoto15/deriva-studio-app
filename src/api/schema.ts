@@ -747,6 +747,53 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/me/menu": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get the authenticated companion menu view
+         * @description Authenticated companion-safe alias for the canonical public menu presentation. Returns the same PublicMenuView shape and is served by the same backend PublicMenuView builder/store path as GET /public/menu, including weekday/weekend structure, Sunday closed-state, add-ons, and Menu Ejecutivo.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description Resolve backend-driven menu copy for this locale. Defaults to es-CL and falls back to es-CL when unsupported. */
+                    locale?: "es-CL" | "en";
+                    /** @description Preview the day-specific menu structure. Defaults to the current Santiago schedule; Friday/Saturday are weekend, Sunday is closed but returns weekday structure. */
+                    schedule?: components["schemas"]["PublicMenuSchedule"];
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Companion menu presentation view. Body is identical to GET /public/menu for the same locale and schedule. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PublicMenuView"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                500: components["responses"]["InternalServerError"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/me/claims": {
         parameters: {
             query?: never;
@@ -1267,7 +1314,7 @@ export interface paths {
         };
         /**
          * Get the public landing menu view
-         * @description Backend-owned menu presentation view for the public landing menu. Keeps /menu as the flat companion item list while exposing the canonical weekday/weekend landing structure, including Menu Ejecutivo on weekdays and the regular weekend menu split. The public view is generated from the current backend catalog so the live site does not silently inherit stale persisted menu rows.
+         * @description Backend-owned menu presentation view for the public landing menu. Keeps /menu as the flat companion item list while exposing the canonical weekday/weekend landing structure, including Menu Ejecutivo on weekdays and the regular weekend menu split. The public view is composed from persisted menu_items plus persisted public menu presentation rows so the live site consumes backend data instead of static frontend/menu code.
          */
         get: {
             parameters: {

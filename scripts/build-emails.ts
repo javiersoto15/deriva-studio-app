@@ -9,6 +9,10 @@ import AperturaActivation, {
   AperturaActivationSubject,
   AperturaActivationPreview,
 } from "../src/emails/AperturaActivation";
+import AperturaReminder, {
+  AperturaReminderSubject,
+  AperturaReminderPreview,
+} from "../src/emails/AperturaReminder";
 
 function stripImagePreloads(html: string): string {
   return html.replace(
@@ -56,6 +60,22 @@ const templates: Template[] = [
           await render(AperturaActivation(props), { pretty: true }),
         ),
         text: await render(AperturaActivation(props), { plainText: true }),
+      };
+    },
+  },
+  {
+    name: "Apertura Reminder",
+    subject: AperturaReminderSubject,
+    preview: AperturaReminderPreview,
+    htmlOut: resolve("docs/email/apertura-reminder.html"),
+    txtOut: resolve("docs/email/apertura-reminder.txt"),
+    render: async () => {
+      const props = AperturaReminder.PreviewProps;
+      return {
+        html: stripImagePreloads(
+          await render(AperturaReminder(props), { pretty: true }),
+        ),
+        text: await render(AperturaReminder(props), { plainText: true }),
       };
     },
   },

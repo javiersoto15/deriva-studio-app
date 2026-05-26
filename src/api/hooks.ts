@@ -20,10 +20,19 @@ export type RewardRedemptionTokenResponse = components["schemas"]["RewardRedempt
 export type StaffLookupRequest = components["schemas"]["StaffLookupRequest"];
 export type StaffLookupResponse = components["schemas"]["StaffLookupResponse"];
 export type MenuItem = components["schemas"]["MenuItem"];
+export type PublicMenuView = components["schemas"]["PublicMenuView"];
+export type PublicMenuSection = components["schemas"]["PublicMenuSection"];
+export type PublicMenuSubgroup = components["schemas"]["PublicMenuSubgroup"];
+export type PublicMenuItem = components["schemas"]["PublicMenuItem"];
+export type PublicMenuAddon = components["schemas"]["PublicMenuAddon"];
+export type ExecutiveMenu = components["schemas"]["ExecutiveMenu"];
+export type PublicMenuSchedule = components["schemas"]["PublicMenuSchedule"];
 export type OriginCard = components["schemas"]["OriginCard"];
 export type CreateMemberRequest = components["schemas"]["CreateMemberRequest"];
 export type CreateMissingPointsClaimRequest = components["schemas"]["CreateMissingPointsClaimRequest"];
 export type MissingPointsClaim = components["schemas"]["MissingPointsClaim"];
+export type CreateReceiptClaimRequest = components["schemas"]["CreateReceiptClaimRequest"];
+export type ReceiptClaimResponse = components["schemas"]["ReceiptClaimResponse"];
 export type FeedbackRequest = components["schemas"]["FeedbackRequest"];
 export type LedgerEntry = components["schemas"]["LedgerEntry"];
 export type IdentitySummary = components["schemas"]["IdentitySummary"];
@@ -390,6 +399,23 @@ export function useMenu(filters: MenuFilters = {}) {
   });
 }
 
+export function useCompanionMenu(
+  locale: BackendLocale = DEFAULT_BACKEND_LOCALE,
+  schedule?: PublicMenuSchedule
+) {
+  return useQuery<PublicMenuView>({
+    queryKey: ["me", "menu", locale, schedule ?? "current"],
+    queryFn: async () => {
+      const { data, error } = await apiClient.GET("/me/menu", {
+        params: { query: { locale, ...(schedule ? { schedule } : {}) } }
+      });
+      if (error) throw error;
+      return data as PublicMenuView;
+    },
+    staleTime: 5 * 60_000
+  });
+}
+
 // Backend: wired. ?locale picks the localized name/description/tasting_notes/
 // allergens copy on the response.
 export function useMenuItem(id: string, locale: BackendLocale = DEFAULT_BACKEND_LOCALE) {
@@ -437,6 +463,35 @@ export function useSubmitClaim() {
       void queryClient.invalidateQueries({ queryKey: ["me", "claims"] });
       void queryClient.invalidateQueries({ queryKey: ["me", "activity"] });
       void queryClient.invalidateQueries({ queryKey: ["me", "balance"] });
+    }
+  });
+}
+
+// Backend: wired. POST /me/receipt-claims — verifies a SumUp transaction
+// server-side and (if successful and unclaimed) awards Deriva Points
+// immediately. Distinct from useSubmitClaim, which is the legacy manual
+// missing-points path. Errors propagate with HTTP status attached so the
+// caller can map 400/404/502/503 to inline copy; meta.silent suppresses
+// the generic global toast for this granular UX.
+export function useSubmitReceiptClaim() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    meta: { silent: true },
+    mutationFn: async (body: CreateReceiptClaimRequest): Promise<ReceiptClaimResponse> => {
+      const { data, error, response } = await apiClient.POST("/me/receipt-claims", { body });
+      if (error || !data) {
+        throw Object.assign(
+          new Error(`POST /me/receipt-claims failed: ${response.status}`),
+          { status: response.status, body: error }
+        );
+      }
+      return data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["me", "balance"] });
+      void queryClient.invalidateQueries({ queryKey: ["me", "activity"] });
+      void queryClient.invalidateQueries({ queryKey: ["me", "claims"] });
+      void queryClient.invalidateQueries({ queryKey: ["me", "rewards"] });
     }
   });
 }

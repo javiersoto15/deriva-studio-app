@@ -38,7 +38,7 @@ export default async function HoyPage() {
         display: "flex",
         flexDirection: "column",
         paddingTop: "env(safe-area-inset-top)",
-        paddingBottom: "calc(env(safe-area-inset-bottom) + 96px)",
+        paddingBottom: "calc(env(safe-area-inset-bottom) + 76px)",
         backgroundColor: colors.beige100
       }}
     >
@@ -49,7 +49,7 @@ export default async function HoyPage() {
       <Greeting shortDate={edition.shortDate} />
       <HeroCafeDelDia origin={cafeDelDia} />
 
-      <div style={{ display: "flex", gap: 10, padding: "16px 16px 0" }}>
+      <div style={{ display: "flex", gap: 8, padding: "10px 14px 0" }}>
         <RotacionTile origins={rotacion} />
         <BarraTile barista={barista} />
       </div>

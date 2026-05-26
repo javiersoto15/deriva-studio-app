@@ -18,7 +18,8 @@ function StatusPanel({
   receipt,
   headline,
   body,
-  isGreenMoment
+  isGreenMoment,
+  points
 }: {
   index: string;
   label: string;
@@ -26,6 +27,7 @@ function StatusPanel({
   headline: string;
   body: string;
   isGreenMoment?: boolean;
+  points?: number;
 }) {
   return (
     <section
@@ -92,7 +94,7 @@ function StatusPanel({
         {isGreenMoment ? (
           <>
             <span style={{ fontFamily: "var(--font-mono), monospace", fontStyle: "normal", fontSize: 28, color: colors.green }}>
-              +48 pts
+              +{points ?? 0} pts
             </span>{" "}
             sumados a tu actividad.
           </>
@@ -148,6 +150,9 @@ export default function ClaimStatusPage() {
 function ClaimStatusInner() {
   const params = useSearchParams();
   const status = (params.get("status") as Status) ?? "all";
+  const pointsParam = Number(params.get("points") ?? "");
+  const awardedPoints = Number.isFinite(pointsParam) && pointsParam > 0 ? pointsParam : undefined;
+  const receiptParam = params.get("receipt")?.trim() || undefined;
   const { data } = useClaims();
   const isEmpty = status === "all" && data !== undefined && data.entries.length === 0;
 
@@ -245,15 +250,17 @@ function ClaimStatusInner() {
 
       {list.map((key) => {
         const p = PANELS[key];
+        const isApproved = key === "approved";
         return (
           <StatusPanel
             key={key}
             index={p.index}
             label={p.label}
-            receipt={p.receipt}
+            receipt={isApproved && receiptParam ? receiptParam : p.receipt}
             headline={p.headline}
             body={p.body}
-            isGreenMoment={key === "approved"}
+            isGreenMoment={isApproved}
+            points={isApproved ? awardedPoints : undefined}
           />
         );
       })}

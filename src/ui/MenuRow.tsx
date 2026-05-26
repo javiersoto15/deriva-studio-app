@@ -5,7 +5,8 @@ export type MenuRowProps = {
   href: string;
   name: string;
   spec?: string;
-  priceClp: number;
+  priceClp?: number;
+  priceLabel?: string;
   available?: boolean;
 };
 
@@ -18,7 +19,14 @@ export type MenuRowProps = {
 // (legible-but-obscured, signals "not now"); price slot replaced with a mono
 // "Próximamente" pill; row rendered as a <div> (no Link) so it's not tappable
 // and doesn't deep-link into a detail page for an item we can't serve.
-export function MenuRow({ href, name, spec, priceClp, available = true }: MenuRowProps) {
+export function MenuRow({
+  href,
+  name,
+  spec,
+  priceClp,
+  priceLabel,
+  available = true
+}: MenuRowProps) {
   const titleNode = (
     <span
       style={{
@@ -59,7 +67,7 @@ export function MenuRow({ href, name, spec, priceClp, available = true }: MenuRo
         marginTop: 4
       }}
     >
-      $ {priceClp.toLocaleString("es-CL")}
+      {priceLabel ?? (typeof priceClp === "number" ? `$ ${priceClp.toLocaleString("es-CL")}` : "")}
     </span>
   ) : (
     <span

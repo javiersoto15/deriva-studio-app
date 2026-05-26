@@ -7,10 +7,10 @@ export function RotacionTile({ origins }: { origins: ReadonlyArray<Origin> }) {
       style={{
         flex: 1,
         backgroundColor: colors.beige50,
-        padding: "16px 16px 18px",
+        padding: "12px 14px 14px",
         display: "flex",
         flexDirection: "column",
-        gap: 12
+        gap: 10
       }}
     >
       <div

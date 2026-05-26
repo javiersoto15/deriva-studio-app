@@ -21,7 +21,7 @@ export function SlimMast({
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: "16px 24px 0",
+        padding: "10px 22px 0",
         gap: 12
       }}
     >

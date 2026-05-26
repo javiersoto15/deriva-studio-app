@@ -22,6 +22,7 @@ import {
   MENU_EJECUTIVO_TODAY,
   getMenuEjecutivoDateLabel
 } from "../../../src/data/menu-ejecutivo";
+import { getPublicMenuView, type ExecutiveMenu } from "../../../src/api/server";
 import { LogoLockup } from "../../../src/ui/LogoLockup";
 import { getEditionMark } from "../../../src/lib/edition";
 import "./menu-display.css";
@@ -141,7 +142,10 @@ function SectionBlock({
   // Addons-only doesn't justify a section block on signage — drop entirely.
   if (items.length === 0 && subgroups.length === 0) return null;
 
-  // Pastelería dense list: flatten all subgroups into a 2-col grid per subgroup label.
+  // Pastelería dense list: flatten all subgroups into a 2-col grid per
+  // subgroup label. Cap each subgroup to a handful of items and tell the
+  // customer to ask at the vitrina for the full selection — signage was
+  // overflowing the 1920px stage with the full list.
   if (section.id === DENSE_PASTRY_ID) {
     return (
       <div className="md-sec">
@@ -149,6 +153,9 @@ function SectionBlock({
         {subgroups.map((g) => (
           <PastryGroup key={g.id} group={g} showPrices={showPrices} />
         ))}
+        <span className="md-pastry__more">
+          — pregunta en vitrina por la selección completa —
+        </span>
       </div>
     );
   }
@@ -206,10 +213,15 @@ function SectionHead({ section }: { section: MenuSectionType }) {
   );
 }
 
+// Show at most 4 dishes per Pastelería subgroup — full selection lives in
+// the vitrina, signage stays at-a-glance.
+const PASTRY_ITEMS_PER_GROUP = 4;
+
 function PastryGroup({ group, showPrices }: { group: MenuSubgroup; showPrices: boolean }) {
-  const half = Math.ceil(group.items.length / 2);
-  const left = group.items.slice(0, half);
-  const right = group.items.slice(half);
+  const capped = group.items.slice(0, PASTRY_ITEMS_PER_GROUP);
+  const half = Math.ceil(capped.length / 2);
+  const left = capped.slice(0, half);
+  const right = capped.slice(half);
   return (
     <div className="md-sub">
       <span className="md-sub__label">{group.label}</span>
@@ -229,10 +241,47 @@ function PastryGroup({ group, showPrices }: { group: MenuSubgroup; showPrices: b
   );
 }
 
-function MenuEjecutivoBox({ showPrices }: { showPrices: boolean }) {
-  const today = MENU_EJECUTIVO_TODAY.courses;
-  const tags = MENU_EJECUTIVO_FIXED.courseTags;
-  const Course = ({ tag, name, note }: { tag: string; name: string; note?: string }) => (
+function MenuEjecutivoBox({
+  showPrices,
+  backendExecutive
+}: {
+  showPrices: boolean;
+  backendExecutive: ExecutiveMenu | null;
+}) {
+  // Prefer backend data (resolves today's rotation server-side); fall back to
+  // the local static constant if the API is unreachable so signage never
+  // goes blank on a TV.
+  const priceLabel =
+    backendExecutive?.price_label ?? MENU_EJECUTIVO_FIXED.priceLabel;
+  const subline = backendExecutive?.subline ?? MENU_EJECUTIVO_FIXED.subline;
+
+  type Course = { tag: string; name: string; note?: string };
+  const courses: Course[] = backendExecutive
+    ? backendExecutive.courses.map((c) => ({ tag: c.tag, name: c.name, note: c.note }))
+    : [
+        {
+          tag: MENU_EJECUTIVO_FIXED.courseTags.bebida,
+          name: MENU_EJECUTIVO_TODAY.courses.bebida.name,
+          note: MENU_EJECUTIVO_TODAY.courses.bebida.note
+        },
+        {
+          tag: MENU_EJECUTIVO_FIXED.courseTags.entrada,
+          name: MENU_EJECUTIVO_TODAY.courses.entrada.name,
+          note: MENU_EJECUTIVO_TODAY.courses.entrada.note
+        },
+        {
+          tag: MENU_EJECUTIVO_FIXED.courseTags.fondo,
+          name: MENU_EJECUTIVO_TODAY.courses.fondo.name,
+          note: MENU_EJECUTIVO_TODAY.courses.fondo.note
+        },
+        {
+          tag: MENU_EJECUTIVO_FIXED.courseTags.queque,
+          name: MENU_EJECUTIVO_TODAY.courses.queque.name,
+          note: MENU_EJECUTIVO_TODAY.courses.queque.note
+        }
+      ];
+
+  const CourseCol = ({ tag, name, note }: Course) => (
     <div className="md-ejec__course-col">
       <div className="md-ejec__course">
         <span className="md-ejec__tag">{tag}</span>
@@ -249,15 +298,14 @@ function MenuEjecutivoBox({ showPrices }: { showPrices: boolean }) {
           <span className="md-ejec__title">Menu Ejecutivo.</span>
         </div>
         {showPrices ? (
-          <span className="md-ejec__price">{MENU_EJECUTIVO_FIXED.priceLabel}</span>
+          <span className="md-ejec__price">{priceLabel}</span>
         ) : null}
       </div>
-      <span className="md-ejec__sub">{MENU_EJECUTIVO_FIXED.subline}</span>
+      <span className="md-ejec__sub">{subline}</span>
       <div className="md-ejec__courses">
-        <Course tag={tags.bebida} name={today.bebida.name} note={today.bebida.note} />
-        <Course tag={tags.entrada} name={today.entrada.name} note={today.entrada.note} />
-        <Course tag={tags.fondo} name={today.fondo.name} note={today.fondo.note} />
-        <Course tag={tags.queque} name={today.queque.name} note={today.queque.note} />
+        {courses.map((c) => (
+          <CourseCol key={c.tag} tag={c.tag} name={c.name} note={c.note} />
+        ))}
       </div>
     </div>
   );
@@ -282,7 +330,8 @@ function MenuDisplayShell({
   unavailable,
   dateLabel,
   closedToday,
-  editionMark
+  editionMark,
+  backendExecutive
 }: {
   showPrices: boolean;
   current: Schedule;
@@ -290,18 +339,25 @@ function MenuDisplayShell({
   dateLabel: string;
   closedToday: boolean;
   editionMark: string;
+  backendExecutive: ExecutiveMenu | null;
 }) {
   const visible = menuSections.filter((s) => matchesSchedule(current, s.schedule));
   const { left, right } = splitByColumn(visible);
 
+  // Signage is a show display — hide prices everywhere except the Menu
+  // Ejecutivo block (where the $10.990 price is part of the program copy).
   const renderSection = (s: MenuSectionType) =>
     s.id === "menu-ejecutivo" ? (
-      <MenuEjecutivoBox key={s.id} showPrices={showPrices} />
+      <MenuEjecutivoBox
+        key={s.id}
+        showPrices={showPrices}
+        backendExecutive={backendExecutive}
+      />
     ) : (
       <SectionBlock
         key={s.id}
         section={s}
-        showPrices={showPrices}
+        showPrices={false}
         current={current}
         unavailable={unavailable}
       />
@@ -374,7 +430,7 @@ function MenuDisplayShell({
   );
 }
 
-async function LiveMenuDisplay() {
+export async function LiveMenuDisplay() {
   await connection();
   const now = chileNow();
   const forceShow = process.env.DERIVA_SHOW_PRICES === "1";
@@ -384,6 +440,12 @@ async function LiveMenuDisplay() {
   const dateLabel = getMenuEjecutivoDateLabel(now);
   const closedToday = isClosedToday(now);
   const editionMark = getEditionMark(now);
+  // Backend resolves today's Menu Ejecutivo courses; pull only that block.
+  // Sections/items still come from menu.ts. If the API is unreachable the
+  // box silently falls back to MENU_EJECUTIVO_TODAY.
+  const publicMenu = await getPublicMenuView();
+  const backendExecutive =
+    publicMenu?.sections.find((s) => s.executive_menu)?.executive_menu ?? null;
   return (
     <MenuDisplayShell
       showPrices={showPrices}
@@ -392,6 +454,7 @@ async function LiveMenuDisplay() {
       dateLabel={dateLabel}
       closedToday={closedToday}
       editionMark={editionMark}
+      backendExecutive={backendExecutive}
     />
   );
 }
@@ -407,6 +470,7 @@ export default function MenuDisplayPage() {
           dateLabel="HOY"
           closedToday={false}
           editionMark="Vol. 001 · Otoño"
+          backendExecutive={null}
         />
       }
     >

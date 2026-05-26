@@ -6,7 +6,12 @@ import { LogoLockup } from "../../../src/ui/LogoLockup";
 import { menuSections, type MenuAddons } from "../../../src/data/menu";
 import { HOURS_LINES, isOpenNow } from "../../../src/lib/open-now";
 import { getEditionMarkUppercase } from "../../../src/lib/edition";
+import { getCurrentSchedule } from "../../../src/data/menu-schedule";
+import { MENU_EJECUTIVO_FIXED } from "../../../src/data/menu-ejecutivo";
+import { CrossfadeRotator } from "../../../src/components/landing/CrossfadeRotator";
+import { LiveMenuDisplay } from "../menu-display/page";
 import "./abierto.css";
+import "../menu-display/menu-display.css";
 
 export const metadata: Metadata = {
   title: "Abierto · Deriva Coffee Studio",
@@ -58,6 +63,18 @@ async function AbiertoDisplay() {
   const editionMark = getEditionMarkUppercase(now);
   const open = isOpenNow(now);
   const cafeteria = getCafeteriaData();
+  // Menu Ejecutivo runs weekdays 13:00–16:00. Announce it on the splash
+  // only while the window is still ahead (hide once 16:00 passes so the
+  // strip never advertises a closed service).
+  const santiagoHour = Number(
+    new Intl.DateTimeFormat("en-GB", {
+      timeZone: "America/Santiago",
+      hour: "2-digit",
+      hour12: false
+    }).format(now)
+  );
+  const showEjecutivo =
+    getCurrentSchedule(now) === "weekday" && santiagoHour < 16;
 
   return (
     <main className="ab-stage" aria-label="Pantalla abierto">
@@ -120,6 +137,21 @@ async function AbiertoDisplay() {
           </Fragment>
         ))}
       </div>
+
+      {/* Menu Ejecutivo strip — only while today's window is still open */}
+      {showEjecutivo ? (
+        <div className="ab-ejec-strip" aria-label="Menu Ejecutivo hoy">
+          <span className="ab-ejec-strip__dash" aria-hidden="true">—</span>
+          <span className="ab-ejec-strip__eyebrow">Hoy</span>
+          <span className="ab-ejec-strip__sep">·</span>
+          <span className="ab-ejec-strip__title">Menu Ejecutivo</span>
+          <span className="ab-ejec-strip__sep">·</span>
+          <span className="ab-ejec-strip__window">13:00 — 16:00</span>
+          <span className="ab-ejec-strip__sep">·</span>
+          <span className="ab-ejec-strip__price">{MENU_EJECUTIVO_FIXED.priceLabel}</span>
+          <span className="ab-ejec-strip__dash" aria-hidden="true">—</span>
+        </div>
+      ) : null}
 
       {/* Three medallions */}
       <section className="ab-trio" aria-label="Destacados">
@@ -230,7 +262,12 @@ export default function AbiertoPage() {
       {/* TV display: reload every 10 minutes to refresh date + edition number. */}
       <meta httpEquiv="refresh" content="600" />
       <Suspense fallback={<main className="ab-stage" />}>
-        <AbiertoDisplay />
+        <CrossfadeRotator
+          views={[
+            { key: "abierto", node: <AbiertoDisplay /> },
+            { key: "menu", node: <LiveMenuDisplay /> }
+          ]}
+        />
       </Suspense>
     </>
   );

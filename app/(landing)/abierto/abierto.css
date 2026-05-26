@@ -14,6 +14,57 @@
 
 html, body { background: var(--ab-plaster); margin: 0; }
 
+/* === Rotator ===
+   /abierto cycles between the Abierto splash and the full menu-display.
+   Both inner stages use width:1080 × height:1920; we hoist `zoom` to the
+   rotator wrapper so the menu-display matches the larger Abierto sizing
+   (0.833 instead of its native 0.6667) and stays consistent on the TV.
+
+   Crossfade is CSS-driven (kiosk TVs throttle JS timers, so animations
+   on the compositor are far more reliable). Cycle = 65s total:
+     0  → 19.2s : Abierto solo                              (29.54%)
+     19.2 → 20s : crossfade Abierto → Menu Ejecutivo         (30.77%)
+     20 → 64.2s : Menu Ejecutivo solo                        (98.77%)
+     64.2 → 65s : crossfade Menu Ejecutivo → Abierto         (100%) */
+.ab-rotator {
+  position: relative;
+  width: 1080px;
+  height: 1920px;
+  margin: 0 auto;
+  zoom: 0.833;
+}
+.ab-rotator__layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  /* Split into longhands so the minifier doesn't collapse the
+     name-less shorthand `animation: 65s linear infinite both` into
+     `animation: none` — which would zero out duration + fill-mode and
+     leave both layers stuck at opacity:0 (i.e. blank screen). */
+  animation-duration: 65s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+.ab-rotator__layer--0 { animation-name: ab-rotator-fade-0; }
+.ab-rotator__layer--1 { animation-name: ab-rotator-fade-1; }
+.ab-rotator .ab-stage,
+.ab-rotator .md-stage {
+  zoom: 1;
+  margin: 0;
+}
+
+@keyframes ab-rotator-fade-0 {
+  0%, 29.54% { opacity: 1; }
+  30.77%, 98.77% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes ab-rotator-fade-1 {
+  0%, 29.54% { opacity: 0; }
+  30.77%, 98.77% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 .ab-stage {
   width: 1080px;
   height: 1920px;
@@ -107,6 +158,28 @@ html, body { background: var(--ab-plaster); margin: 0; }
   text-transform: uppercase; color: var(--ab-ink);
 }
 .ab-hours__label, .ab-hours__sep { color: var(--ab-mute); }
+
+/* === Menu Ejecutivo strip ===
+   Quiet editorial line directly under the hours band. Same mono cadence,
+   italic title carries the single emphasis. No green here — the splash
+   already spends its green moment on the hero period. */
+.ab-ejec-strip {
+  display: flex; justify-content: center; align-items: baseline;
+  gap: 14px;
+  padding: 10px 0 0;
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 500; font-size: 18px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ab-sub);
+}
+.ab-ejec-strip__eyebrow { color: var(--ab-mute); }
+.ab-ejec-strip__title {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic; font-weight: 500;
+  font-size: 28px; letter-spacing: -0.005em; text-transform: none;
+  color: var(--ab-ink);
+}
+.ab-ejec-strip__window, .ab-ejec-strip__price { color: var(--ab-ink); }
+.ab-ejec-strip__sep, .ab-ejec-strip__dash { color: var(--ab-mute); }
 
 /* === Three medallions === */
 .ab-trio { display: flex; gap: 24px; padding: 42px 0 14px; }

@@ -21,12 +21,12 @@ export function NotaTile({ nota }: { nota: Nota }) {
   return (
     <div
       style={{
-        margin: "16px 16px 0",
+        margin: "10px 14px 0",
         backgroundColor: colors.beige50,
-        padding: "16px 22px 18px",
+        padding: "12px 18px 14px",
         display: "flex",
         flexDirection: "column",
-        gap: 10
+        gap: 8
       }}
     >
       <div
@@ -78,8 +78,8 @@ export function NotaTile({ nota }: { nota: Nota }) {
           fontFamily: "var(--font-display), 'Cormorant Garamond', serif",
           fontStyle: "italic",
           fontWeight: 400,
-          fontSize: 18,
-          lineHeight: "26px",
+          fontSize: 16,
+          lineHeight: "22px",
           color: colors.ink900,
           maxWidth: 320
         }}

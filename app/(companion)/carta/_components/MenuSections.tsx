@@ -1,45 +1,37 @@
 "use client";
 
-import { useMemo, useRef, useState, useEffect } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-import type { MenuView } from "../../../../src/api/hooks";
-import { FRONTEND_REDIRECT_SECTIONS } from "../../../../src/api/menu-grouping";
+import type {
+  ExecutiveMenu,
+  PublicMenuItem,
+  PublicMenuSection,
+  PublicMenuView
+} from "../../../../src/api/hooks";
 import { Chip } from "../../../../src/ui/Chip";
 import { MenuRow } from "../../../../src/ui/MenuRow";
 import { colors } from "../../../../src/design/tokens";
 
-// /carta is a fixed-chrome page: <main> doesn't scroll. MenuSections claims
-// the remaining vertical space (flex: 1) and runs its own column layout —
-// category strip + section strip at the top stay parked, the items <ul> below
-// gets `overflow-y: auto` so only it scrolls. The result is the chrome stays
-// pinned without `position: sticky` (which was fighting iOS Safari).
-//
-// Strips keep horizontal scrolling for sections that overflow; the native
-// scrollbar is suppressed via the global `.scrollbar-hide` utility.
-export function MenuSections({ menu }: { menu: MenuView }) {
-  const [categoryId, setCategoryId] = useState<string>(menu.categories[0]?.id ?? "");
-  const activeCategory =
-    menu.categories.find((c) => c.id === categoryId) ?? menu.categories[0];
+export function MenuSections({ menu }: { menu: PublicMenuView | null }) {
+  const sections = menu?.sections ?? [];
+  const [sectionId, setSectionId] = useState<string>(sections[0]?.id ?? "");
+  const effectiveSectionId = sections.some((s) => s.id === sectionId)
+    ? sectionId
+    : sections[0]?.id ?? "";
+  const activeSection = sections.find((s) => s.id === effectiveSectionId) ?? sections[0];
+  const listRef = useRef<HTMLDivElement | null>(null);
 
-  const sectionIds = useMemo(
-    () => (activeCategory?.sections ?? []).map((s) => s.id),
-    [activeCategory]
-  );
-  const [sectionId, setSectionId] = useState<string>(sectionIds[0] ?? "");
-  const effectiveSectionId = sectionIds.includes(sectionId) ? sectionId : sectionIds[0] ?? "";
-  const activeSection =
-    activeCategory?.sections.find((s) => s.id === effectiveSectionId) ??
-    activeCategory?.sections[0];
-
-  // Reset the items scroller to the top whenever the active section changes
-  // so the user lands at the first item rather than mid-list.
-  const listRef = useRef<HTMLUListElement | null>(null);
   useEffect(() => {
     listRef.current?.scrollTo({ top: 0 });
-  }, [effectiveSectionId, activeCategory?.id]);
+  }, [effectiveSectionId]);
 
-  const showCategoryStrip = menu.categories.length > 1;
-  const showSectionStrip = (activeCategory?.sections.length ?? 0) > 1;
+  if (!menu) {
+    return <MenuLoadingState />;
+  }
+
+  if (sections.length === 0) {
+    return <MenuEmptyState />;
+  }
 
   return (
     <div
@@ -51,199 +43,340 @@ export function MenuSections({ menu }: { menu: MenuView }) {
         gap: 12
       }}
     >
-      {showCategoryStrip && (
-        <div
-          role="tablist"
-          aria-label="Categorías"
-          className="scrollbar-hide"
+      {menu.closed_today && menu.closed_label ? (
+        <span
           style={{
-            display: "flex",
-            gap: 20,
-            overflowX: "auto",
-            flexShrink: 0,
-            paddingBottom: 8,
-            borderBottom: `1px solid ${colors.hairlineLight}`,
-            touchAction: "pan-x"
+            alignSelf: "flex-start",
+            fontFamily: "var(--font-mono), monospace",
+            fontSize: 10,
+            letterSpacing: "0.18em",
+            textTransform: "uppercase",
+            color: colors.inkMuted,
+            border: `1px solid ${colors.hairline}`,
+            borderRadius: 999,
+            padding: "4px 10px"
           }}
         >
-          {menu.categories.map((c) => {
-            const active = c.id === (activeCategory?.id ?? "");
-            return (
-              <button
-                key={c.id}
-                role="tab"
-                aria-selected={active}
-                type="button"
-                onClick={() => {
-                  setCategoryId(c.id);
-                  setSectionId(c.sections[0]?.id ?? "");
-                }}
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  padding: "6px 0",
-                  cursor: "pointer",
-                  fontFamily: "var(--font-tracked), 'Poppins', sans-serif",
-                  fontWeight: 600,
-                  fontSize: 10,
-                  letterSpacing: "0.22em",
-                  textTransform: "uppercase",
-                  color: active ? colors.brown700 : colors.inkMuted,
-                  borderBottom: active
-                    ? `1px solid ${colors.brown700}`
-                    : "1px solid transparent",
-                  marginBottom: -9,
-                  whiteSpace: "nowrap",
-                  flexShrink: 0
-                }}
-              >
-                {c.name}
-              </button>
-            );
-          })}
-        </div>
-      )}
+          {menu.closed_label}
+        </span>
+      ) : null}
 
-      {showSectionStrip && (
-        <div
-          className="scrollbar-hide"
-          style={{
-            display: "flex",
-            gap: 8,
-            overflowX: "auto",
-            flexShrink: 0,
-            paddingBottom: 4,
-            touchAction: "pan-x"
-          }}
-        >
-          {activeCategory?.sections.map((s) => {
-            const isRedirect = s.id in FRONTEND_REDIRECT_SECTIONS;
-            const isActive = s.id === (activeSection?.id ?? "");
-            return (
-              <Chip
-                key={s.id}
-                selected={isActive}
-                onClick={() => setSectionId(s.id)}
-                style={isRedirect && !isActive ? { opacity: 0.45 } : undefined}
-              >
-                {s.name}
-              </Chip>
-            );
-          })}
-        </div>
-      )}
+      <div
+        className="scrollbar-hide"
+        style={{
+          display: "flex",
+          gap: 8,
+          overflowX: "auto",
+          flexShrink: 0,
+          paddingBottom: 4,
+          touchAction: "pan-x"
+        }}
+      >
+        {sections.map((section) => (
+          <Chip
+            key={section.id}
+            selected={section.id === activeSection?.id}
+            onClick={() => setSectionId(section.id)}
+          >
+            {section.title}
+          </Chip>
+        ))}
+      </div>
 
-      {activeSection && activeSection.id in FRONTEND_REDIRECT_SECTIONS ? (
-        <SectionRedirectCard
-          sectionName={activeSection.name}
-          alternatives={(FRONTEND_REDIRECT_SECTIONS[activeSection.id] ?? [])
-            .map((altId) => activeCategory?.sections.find((s) => s.id === altId))
-            .filter((s): s is NonNullable<typeof s> => Boolean(s))}
-          onPick={(id) => setSectionId(id)}
-        />
-      ) : (
-        <ul
-          ref={listRef}
-          style={{
-            listStyle: "none",
-            margin: 0,
-            padding: 0,
-            paddingBottom: "calc(env(safe-area-inset-bottom) + 96px)",
-            flex: 1,
-            minHeight: 0,
-            overflowY: "auto",
-            WebkitOverflowScrolling: "touch",
-            overscrollBehaviorY: "contain"
-          }}
-        >
-          {(activeSection?.items ?? []).map((item) => (
-            <li key={item.id}>
-              <MenuRow
-                href={`/carta/${item.id}`}
-                name={item.name}
-                spec={item.description}
-                priceClp={item.price_clp}
-                available={item.available}
-              />
-            </li>
-          ))}
-        </ul>
-      )}
+      <div
+        ref={listRef}
+        style={{
+          flex: 1,
+          minHeight: 0,
+          overflowY: "auto",
+          WebkitOverflowScrolling: "touch",
+          overscrollBehaviorY: "contain",
+          paddingBottom: "calc(env(safe-area-inset-bottom) + 96px)"
+        }}
+      >
+        {activeSection ? <SectionBody section={activeSection} /> : null}
+      </div>
     </div>
   );
 }
 
-function SectionRedirectCard({
-  sectionName,
-  alternatives,
-  onPick
-}: {
-  sectionName: string;
-  alternatives: ReadonlyArray<{ id: string; name: string }>;
-  onPick: (id: string) => void;
-}) {
+function SectionBody({ section }: { section: PublicMenuSection }) {
+  const directItems = section.items ?? [];
+  const subgroups = section.subgroups ?? [];
+  const addons = section.addons ?? [];
+
   return (
-    <div
-      style={{
-        flex: 1,
-        minHeight: 0,
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "flex-start",
-        gap: 20,
-        paddingTop: 32,
-        paddingBottom: "calc(env(safe-area-inset-bottom) + 96px)"
-      }}
-    >
-      <span
-        style={{
-          fontFamily: "var(--font-tracked), 'Poppins', sans-serif",
-          fontWeight: 600,
-          fontSize: 10,
-          letterSpacing: "0.22em",
-          textTransform: "uppercase",
-          color: colors.inkMuted
-        }}
-      >
-        Vuelve pronto
-      </span>
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <SectionHeader section={section} />
+      {section.executive_menu ? <ExecutiveMenuBlock menu={section.executive_menu} /> : null}
+      {directItems.length > 0 ? <ItemList items={directItems} /> : null}
+      {subgroups.map((subgroup) => (
+        <div key={subgroup.id} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <SectionLabel>{subgroup.label}</SectionLabel>
+          <ItemList items={subgroup.items ?? []} />
+          {subgroup.addons ? <AddonBlock addons={[subgroup.addons]} /> : null}
+        </div>
+      ))}
+      {addons.length > 0 ? <AddonBlock label={section.addons_before} addons={addons} /> : null}
+    </div>
+  );
+}
+
+function SectionHeader({ section }: { section: PublicMenuSection }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+      {section.service_window ? <SectionLabel>{section.service_window}</SectionLabel> : null}
       <p
         style={{
           margin: 0,
           fontFamily: "var(--font-display), serif",
-          fontStyle: "italic",
+          fontStyle: section.full_italic || section.italic_word ? "italic" : "normal",
           fontWeight: 400,
           fontSize: 28,
-          lineHeight: 1.2,
-          letterSpacing: "-0.01em",
+          lineHeight: 1.1,
           color: colors.ink900
         }}
       >
-        {sectionName} llega más adelante.
+        {section.title}
+        {section.italic_word ? ` ${section.italic_word}` : ""}
       </p>
-      {alternatives.length > 0 && (
-        <>
-          <p
+      {section.lede ? (
+        <p
+          style={{
+            margin: 0,
+            fontFamily: "Poppins, sans-serif",
+            fontStyle: section.lede_italic ? "italic" : "normal",
+            fontWeight: 400,
+            fontSize: 13,
+            lineHeight: "19px",
+            color: colors.inkMuted
+          }}
+        >
+          {section.lede}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+function ExecutiveMenuBlock({ menu }: { menu: ExecutiveMenu }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 10,
+        padding: "14px 0",
+        borderTop: `1px solid ${colors.hairline}`,
+        borderBottom: `1px solid ${colors.hairline}`
+      }}
+    >
+      <SectionLabel>{menu.hours}</SectionLabel>
+      <div style={{ display: "flex", justifyContent: "space-between", gap: 16 }}>
+        <span
+          style={{
+            fontFamily: "var(--font-display), serif",
+            fontSize: 22,
+            lineHeight: 1.2,
+            color: colors.ink900
+          }}
+        >
+          {menu.hero}
+        </span>
+        <span
+          style={{
+            fontFamily: "var(--font-mono), monospace",
+            fontSize: 12,
+            color: colors.ink900,
+            whiteSpace: "nowrap",
+            marginTop: 4
+          }}
+        >
+          {menu.price_label}
+        </span>
+      </div>
+      <p
+        style={{
+          margin: 0,
+          fontFamily: "Poppins, sans-serif",
+          fontSize: 13,
+          lineHeight: "19px",
+          color: colors.inkMuted
+        }}
+      >
+        {menu.subline}
+      </p>
+      <ol style={{ listStyle: "none", margin: 0, padding: 0 }}>
+        {menu.courses.map((course) => (
+          <li
+            key={course.id}
             style={{
-              margin: 0,
-              fontFamily: "Poppins, sans-serif",
-              fontWeight: 400,
-              fontSize: 14,
-              lineHeight: "20px",
-              color: colors.inkMuted
+              display: "grid",
+              gridTemplateColumns: "28px 1fr",
+              gap: 10,
+              padding: "10px 0",
+              borderTop: `1px solid ${colors.hairlineLight}`
             }}
           >
-            Mientras tanto, prueba nuestras
-          </p>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            {alternatives.map((alt) => (
-              <Chip key={alt.id} onClick={() => onPick(alt.id)}>
-                {alt.name}
-              </Chip>
+            <span
+              style={{
+                fontFamily: "var(--font-mono), monospace",
+                fontSize: 11,
+                color: colors.inkMuted
+              }}
+            >
+              {course.numeral}
+            </span>
+            <span style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+              <span
+                style={{
+                  fontFamily: "Poppins, sans-serif",
+                  fontSize: 10,
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: colors.inkMuted
+                }}
+              >
+                {course.tag}
+              </span>
+              <span
+                style={{
+                  fontFamily: "var(--font-display), serif",
+                  fontSize: 20,
+                  lineHeight: 1.2,
+                  color: colors.ink900
+                }}
+              >
+                {course.name}
+              </span>
+              {course.note ? (
+                <span
+                  style={{
+                    fontFamily: "Poppins, sans-serif",
+                    fontSize: 12,
+                    lineHeight: "17px",
+                    color: colors.inkMuted
+                  }}
+                >
+                  {course.note}
+                </span>
+              ) : null}
+            </span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+function ItemList({ items }: { items: PublicMenuItem[] }) {
+  const visibleItems = useMemo(() => items.filter(Boolean), [items]);
+  if (visibleItems.length === 0) return null;
+
+  return (
+    <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+      {visibleItems.map((item) => (
+        <li key={item.id}>
+          <MenuRow
+            href={`/carta/${item.id}`}
+            name={item.name}
+            spec={item.description}
+            priceClp={item.price_clp ?? 0}
+            priceLabel={item.price_label}
+            available={item.available}
+          />
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function AddonBlock({
+  label,
+  addons
+}: {
+  label?: string;
+  addons: NonNullable<PublicMenuSection["addons"]>;
+}) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 8, paddingTop: 4 }}>
+      {label ? <SectionLabel>{label}</SectionLabel> : null}
+      {addons.map((addon) => (
+        <div key={`${addon.label}-${addon.chips.join(",")}`} style={{ display: "grid", gap: 6 }}>
+          <span
+            style={{
+              fontFamily: "Poppins, sans-serif",
+              fontWeight: 600,
+              fontSize: 12,
+              color: colors.ink900
+            }}
+          >
+            {addon.label}
+          </span>
+          {addon.hint ? (
+            <span
+              style={{
+                fontFamily: "Poppins, sans-serif",
+                fontSize: 12,
+                lineHeight: "17px",
+                color: colors.inkMuted
+              }}
+            >
+              {addon.hint}
+            </span>
+          ) : null}
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+            {addon.chips.map((chip) => (
+              <span
+                key={chip}
+                style={{
+                  fontFamily: "var(--font-mono), monospace",
+                  fontSize: 10,
+                  color: colors.inkMuted,
+                  border: `1px solid ${colors.hairline}`,
+                  borderRadius: 999,
+                  padding: "3px 8px"
+                }}
+              >
+                {chip}
+              </span>
             ))}
           </div>
-        </>
-      )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <span
+      style={{
+        fontFamily: "var(--font-tracked), 'Poppins', sans-serif",
+        fontWeight: 600,
+        fontSize: 10,
+        letterSpacing: "0.18em",
+        textTransform: "uppercase",
+        color: colors.inkMuted
+      }}
+    >
+      {children}
+    </span>
+  );
+}
+
+function MenuLoadingState() {
+  return (
+    <div style={{ flex: 1, paddingTop: 24 }}>
+      <SectionLabel>Cargando carta</SectionLabel>
+    </div>
+  );
+}
+
+function MenuEmptyState() {
+  return (
+    <div style={{ flex: 1, paddingTop: 24 }}>
+      <SectionLabel>Carta no disponible</SectionLabel>
     </div>
   );
 }

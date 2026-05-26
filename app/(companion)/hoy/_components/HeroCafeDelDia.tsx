@@ -6,13 +6,13 @@ export function HeroCafeDelDia({ origin }: { origin: DestacadoOrigin }) {
   return (
     <div
       style={{
-        margin: "16px 16px 0",
+        margin: "10px 14px 0",
         backgroundColor: colors.brown900,
         color: colors.beige100,
-        padding: "20px 22px 18px",
+        padding: "14px 18px 12px",
         display: "flex",
         flexDirection: "column",
-        gap: 10,
+        gap: 6,
         position: "relative"
       }}
     >
@@ -65,12 +65,12 @@ export function HeroCafeDelDia({ origin }: { origin: DestacadoOrigin }) {
       {/* Type moment — origin name */}
       <h2
         style={{
-          margin: "6px 0 0",
+          margin: "2px 0 0",
           fontFamily: "var(--font-display), 'Cormorant Garamond', serif",
           fontStyle: "italic",
           fontWeight: 500,
-          fontSize: 44,
-          lineHeight: "48px",
+          fontSize: 36,
+          lineHeight: "38px",
           letterSpacing: "-0.015em",
           color: colors.beige100
         }}
@@ -83,8 +83,8 @@ export function HeroCafeDelDia({ origin }: { origin: DestacadoOrigin }) {
         style={{
           fontFamily: "var(--font-display), 'Cormorant Garamond', serif",
           fontWeight: 400,
-          fontSize: 17,
-          lineHeight: "22px",
+          fontSize: 15,
+          lineHeight: "20px",
           color: colors.beige100
         }}
       >
@@ -98,8 +98,8 @@ export function HeroCafeDelDia({ origin }: { origin: DestacadoOrigin }) {
           fontFamily: "var(--font-display), 'Cormorant Garamond', serif",
           fontStyle: "italic",
           fontWeight: 400,
-          fontSize: 15,
-          lineHeight: "22px",
+          fontSize: 13,
+          lineHeight: "18px",
           color: "rgba(244, 237, 230, 0.76)",
           maxWidth: 300
         }}
@@ -112,8 +112,8 @@ export function HeroCafeDelDia({ origin }: { origin: DestacadoOrigin }) {
         style={{
           height: 1,
           backgroundColor: colors.hairlineOnDark,
-          marginTop: 8,
-          marginBottom: 4
+          marginTop: 4,
+          marginBottom: 2
         }}
       />
 

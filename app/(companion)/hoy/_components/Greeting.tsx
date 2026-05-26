@@ -29,7 +29,7 @@ export function Greeting({ shortDate }: { shortDate: string }) {
         alignItems: "baseline",
         justifyContent: "space-between",
         gap: 12,
-        padding: "8px 24px 14px"
+        padding: "4px 22px 10px"
       }}
     >
       <div
@@ -37,8 +37,8 @@ export function Greeting({ shortDate }: { shortDate: string }) {
           fontFamily: "var(--font-display), 'Cormorant Garamond', serif",
           fontStyle: "italic",
           fontWeight: 400,
-          fontSize: 22,
-          lineHeight: "28px",
+          fontSize: 20,
+          lineHeight: "26px",
           color: colors.ink900
         }}
       >

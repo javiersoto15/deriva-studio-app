@@ -31,8 +31,8 @@ export function MetricStrip({
       style={{
         display: "flex",
         alignItems: "stretch",
-        gap: 10,
-        padding: "16px 16px 0"
+        gap: 8,
+        padding: "10px 14px 0"
       }}
     >
       <EstadoTile openLabel={openLabel} closesAt={closesAt} isOpen={isOpen} />
@@ -56,7 +56,7 @@ function EstadoTile({
       style={{
         flex: 1,
         backgroundColor: colors.beige50,
-        padding: "12px 14px 14px",
+        padding: "10px 12px 12px",
         display: "flex",
         flexDirection: "column",
         gap: 4
@@ -125,7 +125,7 @@ function CarteraTile({
         flex: 1,
         backgroundColor: colors.brown900,
         color: colors.beige100,
-        padding: "12px 14px 14px",
+        padding: "10px 12px 12px",
         display: "flex",
         flexDirection: "column",
         gap: 4
@@ -191,7 +191,7 @@ function UltimaTile({
       style={{
         flex: 1,
         backgroundColor: colors.beige50,
-        padding: "12px 14px 14px",
+        padding: "10px 12px 12px",
         display: "flex",
         flexDirection: "column",
         gap: 4
