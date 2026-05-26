@@ -850,24 +850,6 @@ export default function EstudioPage() {
           </div>
         </section>
 
-        <Link
-          href="/sumar-visita"
-          className="tap-target"
-          style={{
-            alignSelf: "flex-start",
-            margin: "-10px -8px",
-            fontFamily: "var(--font-tracked), 'Poppins', sans-serif",
-            fontWeight: 600,
-            fontSize: 10,
-            letterSpacing: "0.22em",
-            textTransform: "uppercase",
-            color: colors.brown700,
-            textDecoration: "none"
-          }}
-        >
-          Sumar una visita anterior →
-        </Link>
-
         <div
           style={{
             display: "flex",

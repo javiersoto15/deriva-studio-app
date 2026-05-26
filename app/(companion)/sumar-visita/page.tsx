@@ -86,11 +86,11 @@ export default function SumarVisitaPage() {
       }}
     >
       <Link
-        href="/estudio"
+        href="/cartera"
         className="tap-target"
         style={{ textDecoration: "none", margin: "-10px -8px", alignSelf: "flex-start" }}
       >
-        <Eyebrow>← Studio</Eyebrow>
+        <Eyebrow>← Cartera</Eyebrow>
       </Link>
 
       <h1

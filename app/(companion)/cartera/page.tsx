@@ -115,7 +115,7 @@ export default function CarteraPage() {
 
           <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
             <Link
-              href="/codigo"
+              href="/sumar-visita"
               style={{
                 flex: 1,
                 display: "inline-flex",
@@ -136,7 +136,7 @@ export default function CarteraPage() {
                 textDecoration: "none"
               }}
             >
-              Mostrar código
+              Sumar visita
             </Link>
             <Link
               href="/actividad"
