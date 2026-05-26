@@ -23,8 +23,12 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
       short_name: "Deriva",
       description:
         "Tu Deriva, recordada — café de especialidad, mate y cocina en Providencia.",
+      // start_url is where iOS launches from the home-screen icon; scope must
+      // cover EVERY companion route or iOS opens out-of-scope URLs in Safari
+      // (URL bar reappears). When /hoy became the post-login tab the previous
+      // narrow scope ("/inicio") demoted authed sessions to browser chrome.
       start_url: "/inicio",
-      scope: "/inicio",
+      scope: "/",
       display: "standalone",
       orientation: "portrait",
       background_color: colors.beige100,
