@@ -132,7 +132,7 @@ async function AbiertoBar() {
         <span className="ab-mast__rule" aria-hidden="true" />
       </header>
 
-      <div className="ab-promo__eyebrow">— Desde las 17:00 · hasta cerrar —</div>
+      <div className="ab-promo__eyebrow">— Desde las 16:00 · hasta cerrar —</div>
 
       <div className="ab-promo__hero ab-promo__hero--cerveza">
         <img
@@ -372,10 +372,10 @@ async function AbiertoDisplay() {
 
 async function AbiertoRotator() {
   await connection();
-  // The Bar promo (cervezas + coctelería de café) only runs from 17:00 to
-  // close. Show it once Santiago time reaches 17:00 so mornings/afternoons
-  // stay coffee-focused; the meta-refresh on the page re-evaluates this
-  // within 10 minutes. When hidden, the rotator falls back to a 2-view
+  // The Bar promo (cervezas + coctelería de café) only runs from 16:00 to
+  // close. Show it once Santiago time reaches 16:00 so mornings stay
+  // coffee-focused; the meta-refresh on the page re-evaluates this within
+  // 10 minutes. When hidden, the rotator falls back to a 2-view
   // (Abierto ↔ Campesino) crossfade.
   const santiagoHour = Number(
     new Intl.DateTimeFormat("en-GB", {
@@ -384,7 +384,7 @@ async function AbiertoRotator() {
       hour12: false
     }).format(new Date())
   );
-  const showBar = santiagoHour >= 17;
+  const showBar = santiagoHour >= 16;
 
   return (
     <CrossfadeRotator
