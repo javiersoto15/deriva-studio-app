@@ -342,8 +342,8 @@ html, body { background: var(--ab-plaster); margin: 0; }
   object-position: center 58%;
   display: block;
 }
-.ab-promo__hero--tortas { height: 540px; }
-.ab-promo__hero--tortas img { object-position: center 60%; }
+.ab-promo__hero--cerveza { width: 680px; height: 680px; }
+.ab-promo__hero--cerveza img { object-position: center 45%; }
 .ab-promo__stack {
   display: flex; flex-direction: column; align-items: center;
   gap: 20px; padding-top: 8px;
@@ -385,66 +385,16 @@ html, body { background: var(--ab-plaster); margin: 0; }
   letter-spacing: -0.015em;
   color: var(--ab-green);
 }
-.ab-promo__condition {
-  font-family: var(--font-display), "Cormorant Garamond", serif;
-  font-style: italic; font-weight: 400;
-  font-size: 26px; line-height: 1.25;
-  color: var(--ab-mute);
-  text-align: center;
-  margin-top: 4px;
-}
-
-/* === Barra strip (Tortas promo only) === */
-.ab-barra {
-  display: flex; flex-direction: column; align-items: center;
-  gap: 24px; padding-top: 16px;
-}
-.ab-barra__mark {
-  display: flex; align-items: center; gap: 14px;
-  font-family: var(--font-mono), "IBM Plex Mono", monospace;
-  font-weight: 500; font-size: 22px; letter-spacing: 0.28em;
-  text-transform: uppercase; color: var(--ab-mute);
-}
-.ab-barra__rule { display: inline-block; width: 80px; height: 1px; background: var(--ab-hairline); }
-.ab-barra__medallions { display: flex; gap: 56px; align-items: flex-end; }
-.ab-barra__med {
-  display: flex; flex-direction: column; align-items: center; gap: 14px;
-  margin: 0;
-}
-.ab-barra__circle {
-  width: 220px; height: 220px;
-  border-radius: 50%;
-  overflow: hidden;
-  background: var(--ab-medallion-bg);
-}
-.ab-barra__circle img,
-.ab-barra__circle picture,
-.ab-barra__circle picture img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  object-position: center 40%;
-  display: block;
-}
-.ab-barra__cap {
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
-}
-.ab-barra__name {
-  font-family: var(--font-display), "Cormorant Garamond", serif;
-  font-style: italic; font-weight: 500;
-  font-size: 32px; line-height: 1;
-  color: var(--ab-ink);
-}
-.ab-barra__meta {
-  font-family: var(--font-mono), "IBM Plex Mono", monospace;
-  font-weight: 500; font-size: 16px; letter-spacing: 0.18em;
-  text-transform: uppercase; color: var(--ab-mute);
-}
-.ab-barra__caption {
-  font-family: var(--font-display), "Cormorant Garamond", serif;
-  font-style: italic; font-weight: 400;
-  font-size: 28px; line-height: 1.2;
-  color: var(--ab-sub);
-}
+/* === Bar promo variant (cervezas + coctelería de café) ===
+   Mirrors Paper artboard 9XX-0. Larger type + manifesto deck fill the
+   canvas; single green moment stays on the price amount. */
+.ab-stage--bar { gap: 50px; }
+.ab-stage--bar .ab-promo__stack { gap: 30px; }
+.ab-stage--bar .ab-promo__headline { font-size: 118px; line-height: 126px; max-width: 920px; }
+.ab-stage--bar .ab-promo__sub { font-size: 44px; line-height: 56px; max-width: 860px; }
+.ab-stage--bar .ab-promo__price { padding-top: 48px; gap: 16px; }
+.ab-stage--bar .ab-promo__price-label { font-size: 24px; letter-spacing: 0.3em; }
+.ab-stage--bar .ab-promo__price-amount { font-size: 150px; }
 
 /* === Colophon === */
 .ab-colophon { display: flex; flex-direction: column; gap: 10px; padding-top: 4px; }

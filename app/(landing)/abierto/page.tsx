@@ -80,7 +80,7 @@ async function AbiertoPromo() {
 
       <div className="ab-promo__hero">
         <img
-          src="/promo/desayuno-campesino.jpg"
+          src="https://media.derivastudio.cl/promos/desayuno-campesino.jpg"
           alt="Dos desayunos campesinos sobre la mesa"
           width={1600}
           height={1600}
@@ -110,12 +110,12 @@ async function AbiertoPromo() {
   );
 }
 
-async function AbiertoTortas() {
+async function AbiertoBar() {
   await connection();
   const now = new Date();
   const editionMark = getEditionMarkUppercase(now);
   return (
-    <main className="ab-stage ab-stage--promo" aria-label="Promo · Tortas a mitad de precio">
+    <main className="ab-stage ab-stage--promo ab-stage--bar" aria-label="Promo · La barra de tarde">
       <header className="ab-mast">
         <div className="ab-mast__row">
           <LogoLockup
@@ -132,57 +132,31 @@ async function AbiertoTortas() {
         <span className="ab-mast__rule" aria-hidden="true" />
       </header>
 
-      <div className="ab-promo__eyebrow">— Solo hoy · hasta las 14:00 —</div>
+      <div className="ab-promo__eyebrow">— Desde las 17:00 · hasta cerrar —</div>
 
-      <div className="ab-promo__hero ab-promo__hero--tortas">
+      <div className="ab-promo__hero ab-promo__hero--cerveza">
         <img
-          src="/promo/tortas.jpg"
-          alt="Tortas del día sobre la barra"
-          width={900}
-          height={1600}
+          src="https://media.derivastudio.cl/promos/cerveza-barra.jpg"
+          alt="Cerveza helada en la barra de Deriva"
+          width={1080}
+          height={1080}
           decoding="async"
         />
       </div>
 
       <div className="ab-promo__stack">
-        <span className="ab-promo__mark">§ 02 · Hoy</span>
-        <h1 className="ab-promo__headline">Acompaña tu espresso.</h1>
-        <p className="ab-promo__sub">— torta del día a mitad de precio —</p>
+        <span className="ab-promo__mark">§ 02 · La barra</span>
+        <h1 className="ab-promo__headline">La tarde es para quedarse.</h1>
+        <p className="ab-promo__sub">
+          Un café, una cerveza helada, un amigo nuevo.
+          <br />
+          Quédate sin apuro.
+        </p>
         <div className="ab-promo__price">
-          <span className="ab-promo__price-label">Promo</span>
-          <span className="ab-promo__price-amount">–50%</span>
-          <span className="ab-promo__condition">al pedir un espresso de la barra</span>
+          <span className="ab-promo__price-label">2 Peroni o Asahi</span>
+          <span className="ab-promo__price-amount">$ 5.000</span>
         </div>
       </div>
-
-      <section className="ab-barra" aria-label="De la barra">
-        <div className="ab-barra__mark">
-          <span className="ab-barra__rule" aria-hidden="true" />
-          <span className="ab-barra__label">§ 03 · De la barra</span>
-          <span className="ab-barra__rule" aria-hidden="true" />
-        </div>
-        <div className="ab-barra__medallions">
-          <article className="ab-barra__med">
-            <div className="ab-barra__circle">
-              <DerivaImage slug="cappuccino" alt="Cappuccino en taza" sizes="220px" />
-            </div>
-            <div className="ab-barra__cap">
-              <span className="ab-barra__name">Cappuccino</span>
-              <span className="ab-barra__meta">180 ml</span>
-            </div>
-          </article>
-          <article className="ab-barra__med">
-            <div className="ab-barra__circle">
-              <DerivaImage slug="latte" alt="Latte servido en taza roja" sizes="220px" />
-            </div>
-            <div className="ab-barra__cap">
-              <span className="ab-barra__name">Latte</span>
-              <span className="ab-barra__meta">240 ml</span>
-            </div>
-          </article>
-        </div>
-        <span className="ab-barra__caption">— vale con cualquier espresso de la barra —</span>
-      </section>
 
       <footer className="ab-colophon">
         <span className="ab-colophon__rule" aria-hidden="true" />
@@ -398,10 +372,11 @@ async function AbiertoDisplay() {
 
 async function AbiertoRotator() {
   await connection();
-  // The Tortas promo expires daily at 14:00. Drop it from the rotator once
-  // Santiago time passes 14:00 so the TV never advertises a closed promo;
-  // the meta-refresh on the page re-evaluates this within 10 minutes. When
-  // hidden, the rotator falls back to a 2-view (Abierto ↔ Campesino) crossfade.
+  // The Bar promo (cervezas + coctelería de café) only runs from 17:00 to
+  // close. Show it once Santiago time reaches 17:00 so mornings/afternoons
+  // stay coffee-focused; the meta-refresh on the page re-evaluates this
+  // within 10 minutes. When hidden, the rotator falls back to a 2-view
+  // (Abierto ↔ Campesino) crossfade.
   const santiagoHour = Number(
     new Intl.DateTimeFormat("en-GB", {
       timeZone: "America/Santiago",
@@ -409,15 +384,15 @@ async function AbiertoRotator() {
       hour12: false
     }).format(new Date())
   );
-  const showTortas = santiagoHour < 14;
+  const showBar = santiagoHour >= 17;
 
   return (
     <CrossfadeRotator
-      className={showTortas ? "ab-rotator" : "ab-rotator ab-rotator--2up"}
+      className={showBar ? "ab-rotator" : "ab-rotator ab-rotator--2up"}
       views={[
         { key: "abierto", node: <AbiertoDisplay /> },
         { key: "promo", node: <AbiertoPromo /> },
-        ...(showTortas ? [{ key: "tortas", node: <AbiertoTortas /> }] : [])
+        ...(showBar ? [{ key: "bar", node: <AbiertoBar /> }] : [])
       ]}
     />
   );
