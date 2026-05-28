@@ -73,6 +73,23 @@ html, body { background: var(--ab-plaster); margin: 0; }
   100% { opacity: 0; }
 }
 
+/* 2-view variant — after 14:00 the Tortas view drops out and the rotator
+   cycles Abierto ↔ Campesino only. Cycle = 40s total (19s + 1s fade each). */
+.ab-rotator--2up .ab-rotator__layer { animation-duration: 40s; }
+.ab-rotator--2up .ab-rotator__layer--0 { animation-name: ab-rotator-fade2-0; }
+.ab-rotator--2up .ab-rotator__layer--1 { animation-name: ab-rotator-fade2-1; }
+
+@keyframes ab-rotator-fade2-0 {
+  0%, 47.5% { opacity: 1; }
+  50%, 97.5% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes ab-rotator-fade2-1 {
+  0%, 47.5% { opacity: 0; }
+  50%, 97.5% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 .ab-stage {
   width: 1080px;
   height: 1920px;

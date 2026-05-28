@@ -132,7 +132,7 @@ async function AbiertoTortas() {
         <span className="ab-mast__rule" aria-hidden="true" />
       </header>
 
-      <div className="ab-promo__eyebrow">— Hoy · Mayo —</div>
+      <div className="ab-promo__eyebrow">— Solo hoy · hasta las 14:00 —</div>
 
       <div className="ab-promo__hero ab-promo__hero--tortas">
         <img
@@ -396,19 +396,40 @@ async function AbiertoDisplay() {
   );
 }
 
+async function AbiertoRotator() {
+  await connection();
+  // The Tortas promo expires daily at 14:00. Drop it from the rotator once
+  // Santiago time passes 14:00 so the TV never advertises a closed promo;
+  // the meta-refresh on the page re-evaluates this within 10 minutes. When
+  // hidden, the rotator falls back to a 2-view (Abierto ↔ Campesino) crossfade.
+  const santiagoHour = Number(
+    new Intl.DateTimeFormat("en-GB", {
+      timeZone: "America/Santiago",
+      hour: "2-digit",
+      hour12: false
+    }).format(new Date())
+  );
+  const showTortas = santiagoHour < 14;
+
+  return (
+    <CrossfadeRotator
+      className={showTortas ? "ab-rotator" : "ab-rotator ab-rotator--2up"}
+      views={[
+        { key: "abierto", node: <AbiertoDisplay /> },
+        { key: "promo", node: <AbiertoPromo /> },
+        ...(showTortas ? [{ key: "tortas", node: <AbiertoTortas /> }] : [])
+      ]}
+    />
+  );
+}
+
 export default function AbiertoPage() {
   return (
     <>
       {/* TV display: reload every 10 minutes to refresh date + edition number. */}
       <meta httpEquiv="refresh" content="600" />
       <Suspense fallback={<main className="ab-stage" />}>
-        <CrossfadeRotator
-          views={[
-            { key: "abierto", node: <AbiertoDisplay /> },
-            { key: "promo", node: <AbiertoPromo /> },
-            { key: "tortas", node: <AbiertoTortas /> }
-          ]}
-        />
+        <AbiertoRotator />
       </Suspense>
     </>
   );
