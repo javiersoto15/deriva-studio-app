@@ -9,9 +9,7 @@ import { getEditionMarkUppercase } from "../../../src/lib/edition";
 import { getCurrentSchedule } from "../../../src/data/menu-schedule";
 import { MENU_EJECUTIVO_FIXED } from "../../../src/data/menu-ejecutivo";
 import { CrossfadeRotator } from "../../../src/components/landing/CrossfadeRotator";
-import { LiveMenuDisplay } from "../menu-display/page";
 import "./abierto.css";
-import "../menu-display/menu-display.css";
 
 export const metadata: Metadata = {
   title: "Abierto · Deriva Coffee Studio",
@@ -54,6 +52,148 @@ function getCafeteriaData(): { itemNames: string[]; addons: MenuAddons[] } {
       : [cafe.addons]
     : [];
   return { itemNames, addons: [...espressoAddons, ...sectionAddons] };
+}
+
+async function AbiertoPromo() {
+  await connection();
+  const now = new Date();
+  const editionMark = getEditionMarkUppercase(now);
+  return (
+    <main className="ab-stage ab-stage--promo" aria-label="Promo · Desayuno campesino">
+      <header className="ab-mast">
+        <div className="ab-mast__row">
+          <LogoLockup
+            isotipo={56}
+            wordmarkSize={34}
+            wordmarkLine={32}
+            subSize={10}
+            gap={14}
+            isotipoColor="#241B14"
+            wordmarkColor="#241B14"
+          />
+          <span className="ab-mast__edition">{editionMark}</span>
+        </div>
+        <span className="ab-mast__rule" aria-hidden="true" />
+      </header>
+
+      <div className="ab-promo__eyebrow">— Esta semana · Mayo —</div>
+
+      <div className="ab-promo__hero">
+        <img
+          src="/promo/desayuno-campesino.jpg"
+          alt="Dos desayunos campesinos sobre la mesa"
+          width={1600}
+          height={1600}
+          decoding="async"
+        />
+      </div>
+
+      <div className="ab-promo__stack">
+        <span className="ab-promo__mark">§ 01 · Desayuno</span>
+        <h1 className="ab-promo__headline">Desayuno campesino · de a dos.</h1>
+        <p className="ab-promo__sub">— para compartir entre dos —</p>
+        <div className="ab-promo__price">
+          <span className="ab-promo__price-label">Promo</span>
+          <span className="ab-promo__price-amount">$ 14.500</span>
+        </div>
+      </div>
+
+      <footer className="ab-colophon">
+        <span className="ab-colophon__rule" aria-hidden="true" />
+        <div className="ab-colophon__row">
+          <span>MAGNERE 1570 · LOCAL 105</span>
+          <span>@DERIVA.COFFEE.STUDIO</span>
+          <span>DERIVASTUDIO.CL</span>
+        </div>
+      </footer>
+    </main>
+  );
+}
+
+async function AbiertoTortas() {
+  await connection();
+  const now = new Date();
+  const editionMark = getEditionMarkUppercase(now);
+  return (
+    <main className="ab-stage ab-stage--promo" aria-label="Promo · Tortas a mitad de precio">
+      <header className="ab-mast">
+        <div className="ab-mast__row">
+          <LogoLockup
+            isotipo={56}
+            wordmarkSize={34}
+            wordmarkLine={32}
+            subSize={10}
+            gap={14}
+            isotipoColor="#241B14"
+            wordmarkColor="#241B14"
+          />
+          <span className="ab-mast__edition">{editionMark}</span>
+        </div>
+        <span className="ab-mast__rule" aria-hidden="true" />
+      </header>
+
+      <div className="ab-promo__eyebrow">— Hoy · Mayo —</div>
+
+      <div className="ab-promo__hero ab-promo__hero--tortas">
+        <img
+          src="/promo/tortas.jpg"
+          alt="Tortas del día sobre la barra"
+          width={900}
+          height={1600}
+          decoding="async"
+        />
+      </div>
+
+      <div className="ab-promo__stack">
+        <span className="ab-promo__mark">§ 02 · Hoy</span>
+        <h1 className="ab-promo__headline">Acompaña tu espresso.</h1>
+        <p className="ab-promo__sub">— torta del día a mitad de precio —</p>
+        <div className="ab-promo__price">
+          <span className="ab-promo__price-label">Promo</span>
+          <span className="ab-promo__price-amount">–50%</span>
+          <span className="ab-promo__condition">al pedir un espresso de la barra</span>
+        </div>
+      </div>
+
+      <section className="ab-barra" aria-label="De la barra">
+        <div className="ab-barra__mark">
+          <span className="ab-barra__rule" aria-hidden="true" />
+          <span className="ab-barra__label">§ 03 · De la barra</span>
+          <span className="ab-barra__rule" aria-hidden="true" />
+        </div>
+        <div className="ab-barra__medallions">
+          <article className="ab-barra__med">
+            <div className="ab-barra__circle">
+              <DerivaImage slug="cappuccino" alt="Cappuccino en taza" sizes="220px" />
+            </div>
+            <div className="ab-barra__cap">
+              <span className="ab-barra__name">Cappuccino</span>
+              <span className="ab-barra__meta">180 ml</span>
+            </div>
+          </article>
+          <article className="ab-barra__med">
+            <div className="ab-barra__circle">
+              <DerivaImage slug="latte" alt="Latte servido en taza roja" sizes="220px" />
+            </div>
+            <div className="ab-barra__cap">
+              <span className="ab-barra__name">Latte</span>
+              <span className="ab-barra__meta">240 ml</span>
+            </div>
+          </article>
+        </div>
+        <span className="ab-barra__caption">— vale con cualquier espresso de la barra —</span>
+      </section>
+
+      <footer className="ab-colophon">
+        <span className="ab-colophon__rule" aria-hidden="true" />
+        <div className="ab-colophon__row">
+          <span>MAGNERE 1570 · LOCAL 105</span>
+          <span>@DERIVA.COFFEE.STUDIO</span>
+          <span>DERIVASTUDIO.CL</span>
+        </div>
+      </footer>
+    </main>
+  );
 }
 
 async function AbiertoDisplay() {
@@ -265,7 +405,8 @@ export default function AbiertoPage() {
         <CrossfadeRotator
           views={[
             { key: "abierto", node: <AbiertoDisplay /> },
-            { key: "menu", node: <LiveMenuDisplay /> }
+            { key: "promo", node: <AbiertoPromo /> },
+            { key: "tortas", node: <AbiertoTortas /> }
           ]}
         />
       </Suspense>

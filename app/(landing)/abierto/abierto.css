@@ -15,17 +15,19 @@
 html, body { background: var(--ab-plaster); margin: 0; }
 
 /* === Rotator ===
-   /abierto cycles between the Abierto splash and the full menu-display.
-   Both inner stages use width:1080 × height:1920; we hoist `zoom` to the
-   rotator wrapper so the menu-display matches the larger Abierto sizing
-   (0.833 instead of its native 0.6667) and stays consistent on the TV.
+   /abierto cycles between three views: Abierto splash, Promo
+   (Desayuno campesino), and Tortas (–50% con espresso). Inner stages
+   are 1080×1920; we hoist `zoom` to the rotator wrapper so all stages
+   share the TV sizing (0.833).
 
    Crossfade is CSS-driven (kiosk TVs throttle JS timers, so animations
-   on the compositor are far more reliable). Cycle = 65s total:
-     0  → 44.2s : Abierto solo                              (67.69%)
-     44.2 → 45s : crossfade Abierto → Menu Ejecutivo         (69.23%)
-     45 → 64.2s : Menu Ejecutivo solo                        (98.77%)
-     64.2 → 65s : crossfade Menu Ejecutivo → Abierto         (100%) */
+   on the compositor are far more reliable). Cycle = 60s total:
+     0   → 19s : Abierto solo                        (31.67%)
+     19  → 20s : crossfade Abierto → Campesino       (33.33%)
+     20  → 39s : Campesino solo                      (65.00%)
+     39  → 40s : crossfade Campesino → Tortas        (66.67%)
+     40  → 59s : Tortas solo                         (98.33%)
+     59  → 60s : crossfade Tortas → Abierto          (100%) */
 .ab-rotator {
   position: relative;
   width: 1080px;
@@ -38,16 +40,17 @@ html, body { background: var(--ab-plaster); margin: 0; }
   inset: 0;
   opacity: 0;
   /* Split into longhands so the minifier doesn't collapse the
-     name-less shorthand `animation: 65s linear infinite both` into
+     name-less shorthand `animation: 40s linear infinite both` into
      `animation: none` — which would zero out duration + fill-mode and
-     leave both layers stuck at opacity:0 (i.e. blank screen). */
-  animation-duration: 65s;
+     leave layers stuck at opacity:0 (i.e. blank screen). */
+  animation-duration: 60s;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
   animation-fill-mode: both;
 }
 .ab-rotator__layer--0 { animation-name: ab-rotator-fade-0; }
 .ab-rotator__layer--1 { animation-name: ab-rotator-fade-1; }
+.ab-rotator__layer--2 { animation-name: ab-rotator-fade-2; }
 .ab-rotator .ab-stage,
 .ab-rotator .md-stage {
   zoom: 1;
@@ -55,13 +58,18 @@ html, body { background: var(--ab-plaster); margin: 0; }
 }
 
 @keyframes ab-rotator-fade-0 {
-  0%, 67.69% { opacity: 1; }
-  69.23%, 98.77% { opacity: 0; }
+  0%, 31.67% { opacity: 1; }
+  33.33%, 98.33% { opacity: 0; }
   100% { opacity: 1; }
 }
 @keyframes ab-rotator-fade-1 {
-  0%, 67.69% { opacity: 0; }
-  69.23%, 98.77% { opacity: 1; }
+  0%, 31.67% { opacity: 0; }
+  33.33%, 65% { opacity: 1; }
+  66.67%, 100% { opacity: 0; }
+}
+@keyframes ab-rotator-fade-2 {
+  0%, 65% { opacity: 0; }
+  66.67%, 98.33% { opacity: 1; }
   100% { opacity: 0; }
 }
 
@@ -287,6 +295,138 @@ html, body { background: var(--ab-plaster); margin: 0; }
   font-family: var(--font-mono), "IBM Plex Mono", monospace;
   font-weight: 500; font-size: 13px; letter-spacing: 0.3em;
   text-transform: uppercase; color: var(--ab-mute);
+}
+
+/* === Promo view (Desayuno campesino · de a dos) ===
+   Mirrors Paper artboard 9HL-0. Reuses .ab-stage skeleton + masthead
+   + colophon; replaces hero/medallions/especialidad/pull-quote with
+   a centered photo broadside + single green moment on the price. */
+.ab-stage--promo {
+  gap: 40px;
+}
+.ab-stage--promo .ab-colophon { margin-top: auto; }
+.ab-promo__eyebrow {
+  font-family: var(--font-tracked), Poppins, sans-serif;
+  font-weight: 600; font-size: 22px; letter-spacing: 0.32em;
+  text-transform: uppercase; color: var(--ab-sub);
+  text-align: center;
+}
+.ab-promo__hero {
+  align-self: center;
+  width: 760px; height: 760px;
+  border-radius: 28px;
+  overflow: hidden;
+  background: var(--ab-medallion-bg);
+  box-shadow: 0 24px 48px -28px rgba(36, 27, 20, 0.32);
+}
+.ab-promo__hero img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center 58%;
+  display: block;
+}
+.ab-promo__hero--tortas { height: 540px; }
+.ab-promo__hero--tortas img { object-position: center 60%; }
+.ab-promo__stack {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 20px; padding-top: 8px;
+}
+.ab-promo__mark {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 500; font-size: 22px; letter-spacing: 0.28em;
+  text-transform: uppercase; color: var(--ab-mute);
+}
+.ab-promo__headline {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic; font-weight: 500;
+  font-size: 92px; line-height: 1.0; letter-spacing: -0.012em;
+  color: var(--ab-ink);
+  text-align: center;
+  max-width: 880px;
+  margin: 0;
+}
+.ab-promo__sub {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic; font-weight: 400;
+  font-size: 34px; line-height: 1.2;
+  color: var(--ab-sub);
+  text-align: center;
+  margin: 0;
+}
+.ab-promo__price {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 10px; padding-top: 22px;
+}
+.ab-promo__price-label {
+  font-family: var(--font-tracked), Poppins, sans-serif;
+  font-weight: 600; font-size: 18px; letter-spacing: 0.32em;
+  text-transform: uppercase; color: var(--ab-mute);
+}
+.ab-promo__price-amount {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 500; font-size: 118px; line-height: 1;
+  letter-spacing: -0.015em;
+  color: var(--ab-green);
+}
+.ab-promo__condition {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic; font-weight: 400;
+  font-size: 26px; line-height: 1.25;
+  color: var(--ab-mute);
+  text-align: center;
+  margin-top: 4px;
+}
+
+/* === Barra strip (Tortas promo only) === */
+.ab-barra {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 24px; padding-top: 16px;
+}
+.ab-barra__mark {
+  display: flex; align-items: center; gap: 14px;
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 500; font-size: 22px; letter-spacing: 0.28em;
+  text-transform: uppercase; color: var(--ab-mute);
+}
+.ab-barra__rule { display: inline-block; width: 80px; height: 1px; background: var(--ab-hairline); }
+.ab-barra__medallions { display: flex; gap: 56px; align-items: flex-end; }
+.ab-barra__med {
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+  margin: 0;
+}
+.ab-barra__circle {
+  width: 220px; height: 220px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--ab-medallion-bg);
+}
+.ab-barra__circle img,
+.ab-barra__circle picture,
+.ab-barra__circle picture img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+  display: block;
+}
+.ab-barra__cap {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.ab-barra__name {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic; font-weight: 500;
+  font-size: 32px; line-height: 1;
+  color: var(--ab-ink);
+}
+.ab-barra__meta {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 500; font-size: 16px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--ab-mute);
+}
+.ab-barra__caption {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic; font-weight: 400;
+  font-size: 28px; line-height: 1.2;
+  color: var(--ab-sub);
 }
 
 /* === Colophon === */
