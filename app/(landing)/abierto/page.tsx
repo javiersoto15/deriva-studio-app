@@ -7,7 +7,7 @@ import { menuSections, type MenuAddons } from "../../../src/data/menu";
 import { HOURS_LINES, isOpenNow } from "../../../src/lib/open-now";
 import { getEditionMarkUppercase } from "../../../src/lib/edition";
 import { getCurrentSchedule } from "../../../src/data/menu-schedule";
-import { MENU_EJECUTIVO_FIXED } from "../../../src/data/menu-ejecutivo";
+import { MENU_EJECUTIVO_FIXED, MENU_EJECUTIVO_TODAY } from "../../../src/data/menu-ejecutivo";
 import { CrossfadeRotator } from "../../../src/components/landing/CrossfadeRotator";
 import "./abierto.css";
 
@@ -132,7 +132,7 @@ async function AbiertoBar() {
         <span className="ab-mast__rule" aria-hidden="true" />
       </header>
 
-      <div className="ab-promo__eyebrow">— Desde las 16:00 · hasta cerrar —</div>
+      <div className="ab-promo__eyebrow">— Al almuerzo y hasta cerrar —</div>
 
       <div className="ab-promo__hero ab-promo__hero--cerveza">
         <img
@@ -146,15 +146,89 @@ async function AbiertoBar() {
 
       <div className="ab-promo__stack">
         <span className="ab-promo__mark">§ 02 · La barra</span>
-        <h1 className="ab-promo__headline">La tarde es para quedarse.</h1>
+        <h1 className="ab-promo__headline">La barra es para quedarse.</h1>
         <p className="ab-promo__sub">
-          Un café, una cerveza helada, un amigo nuevo.
+          Una cerveza helada para tu almuerzo,
           <br />
-          Quédate sin apuro.
+          o un café sin apuro por la tarde.
         </p>
         <div className="ab-promo__price">
           <span className="ab-promo__price-label">2 Peroni o Asahi</span>
           <span className="ab-promo__price-amount">$ 5.000</span>
+        </div>
+      </div>
+
+      <footer className="ab-colophon">
+        <span className="ab-colophon__rule" aria-hidden="true" />
+        <div className="ab-colophon__row">
+          <span>MAGNERE 1570 · LOCAL 105</span>
+          <span>@DERIVA.COFFEE.STUDIO</span>
+          <span>DERIVASTUDIO.CL</span>
+        </div>
+      </footer>
+    </main>
+  );
+}
+
+async function AbiertoEjecutivo() {
+  await connection();
+  const now = new Date();
+  const editionMark = getEditionMarkUppercase(now);
+  const { courses: today } = MENU_EJECUTIVO_TODAY;
+  const { courseTags } = MENU_EJECUTIVO_FIXED;
+  const courses = [
+    { roman: "i.", tag: courseTags.bebida, ...today.bebida },
+    { roman: "ii.", tag: courseTags.entrada, ...today.entrada },
+    { roman: "iii.", tag: courseTags.fondo, ...today.fondo },
+    { roman: "iv.", tag: courseTags.queque, ...today.queque }
+  ];
+
+  return (
+    <main className="ab-stage ab-stage--ejec" aria-label="Menu Ejecutivo de hoy">
+      <header className="ab-mast">
+        <div className="ab-mast__row">
+          <LogoLockup
+            isotipo={56}
+            wordmarkSize={34}
+            wordmarkLine={32}
+            subSize={10}
+            gap={14}
+            isotipoColor="#241B14"
+            wordmarkColor="#241B14"
+          />
+          <span className="ab-mast__edition">{editionMark}</span>
+        </div>
+        <span className="ab-mast__rule" aria-hidden="true" />
+      </header>
+
+      <div className="ab-ejec-view">
+        <span className="ab-ejec-view__eyebrow">§ Menú Ejecutivo · de lunes a viernes</span>
+        <h1 className="ab-ejec-view__hero">{MENU_EJECUTIVO_FIXED.hero}</h1>
+        <p className="ab-ejec-view__sub">{MENU_EJECUTIVO_FIXED.subline}</p>
+
+        <ul className="ab-ejec-list">
+          {courses.map((c) => (
+            <li key={c.roman} className="ab-ejec-row">
+              <span className="ab-ejec-row__num">{c.roman}</span>
+              <span className="ab-ejec-row__body">
+                <span className="ab-ejec-row__name">{c.name}</span>
+                {c.note ? <span className="ab-ejec-row__note">{c.note}</span> : null}
+              </span>
+              <span className="ab-ejec-row__tag">{c.tag}</span>
+            </li>
+          ))}
+        </ul>
+
+        <div className="ab-ejec-view__service">
+          <div className="ab-ejec-view__service-col">
+            <span className="ab-ejec-view__service-label">Servimos</span>
+            <span className="ab-ejec-view__window">13:00 — 16:00</span>
+            <span className="ab-ejec-view__days">Lunes a viernes</span>
+          </div>
+          <div className="ab-ejec-puck">
+            <span className="ab-ejec-puck__clp">CLP</span>
+            <span className="ab-ejec-puck__amount">10.990</span>
+          </div>
         </div>
       </div>
 
@@ -372,26 +446,34 @@ async function AbiertoDisplay() {
 
 async function AbiertoRotator() {
   await connection();
-  // The Bar promo (cervezas + coctelería de café) only runs from 16:00 to
-  // close. Show it once Santiago time reaches 16:00 so mornings stay
-  // coffee-focused; the meta-refresh on the page re-evaluates this within
-  // 10 minutes. When hidden, the rotator falls back to a 2-view
-  // (Abierto ↔ Campesino) crossfade.
+  // The rotation set depends on the time of day (and weekday vs weekend).
+  // The page meta-refresh re-evaluates this within 10 minutes, and
+  // CrossfadeRotator generates keyframes for whatever count is active.
+  const now = new Date();
   const santiagoHour = Number(
     new Intl.DateTimeFormat("en-GB", {
       timeZone: "America/Santiago",
       hour: "2-digit",
       hour12: false
-    }).format(new Date())
+    }).format(now)
   );
-  const showBar = santiagoHour >= 16;
+  // Menu Ejecutivo full panel takes the promo slot on weekdays until 16:00
+  // (it advertises the lunch ronda ahead of + during service). After 16:00,
+  // and on weekends where there is no executive menu, the Desayuno campesino
+  // promo runs instead.
+  const showEjecutivo = getCurrentSchedule(now) === "weekday" && santiagoHour < 16;
+  const showCampesino = !showEjecutivo;
+  // La barra (cervezas) runs from lunch (13:00) to close so mornings stay
+  // coffee-focused.
+  const showBar = santiagoHour >= 13;
 
   return (
     <CrossfadeRotator
-      className={showBar ? "ab-rotator" : "ab-rotator ab-rotator--2up"}
+      className="ab-rotator"
       views={[
         { key: "abierto", node: <AbiertoDisplay /> },
-        { key: "promo", node: <AbiertoPromo /> },
+        ...(showEjecutivo ? [{ key: "ejecutivo", node: <AbiertoEjecutivo /> }] : []),
+        ...(showCampesino ? [{ key: "promo", node: <AbiertoPromo /> }] : []),
         ...(showBar ? [{ key: "bar", node: <AbiertoBar /> }] : [])
       ]}
     />

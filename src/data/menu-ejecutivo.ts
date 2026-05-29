@@ -36,10 +36,10 @@ export const MENU_EJECUTIVO_FIXED = {
 export const MENU_EJECUTIVO_TODAY: MenuEjecutivoEdition = {
   courses: {
     bebida: { name: "Una bebida" },
-    entrada: { name: "Crema del Día" },
+    entrada: { name: "Crema de verduras asada" },
     fondo: {
-      name: "Ñoquis al pesto con zapallo",
-      note: "ó con salsa de tomate y vacuno"
+      name: "Lomo vetado con papas fritas",
+      note: "ó con ensalada proteica"
     },
     queque: { name: "Un queque" }
   }

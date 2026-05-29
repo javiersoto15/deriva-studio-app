@@ -9,25 +9,22 @@
   --ab-mute: #8B7B6C;
   --ab-hairline: #C9C2B5;
   --ab-green: #00311F;
+  --ab-ochre: #B47A3A;
   --ab-medallion-bg: #E5DECF;
 }
 
 html, body { background: var(--ab-plaster); margin: 0; }
 
 /* === Rotator ===
-   /abierto cycles between three views: Abierto splash, Promo
-   (Desayuno campesino), and Tortas (–50% con espresso). Inner stages
-   are 1080×1920; we hoist `zoom` to the rotator wrapper so all stages
-   share the TV sizing (0.833).
+   /abierto cycles through a time-dependent set of 1080×1920 views:
+   Abierto splash, Menu Ejecutivo (weekday lunch), Promo (Desayuno
+   campesino), and La barra (cervezas, from lunch to close). We hoist
+   `zoom` to the rotator wrapper so all stages share the TV sizing (0.833).
 
-   Crossfade is CSS-driven (kiosk TVs throttle JS timers, so animations
-   on the compositor are far more reliable). Cycle = 60s total:
-     0   → 19s : Abierto solo                        (31.67%)
-     19  → 20s : crossfade Abierto → Campesino       (33.33%)
-     20  → 39s : Campesino solo                      (65.00%)
-     39  → 40s : crossfade Campesino → Tortas        (66.67%)
-     40  → 59s : Tortas solo                         (98.33%)
-     59  → 60s : crossfade Tortas → Abierto          (100%) */
+   Crossfade is CSS-driven (kiosk TVs throttle JS timers, so animations on
+   the compositor are far more reliable). Each view holds 19s solo + 1s
+   fade; CrossfadeRotator generates the per-layer keyframes for whatever
+   number of views is active (2 → 40s, 3 → 60s, 4 → 80s). */
 .ab-rotator {
   position: relative;
   width: 1080px;
@@ -39,55 +36,19 @@ html, body { background: var(--ab-plaster); margin: 0; }
   position: absolute;
   inset: 0;
   opacity: 0;
-  /* Split into longhands so the minifier doesn't collapse the
-     name-less shorthand `animation: 40s linear infinite both` into
-     `animation: none` — which would zero out duration + fill-mode and
-     leave layers stuck at opacity:0 (i.e. blank screen). */
-  animation-duration: 60s;
+  /* animation-name + animation-duration are set inline by CrossfadeRotator
+     (generated per view count). Keep the rest as longhands here so the
+     minifier never collapses a name-less `animation` shorthand into
+     `animation: none` — which would zero out fill-mode and leave every
+     layer stuck at opacity:0 (a blank screen). */
   animation-timing-function: linear;
   animation-iteration-count: infinite;
   animation-fill-mode: both;
 }
-.ab-rotator__layer--0 { animation-name: ab-rotator-fade-0; }
-.ab-rotator__layer--1 { animation-name: ab-rotator-fade-1; }
-.ab-rotator__layer--2 { animation-name: ab-rotator-fade-2; }
 .ab-rotator .ab-stage,
 .ab-rotator .md-stage {
   zoom: 1;
   margin: 0;
-}
-
-@keyframes ab-rotator-fade-0 {
-  0%, 31.67% { opacity: 1; }
-  33.33%, 98.33% { opacity: 0; }
-  100% { opacity: 1; }
-}
-@keyframes ab-rotator-fade-1 {
-  0%, 31.67% { opacity: 0; }
-  33.33%, 65% { opacity: 1; }
-  66.67%, 100% { opacity: 0; }
-}
-@keyframes ab-rotator-fade-2 {
-  0%, 65% { opacity: 0; }
-  66.67%, 98.33% { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-/* 2-view variant — after 14:00 the Tortas view drops out and the rotator
-   cycles Abierto ↔ Campesino only. Cycle = 40s total (19s + 1s fade each). */
-.ab-rotator--2up .ab-rotator__layer { animation-duration: 40s; }
-.ab-rotator--2up .ab-rotator__layer--0 { animation-name: ab-rotator-fade2-0; }
-.ab-rotator--2up .ab-rotator__layer--1 { animation-name: ab-rotator-fade2-1; }
-
-@keyframes ab-rotator-fade2-0 {
-  0%, 47.5% { opacity: 1; }
-  50%, 97.5% { opacity: 0; }
-  100% { opacity: 1; }
-}
-@keyframes ab-rotator-fade2-1 {
-  0%, 47.5% { opacity: 0; }
-  50%, 97.5% { opacity: 1; }
-  100% { opacity: 0; }
 }
 
 .ab-stage {
@@ -395,6 +356,116 @@ html, body { background: var(--ab-plaster); margin: 0; }
 .ab-stage--bar .ab-promo__price { padding-top: 48px; gap: 16px; }
 .ab-stage--bar .ab-promo__price-label { font-size: 24px; letter-spacing: 0.3em; }
 .ab-stage--bar .ab-promo__price-amount { font-size: 150px; }
+
+/* === Menu Ejecutivo full panel ===
+   Mirrors the approved IG light v1 (Paper 9ZH-0): masthead, hero
+   "La ronda del mediodía.", a four-course numbered list, then the service
+   window + espresso price puck. Single green moment lives on the 13:00 —
+   16:00 window; the puck stays espresso ink with a cream amount. */
+.ab-stage--ejec { gap: 0; }
+.ab-ejec-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-top: 40px;
+  min-height: 0;
+}
+.ab-ejec-view__eyebrow {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 500; font-size: 20px; letter-spacing: 0.24em;
+  text-transform: uppercase; color: var(--ab-ochre);
+}
+.ab-ejec-view__hero {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic; font-weight: 500;
+  font-size: 132px; line-height: 1.04; letter-spacing: -0.025em;
+  color: var(--ab-ink);
+  margin: 0; padding-top: 18px;
+}
+.ab-ejec-view__sub {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic; font-weight: 400;
+  font-size: 34px; line-height: 1.25; color: var(--ab-sub);
+  margin: 0; padding-top: 18px; max-width: 760px;
+}
+
+/* Four-course numbered list — flex-grows to distribute rows evenly. */
+.ab-ejec-list {
+  flex: 1;
+  display: flex; flex-direction: column;
+  list-style: none; margin: 0; padding: 40px 0 0;
+  min-height: 0;
+}
+.ab-ejec-row {
+  flex: 1;
+  display: flex; align-items: baseline; gap: 28px;
+  padding: 22px 4px;
+  border-top: 1px solid var(--ab-hairline);
+}
+.ab-ejec-row:last-child { border-bottom: 1px solid var(--ab-hairline); }
+.ab-ejec-row__num {
+  flex: 0 0 96px;
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 600; font-size: 26px; letter-spacing: 0.12em;
+  color: var(--ab-mute);
+}
+.ab-ejec-row__body { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.ab-ejec-row__name {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic; font-weight: 500; font-size: 58px; line-height: 1.02;
+  color: var(--ab-ink);
+}
+.ab-ejec-row__note {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic; font-weight: 400; font-size: 34px; line-height: 1.05;
+  color: var(--ab-sub);
+}
+.ab-ejec-row__tag {
+  flex: 0 0 auto;
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 500; font-size: 16px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--ab-mute);
+  text-align: right; white-space: nowrap;
+  align-self: flex-start; padding-top: 14px;
+}
+
+/* Service window + price puck. Green moment = the window. */
+.ab-ejec-view__service {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 44px;
+}
+.ab-ejec-view__service-col { display: flex; flex-direction: column; gap: 8px; }
+.ab-ejec-view__service-label {
+  font-family: var(--font-tracked), Poppins, sans-serif;
+  font-weight: 600; font-size: 16px; letter-spacing: 0.32em;
+  text-transform: uppercase; color: var(--ab-mute);
+}
+.ab-ejec-view__window {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 500; font-size: 52px; line-height: 1; letter-spacing: -0.01em;
+  color: var(--ab-green);
+}
+.ab-ejec-view__days {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 400; font-size: 18px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--ab-sub);
+}
+.ab-ejec-puck {
+  width: 224px; height: 224px; border-radius: 50%;
+  background: var(--ab-ink);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px;
+}
+.ab-ejec-puck__clp {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 600; font-size: 18px; letter-spacing: 0.28em;
+  text-transform: uppercase; color: var(--ab-ochre);
+}
+.ab-ejec-puck__amount {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 500; font-size: 64px; line-height: 1; letter-spacing: -0.01em;
+  color: var(--ab-plaster);
+}
 
 /* === Colophon === */
 .ab-colophon { display: flex; flex-direction: column; gap: 10px; padding-top: 4px; }
