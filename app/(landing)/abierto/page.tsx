@@ -6,7 +6,6 @@ import { LogoLockup } from "../../../src/ui/LogoLockup";
 import { menuSections, type MenuAddons } from "../../../src/data/menu";
 import { HOURS_LINES, isOpenNow } from "../../../src/lib/open-now";
 import { getEditionMarkUppercase } from "../../../src/lib/edition";
-import { getCurrentSchedule } from "../../../src/data/menu-schedule";
 import { MENU_EJECUTIVO_FIXED, MENU_EJECUTIVO_TODAY } from "../../../src/data/menu-ejecutivo";
 import { CrossfadeRotator } from "../../../src/components/landing/CrossfadeRotator";
 import "./abierto.css";
@@ -20,6 +19,17 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { themeColor: "#F4EFE6" };
 
 const ROMAN_MONTHS = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
+
+// Menu Ejecutivo runs Lunes a viernes. This is NOT the carta's
+// getCurrentSchedule() (which treats Fri as "weekend" for the full menu) —
+// the executive lunch still runs on Fridays, so gate on the real weekday.
+function isMenuEjecutivoDay(now: Date): boolean {
+  const weekday = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Santiago",
+    weekday: "short"
+  }).format(now);
+  return weekday !== "Sat" && weekday !== "Sun";
+}
 
 function getDayLabels(now: Date) {
   const dateFmt = new Intl.DateTimeFormat("es-CL", {
@@ -261,8 +271,7 @@ async function AbiertoDisplay() {
       hour12: false
     }).format(now)
   );
-  const showEjecutivo =
-    getCurrentSchedule(now) === "weekday" && santiagoHour < 16;
+  const showEjecutivo = isMenuEjecutivoDay(now) && santiagoHour < 16;
 
   return (
     <main className="ab-stage" aria-label="Pantalla abierto">
@@ -461,7 +470,7 @@ async function AbiertoRotator() {
   // (it advertises the lunch ronda ahead of + during service). After 16:00,
   // and on weekends where there is no executive menu, the Desayuno campesino
   // promo runs instead.
-  const showEjecutivo = getCurrentSchedule(now) === "weekday" && santiagoHour < 16;
+  const showEjecutivo = isMenuEjecutivoDay(now) && santiagoHour < 16;
   const showCampesino = !showEjecutivo;
   // La barra (cervezas) runs from lunch (13:00) to close so mornings stay
   // coffee-focused.
