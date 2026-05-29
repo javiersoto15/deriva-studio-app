@@ -20,6 +20,10 @@ export const viewport: Viewport = { themeColor: "#F4EFE6" };
 
 const ROMAN_MONTHS = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
 
+// La barra promo — shared by the dedicated bar view and the Menu Ejecutivo
+// "para acompañar" pairing line so the two never drift.
+const BAR_PROMO = { drinks: "2 Peroni o Asahi", price: "$ 5.000" } as const;
+
 // Menu Ejecutivo runs Lunes a viernes. This is NOT the carta's
 // getCurrentSchedule() (which treats Fri as "weekend" for the full menu) —
 // the executive lunch still runs on Fridays, so gate on the real weekday.
@@ -163,8 +167,8 @@ async function AbiertoBar() {
           o un café sin apuro por la tarde.
         </p>
         <div className="ab-promo__price">
-          <span className="ab-promo__price-label">2 Peroni o Asahi</span>
-          <span className="ab-promo__price-amount">$ 5.000</span>
+          <span className="ab-promo__price-label">{BAR_PROMO.drinks}</span>
+          <span className="ab-promo__price-amount">{BAR_PROMO.price}</span>
         </div>
       </div>
 
@@ -228,6 +232,14 @@ async function AbiertoEjecutivo() {
             </li>
           ))}
         </ul>
+
+        <div className="ab-ejec-pairing">
+          <span className="ab-ejec-pairing__kicker">§ Para acompañar</span>
+          <span className="ab-ejec-pairing__text">
+            Una cerveza helada · {BAR_PROMO.drinks}
+          </span>
+          <span className="ab-ejec-pairing__price">+ {BAR_PROMO.price}</span>
+        </div>
 
         <div className="ab-ejec-view__service">
           <div className="ab-ejec-view__service-col">

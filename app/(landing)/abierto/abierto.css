@@ -429,10 +429,39 @@ html, body { background: var(--ab-plaster); margin: 0; }
   align-self: flex-start; padding-top: 14px;
 }
 
+/* "Para acompañar" sidenote — optional beer pairing at lunch. Warm sand
+   ground + 3px structural green rule (a sidenote rule, so it doesn't count
+   as a second green moment). The "+" frames it as an add-on, not included. */
+.ab-ejec-pairing {
+  display: flex; align-items: baseline; gap: 22px;
+  margin-top: 28px;
+  padding: 20px 26px;
+  background: #E8DFCB;
+  border-left: 3px solid var(--ab-green);
+}
+.ab-ejec-pairing__kicker {
+  flex: 0 0 auto;
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 500; font-size: 16px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--ab-ochre);
+}
+.ab-ejec-pairing__text {
+  flex: 1;
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic; font-weight: 500; font-size: 34px; line-height: 1.1;
+  color: var(--ab-ink);
+}
+.ab-ejec-pairing__price {
+  flex: 0 0 auto;
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 500; font-size: 26px; letter-spacing: -0.01em;
+  color: var(--ab-ink); white-space: nowrap;
+}
+
 /* Service window + price puck. Green moment = the window. */
 .ab-ejec-view__service {
   display: flex; justify-content: space-between; align-items: center;
-  padding-top: 44px;
+  padding-top: 28px;
 }
 .ab-ejec-view__service-col { display: flex; flex-direction: column; gap: 8px; }
 .ab-ejec-view__service-label {
