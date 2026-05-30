@@ -202,11 +202,11 @@ function BarPanel() {
             <em>no se apura.</em>
           </h2>
           <p className="landing-panel__body">
-            Espresso ICON, molienda Mahlkönig, agua filtrada. Cada extracción es una decisión:
+            Espresso Dalla Corte, molienda Mahlkönig, agua filtrada. Cada extracción es una decisión:
             tiempo, presión, paciencia.
           </p>
           <ul className="landing-panel__list">
-            <li>Espresso · La Marzocco ICON</li>
+            <li>Espresso · Dalla Corte</li>
             <li>Filtrado · V60 · Chemex</li>
             <li>Origen · rotando con la temporada</li>
           </ul>
@@ -215,7 +215,7 @@ function BarPanel() {
       <div className="landing-panel__photo">
         <DerivaImage
           slug="bar"
-          alt="Barra de Deriva: máquina de espresso ICON, molinos, pastelería"
+          alt="Barra de Deriva: máquina de espresso Dalla Corte, molinos, pastelería"
           sizes="(max-width: 900px) 100vw, 60vw"
           fill
           className="landing-panel__img"

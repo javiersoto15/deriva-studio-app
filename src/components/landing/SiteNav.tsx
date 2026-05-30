@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { todayHoursLabel } from "../../lib/open-now";
 
 type Tab = "inicio" | "carta" | "visita";
 
@@ -13,6 +14,14 @@ export function SiteNav({
   variant?: "translucent" | "solid";
 }) {
   const [scrolled, setScrolled] = useState(false);
+  // Weekday hours by default for the prerender/SSR pass; the real day is
+  // resolved client-side after mount so we never read `new Date()` during
+  // static prerender (Next 16 dynamic-IO). Only Sat/Sun differ from default.
+  const [hoursLabel, setHoursLabel] = useState("08:00–21:00");
+
+  useEffect(() => {
+    setHoursLabel(todayHoursLabel());
+  }, []);
 
   useEffect(() => {
     if (variant === "solid") return;
@@ -53,7 +62,7 @@ export function SiteNav({
           Visita
         </Link>
       </div>
-      <span className="landing-nav__cue">Magnere 1570 · 08:00–21:00</span>
+      <span className="landing-nav__cue">Magnere 1570 · {hoursLabel}</span>
     </nav>
   );
 }

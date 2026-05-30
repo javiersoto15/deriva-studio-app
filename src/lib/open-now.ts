@@ -13,6 +13,20 @@ export const HOURS_LINES = [
   "DOM CERRADO"
 ] as const;
 
+// Today's published hours as a compact signage label, computed in
+// America/Santiago so it matches the day on the wall regardless of the
+// server's timezone. Lun–Vie "08:00–21:00" · Sáb "10:00–21:00" · Dom "Cerrado".
+export function todayHoursLabel(now: Date = new Date()): string {
+  const weekday = new Intl.DateTimeFormat("en-US", {
+    timeZone: CHILE_TZ,
+    weekday: "short"
+  }).format(now);
+
+  if (weekday === "Sun") return "Cerrado";
+  if (weekday === "Sat") return "10:00–21:00";
+  return "08:00–21:00";
+}
+
 export function isOpenNow(now: Date = new Date()): boolean {
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone: CHILE_TZ,
