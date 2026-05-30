@@ -265,7 +265,8 @@ function CasaPanel() {
           </p>
           <ul className="landing-panel__list">
             <li>Capacidad · 32 puestos</li>
-            <li>Lun–Sáb · desde las 08:00</li>
+            <li>Lun–Vie · desde las 08:00</li>
+            <li>Sáb · desde las 10:00</li>
           </ul>
         </div>
       </div>
