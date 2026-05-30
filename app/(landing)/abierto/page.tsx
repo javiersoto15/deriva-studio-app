@@ -518,15 +518,28 @@ async function AbiertoRotator() {
   // La barra (cervezas) runs from lunch (13:00) to close so mornings stay
   // coffee-focused.
   const showBar = santiagoHour >= 13;
-  // Noche · just for today — sits as the second view in the rotation.
+  // Noche · just for today the display is a two-view takeover: the Abierto
+  // splash (20s) and the "Quédate hasta el cierre" night art (45s). The other
+  // promo panels step aside for the day; they return automatically once the
+  // Santiago date rolls past NOCHE.date.
   const showNoche = santiagoDate(now) === NOCHE.date;
+  if (showNoche) {
+    return (
+      <CrossfadeRotator
+        className="ab-rotator"
+        views={[
+          { key: "abierto", node: <AbiertoDisplay />, hold: 20 },
+          { key: "noche", node: <AbiertoNoche />, hold: 45 }
+        ]}
+      />
+    );
+  }
 
   return (
     <CrossfadeRotator
       className="ab-rotator"
       views={[
         { key: "abierto", node: <AbiertoDisplay /> },
-        ...(showNoche ? [{ key: "noche", node: <AbiertoNoche /> }] : []),
         ...(showEjecutivo ? [{ key: "ejecutivo", node: <AbiertoEjecutivo /> }] : []),
         ...(showCampesino ? [{ key: "promo", node: <AbiertoPromo /> }] : []),
         ...(showBar ? [{ key: "bar", node: <AbiertoBar /> }] : [])
