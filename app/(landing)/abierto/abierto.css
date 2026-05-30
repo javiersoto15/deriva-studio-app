@@ -506,3 +506,11 @@ html, body { background: var(--ab-plaster); margin: 0; }
   text-transform: uppercase; color: var(--ab-sub);
 }
 .ab-colophon__row > span:nth-child(2) { color: var(--ab-mute); }
+
+/* === Noche · full-bleed art view (temporary, date-gated) ===
+   Drops the plaster ground + stage padding so a single pre-composed
+   1080×1920 art (the Sábado night story) fills the kiosk panel exactly.
+   The PNG already carries masthead, copy, and colophon — see the IG
+   story it was ported from. */
+.ab-stage--noche { padding: 0; background: #140c06; }
+.ab-noche__art { width: 1080px; height: 1920px; object-fit: cover; display: block; }

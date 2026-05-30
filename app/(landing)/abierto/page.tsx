@@ -24,6 +24,19 @@ const ROMAN_MONTHS = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X
 // "para acompañar" pairing line so the two never drift.
 const BAR_PROMO = { drinks: "2 Peroni o Asahi", price: "$ 5.000" } as const;
 
+// Noche · temporary date-gated art view. A single pre-composed 1080×1920 PNG
+// (ported from the Sábado night IG story) takes the second rotation slot, but
+// ONLY on its date — once the Santiago day rolls past, the view drops out of
+// the rotation on the next 10-minute refresh. Bump/remove when the day passes.
+const NOCHE = {
+  date: "2026-05-30",
+  src: "https://media.derivastudio.cl/promos/sabado-noche-2026-05-30.png"
+} as const;
+
+function santiagoDate(now: Date): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Santiago" }).format(now);
+}
+
 // Menu Ejecutivo runs Lunes a viernes. This is NOT the carta's
 // getCurrentSchedule() (which treats Fri as "weekend" for the full menu) —
 // the executive lunch still runs on Fridays, so gate on the real weekday.
@@ -465,6 +478,24 @@ async function AbiertoDisplay() {
   );
 }
 
+// Noche · full-bleed pre-composed art (the night-story PNG). The image already
+// carries masthead, copy, and colophon, so the view is just the art filling the
+// 1080×1920 stage — no plaster ground, no padding.
+function AbiertoNoche() {
+  return (
+    <main className="ab-stage ab-stage--noche" aria-label="Sábado de noche en Deriva">
+      <img
+        className="ab-noche__art"
+        src={NOCHE.src}
+        alt="Sábado de noche en Deriva — once, barra y café hasta el cierre"
+        width={1080}
+        height={1920}
+        decoding="async"
+      />
+    </main>
+  );
+}
+
 async function AbiertoRotator() {
   await connection();
   // The rotation set depends on the time of day (and weekday vs weekend).
@@ -487,12 +518,15 @@ async function AbiertoRotator() {
   // La barra (cervezas) runs from lunch (13:00) to close so mornings stay
   // coffee-focused.
   const showBar = santiagoHour >= 13;
+  // Noche · just for today — sits as the second view in the rotation.
+  const showNoche = santiagoDate(now) === NOCHE.date;
 
   return (
     <CrossfadeRotator
       className="ab-rotator"
       views={[
         { key: "abierto", node: <AbiertoDisplay /> },
+        ...(showNoche ? [{ key: "noche", node: <AbiertoNoche /> }] : []),
         ...(showEjecutivo ? [{ key: "ejecutivo", node: <AbiertoEjecutivo /> }] : []),
         ...(showCampesino ? [{ key: "promo", node: <AbiertoPromo /> }] : []),
         ...(showBar ? [{ key: "bar", node: <AbiertoBar /> }] : [])
