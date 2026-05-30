@@ -31,7 +31,8 @@ const SHARED_INFRA_PREFIXES = [
   // Static assets served from public/ that both surfaces reference (logos,
   // isotipos, OG fallbacks, email artwork). Any new top-level public/ folder
   // accessed from both hosts needs to be added here.
-  "/brand"
+  "/brand",
+  "/promo"
 ] as const;
 
 // Top-level path segments owned by the landing surface (apex host).

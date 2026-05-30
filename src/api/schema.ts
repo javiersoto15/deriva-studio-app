@@ -794,6 +794,61 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/me/today": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get today's companion landing content
+         * @description Returns the authenticated member's /hoy content for the explicit weekday resolved by the frontend. The backend returns UTC instants only and does not resolve Santiago weekdays server-side.
+         */
+        get: {
+            parameters: {
+                query: {
+                    day: components["schemas"]["TodayWeekday"];
+                    /** @description Resolves localized JSONB fields. Unknown values fall back to es-CL. */
+                    locale?: "es-CL" | "en";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Today landing content. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TodayResponse"];
+                    };
+                };
+                /** @description Missing or invalid weekday. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TodayError"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                500: components["responses"]["InternalServerError"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/me/claims": {
         parameters: {
             query?: never;
@@ -1364,7 +1419,7 @@ export interface paths {
                     /** @description Filter active menu items by normalized category id. */
                     category?: "coffee" | "beverage" | "breakfast" | "savory" | "entree" | "dessert";
                     /** @description Filter active menu items by normalized section id. */
-                    section?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "cakes-pies" | "bakes";
+                    section?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "onces" | "cakes-pies" | "bakes";
                     /** @description Resolve backend-driven menu copy for this locale. Defaults to es-CL and falls back to es-CL when unsupported. */
                     locale?: "es-CL" | "en";
                 };
@@ -2111,7 +2166,7 @@ export interface paths {
         };
         /**
          * Admin menu list
-         * @description P1 contract placeholder; currently returns 501 Not Implemented.
+         * @description Manager/owner endpoint returning editable menu catalog rows plus normalized taxonomy. Includes unavailable items so operational changes can be made through authenticated APIs instead of seeds, frontend edits, or direct SQL.
          */
         get: {
             parameters: {
@@ -2122,9 +2177,17 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
+                /** @description Editable menu catalog and taxonomy. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AdminMenuView"];
+                    };
+                };
                 401: components["responses"]["Unauthorized"];
                 403: components["responses"]["Forbidden"];
-                501: components["responses"]["NotImplemented"];
             };
         };
         put?: never;
@@ -2146,7 +2209,7 @@ export interface paths {
         put?: never;
         /**
          * Create a menu item
-         * @description P1 contract placeholder; currently returns 501 Not Implemented.
+         * @description Manager/owner endpoint for creating an operational menu catalog item. The backend generates the internal item id from the submitted name and returns it in the response. Public menu placement remains controlled by /admin/public-menu.
          */
         post: {
             parameters: {
@@ -2157,13 +2220,22 @@ export interface paths {
             };
             requestBody: {
                 content: {
-                    "application/json": components["schemas"]["MenuItemInput"];
+                    "application/json": components["schemas"]["MenuItemCreateInput"];
                 };
             };
             responses: {
+                /** @description Created menu item. */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MenuItem"];
+                    };
+                };
+                400: components["responses"]["BadRequest"];
                 401: components["responses"]["Unauthorized"];
                 403: components["responses"]["Forbidden"];
-                501: components["responses"]["NotImplemented"];
             };
         };
         delete?: never;
@@ -2182,6 +2254,248 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update a menu item
+         * @description Manager/owner endpoint for operational catalog edits. Actor is derived from the bearer token and every successful mutation emits an audit log entry.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    item_id: components["parameters"]["ItemID"];
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["MenuItemInput"];
+                };
+            };
+            responses: {
+                /** @description Updated menu item. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MenuItem"];
+                    };
+                };
+                400: components["responses"]["BadRequest"];
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                404: components["responses"]["NotFound"];
+            };
+        };
+        trace?: never;
+    };
+    "/admin/public-menu": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Admin public menu presentation
+         * @description Manager/owner endpoint returning editable public landing menu sections, subgroups, item placement, add-ons, schedule visibility, and Menu Ejecutivo placement.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Editable public menu presentation. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PublicMenuPresentation"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+            };
+        };
+        /**
+         * Replace public menu presentation
+         * @description Manager/owner endpoint replacing the public menu layout. Referenced item IDs must exist in menu_items, Menu Ejecutivo must remain present, and every successful mutation emits an audit log entry.
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["PublicMenuPresentation"];
+                };
+            };
+            responses: {
+                /** @description Updated public menu presentation. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PublicMenuPresentation"];
+                    };
+                };
+                400: components["responses"]["BadRequest"];
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/menu-ejecutivo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Menu Ejecutivo edition
+         * @description Manager/owner endpoint returning the Menu Ejecutivo edition for a service date. If no date-specific edition exists, the response source is fallback_default.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description Service date in YYYY-MM-DD format. */
+                    date?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Menu Ejecutivo admin view. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ExecutiveMenuAdminView"];
+                    };
+                };
+                400: components["responses"]["BadRequest"];
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/menu-ejecutivo/{date}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Upsert Menu Ejecutivo edition
+         * @description Manager/owner endpoint upserting price, hours, copy, and exactly the bebida, entrada, fondo, and queque courses for one service date. Actor is derived from auth context and every successful mutation emits an audit log entry.
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    date: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ExecutiveMenu"];
+                };
+            };
+            responses: {
+                /** @description Upserted Menu Ejecutivo admin view. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ExecutiveMenuAdminView"];
+                    };
+                };
+                400: components["responses"]["BadRequest"];
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/menu-ejecutivo/{date}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Publish Menu Ejecutivo edition
+         * @description Manager/owner endpoint marking a date-specific Menu Ejecutivo edition as published for public menu readers. Actor is derived from auth context and every successful mutation emits an audit log entry.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    date: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Published Menu Ejecutivo admin view. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ExecutiveMenuAdminView"];
+                    };
+                };
+                400: components["responses"]["BadRequest"];
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                404: components["responses"]["NotFound"];
+            };
+        };
         /**
          * Delete a menu item
          * @description P1 contract placeholder; currently returns 501 Not Implemented.
@@ -2204,30 +2518,421 @@ export interface paths {
         };
         options?: never;
         head?: never;
-        /**
-         * Update a menu item
-         * @description P1 contract placeholder; currently returns 501 Not Implemented.
-         */
-        patch: {
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/today/origins": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List today coffee origins */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Editable today origins. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TodayOriginsResponse"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/today/origins/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a today coffee origin */
+        get: {
             parameters: {
                 query?: never;
                 header?: never;
                 path: {
-                    item_id: components["parameters"]["ItemID"];
+                    id: components["parameters"]["TodayID"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Today origin. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TodayOrigin"];
+                    };
+                };
+                404: components["responses"]["NotFound"];
+            };
+        };
+        /** Upsert a today coffee origin */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: components["parameters"]["TodayID"];
                 };
                 cookie?: never;
             };
             requestBody: {
                 content: {
-                    "application/json": components["schemas"]["MenuItemInput"];
+                    "application/json": components["schemas"]["TodayOrigin"];
                 };
             };
             responses: {
-                401: components["responses"]["Unauthorized"];
-                403: components["responses"]["Forbidden"];
-                501: components["responses"]["NotImplemented"];
+                /** @description Updated origin. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TodayOrigin"];
+                    };
+                };
+                /** @description Created origin. */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TodayOrigin"];
+                    };
+                };
+                400: components["responses"]["TodayBadRequest"];
+                422: components["responses"]["TodayUnprocessable"];
             };
         };
+        post?: never;
+        /** Delete a today coffee origin */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: components["parameters"]["TodayID"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Deleted. */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                409: components["responses"]["TodayConflict"];
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/today/baristas": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List today baristas */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Editable today baristas. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TodayBaristasResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/today/baristas/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a today barista */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: components["parameters"]["TodayID"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Today barista. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TodayBarista"];
+                    };
+                };
+                404: components["responses"]["NotFound"];
+            };
+        };
+        /** Upsert a today barista */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: components["parameters"]["TodayID"];
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["TodayBarista"];
+                };
+            };
+            responses: {
+                /** @description Updated barista. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TodayBarista"];
+                    };
+                };
+                /** @description Created barista. */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TodayBarista"];
+                    };
+                };
+                400: components["responses"]["TodayBadRequest"];
+                422: components["responses"]["TodayUnprocessable"];
+            };
+        };
+        post?: never;
+        /** Delete a today barista */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: components["parameters"]["TodayID"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Deleted. */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                409: components["responses"]["TodayConflict"];
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/today/schedule": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List today schedule */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Seven weekday schedule entries. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TodayScheduleResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/today/schedule/{weekday}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a today schedule entry */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    weekday: components["parameters"]["TodayWeekdayParam"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Schedule entry. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TodayScheduleEntry"];
+                    };
+                };
+                400: components["responses"]["TodayBadRequest"];
+            };
+        };
+        /** Replace a today schedule entry */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    weekday: components["parameters"]["TodayWeekdayParam"];
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["TodayScheduleEntry"];
+                };
+            };
+            responses: {
+                /** @description Updated schedule entry. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TodayScheduleEntry"];
+                    };
+                };
+                400: components["responses"]["TodayBadRequest"];
+                422: components["responses"]["TodayUnprocessable"];
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/today/seed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Replace all today content
+         * @description Transactional full replace of origins, baristas, and schedule for agent-driven restores.
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["TodaySeed"];
+                };
+            };
+            responses: {
+                /** @description Seed applied. */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                400: components["responses"]["TodayBadRequest"];
+                422: components["responses"]["TodayUnprocessable"];
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/admin/rewards": {
@@ -2457,6 +3162,93 @@ export interface components {
         };
         ErrorResponse: {
             error: string;
+        };
+        /** @enum {string} */
+        TodayWeekday: "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
+        TodayLocalizedString: {
+            "es-CL": string;
+            en?: string;
+        } & {
+            [key: string]: string;
+        };
+        TodayError: {
+            /** @enum {string} */
+            code: "invalid_weekday" | "invalid_slug" | "invalid_time" | "missing_required_locale" | "missing_reference" | "in_use" | "invalid_json" | "not_found" | "internal_error";
+            field?: string;
+            locale?: string;
+            id?: string;
+            referenced_by?: {
+                table: string;
+                weekday: components["schemas"]["TodayWeekday"];
+            }[];
+        };
+        TodayHours: {
+            /** Format: date-time */
+            opens_at_utc: string | null;
+            /** Format: date-time */
+            closes_at_utc: string | null;
+        };
+        TodayOriginView: {
+            name: string;
+            finca?: string;
+            proceso: string;
+            notes: string;
+            brew?: string;
+            flags: string[];
+        };
+        TodayBaristaView: {
+            name: string;
+            /** Format: date-time */
+            turno_until_utc: string | null;
+            note?: string;
+        };
+        TodayLastOrder: {
+            name: string;
+            /** Format: date-time */
+            placed_at_utc: string;
+        };
+        TodayResponse: {
+            day: components["schemas"]["TodayWeekday"];
+            hours: components["schemas"]["TodayHours"];
+            destacado: components["schemas"]["TodayOriginView"];
+            rotacion: components["schemas"]["TodayOriginView"][];
+            barra: components["schemas"]["TodayBaristaView"] | null;
+            last_order: components["schemas"]["TodayLastOrder"] | null;
+        };
+        TodayOrigin: {
+            id: string;
+            name: string;
+            finca?: string;
+            proceso: components["schemas"]["TodayLocalizedString"];
+            notes: components["schemas"]["TodayLocalizedString"];
+            brew?: components["schemas"]["TodayLocalizedString"];
+            flags: string[];
+        };
+        TodayBarista: {
+            id: string;
+            name: string;
+            note?: components["schemas"]["TodayLocalizedString"];
+        };
+        TodayScheduleEntry: {
+            weekday: components["schemas"]["TodayWeekday"];
+            destacado_id?: string;
+            rotacion_ids: string[];
+            barista_id?: string;
+            shift_end_local: string | null;
+        };
+        TodayOriginsResponse: {
+            origins: components["schemas"]["TodayOrigin"][];
+        };
+        TodayBaristasResponse: {
+            baristas: components["schemas"]["TodayBarista"][];
+        };
+        TodayScheduleResponse: {
+            schedule: components["schemas"]["TodayScheduleEntry"][];
+        };
+        TodaySeed: {
+            origins: components["schemas"]["TodayOrigin"][];
+            baristas: components["schemas"]["TodayBarista"][];
+            schedule: components["schemas"]["TodayScheduleEntry"][];
         };
         IssueCampaignTokensRequest: {
             campaign_id: string;
@@ -2774,7 +3566,14 @@ export interface components {
             notification_prefs?: components["schemas"]["NotificationPrefs"];
         };
         BalanceResponse: {
+            /** @description Backward-compatible alias for available_points. */
             balance: number;
+            /** @description Spendable point balance after reward redemptions and other ledger debits. */
+            available_points: number;
+            /** @description Historic qualifying points earned across all time. Reward redemptions do not reduce this value. */
+            lifetime_earned_points: number;
+            /** @description Historic points spent through reward redemptions. */
+            lifetime_redeemed_points: number;
             pending: number;
             next_reward: components["schemas"]["NextReward"] | null;
             expires_oldest: string | null;
@@ -2804,8 +3603,55 @@ export interface components {
         StaffLookupResponse: {
             matches: components["schemas"]["Member"][];
         };
+        AdminMenuView: {
+            items: components["schemas"]["MenuItem"][];
+            categories: components["schemas"]["MenuTaxonomyCategory"][];
+            sections: components["schemas"]["MenuTaxonomySection"][];
+        };
+        MenuTaxonomyCategory: {
+            id: string;
+            label: string;
+            sort_order: number;
+        };
+        MenuTaxonomySection: {
+            id: string;
+            category_id: string;
+            label: string;
+            legacy_section?: string;
+            sort_order: number;
+        };
         /** @enum {string} */
         PublicMenuSchedule: "weekday" | "weekend";
+        PublicMenuPresentation: {
+            name: string;
+            season: string;
+            sections: components["schemas"]["PublicMenuSectionTemplate"][];
+        };
+        PublicMenuSectionTemplate: {
+            id: string;
+            numeral: string;
+            title: string;
+            italic_word?: string;
+            full_italic?: boolean;
+            /** @enum {string} */
+            emphasis: "hero" | "primary" | "utility";
+            lede: string;
+            lede_italic?: boolean;
+            service_window?: string;
+            schedule?: components["schemas"]["PublicMenuSchedule"][];
+            items?: string[];
+            subgroups?: components["schemas"]["PublicMenuSubgroupTemplate"][];
+            addons?: components["schemas"]["PublicMenuAddon"][];
+            addons_before?: string;
+            executive_menu?: boolean;
+        };
+        PublicMenuSubgroupTemplate: {
+            id: string;
+            label: string;
+            items?: string[];
+            addons?: components["schemas"]["PublicMenuAddon"];
+            schedule?: components["schemas"]["PublicMenuSchedule"][];
+        };
         PublicMenuView: {
             /** @enum {string} */
             locale?: "es-CL" | "en";
@@ -2847,8 +3693,16 @@ export interface components {
             hours: string;
             hero: string;
             subline: string;
-            date_label: string;
+            date_label?: string;
             courses: components["schemas"]["ExecutiveMenuCourse"][];
+        };
+        ExecutiveMenuAdminView: {
+            /** Format: date */
+            service_date: string;
+            /** @enum {string} */
+            source: "date_specific" | "fallback_default";
+            published: boolean;
+            menu: components["schemas"]["ExecutiveMenu"];
         };
         ExecutiveMenuCourse: {
             /** @enum {string} */
@@ -2891,7 +3745,7 @@ export interface components {
              * @description Normalized menu section id.
              * @enum {string}
              */
-            section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "cakes-pies" | "bakes";
+            section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "onces" | "cakes-pies" | "bakes";
             section_label?: string;
             /** @description Legacy/display section value kept for backward compatibility. */
             section: string;
@@ -2935,7 +3789,7 @@ export interface components {
              * @description Normalized menu section id.
              * @enum {string}
              */
-            section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "cakes-pies" | "bakes";
+            section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "onces" | "cakes-pies" | "bakes";
             section_label?: string;
             /** @description Legacy/display section value kept for backward compatibility. */
             section: string;
@@ -2961,11 +3815,25 @@ export interface components {
             /** @enum {string} */
             category_id?: "coffee" | "beverage" | "breakfast" | "savory" | "entree" | "dessert";
             /** @enum {string} */
-            section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "cakes-pies" | "bakes";
+            section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "onces" | "cakes-pies" | "bakes";
             section?: string;
             name?: string;
             description?: string;
             price_clp?: number;
+            tags?: string[];
+            allergens?: string[];
+            available?: boolean;
+        };
+        /** @description Create payload for menu catalog items. Provide either section_id or section; id is generated by the backend and returned in the MenuItem response. */
+        MenuItemCreateInput: {
+            /** @enum {string} */
+            category_id?: "coffee" | "beverage" | "breakfast" | "savory" | "entree" | "dessert";
+            /** @enum {string} */
+            section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "onces" | "cakes-pies" | "bakes";
+            section?: string;
+            name: string;
+            description?: string;
+            price_clp: number;
             tags?: string[];
             allergens?: string[];
             available?: boolean;
@@ -3218,6 +4086,33 @@ export interface components {
                 "application/json": components["schemas"]["ErrorResponse"];
             };
         };
+        /** @description Invalid today request. */
+        TodayBadRequest: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": components["schemas"]["TodayError"];
+            };
+        };
+        /** @description Today request failed validation. */
+        TodayUnprocessable: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": components["schemas"]["TodayError"];
+            };
+        };
+        /** @description Today resource is referenced by active schedule rows. */
+        TodayConflict: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": components["schemas"]["TodayError"];
+            };
+        };
     };
     parameters: {
         MemberID: string;
@@ -3226,6 +4121,8 @@ export interface components {
         OriginID: string;
         RewardID: string;
         OrderID: string;
+        TodayID: string;
+        TodayWeekdayParam: components["schemas"]["TodayWeekday"];
     };
     requestBodies: never;
     headers: never;

@@ -64,6 +64,7 @@ export const SECTION_LABELS_ES: Record<NonNullable<MenuItem["section_id"]>, stri
   breakfast: "Desayuno",
   empanadas: "Empanadas",
   picoteos: "Picoteos",
+  onces: "Onces",
   croissants: "Croissants",
   baguettes: "Baguettes",
   toasts: "Tostadas",

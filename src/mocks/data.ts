@@ -97,6 +97,9 @@ export const fixtureMenuItems: MenuItem[] = [
 // ---- Canonical balance ----
 export const fixtureBalance: BalanceResponse = {
   balance: 423,
+  available_points: 423,
+  lifetime_earned_points: 1240,
+  lifetime_redeemed_points: 817,
   pending: 0,
   next_reward: {
     name: "Cortado de la casa",
