@@ -1,7 +1,6 @@
 import type { Origin, Weekday } from "./types";
 
-// Rotación — the two secondary origins on bar today, beyond el destacado.
-// Two per day so the right side of the two-up tile fills cleanly.
+// Degraded fallback only. Authenticated runtime content comes from GET /me/today.
 const SCHEDULE: Record<Weekday, ReadonlyArray<Origin>> = {
   mon: [
     {

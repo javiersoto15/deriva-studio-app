@@ -1,7 +1,6 @@
 import type { DestacadoOrigin, Weekday } from "./types";
 
-// Café del día — the hero of /hoy. Rotates by weekday.
-// Swap to backend: `/public/today?day=mon` returning `{ destacado: DestacadoOrigin, ... }`.
+// Degraded fallback only. Authenticated runtime content comes from GET /me/today.
 const SCHEDULE: Record<Weekday, DestacadoOrigin> = {
   mon: {
     name: "Huehuetenango",

@@ -88,7 +88,7 @@ Per [[feedback_voice_surface_scoped]] and [[project_inicio_redesign]]:
 New endpoint required:
 
 ```
-GET /me/today?locale=es-CL|en
+GET /me/today?locale=es-CL|en|pt-BR
 ```
 
 Response shape:

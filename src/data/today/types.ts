@@ -1,6 +1,6 @@
-// Typed shapes for the /hoy daily edition. v1 reads from typed configs in
-// this folder. The shapes mirror the eventual `/public/today` backend
-// response so a future swap is a single fetcher change per module.
+// Degraded fallback shapes for the /hoy daily edition.
+// Runtime content comes from authenticated GET /me/today. The static modules
+// in this folder are retained only for the loading/offline shell.
 
 export type Weekday = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
 
@@ -14,7 +14,7 @@ export type Origin = {
   /** Tasting notes, italic. */
   notes: string;
   /** Optional flags surfaced as small chips. */
-  flags?: ReadonlyArray<"sin-cafeina">;
+  flags?: ReadonlyArray<string>;
 };
 
 export type DestacadoOrigin = Origin & {

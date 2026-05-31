@@ -1,7 +1,6 @@
 import type { Barista, Weekday } from "./types";
 
-// Barista on shift, by weekday. Update as the rota changes.
-// Swap to backend later when staff scheduling lands in the admin app.
+// Degraded fallback only. Authenticated runtime content comes from GET /me/today.
 const SCHEDULE: Record<Weekday, Barista> = {
   mon: {
     name: "Martina",
