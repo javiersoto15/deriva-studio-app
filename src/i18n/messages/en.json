@@ -1,16 +1,43 @@
 {
-  "splash": { "tagline": "", "eyebrow": "", "cta_primary": "", "cta_secondary": "" },
-  "signup": {
-    "phone_title": "",
-    "phone_caption": "",
-    "continue": "",
-    "verify_title": "",
-    "resend_in": "",
-    "confirm": "",
-    "consent_title": "",
-    "create_account": "",
-    "privacy_link": ""
+  "splash": {
+    "tagline": "Your Deriva, remembered.",
+    "eyebrow": "DERIVA · COMPANION",
+    "cta_primary": "Get started",
+    "cta_secondary": "I already have an account · sign in"
   },
-  "home": { "good_morning": "" },
-  "tabs": { "carta": "", "codigo": "", "cartera": "", "estudio": "" }
+  "signup": {
+    "phone_title": "What's your number?",
+    "phone_caption": "We'll send you a code by SMS",
+    "continue": "Continue",
+    "verify_title": "Confirm with the code",
+    "resend_in": "Resend in",
+    "confirm": "Confirm",
+    "consent_title": "Before we start",
+    "create_account": "Create account",
+    "privacy_link": "Privacy policy · terms"
+  },
+  "home": {
+    "good_morning": "Good morning"
+  },
+  "tabs": {
+    "carta": "Menu",
+    "codigo": "Code",
+    "cartera": "Wallet",
+    "estudio": "Studio"
+  },
+  "menu": {
+    "loading": "Loading menu",
+    "unavailable": "Menu unavailable",
+    "today_on_bar": "On the bar today",
+    "items_count": "{count, plural, one {# item} other {# items}}",
+    "coming_soon": "back soon",
+    "redirect_lede": "{section} is coming later. In the meantime, try our",
+    "back": "Menu",
+    "price": "Price",
+    "contains": "Contains",
+    "no_allergens": "No declared allergens.",
+    "item_loading": "Loading",
+    "save": "Save",
+    "my_usual": "My usual"
+  }
 }

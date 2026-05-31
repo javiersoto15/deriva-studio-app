@@ -1,15 +1,19 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 import { useCompanionMenu } from "../../../../src/api/hooks";
+import { useActiveBackendLocale } from "../../../../src/i18n/use-active-locale";
 import { colors } from "../../../../src/design/tokens";
 import { MenuSections } from "./MenuSections";
 
 const DEFAULT_ORIGIN = { id: "orig_house_blend_dach", label: "House Blend · DACH" };
 
 export function CartaMenu() {
-  const { data: menu, error, isLoading } = useCompanionMenu();
+  const t = useTranslations("menu");
+  const locale = useActiveBackendLocale();
+  const { data: menu, error, isLoading } = useCompanionMenu(locale);
   // Surface the real failure mode instead of an infinite "Cargando carta"
   // when the menu request errors. The QueryProvider's global error ramp
   // handles 401/403; this is for the everything-else case.
@@ -32,7 +36,7 @@ export function CartaMenu() {
             color: colors.brown700
           }}
         >
-          Carta no disponible
+          {t("unavailable")}
         </span>
         <span
           style={{
@@ -58,7 +62,7 @@ export function CartaMenu() {
           color: colors.inkMuted
         }}
       >
-        Hoy en barra ·{" "}
+        {t("today_on_bar")} ·{" "}
         {DEFAULT_ORIGIN.id ? (
           <Link
             href={`/carta/origen/${DEFAULT_ORIGIN.id}`}

@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
+import createNextIntlPlugin from "next-intl/plugin";
 import { injectManifest } from "@serwist/build";
 import { serwist as serwistConfigurator } from "@serwist/next/config";
 import esbuild from "esbuild";
@@ -135,10 +136,14 @@ const nextConfig: NextConfig = {
   }
 };
 
+// next-intl plugin — aliases the request config so getRequestConfig /
+// NextIntlClientProvider resolve messages. Points explicitly at our src/ path.
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
+
 // withSentryConfig is safe to apply unconditionally — it only uploads source maps
 // when SENTRY_AUTH_TOKEN / SENTRY_ORG / SENTRY_PROJECT are set, and the runtime
 // init early-returns when NEXT_PUBLIC_SENTRY_DSN is empty.
-export default withSentryConfig(nextConfig, {
+export default withSentryConfig(withNextIntl(nextConfig), {
   org: process.env.SENTRY_ORG,
   project: process.env.SENTRY_PROJECT,
   authToken: process.env.SENTRY_AUTH_TOKEN,

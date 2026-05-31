@@ -1,16 +1,29 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Suspense } from "react";
+
+import { getTranslations } from "next-intl/server";
 
 import { getMenuItem } from "../../../../src/api/server";
+import { getActiveBackendLocale } from "../../../../src/i18n/server";
 import { colors } from "../../../../src/design/tokens";
 import { Chip } from "../../../../src/ui/Chip";
 import { Eyebrow } from "../../../../src/ui/Eyebrow";
-import { ItemSaveButton, ItemUsualCta } from "./_components/ItemActions";
+import {
+  ItemBackLink,
+  ItemBodyFallback,
+  ItemSaveButton,
+  ItemUsualCta
+} from "./_components/ItemActions";
 
 // Item detail (non-origin) — matches Paper artboard 26X-0. Zero green moments.
 // Phase 2B.5 — Converted to RSC. Spec sheet, allergens, barista note are all
 // server-rendered HTML. The favorite/usual buttons are the only client island.
 // Phase 2B.6 — generateMetadata sets <title> to the item name for SEO + share.
+//
+// Locale: the localized item copy (name/description/spec/allergens/barista
+// note) comes from the backend via ?locale. getActiveBackendLocale() reads the
+// NEXT_LOCALE cookie, so the body fetch lives inside a <Suspense> boundary
+// (cacheComponents requires cookie reads to be wrapped).
 
 const FALLBACK_SPEC = [
   { label: "TUESTE", value: "Medio · house blend" },
@@ -26,9 +39,19 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const item = await getMenuItem(id);
+  const locale = await getActiveBackendLocale();
+  const item = await getMenuItem(id, locale);
   return { title: item?.name ?? "Carta" };
 }
+
+const labelStyle = {
+  fontFamily: "var(--font-tracked), 'Poppins', sans-serif",
+  fontWeight: 600,
+  fontSize: 10,
+  letterSpacing: "0.22em",
+  textTransform: "uppercase" as const,
+  color: colors.inkMuted
+};
 
 export default async function ItemDetailPage({
   params
@@ -36,12 +59,6 @@ export default async function ItemDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  // `getMenuItem` returns null on failure so the page still prerenders for
-  // crawlers + shared links.
-  const data = await getMenuItem(id);
-
-  const spec = data?.spec ?? FALLBACK_SPEC;
-  const allergens = data?.allergens ?? [];
 
   return (
     <main
@@ -54,22 +71,32 @@ export default async function ItemDetailPage({
       }}
     >
       <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <Link
-          href="/carta"
-          style={{
-            fontFamily: "var(--font-display), serif",
-            fontStyle: "italic",
-            fontWeight: 300,
-            fontSize: 16,
-            color: colors.brown700,
-            textDecoration: "none"
-          }}
-        >
-          ← Carta
-        </Link>
+        <ItemBackLink />
         <ItemSaveButton itemId={id} />
       </header>
 
+      <Suspense fallback={<ItemBodyFallback />}>
+        <ItemBody id={id} />
+      </Suspense>
+    </main>
+  );
+}
+
+// Locale-dependent body. Isolated so the getActiveBackendLocale() cookie read
+// sits behind <Suspense> (PPR / cacheComponents requirement). `getMenuItem`
+// returns null on failure so the page still renders for crawlers + shared links.
+async function ItemBody({ id }: { id: string }) {
+  const locale = await getActiveBackendLocale();
+  const [data, t] = await Promise.all([
+    getMenuItem(id, locale),
+    getTranslations("menu")
+  ]);
+
+  const spec = data?.spec ?? FALLBACK_SPEC;
+  const allergens = data?.allergens ?? [];
+
+  return (
+    <>
       <Eyebrow>{data?.section_eyebrow ?? "Espresso · Con leche"}</Eyebrow>
 
       <div>
@@ -109,18 +136,7 @@ export default async function ItemDetailPage({
           borderTop: `1px solid ${colors.hairline}`
         }}
       >
-        <span
-          style={{
-            fontFamily: "var(--font-tracked), 'Poppins', sans-serif",
-            fontWeight: 600,
-            fontSize: 10,
-            letterSpacing: "0.22em",
-            textTransform: "uppercase",
-            color: colors.inkMuted
-          }}
-        >
-          Precio
-        </span>
+        <span style={labelStyle}>{t("price")}</span>
         <span style={{ fontFamily: "var(--font-mono), monospace", fontSize: 20, color: colors.ink900 }}>
           $ {(data?.price_clp ?? 3400).toLocaleString("es-CL")}
         </span>
@@ -139,18 +155,7 @@ export default async function ItemDetailPage({
               borderTop: `1px solid ${colors.hairline}`
             }}
           >
-            <span
-              style={{
-                fontFamily: "var(--font-tracked), 'Poppins', sans-serif",
-                fontWeight: 600,
-                fontSize: 10,
-                letterSpacing: "0.22em",
-                textTransform: "uppercase",
-                color: colors.inkMuted
-              }}
-            >
-              {row.label}
-            </span>
+            <span style={labelStyle}>{row.label}</span>
             <span
               style={{
                 fontFamily: "var(--font-mono), monospace",
@@ -167,18 +172,7 @@ export default async function ItemDetailPage({
 
       {/* Allergens */}
       <section style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <span
-          style={{
-            fontFamily: "var(--font-tracked), 'Poppins', sans-serif",
-            fontWeight: 600,
-            fontSize: 10,
-            letterSpacing: "0.22em",
-            textTransform: "uppercase",
-            color: colors.inkMuted
-          }}
-        >
-          Contiene
-        </span>
+        <span style={labelStyle}>{t("contains")}</span>
         {allergens.length > 0 ? (
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             {allergens.map((a) => (
@@ -197,7 +191,7 @@ export default async function ItemDetailPage({
               color: colors.inkMuted
             }}
           >
-            Sin alérgenos declarados.
+            {t("no_allergens")}
           </span>
         )}
       </section>
@@ -217,6 +211,6 @@ export default async function ItemDetailPage({
       </p>
 
       <ItemUsualCta itemId={id} />
-    </main>
+    </>
   );
 }

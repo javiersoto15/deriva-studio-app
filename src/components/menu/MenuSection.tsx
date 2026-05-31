@@ -6,9 +6,16 @@ import type {
 } from "../../api/server";
 import { MenuItem } from "./MenuItem";
 
+// Minimal translator shape — satisfied by next-intl's getTranslations('menu')
+// return value. Passed down from the (server, dynamic) LiveMenu so MenuSection
+// stays a sync component while its chrome strings localize with the active UI
+// locale. Backend-owned content (title, lede, item copy) is NOT translated here.
+type MenuTranslate = (key: string, values?: Record<string, string | number>) => string;
+
 type Props = {
   section: PublicMenuSection;
   showPrices?: boolean;
+  t: MenuTranslate;
 };
 
 // Apertura redirect map: section id → ids of sections to recommend instead.
@@ -25,7 +32,7 @@ function isFullyUnavailable(section: PublicMenuSection): boolean {
   return items.length > 0 && items.every((i) => i.available === false);
 }
 
-export function MenuSection({ section, showPrices = false }: Props) {
+export function MenuSection({ section, showPrices = false, t }: Props) {
   const executive = section.executive_menu;
   const isMenuEjecutivo = executive != null;
   const items = section.items ?? [];
@@ -47,8 +54,8 @@ export function MenuSection({ section, showPrices = false }: Props) {
             {isMenuEjecutivo
               ? executive.date_label
               : showRedirect
-                ? "vuelve pronto"
-                : `${count} ítem${count === 1 ? "" : "s"}`}
+                ? t("coming_soon")
+                : t("items_count", { count })}
           </span>
         </div>
         <div className={isMenuEjecutivo ? "menu-section__title-row" : undefined}>
@@ -89,7 +96,7 @@ export function MenuSection({ section, showPrices = false }: Props) {
       ) : showRedirect ? (
         <div className="menu-section__redirect">
           <p className="menu-section__redirect-lede">
-            {section.title.replace(/\.$/, "")} llega más adelante. Mientras tanto, prueba nuestras
+            {t("redirect_lede", { section: section.title.replace(/\.$/, "") })}
           </p>
           <ul className="menu-section__redirect-chips">
             {redirects!.map((alt) => (

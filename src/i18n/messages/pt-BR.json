@@ -1,0 +1,43 @@
+{
+  "splash": {
+    "tagline": "Sua Deriva, lembrada.",
+    "eyebrow": "DERIVA · COMPANION",
+    "cta_primary": "Começar",
+    "cta_secondary": "Já tenho conta · entrar"
+  },
+  "signup": {
+    "phone_title": "Qual é o seu número?",
+    "phone_caption": "Enviamos um código por SMS",
+    "continue": "Continuar",
+    "verify_title": "Confirme com o código",
+    "resend_in": "Reenviar em",
+    "confirm": "Confirmar",
+    "consent_title": "Antes de começar",
+    "create_account": "Criar conta",
+    "privacy_link": "Política de privacidade · termos"
+  },
+  "home": {
+    "good_morning": "Bom dia"
+  },
+  "tabs": {
+    "carta": "Cardápio",
+    "codigo": "Código",
+    "cartera": "Carteira",
+    "estudio": "Studio"
+  },
+  "menu": {
+    "loading": "Carregando cardápio",
+    "unavailable": "Cardápio indisponível",
+    "today_on_bar": "Hoje no balcão",
+    "items_count": "{count, plural, one {# item} other {# itens}}",
+    "coming_soon": "volta em breve",
+    "redirect_lede": "{section} chega mais adiante. Enquanto isso, prove nossas",
+    "back": "Cardápio",
+    "price": "Preço",
+    "contains": "Contém",
+    "no_allergens": "Sem alérgenos declarados.",
+    "item_loading": "Carregando",
+    "save": "Salvar",
+    "my_usual": "É o meu de sempre"
+  }
+}

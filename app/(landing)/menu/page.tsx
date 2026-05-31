@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { connection } from "next/server";
+import { getTranslations } from "next-intl/server";
 import { PRICING_OPEN_AT } from "../../../src/data/menu";
 import { getPublicMenuView, type PublicMenuView } from "../../../src/api/server";
+import { getActiveBackendLocale } from "../../../src/i18n/server";
 import { MenuChipNav } from "../../../src/components/menu/MenuChipNav";
 import { MenuSection } from "../../../src/components/menu/MenuSection";
 import { SiteNav } from "../../../src/components/landing/SiteNav";
+import { LocaleSwitcherServer } from "../../../src/ui/LocaleSwitcherServer";
 
 const siteUrl = "https://derivastudio.cl";
 const pageUrl = `${siteUrl}/menu`;
@@ -55,7 +58,11 @@ function buildMenuJsonLd(menu: PublicMenuView): Record<string, unknown> {
 // dynamic — same behavior as before, only the source data swapped.
 async function LiveMenu() {
   await connection();
-  const menu = await getPublicMenuView();
+  const locale = await getActiveBackendLocale();
+  const [menu, t] = await Promise.all([
+    getPublicMenuView({ locale }),
+    getTranslations("menu")
+  ]);
   if (!menu) {
     return null;
   }
@@ -130,7 +137,7 @@ async function LiveMenu() {
                   <span className="menu-chapter__rule" aria-hidden="true" />
                 </aside>
               ) : null}
-              <MenuSection section={section} showPrices={showPrices} />
+              <MenuSection section={section} showPrices={showPrices} t={t} />
             </div>
           ))}
         </div>
@@ -160,6 +167,11 @@ export default function MenuPage() {
               </h1>
             </div>
             <div className="menu-hero__right">
+              <div className="menu-hero__locale">
+                <Suspense fallback={null}>
+                  <LocaleSwitcherServer />
+                </Suspense>
+              </div>
               <p className="menu-hero__lede">
                 Una mesa simple para café, mate y cocina. Método, origen y ritual, sin exceso.
               </p>

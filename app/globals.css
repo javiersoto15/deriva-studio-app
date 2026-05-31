@@ -1124,6 +1124,12 @@ address {
   font-weight: 400;
 }
 
+.menu-hero__locale {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 14px;
+}
+
 .menu-hero__lede {
   margin: 0;
   font-family: var(--mono);

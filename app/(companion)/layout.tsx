@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense, type ReactNode } from "react";
 import { QueryProvider } from "../../src/api/QueryProvider";
+import { CompanionLocaleProvider } from "../../src/i18n/CompanionLocaleProvider";
 import { AuthProvider } from "../../src/auth/provider";
 import { RequireAuth } from "../../src/auth/RequireAuth";
 import { colors } from "../../src/design/tokens";
@@ -27,7 +28,8 @@ export const metadata: Metadata = {
 
 export default function CompanionLayout({ children }: { children: ReactNode }) {
   return (
-    <QueryProvider>
+    <CompanionLocaleProvider>
+      <QueryProvider>
       <AuthProvider>
         {/* Auth guard — when Firebase status flips to "anonymous" on a
             protected route (background token-refresh failure, refresh-token
@@ -75,6 +77,7 @@ export default function CompanionLayout({ children }: { children: ReactNode }) {
           <Toaster />
         </div>
       </AuthProvider>
-    </QueryProvider>
+      </QueryProvider>
+    </CompanionLocaleProvider>
   );
 }

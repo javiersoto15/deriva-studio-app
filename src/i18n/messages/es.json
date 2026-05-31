@@ -24,5 +24,20 @@
     "codigo": "Código",
     "cartera": "Cartera",
     "estudio": "Studio"
+  },
+  "menu": {
+    "loading": "Cargando carta",
+    "unavailable": "Carta no disponible",
+    "today_on_bar": "Hoy en barra",
+    "items_count": "{count, plural, one {# ítem} other {# ítems}}",
+    "coming_soon": "vuelve pronto",
+    "redirect_lede": "{section} llega más adelante. Mientras tanto, prueba nuestras",
+    "back": "Carta",
+    "price": "Precio",
+    "contains": "Contiene",
+    "no_allergens": "Sin alérgenos declarados.",
+    "item_loading": "Cargando",
+    "save": "Guardar",
+    "my_usual": "Es mi usual"
   }
 }

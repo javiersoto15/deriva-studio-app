@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 
 import type {
   ExecutiveMenu,
@@ -366,17 +367,19 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 }
 
 function MenuLoadingState() {
+  const t = useTranslations("menu");
   return (
     <div style={{ flex: 1, paddingTop: 24 }}>
-      <SectionLabel>Cargando carta</SectionLabel>
+      <SectionLabel>{t("loading")}</SectionLabel>
     </div>
   );
 }
 
 function MenuEmptyState() {
+  const t = useTranslations("menu");
   return (
     <div style={{ flex: 1, paddingTop: 24 }}>
-      <SectionLabel>Carta no disponible</SectionLabel>
+      <SectionLabel>{t("unavailable")}</SectionLabel>
     </div>
   );
 }

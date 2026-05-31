@@ -40,7 +40,7 @@ export const SECTION_ORDER: ReadonlyArray<NonNullable<MenuItem["section_id"]>> =
 
 // Display labels for legacy items lacking a backend-localized label. New
 // items SHOULD ship with `category_label` / `section_label` already
-// localized (the backend honors ?locale=es-CL|en) — these maps exist only
+// localized (the backend honors ?locale=es-CL|en|pt-BR) — these maps exist only
 // as a safety net for old fixtures, partial backfills, or any item whose
 // label arrives null. They are NOT a translation layer.
 //

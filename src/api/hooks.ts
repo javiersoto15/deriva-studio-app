@@ -43,6 +43,8 @@ export type AddEmailResponse = components["schemas"]["AddEmailResponse"];
 export type AddPhoneRequest = components["schemas"]["AddPhoneRequest"];
 export type AddPhoneResponse = components["schemas"]["AddPhoneResponse"];
 export type LinkProviderRequest = components["schemas"]["LinkProviderRequest"];
+export type TodayResponse = components["schemas"]["TodayResponse"];
+export type TodayWeekday = components["schemas"]["TodayWeekday"];
 
 // Extracts the typed IdentityConflict body from an openapi-fetch error, when
 // the backend returned a 409 with the canonical shape. Returns null otherwise
@@ -341,13 +343,16 @@ export function useRemoveFavorite() {
 // codes ("es", "en"). The mapper bridges them. New locales added here must
 // also be added to the backend enum in openapi.yaml.
 
-export type BackendLocale = "es-CL" | "en";
-export const DEFAULT_BACKEND_LOCALE: BackendLocale = "es-CL";
-
-export function toBackendLocale(short?: string | null): BackendLocale {
-  if (short === "en") return "en";
-  return DEFAULT_BACKEND_LOCALE;
-}
+// Canonical locale vocabulary + mapper live in the directive-free i18n/locale
+// module so server code (server.ts, i18n/request.ts) can share them without
+// pulling this "use client" module into the RSC graph. Re-exported here for the
+// existing call sites that import from the hooks barrel.
+export {
+  toBackendLocale,
+  DEFAULT_BACKEND_LOCALE,
+  type BackendLocale
+} from "../i18n/locale";
+import { DEFAULT_BACKEND_LOCALE, type BackendLocale } from "../i18n/locale";
 
 // Backend: wired. Note: canonical /menu returns MenuItem[] (flat array). The
 // UI groups by section client-side via useMenu() below.
@@ -413,6 +418,26 @@ export function useCompanionMenu(
       return data as PublicMenuView;
     },
     staleTime: 5 * 60_000
+  });
+}
+
+export function useToday(
+  day: TodayWeekday,
+  locale: BackendLocale = DEFAULT_BACKEND_LOCALE,
+  enabled = true
+) {
+  return useQuery<TodayResponse>({
+    queryKey: ["me", "today", day, locale],
+    queryFn: async () => {
+      const { data, error } = await apiClient.GET("/me/today", {
+        params: { query: { day, locale } }
+      });
+      if (error) throw error;
+      return data as TodayResponse;
+    },
+    enabled: Boolean(day) && enabled,
+    staleTime: 60_000,
+    meta: { silent: true }
   });
 }
 

@@ -5,6 +5,7 @@ import { cacheLife, cacheTag } from "next/cache";
 import type { components } from "./schema";
 import { groupMenuItems, type MenuView } from "./menu-grouping";
 import type { ItemDetail, OriginCardView } from "./hooks";
+import { DEFAULT_BACKEND_LOCALE, type BackendLocale } from "../i18n/locale";
 
 // Phase 2B.2 — Node-side fetcher for the customer carta routes.
 //
@@ -56,14 +57,18 @@ async function tryGetJson<T>(path: string): Promise<T | null> {
 }
 
 // ----- Public canonical /menu -----------------------------------------------
-// Returns the flat MenuItem[] from the canonical OpenAPI contract.
-export async function getMenuItems(): Promise<
-  components["schemas"]["MenuItem"][] | null
-> {
+// Returns the flat MenuItem[] from the canonical OpenAPI contract. `locale` is
+// an explicit arg (part of the cache key) — the caller resolves it from the
+// active locale in a dynamic scope so this cached function never reads cookies.
+export async function getMenuItems(
+  locale: BackendLocale = DEFAULT_BACKEND_LOCALE
+): Promise<components["schemas"]["MenuItem"][] | null> {
   "use cache";
   cacheLife("hours");
   cacheTag("menu");
-  return tryGetJson<components["schemas"]["MenuItem"][]>("/menu");
+  return tryGetJson<components["schemas"]["MenuItem"][]>(
+    `/menu?locale=${locale}`
+  );
 }
 
 // ----- UI-shaped MenuView (derived) -----------------------------------------
@@ -73,11 +78,15 @@ export async function getMenuItems(): Promise<
 // all-purpose default origin per /12_menu/coffee_origins/README.md). The
 // specialty rotation and decaf live on their own origin cards reachable from
 // the item detail spec sheet.
-export async function getMenuView(): Promise<MenuView | null> {
+export async function getMenuView(
+  locale: BackendLocale = DEFAULT_BACKEND_LOCALE
+): Promise<MenuView | null> {
   "use cache";
   cacheLife("hours");
   cacheTag("menu");
-  const items = await tryGetJson<components["schemas"]["MenuItem"][]>("/menu");
+  const items = await tryGetJson<components["schemas"]["MenuItem"][]>(
+    `/menu?locale=${locale}`
+  );
   if (!items) return null;
   return {
     categories: groupMenuItems(items),
@@ -86,12 +95,17 @@ export async function getMenuView(): Promise<MenuView | null> {
 }
 
 // ----- Per-item view --------------------------------------------------------
-// Used by /carta/[id] for the rich spec sheet.
-export async function getMenuItem(id: string): Promise<ItemDetail | null> {
+// Used by /carta/[id] for the rich spec sheet. `locale` is part of the cache
+// key so each language caches independently; resolve it in the dynamic caller
+// (inside a Suspense boundary) so this cached function never reads cookies.
+export async function getMenuItem(
+  id: string,
+  locale: BackendLocale = DEFAULT_BACKEND_LOCALE
+): Promise<ItemDetail | null> {
   "use cache";
   cacheLife("hours");
   cacheTag("menu", `menu-item-${id}`);
-  return tryGetJson<ItemDetail>(`/menu/items/${id}`);
+  return tryGetJson<ItemDetail>(`/menu/items/${id}?locale=${locale}`);
 }
 
 // ----- Per-origin view ------------------------------------------------------
@@ -121,7 +135,7 @@ export type PublicMenuSchedule = components["schemas"]["PublicMenuSchedule"];
 
 export async function getPublicMenuView(opts?: {
   schedule?: PublicMenuSchedule;
-  locale?: "es-CL" | "en";
+  locale?: "es-CL" | "en" | "pt-BR";
 }): Promise<PublicMenuView | null> {
   "use cache";
   cacheLife("hours");

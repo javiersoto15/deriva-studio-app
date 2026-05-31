@@ -597,7 +597,7 @@ export interface paths {
                 query?: {
                     status?: "active" | "expired" | "redeemed";
                     /** @description Resolve backend-driven reward copy for this locale. Defaults to es-CL and falls back to es-CL when unsupported. */
-                    locale?: "es-CL" | "en";
+                    locale?: "es-CL" | "en" | "pt-BR";
                 };
                 header?: never;
                 path?: never;
@@ -762,7 +762,7 @@ export interface paths {
             parameters: {
                 query?: {
                     /** @description Resolve backend-driven menu copy for this locale. Defaults to es-CL and falls back to es-CL when unsupported. */
-                    locale?: "es-CL" | "en";
+                    locale?: "es-CL" | "en" | "pt-BR";
                     /** @description Preview the day-specific menu structure. Defaults to the current Santiago schedule; Friday/Saturday are weekend, Sunday is closed but returns weekday structure. */
                     schedule?: components["schemas"]["PublicMenuSchedule"];
                 };
@@ -810,7 +810,7 @@ export interface paths {
                 query: {
                     day: components["schemas"]["TodayWeekday"];
                     /** @description Resolves localized JSONB fields. Unknown values fall back to es-CL. */
-                    locale?: "es-CL" | "en";
+                    locale?: "es-CL" | "en" | "pt-BR";
                 };
                 header?: never;
                 path?: never;
@@ -1375,7 +1375,7 @@ export interface paths {
             parameters: {
                 query?: {
                     /** @description Resolve backend-driven menu copy for this locale. Defaults to es-CL and falls back to es-CL when unsupported. */
-                    locale?: "es-CL" | "en";
+                    locale?: "es-CL" | "en" | "pt-BR";
                     /** @description Preview the day-specific landing structure. Defaults to the current Santiago schedule; Friday/Saturday are weekend, Sunday is closed but returns weekday structure. */
                     schedule?: components["schemas"]["PublicMenuSchedule"];
                 };
@@ -1421,7 +1421,7 @@ export interface paths {
                     /** @description Filter active menu items by normalized section id. */
                     section?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "onces" | "cakes-pies" | "bakes";
                     /** @description Resolve backend-driven menu copy for this locale. Defaults to es-CL and falls back to es-CL when unsupported. */
-                    locale?: "es-CL" | "en";
+                    locale?: "es-CL" | "en" | "pt-BR";
                 };
                 header?: never;
                 path?: never;
@@ -1464,7 +1464,7 @@ export interface paths {
             parameters: {
                 query?: {
                     /** @description Resolve backend-driven menu item copy for this locale. Defaults to es-CL and falls back to es-CL when unsupported. */
-                    locale?: "es-CL" | "en";
+                    locale?: "es-CL" | "en" | "pt-BR";
                 };
                 header?: never;
                 path: {
@@ -3437,7 +3437,7 @@ export interface components {
         MyReward: {
             id: string;
             /** @enum {string} */
-            locale?: "es-CL" | "en";
+            locale?: "es-CL" | "en" | "pt-BR";
             name: string;
             threshold_points: number;
             icon: string;
@@ -3654,7 +3654,7 @@ export interface components {
         };
         PublicMenuView: {
             /** @enum {string} */
-            locale?: "es-CL" | "en";
+            locale?: "es-CL" | "en" | "pt-BR";
             name: string;
             season: string;
             current_schedule: components["schemas"]["PublicMenuSchedule"];
@@ -3734,7 +3734,7 @@ export interface components {
         MenuItem: {
             id: string;
             /** @enum {string} */
-            locale?: "es-CL" | "en";
+            locale?: "es-CL" | "en" | "pt-BR";
             /**
              * @description Normalized high-level menu category id.
              * @enum {string}
@@ -3778,7 +3778,7 @@ export interface components {
         MenuItemView: {
             id: string;
             /** @enum {string} */
-            locale?: "es-CL" | "en";
+            locale?: "es-CL" | "en" | "pt-BR";
             /**
              * @description Normalized high-level menu category id.
              * @enum {string}
