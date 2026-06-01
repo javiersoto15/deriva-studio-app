@@ -4,6 +4,7 @@ import Link from "next/link";
 import { SiteNav } from "../../src/components/landing/SiteNav";
 import { CartaScroller, type CartaChip } from "../../src/components/landing/CartaScroller";
 import { DerivaImage } from "../../src/components/landing/DerivaImage";
+import { AppTeaser } from "../../src/components/landing/AppTeaser";
 import { isOpenNow } from "../../src/lib/open-now";
 import { PHOTO_BASE_URL } from "../../src/data/photos";
 
@@ -358,6 +359,14 @@ function VisitaSection({ openNow }: { openNow: boolean }) {
   );
 }
 
+function AppTeaserSection() {
+  return (
+    <section className="app-teaser" aria-labelledby="app-teaser-title">
+      <AppTeaser headingId="app-teaser-title" />
+    </section>
+  );
+}
+
 function Footer() {
   return (
     <footer className="landing-footer">
@@ -395,6 +404,7 @@ export default function HomePage() {
         <Suspense fallback={<VisitaSection openNow={false} />}>
           <OpenNowStatus />
         </Suspense>
+        <AppTeaserSection />
         <Footer />
       </main>
     </>

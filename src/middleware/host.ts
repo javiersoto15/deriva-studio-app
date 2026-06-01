@@ -44,7 +44,8 @@ const LANDING_PREFIXES = [
   "/menu-display",
   "/abierto",
   "/privacidad",
-  "/unsubscribe"
+  "/unsubscribe",
+  "/companion"
 ] as const;
 
 // Top-level path segments owned by the companion surface (app. host).

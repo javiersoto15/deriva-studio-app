@@ -107,8 +107,7 @@ export function getWaitlistCopy(mode: RewardMode = waitlistConfig.rewardMode): C
 }
 
 const companionCopy: CopyVariant = {
-  formIntro:
-    "Crea tu propia Deriva. Tu carta, tu código y tus recompensas, todo en un lugar. Suma tu correo y te avisamos cuando esté lista.",
+  formIntro: "Suma tu correo y te avisamos apenas esté lista.",
   formLabelEmail: "Correo",
   formLabelName: "Nombre (opcional)",
   placeholderEmail: "tu@correo.cl",

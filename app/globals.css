@@ -569,6 +569,119 @@ address {
   color: var(--muted);
 }
 
+/* — Companion app teaser (dark espresso) —————————————————————————— */
+.app-teaser {
+  position: relative;
+  background: var(--landing-ink);
+  color: var(--landing-fg);
+  padding: clamp(64px, 9vw, 120px) 24px;
+  display: flex;
+  justify-content: center;
+}
+.app-teaser--page {
+  min-height: 100vh;
+  align-items: center;
+}
+.app-teaser__inner {
+  width: min(100%, 620px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 22px;
+}
+/* Extra .app-teaser specificity beats .landing-display (clamp floor 56px),
+   which otherwise wins on source order and overflows the mobile viewport. */
+.app-teaser .app-teaser__headline {
+  text-align: center;
+  font-size: clamp(42px, 10.5vw, 92px);
+}
+/* Single green moment on dark — sage stays legible where deep green vanishes.
+   Extra .app-teaser specificity beats .landing-display--on-dark em (copper). */
+.app-teaser .app-teaser__headline em {
+  font-style: italic;
+  color: #8fae8c;
+}
+.app-teaser__lede {
+  margin: 0;
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  font-style: italic;
+  font-size: clamp(17px, 2.2vw, 20px);
+  line-height: 1.5;
+  color: var(--landing-fg-dim);
+  max-width: 34ch;
+}
+.app-teaser__toolkit {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 22px 0 0;
+  border-top: 1px solid rgba(201, 165, 122, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(100%, 460px);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.03em;
+  line-height: 1.5;
+  color: var(--landing-fg-faint);
+  text-align: left;
+}
+.app-teaser__toolkit-label {
+  color: var(--landing-fg);
+  letter-spacing: 0.06em;
+}
+.app-teaser__note {
+  margin: 4px 0 0;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--landing-fg-faint);
+}
+
+/* Waitlist form recolored for the dark teaser ground. */
+.app-teaser .waitlist {
+  width: min(100%, 460px);
+}
+.app-teaser .waitlist__intro {
+  color: var(--landing-fg-dim);
+}
+.app-teaser .waitlist__field {
+  border-bottom-color: rgba(242, 235, 221, 0.35);
+}
+.app-teaser .waitlist__field:focus-within {
+  border-bottom-color: var(--landing-copper);
+}
+.app-teaser .waitlist__input {
+  color: var(--landing-fg);
+}
+.app-teaser .waitlist__input::placeholder {
+  color: var(--landing-fg-faint);
+}
+.app-teaser .waitlist__consent {
+  color: var(--landing-fg-faint);
+}
+.app-teaser .waitlist__link {
+  color: var(--landing-copper);
+}
+.app-teaser .waitlist__submit {
+  background: var(--landing-copper);
+  color: var(--landing-ink);
+}
+.app-teaser .waitlist__submit:hover:not(:disabled) {
+  background: #d8b88c;
+}
+.app-teaser .waitlist__success-title {
+  color: #8fae8c;
+}
+.app-teaser .waitlist__success-body {
+  color: var(--landing-fg-dim);
+}
+.app-teaser .waitlist__status {
+  color: var(--landing-copper);
+}
+
 /* Legal page */
 .legal-page {
   min-height: 100vh;
