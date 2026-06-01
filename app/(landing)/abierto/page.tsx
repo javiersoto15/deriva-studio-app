@@ -440,10 +440,17 @@ async function AbiertoNoche() {
   );
 }
 
-async function AbiertoRotator({ preview }: { preview?: string }) {
+async function AbiertoRotator({
+  searchParams
+}: {
+  searchParams: Promise<{ view?: string }>;
+}) {
   await connection();
   // QA hook: `?view=abierto|ejecutivo|noche` renders one view solid (no
   // rotation, no time gating) so a panel can be checked any time of day.
+  // Read inside the Suspense boundary so the dynamic access doesn't block
+  // the static shell from prerendering.
+  const { view: preview } = await searchParams;
   if (preview) {
     const node =
       preview === "ejecutivo" ? <AbiertoEjecutivo /> :
@@ -505,19 +512,17 @@ async function AbiertoRotator({ preview }: { preview?: string }) {
   );
 }
 
-export default async function AbiertoPage({
+export default function AbiertoPage({
   searchParams
 }: {
   searchParams: Promise<{ view?: string }>;
 }) {
-  const { view } = await searchParams;
   return (
     <>
-      {/* TV display: reload every 10 minutes to refresh date + edition number.
-          Skip the auto-refresh while previewing a single view. */}
-      {view ? null : <meta httpEquiv="refresh" content="600" />}
+      {/* TV display: reload every 10 minutes to refresh date + edition number. */}
+      <meta httpEquiv="refresh" content="600" />
       <Suspense fallback={<main className="ab-stage" />}>
-        <AbiertoRotator preview={view} />
+        <AbiertoRotator searchParams={searchParams} />
       </Suspense>
     </>
   );
