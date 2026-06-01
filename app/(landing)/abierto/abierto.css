@@ -398,10 +398,111 @@ html, body { background: var(--ab-plaster); margin: 0; }
 }
 .ab-colophon__row > span:nth-child(2) { color: var(--ab-mute); }
 
-/* === Noche · full-bleed art view (temporary, date-gated) ===
-   Drops the plaster ground + stage padding so a single pre-composed
-   1080×1920 art (the Sábado night story) fills the kiosk panel exactly.
-   The PNG already carries masthead, copy, and colophon — see the IG
-   story it was ported from. */
-.ab-stage--noche { padding: 0; background: #140c06; }
-.ab-noche__art { width: 1080px; height: 1920px; object-fit: cover; display: block; }
+/* === Noche · live evening view (storefront photo + editorial overlay) ===
+   The storefront-at-night photo runs full-bleed (set inline as a
+   background-image + dark scrim gradient on .ab-stage--noche). The brand lives
+   in the lit sign, so there's no lockup — just a day/place mast, the hero, the
+   three priced rows, and a footer. Rebuilt from the baked Sábado PNG so the
+   masthead day is the real weekday. Photo + scrim come from the component's
+   inline style; the rules below only style the cream overlay. */
+.ab-stage--noche {
+  gap: 0;
+  color: #F4EDE6;
+  background-color: #160D07;
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+.ab-noche-mast {
+  display: flex; justify-content: space-between; align-items: flex-start;
+}
+.ab-noche-mast__place { display: flex; flex-direction: column; gap: 4px; }
+.ab-noche-mast__day {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 600; font-size: 22px; letter-spacing: 0.26em;
+  text-transform: uppercase; color: #F4EDE6;
+}
+.ab-noche-mast__loc {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 400; font-size: 15px; letter-spacing: 0.24em;
+  text-transform: uppercase; color: #C9B79A;
+}
+.ab-noche-mast__ed {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 500; font-size: 15px; letter-spacing: 0.24em;
+  text-transform: uppercase; color: #C9B79A; padding-top: 4px;
+}
+
+/* Spacer lets the lit storefront sign breathe in the upper third before the
+   editorial block. */
+.ab-noche-spacer { flex: 1; min-height: 120px; }
+
+.ab-noche-view { display: flex; flex-direction: column; }
+.ab-noche-kicker {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 600; font-size: 18px; letter-spacing: 0.28em;
+  text-transform: uppercase; color: var(--ab-ochre);
+}
+.ab-noche-hero {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic; font-weight: 500;
+  font-size: 104px; line-height: 0.98; letter-spacing: -0.025em;
+  color: #F8F2E8; margin: 0; padding-top: 18px;
+  max-width: 720px;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.45);
+}
+.ab-noche-sub {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic; font-weight: 400;
+  font-size: 34px; line-height: 1.22; color: #E4D8C4;
+  margin: 0; padding-top: 20px; max-width: 720px;
+  text-shadow: 0 1px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* Three priced rows. */
+.ab-noche-list {
+  display: flex; flex-direction: column;
+  list-style: none; margin: 0; padding: 44px 0 0;
+}
+.ab-noche-row {
+  display: flex; align-items: baseline; gap: 28px;
+  padding: 26px 0;
+  border-top: 1px solid rgba(201, 183, 154, 0.28);
+}
+.ab-noche-row:last-child { border-bottom: 1px solid rgba(201, 183, 154, 0.28); }
+.ab-noche-row__num {
+  flex: 0 0 56px;
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 600; font-size: 18px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: #C9B79A;
+}
+.ab-noche-row__body { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.ab-noche-row__name {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic; font-weight: 500; font-size: 56px; line-height: 1.0;
+  letter-spacing: -0.02em; color: #F8F2E8;
+}
+.ab-noche-row__note {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 400; font-size: 18px; letter-spacing: 0.06em;
+  color: #C9B79A;
+}
+.ab-noche-row__price {
+  flex: 0 0 auto; align-self: center;
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 600; font-size: 34px; letter-spacing: -0.01em;
+  color: #E0A86B; white-space: nowrap;
+}
+
+/* Footer — two mono columns over the scrim. */
+.ab-noche-foot {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  padding-top: 40px;
+}
+.ab-noche-foot__col {
+  display: flex; flex-direction: column; gap: 6px;
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 500; font-size: 14px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: #C9B79A;
+}
+.ab-noche-foot__col--right { text-align: right; }

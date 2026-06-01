@@ -20,13 +20,46 @@ export const viewport: Viewport = { themeColor: "#F4EFE6" };
 
 const ROMAN_MONTHS = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
 
-// Noche · evening art view. A single pre-composed 1080×1920 PNG (ported from
-// the Sábado night IG story) takes the second rotation slot every day from
-// 16:00 until close, replacing the Menu Ejecutivo panel. Swap `src` when a
-// fresher night edition is produced.
+// Noche · live evening view (Deriva Dark Hours), ported from the Sábado night
+// IG story but rebuilt as a live component so the masthead day is the real
+// weekday — never a stale "Sábado". Runs every open evening from 16:00 until
+// close, replacing the Menu Ejecutivo panel. Prices are the already-published
+// Dark Hours figures.
 const NOCHE = {
-  src: "https://media.derivastudio.cl/promos/sabado-noche-2026-05-30.png"
+  photo: "https://media.derivastudio.cl/promos/fachada-noche.jpg",
+  hero: "Quédate hasta el cierre.",
+  sub: "Providencia se enciende de noche. La barra de Deriva, también.",
+  items: [
+    {
+      roman: "i.",
+      name: "La once",
+      note: "Once Deriva · focaccia, un dulce y café",
+      price: "desde $10.900"
+    },
+    {
+      roman: "ii.",
+      name: "La barra",
+      note: "Cervezas heladas · coctelería de café",
+      price: "2 × $5.000"
+    },
+    {
+      roman: "iii.",
+      name: "El espresso",
+      note: "Espresso Tonic · Citrus Soda · ó caliente",
+      price: "$4.900"
+    }
+  ]
 } as const;
+
+// Capitalised Spanish weekday in Chilean time — "Lunes", "Martes", … — for
+// the night view's day-aware kicker.
+function santiagoWeekday(now: Date): string {
+  const wd = new Intl.DateTimeFormat("es-CL", {
+    timeZone: "America/Santiago",
+    weekday: "long"
+  }).format(now);
+  return wd.charAt(0).toUpperCase() + wd.slice(1);
+}
 
 // Menu Ejecutivo runs Lunes a viernes. This is NOT the carta's
 // getCurrentSchedule() (which treats Fri as "weekend" for the full menu) —
@@ -348,26 +381,76 @@ async function AbiertoDisplay() {
   );
 }
 
-// Noche · full-bleed pre-composed art (the night-story PNG). The image already
-// carries masthead, copy, and colophon, so the view is just the art filling the
-// 1080×1920 stage — no plaster ground, no padding.
-function AbiertoNoche() {
+// Noche · live evening view. The storefront-at-night photo runs full-bleed
+// under a dark scrim (the brand lives in the lit sign, so no lockup needed);
+// cream editorial chrome overlays it. Rebuilt from the baked "Sábado" PNG as
+// a live view so the masthead day is the real weekday — correct any night.
+async function AbiertoNoche() {
+  await connection();
+  const now = new Date();
+  const weekday = santiagoWeekday(now);
   return (
-    <main className="ab-stage ab-stage--noche" aria-label="Sábado de noche en Deriva">
-      <img
-        className="ab-noche__art"
-        src={NOCHE.src}
-        alt="Sábado de noche en Deriva — once, barra y café hasta el cierre"
-        width={1080}
-        height={1920}
-        decoding="async"
-      />
+    <main
+      className="ab-stage ab-stage--noche"
+      aria-label="La tarde en Deriva — hasta el cierre"
+      style={{
+        backgroundImage: `linear-gradient(180deg, rgba(18,11,6,0.42) 0%, rgba(18,11,6,0.58) 34%, rgba(18,11,6,0.86) 68%, rgba(18,11,6,0.97) 100%), url(${NOCHE.photo})`
+      }}
+    >
+      <header className="ab-noche-mast">
+        <div className="ab-noche-mast__place">
+          <span className="ab-noche-mast__day">{weekday}</span>
+          <span className="ab-noche-mast__loc">Providencia</span>
+        </div>
+        <span className="ab-noche-mast__ed">Edición de la tarde</span>
+      </header>
+
+      <span className="ab-noche-spacer" aria-hidden="true" />
+
+      <div className="ab-noche-view">
+        <span className="ab-noche-kicker">§ La tarde en Deriva</span>
+        <h1 className="ab-noche-hero">{NOCHE.hero}</h1>
+        <p className="ab-noche-sub">{NOCHE.sub}</p>
+
+        <ul className="ab-noche-list">
+          {NOCHE.items.map((it) => (
+            <li key={it.roman} className="ab-noche-row">
+              <span className="ab-noche-row__num">{it.roman}</span>
+              <span className="ab-noche-row__body">
+                <span className="ab-noche-row__name">{it.name}</span>
+                <span className="ab-noche-row__note">{it.note}</span>
+              </span>
+              <span className="ab-noche-row__price">{it.price}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <footer className="ab-noche-foot">
+        <div className="ab-noche-foot__col">
+          <span>Magnere 1570 · Local 105</span>
+          <span>Providencia · Santiago</span>
+        </div>
+        <div className="ab-noche-foot__col ab-noche-foot__col--right">
+          <span>@deriva.coffee.studio</span>
+          <span>Hoy hasta las 21 h</span>
+        </div>
+      </footer>
     </main>
   );
 }
 
-async function AbiertoRotator() {
+async function AbiertoRotator({ preview }: { preview?: string }) {
   await connection();
+  // QA hook: `?view=abierto|ejecutivo|noche` renders one view solid (no
+  // rotation, no time gating) so a panel can be checked any time of day.
+  if (preview) {
+    const node =
+      preview === "ejecutivo" ? <AbiertoEjecutivo /> :
+      preview === "noche" ? <AbiertoNoche /> :
+      <AbiertoDisplay />;
+    return <CrossfadeRotator className="ab-rotator" views={[{ key: preview, node }]} />;
+  }
   // The rotation set is time- and weekday-dependent. The page meta-refresh
   // re-evaluates within 10 minutes, and CrossfadeRotator generates keyframes
   // for whatever count is active.
@@ -422,13 +505,19 @@ async function AbiertoRotator() {
   );
 }
 
-export default function AbiertoPage() {
+export default async function AbiertoPage({
+  searchParams
+}: {
+  searchParams: Promise<{ view?: string }>;
+}) {
+  const { view } = await searchParams;
   return (
     <>
-      {/* TV display: reload every 10 minutes to refresh date + edition number. */}
-      <meta httpEquiv="refresh" content="600" />
+      {/* TV display: reload every 10 minutes to refresh date + edition number.
+          Skip the auto-refresh while previewing a single view. */}
+      {view ? null : <meta httpEquiv="refresh" content="600" />}
       <Suspense fallback={<main className="ab-stage" />}>
-        <AbiertoRotator />
+        <AbiertoRotator preview={view} />
       </Suspense>
     </>
   );
