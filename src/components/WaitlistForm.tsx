@@ -3,12 +3,12 @@
 import { useActionState, useId } from "react";
 import { useFormStatus } from "react-dom";
 import { subscribeToWaitlist, type WaitlistState } from "../server/waitlist";
-import { getWaitlistCopy, waitlistConfig } from "../config/waitlist";
+import { getCampaignCopy, waitlistConfig, type Campaign } from "../config/waitlist";
 
 const initialState: WaitlistState = { status: "idle" };
 
-export function WaitlistForm() {
-  const copy = getWaitlistCopy();
+export function WaitlistForm({ campaign = "apertura" }: { campaign?: Campaign }) {
+  const copy = getCampaignCopy(campaign);
   const emailId = useId();
   const consentId = useId();
   const statusId = useId();
@@ -25,6 +25,7 @@ export function WaitlistForm() {
 
   return (
     <form className="waitlist" action={formAction} noValidate>
+      <input type="hidden" name="campaign" value={campaign} />
       <p className="waitlist__intro">{copy.formIntro}</p>
 
       <div className="waitlist__field">
@@ -42,7 +43,7 @@ export function WaitlistForm() {
           className="waitlist__input"
           aria-describedby={statusId}
         />
-        <SubmitButton />
+        <SubmitButton copy={copy} />
       </div>
 
       <div className="waitlist__consent">
@@ -71,8 +72,7 @@ export function WaitlistForm() {
   );
 }
 
-function SubmitButton() {
-  const copy = getWaitlistCopy();
+function SubmitButton({ copy }: { copy: ReturnType<typeof getCampaignCopy> }) {
   const { pending } = useFormStatus();
   return (
     <button type="submit" className="waitlist__submit" disabled={pending}>

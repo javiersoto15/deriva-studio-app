@@ -6,6 +6,14 @@ export const waitlistConfig = {
   privacyPath: "/privacidad",
 } as const;
 
+export type Campaign = "apertura" | "companion";
+
+// Each campaign routes to its own Resend audience via this env var name.
+export const campaignConfig: Record<Campaign, { audienceEnvVar: string }> = {
+  apertura: { audienceEnvVar: "RESEND_AUDIENCE_ID" },
+  companion: { audienceEnvVar: "RESEND_COMPANION_AUDIENCE_ID" },
+};
+
 type CopyVariant = {
   formIntro: string;
   formLabelEmail: string;
@@ -96,4 +104,31 @@ const rewardCopy: Record<RewardMode, CopyVariant> = {
 
 export function getWaitlistCopy(mode: RewardMode = waitlistConfig.rewardMode): CopyVariant {
   return rewardCopy[mode];
+}
+
+const companionCopy: CopyVariant = {
+  formIntro:
+    "Crea tu propia Deriva. Tu carta, tu código y tus recompensas, todo en un lugar. Suma tu correo y te avisamos cuando esté lista.",
+  formLabelEmail: "Correo",
+  formLabelName: "Nombre (opcional)",
+  placeholderEmail: "tu@correo.cl",
+  placeholderName: "Cómo te llamas",
+  consentLine: "Acepto recibir correos de Deriva sobre la app.",
+  privacyLinkLabel: "Política de privacidad",
+  submit: "Avísame",
+  submitting: "Enviando…",
+  successTitle: "Listo. Llegas tú primero.",
+  successBody: "Cuando la app esté lista, te escribimos a tu correo antes que a nadie.",
+  errorGeneric: "Algo falló. Inténtalo de nuevo en un momento.",
+  errorInvalid: "Revisa el correo ingresado.",
+  errorRateLimit: "Recibimos varios intentos. Espera un momento e intenta otra vez.",
+  emailSubject: "Se viene tu propia Deriva",
+  emailHeading: "Crea tu propia Deriva.",
+  emailBody:
+    "Estás en la lista. Muy pronto vas a tener tu propia Deriva: tu carta, tu código de miembro y tus recompensas, todo en un lugar.\n\nNo te llenamos el correo. Te escribimos cuando esté lista.",
+  emailSignoff: "— Equipo Deriva",
+};
+
+export function getCampaignCopy(campaign: Campaign): CopyVariant {
+  return campaign === "companion" ? companionCopy : getWaitlistCopy();
 }

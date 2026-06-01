@@ -2,8 +2,8 @@
 
 import { Resend } from "resend";
 import { z } from "zod";
-import { getWaitlistCopy, waitlistConfig } from "../config/waitlist";
-import { buildWelcomeEmail } from "./welcome-email";
+import { getCampaignCopy, campaignConfig, waitlistConfig, type Campaign } from "../config/waitlist";
+import { buildWelcomeEmailFor } from "./welcome-email";
 
 const schema = z.object({
   email: z.string().trim().toLowerCase().email().max(254),
@@ -11,6 +11,7 @@ const schema = z.object({
   consent: z.literal("on"),
   // Honeypot — bots fill this; real users won't.
   company: z.string().max(0).optional().or(z.literal("")),
+  campaign: z.enum(["apertura", "companion"]).default("apertura"),
 });
 
 export type WaitlistState =
@@ -38,28 +39,28 @@ export async function subscribeToWaitlist(
   _previous: WaitlistState,
   formData: FormData,
 ): Promise<WaitlistState> {
-  const copy = getWaitlistCopy();
-
   const parsed = schema.safeParse({
     email: formData.get("email"),
     name: formData.get("name") ?? "",
     consent: formData.get("consent"),
     company: formData.get("company") ?? "",
+    campaign: formData.get("campaign") ?? "apertura",
   });
 
   if (!parsed.success) {
-    return { status: "error", message: copy.errorInvalid };
+    return { status: "error", message: getCampaignCopy("apertura").errorInvalid };
   }
 
-  const { email, name } = parsed.data;
+  const { email, name, campaign } = parsed.data;
+  const copy = getCampaignCopy(campaign);
   const firstName = name && name.length > 0 ? name : undefined;
 
-  if (!rateLimit(email)) {
+  if (!rateLimit(`${campaign}:${email}`)) {
     return { status: "error", message: copy.errorRateLimit };
   }
 
   const apiKey = process.env.RESEND_API_KEY;
-  const audienceId = process.env.RESEND_AUDIENCE_ID;
+  const audienceId = process.env[campaignConfig[campaign].audienceEnvVar];
   const fromEmail = process.env.RESEND_FROM_EMAIL ?? "onboarding@resend.dev";
   const fromName = process.env.RESEND_FROM_NAME ?? waitlistConfig.brandName;
 
@@ -88,7 +89,7 @@ export async function subscribeToWaitlist(
       return { status: "success", title: copy.successTitle, body: copy.successBody };
     }
 
-    const welcome = buildWelcomeEmail(waitlistConfig.rewardMode, firstName);
+    const welcome = buildWelcomeEmailFor(campaign, firstName);
     const sendResult = await resend.emails.send({
       from: `${fromName} <${fromEmail}>`,
       to: email,
