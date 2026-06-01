@@ -20,22 +20,13 @@ export const viewport: Viewport = { themeColor: "#F4EFE6" };
 
 const ROMAN_MONTHS = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
 
-// La barra promo — shared by the dedicated bar view and the Menu Ejecutivo
-// "para acompañar" pairing line so the two never drift.
-const BAR_PROMO = { drinks: "2 Peroni o Asahi", price: "$ 5.000" } as const;
-
-// Noche · temporary date-gated art view. A single pre-composed 1080×1920 PNG
-// (ported from the Sábado night IG story) takes the second rotation slot, but
-// ONLY on its date — once the Santiago day rolls past, the view drops out of
-// the rotation on the next 10-minute refresh. Bump/remove when the day passes.
+// Noche · evening art view. A single pre-composed 1080×1920 PNG (ported from
+// the Sábado night IG story) takes the second rotation slot every day from
+// 16:00 until close, replacing the Menu Ejecutivo panel. Swap `src` when a
+// fresher night edition is produced.
 const NOCHE = {
-  date: "2026-05-30",
   src: "https://media.derivastudio.cl/promos/sabado-noche-2026-05-30.png"
 } as const;
-
-function santiagoDate(now: Date): string {
-  return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Santiago" }).format(now);
-}
 
 // Menu Ejecutivo runs Lunes a viernes. This is NOT the carta's
 // getCurrentSchedule() (which treats Fri as "weekend" for the full menu) —
@@ -81,133 +72,19 @@ function getCafeteriaData(): { itemNames: string[]; addons: MenuAddons[] } {
   return { itemNames, addons: [...espressoAddons, ...sectionAddons] };
 }
 
-async function AbiertoPromo() {
-  await connection();
-  const now = new Date();
-  const editionMark = getEditionMarkUppercase(now);
-  return (
-    <main className="ab-stage ab-stage--promo" aria-label="Promo · Desayuno campesino">
-      <header className="ab-mast">
-        <div className="ab-mast__row">
-          <LogoLockup
-            isotipo={56}
-            wordmarkSize={34}
-            wordmarkLine={32}
-            subSize={10}
-            gap={14}
-            isotipoColor="#241B14"
-            wordmarkColor="#241B14"
-          />
-          <span className="ab-mast__edition">{editionMark}</span>
-        </div>
-        <span className="ab-mast__rule" aria-hidden="true" />
-      </header>
-
-      <div className="ab-promo__eyebrow">— Esta semana · Mayo —</div>
-
-      <div className="ab-promo__hero">
-        <img
-          src="https://media.derivastudio.cl/promos/desayuno-campesino.jpg"
-          alt="Dos desayunos campesinos sobre la mesa"
-          width={1600}
-          height={1600}
-          decoding="async"
-        />
-      </div>
-
-      <div className="ab-promo__stack">
-        <span className="ab-promo__mark">§ 01 · Desayuno</span>
-        <h1 className="ab-promo__headline">Desayuno campesino · de a dos.</h1>
-        <p className="ab-promo__sub">— para compartir entre dos —</p>
-        <div className="ab-promo__price">
-          <span className="ab-promo__price-label">Promo</span>
-          <span className="ab-promo__price-amount">$ 14.500</span>
-        </div>
-      </div>
-
-      <footer className="ab-colophon">
-        <span className="ab-colophon__rule" aria-hidden="true" />
-        <div className="ab-colophon__row">
-          <span>MAGNERE 1570 · LOCAL 105</span>
-          <span>@DERIVA.COFFEE.STUDIO</span>
-          <span>DERIVASTUDIO.CL</span>
-        </div>
-      </footer>
-    </main>
-  );
-}
-
-async function AbiertoBar() {
-  await connection();
-  const now = new Date();
-  const editionMark = getEditionMarkUppercase(now);
-  return (
-    <main className="ab-stage ab-stage--promo ab-stage--bar" aria-label="Promo · La barra de tarde">
-      <header className="ab-mast">
-        <div className="ab-mast__row">
-          <LogoLockup
-            isotipo={56}
-            wordmarkSize={34}
-            wordmarkLine={32}
-            subSize={10}
-            gap={14}
-            isotipoColor="#241B14"
-            wordmarkColor="#241B14"
-          />
-          <span className="ab-mast__edition">{editionMark}</span>
-        </div>
-        <span className="ab-mast__rule" aria-hidden="true" />
-      </header>
-
-      <div className="ab-promo__eyebrow">— Al almuerzo y hasta cerrar —</div>
-
-      <div className="ab-promo__hero ab-promo__hero--cerveza">
-        <img
-          src="https://media.derivastudio.cl/promos/cerveza-barra.jpg"
-          alt="Cerveza helada en la barra de Deriva"
-          width={1080}
-          height={1080}
-          decoding="async"
-        />
-      </div>
-
-      <div className="ab-promo__stack">
-        <span className="ab-promo__mark">§ 02 · La barra</span>
-        <h1 className="ab-promo__headline">La barra es para quedarse.</h1>
-        <p className="ab-promo__sub">
-          Una cerveza helada para tu almuerzo,
-          <br />
-          o un café sin apuro por la tarde.
-        </p>
-        <div className="ab-promo__price">
-          <span className="ab-promo__price-label">{BAR_PROMO.drinks}</span>
-          <span className="ab-promo__price-amount">{BAR_PROMO.price}</span>
-        </div>
-      </div>
-
-      <footer className="ab-colophon">
-        <span className="ab-colophon__rule" aria-hidden="true" />
-        <div className="ab-colophon__row">
-          <span>MAGNERE 1570 · LOCAL 105</span>
-          <span>@DERIVA.COFFEE.STUDIO</span>
-          <span>DERIVASTUDIO.CL</span>
-        </div>
-      </footer>
-    </main>
-  );
-}
-
 async function AbiertoEjecutivo() {
   await connection();
   const now = new Date();
   const editionMark = getEditionMarkUppercase(now);
   const { courses: today } = MENU_EJECUTIVO_TODAY;
   const { courseTags } = MENU_EJECUTIVO_FIXED;
+  // Spread the course first, then resolve the tag — a per-day `tag` override
+  // (e.g. "a elección" for a two-option fondo) wins over the fixed default.
   const courses = [
-    { roman: "i.", tag: courseTags.bebida, ...today.bebida },
-    { roman: "ii.", tag: courseTags.entrada, ...today.entrada },
-    { roman: "iii.", tag: courseTags.fondo, ...today.fondo },
-    { roman: "iv.", tag: courseTags.queque, ...today.queque }
+    { roman: "i.", ...today.bebida, tag: today.bebida.tag ?? courseTags.bebida },
+    { roman: "ii.", ...today.entrada, tag: today.entrada.tag ?? courseTags.entrada },
+    { roman: "iii.", ...today.fondo, tag: today.fondo.tag ?? courseTags.fondo },
+    { roman: "iv.", ...today.queque, tag: today.queque.tag ?? courseTags.queque }
   ];
 
   return (
@@ -220,8 +97,8 @@ async function AbiertoEjecutivo() {
             wordmarkLine={32}
             subSize={10}
             gap={14}
-            isotipoColor="#241B14"
-            wordmarkColor="#241B14"
+            isotipoColor="#F4EDE6"
+            wordmarkColor="#F4EDE6"
           />
           <span className="ab-mast__edition">{editionMark}</span>
         </div>
@@ -229,30 +106,23 @@ async function AbiertoEjecutivo() {
       </header>
 
       <div className="ab-ejec-view">
-        <span className="ab-ejec-view__eyebrow">§ Menú Ejecutivo · de lunes a viernes</span>
-        <h1 className="ab-ejec-view__hero">{MENU_EJECUTIVO_FIXED.hero}</h1>
-        <p className="ab-ejec-view__sub">{MENU_EJECUTIVO_FIXED.subline}</p>
+        <div className="ab-ejec-eyebrow">
+          <span className="ab-ejec-eyebrow__l">§ La ronda del mediodía</span>
+          <span className="ab-ejec-eyebrow__r">Cuatro momentos · una cuenta</span>
+        </div>
 
         <ul className="ab-ejec-list">
           {courses.map((c) => (
             <li key={c.roman} className="ab-ejec-row">
-              <span className="ab-ejec-row__num">{c.roman}</span>
-              <span className="ab-ejec-row__body">
-                <span className="ab-ejec-row__name">{c.name}</span>
-                {c.note ? <span className="ab-ejec-row__note">{c.note}</span> : null}
+              <span className="ab-ejec-row__head">
+                <span className="ab-ejec-row__num">{c.roman}</span>
+                <span className="ab-ejec-row__tag">{c.tag}</span>
               </span>
-              <span className="ab-ejec-row__tag">{c.tag}</span>
+              <span className="ab-ejec-row__name">{c.name}</span>
+              {c.note ? <span className="ab-ejec-row__note">{c.note}</span> : null}
             </li>
           ))}
         </ul>
-
-        <div className="ab-ejec-pairing">
-          <span className="ab-ejec-pairing__kicker">§ Para acompañar</span>
-          <span className="ab-ejec-pairing__text">
-            Una cerveza helada · {BAR_PROMO.drinks}
-          </span>
-          <span className="ab-ejec-pairing__price">+ {BAR_PROMO.price}</span>
-        </div>
 
         <div className="ab-ejec-view__service">
           <div className="ab-ejec-view__service-col">
@@ -498,9 +368,9 @@ function AbiertoNoche() {
 
 async function AbiertoRotator() {
   await connection();
-  // The rotation set depends on the time of day (and weekday vs weekend).
-  // The page meta-refresh re-evaluates this within 10 minutes, and
-  // CrossfadeRotator generates keyframes for whatever count is active.
+  // The rotation set is time- and weekday-dependent. The page meta-refresh
+  // re-evaluates within 10 minutes, and CrossfadeRotator generates keyframes
+  // for whatever count is active.
   const now = new Date();
   const santiagoHour = Number(
     new Intl.DateTimeFormat("en-GB", {
@@ -509,20 +379,27 @@ async function AbiertoRotator() {
       hour12: false
     }).format(now)
   );
-  // Menu Ejecutivo full panel takes the promo slot on weekdays until 16:00
-  // (it advertises the lunch ronda ahead of + during service). After 16:00,
-  // and on weekends where there is no executive menu, the Desayuno campesino
-  // promo runs instead.
+  // Weekday lunch (until 16:00): a two-view loop — the Abierto splash (20s)
+  // and the Menu Ejecutivo panel (30s). The executive menu advertises ahead
+  // of + during service.
   const showEjecutivo = isMenuEjecutivoDay(now) && santiagoHour < 16;
-  const showCampesino = !showEjecutivo;
-  // La barra (cervezas) runs from lunch (13:00) to close so mornings stay
-  // coffee-focused.
-  const showBar = santiagoHour >= 13;
-  // Noche · just for today the display is a two-view takeover: the Abierto
-  // splash (20s) and the "Quédate hasta el cierre" night art (45s). The other
-  // promo panels step aside for the day; they return automatically once the
-  // Santiago date rolls past NOCHE.date.
-  const showNoche = santiagoDate(now) === NOCHE.date;
+  // From 16:00 until close the Menu Ejecutivo drops out and the evening night
+  // art (45s) takes the second slot. Gated on open hours so it never runs on
+  // Sunday (closed) or after the 21:00 close.
+  const showNoche = santiagoHour >= 16 && isOpenNow(now);
+
+  if (showEjecutivo) {
+    return (
+      <CrossfadeRotator
+        className="ab-rotator"
+        views={[
+          { key: "abierto", node: <AbiertoDisplay />, hold: 20 },
+          { key: "ejecutivo", node: <AbiertoEjecutivo />, hold: 30 }
+        ]}
+      />
+    );
+  }
+
   if (showNoche) {
     return (
       <CrossfadeRotator
@@ -535,15 +412,12 @@ async function AbiertoRotator() {
     );
   }
 
+  // Otherwise (weekend daytime, or weekday evening past close): the Abierto
+  // splash alone.
   return (
     <CrossfadeRotator
       className="ab-rotator"
-      views={[
-        { key: "abierto", node: <AbiertoDisplay /> },
-        ...(showEjecutivo ? [{ key: "ejecutivo", node: <AbiertoEjecutivo /> }] : []),
-        ...(showCampesino ? [{ key: "promo", node: <AbiertoPromo /> }] : []),
-        ...(showBar ? [{ key: "bar", node: <AbiertoBar /> }] : [])
-      ]}
+      views={[{ key: "abierto", node: <AbiertoDisplay />, hold: 20 }]}
     />
   );
 }

@@ -275,226 +275,117 @@ html, body { background: var(--ab-plaster); margin: 0; }
   text-transform: uppercase; color: var(--ab-mute);
 }
 
-/* === Promo view (Desayuno campesino · de a dos) ===
-   Mirrors Paper artboard 9HL-0. Reuses .ab-stage skeleton + masthead
-   + colophon; replaces hero/medallions/especialidad/pull-quote with
-   a centered photo broadside + single green moment on the price. */
-.ab-stage--promo {
-  gap: 40px;
+/* === Menu Ejecutivo full panel · v2 dark ===
+   Ports the approved dark IG story (Paper "Abierto · Menu Ejecutivo · v2
+   dark"): espresso ground, dishes-as-hero in cream Cormorant italic, copper
+   labels, and an inverted cream price puck. It crossfades with the Abierto
+   splash, so the masthead keeps the splash's position — only the lockup goes
+   cream on the dark ground. The dish list flex-distributes to fill height.
+   The dark edition's accent is copper (no green moment on this surface). */
+.ab-stage--ejec {
+  gap: 0;
+  background: #281A12;
+  color: #F4EDE6;
 }
-.ab-stage--promo .ab-colophon { margin-top: auto; }
-.ab-promo__eyebrow {
-  font-family: var(--font-tracked), Poppins, sans-serif;
-  font-weight: 600; font-size: 22px; letter-spacing: 0.32em;
-  text-transform: uppercase; color: var(--ab-sub);
-  text-align: center;
-}
-.ab-promo__hero {
-  align-self: center;
-  width: 760px; height: 760px;
-  border-radius: 28px;
-  overflow: hidden;
-  background: var(--ab-medallion-bg);
-  box-shadow: 0 24px 48px -28px rgba(36, 27, 20, 0.32);
-}
-.ab-promo__hero img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  object-position: center 58%;
-  display: block;
-}
-.ab-promo__hero--cerveza { width: 680px; height: 680px; }
-.ab-promo__hero--cerveza img { object-position: center 45%; }
-.ab-promo__stack {
-  display: flex; flex-direction: column; align-items: center;
-  gap: 20px; padding-top: 8px;
-}
-.ab-promo__mark {
-  font-family: var(--font-mono), "IBM Plex Mono", monospace;
-  font-weight: 500; font-size: 22px; letter-spacing: 0.28em;
-  text-transform: uppercase; color: var(--ab-mute);
-}
-.ab-promo__headline {
-  font-family: var(--font-display), "Cormorant Garamond", serif;
-  font-style: italic; font-weight: 500;
-  font-size: 92px; line-height: 1.0; letter-spacing: -0.012em;
-  color: var(--ab-ink);
-  text-align: center;
-  max-width: 880px;
-  margin: 0;
-}
-.ab-promo__sub {
-  font-family: var(--font-display), "Cormorant Garamond", serif;
-  font-style: italic; font-weight: 400;
-  font-size: 34px; line-height: 1.2;
-  color: var(--ab-sub);
-  text-align: center;
-  margin: 0;
-}
-.ab-promo__price {
-  display: flex; flex-direction: column; align-items: center;
-  gap: 10px; padding-top: 22px;
-}
-.ab-promo__price-label {
-  font-family: var(--font-tracked), Poppins, sans-serif;
-  font-weight: 600; font-size: 18px; letter-spacing: 0.32em;
-  text-transform: uppercase; color: var(--ab-mute);
-}
-.ab-promo__price-amount {
-  font-family: var(--font-mono), "IBM Plex Mono", monospace;
-  font-weight: 500; font-size: 118px; line-height: 1;
-  letter-spacing: -0.015em;
-  color: var(--ab-green);
-}
-/* === Bar promo variant (cervezas + coctelería de café) ===
-   Mirrors Paper artboard 9XX-0. Larger type + manifesto deck fill the
-   canvas; single green moment stays on the price amount. */
-.ab-stage--bar { gap: 50px; }
-.ab-stage--bar .ab-promo__stack { gap: 30px; }
-.ab-stage--bar .ab-promo__headline { font-size: 118px; line-height: 126px; max-width: 920px; }
-.ab-stage--bar .ab-promo__sub { font-size: 44px; line-height: 56px; max-width: 860px; }
-.ab-stage--bar .ab-promo__price { padding-top: 48px; gap: 16px; }
-.ab-stage--bar .ab-promo__price-label { font-size: 24px; letter-spacing: 0.3em; }
-.ab-stage--bar .ab-promo__price-amount { font-size: 150px; }
+.ab-stage--ejec .ab-mast__edition { color: #8B7B68; }
+.ab-stage--ejec .ab-mast__rule { height: 1px; background: #67594D; }
 
-/* === Menu Ejecutivo full panel ===
-   Mirrors the approved IG light v1 (Paper 9ZH-0): masthead, hero
-   "La ronda del mediodía.", a four-course numbered list, then the service
-   window + espresso price puck. Single green moment lives on the 13:00 —
-   16:00 window; the puck stays espresso ink with a cream amount. */
-.ab-stage--ejec { gap: 0; }
 .ab-ejec-view {
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-height: 0;
+}
+.ab-ejec-eyebrow {
+  display: flex; justify-content: space-between; align-items: baseline;
   padding-top: 40px;
-  min-height: 0;
 }
-.ab-ejec-view__eyebrow {
-  font-family: var(--font-mono), "IBM Plex Mono", monospace;
-  font-weight: 500; font-size: 20px; letter-spacing: 0.24em;
-  text-transform: uppercase; color: var(--ab-ochre);
-}
-.ab-ejec-view__hero {
-  font-family: var(--font-display), "Cormorant Garamond", serif;
-  font-style: italic; font-weight: 500;
-  font-size: 132px; line-height: 1.04; letter-spacing: -0.025em;
-  color: var(--ab-ink);
-  margin: 0; padding-top: 18px;
-}
-.ab-ejec-view__sub {
-  font-family: var(--font-display), "Cormorant Garamond", serif;
-  font-style: italic; font-weight: 400;
-  font-size: 34px; line-height: 1.25; color: var(--ab-sub);
-  margin: 0; padding-top: 18px; max-width: 760px;
-}
-
-/* Four-course numbered list — flex-grows to distribute rows evenly. */
-.ab-ejec-list {
-  flex: 1;
-  display: flex; flex-direction: column;
-  list-style: none; margin: 0; padding: 40px 0 0;
-  min-height: 0;
-}
-.ab-ejec-row {
-  flex: 1;
-  display: flex; align-items: baseline; gap: 28px;
-  padding: 22px 4px;
-  border-top: 1px solid var(--ab-hairline);
-}
-.ab-ejec-row:last-child { border-bottom: 1px solid var(--ab-hairline); }
-.ab-ejec-row__num {
-  flex: 0 0 96px;
-  font-family: var(--font-mono), "IBM Plex Mono", monospace;
-  font-weight: 600; font-size: 26px; letter-spacing: 0.12em;
-  color: var(--ab-mute);
-}
-.ab-ejec-row__body { flex: 1; display: flex; flex-direction: column; gap: 6px; }
-.ab-ejec-row__name {
-  font-family: var(--font-display), "Cormorant Garamond", serif;
-  font-style: italic; font-weight: 500; font-size: 58px; line-height: 1.02;
-  color: var(--ab-ink);
-}
-.ab-ejec-row__note {
-  font-family: var(--font-display), "Cormorant Garamond", serif;
-  font-style: italic; font-weight: 400; font-size: 34px; line-height: 1.05;
-  color: var(--ab-sub);
-}
-.ab-ejec-row__tag {
-  flex: 0 0 auto;
-  font-family: var(--font-mono), "IBM Plex Mono", monospace;
-  font-weight: 500; font-size: 16px; letter-spacing: 0.18em;
-  text-transform: uppercase; color: var(--ab-mute);
-  text-align: right; white-space: nowrap;
-  align-self: flex-start; padding-top: 14px;
-}
-
-/* "Para acompañar" sidenote — optional beer pairing at lunch. Warm sand
-   ground + 3px structural green rule (a sidenote rule, so it doesn't count
-   as a second green moment). The "+" frames it as an add-on, not included. */
-.ab-ejec-pairing {
-  display: flex; align-items: baseline; gap: 22px;
-  margin-top: 28px;
-  padding: 20px 26px;
-  background: #E8DFCB;
-  border-left: 3px solid var(--ab-green);
-}
-.ab-ejec-pairing__kicker {
-  flex: 0 0 auto;
-  font-family: var(--font-mono), "IBM Plex Mono", monospace;
-  font-weight: 500; font-size: 16px; letter-spacing: 0.2em;
-  text-transform: uppercase; color: var(--ab-ochre);
-}
-.ab-ejec-pairing__text {
-  flex: 1;
-  font-family: var(--font-display), "Cormorant Garamond", serif;
-  font-style: italic; font-weight: 500; font-size: 34px; line-height: 1.1;
-  color: var(--ab-ink);
-}
-.ab-ejec-pairing__price {
-  flex: 0 0 auto;
-  font-family: var(--font-mono), "IBM Plex Mono", monospace;
-  font-weight: 500; font-size: 26px; letter-spacing: -0.01em;
-  color: var(--ab-ink); white-space: nowrap;
-}
-
-/* Service window + price puck. Green moment = the window. */
-.ab-ejec-view__service {
-  display: flex; justify-content: space-between; align-items: center;
-  padding-top: 28px;
-}
-.ab-ejec-view__service-col { display: flex; flex-direction: column; gap: 8px; }
-.ab-ejec-view__service-label {
-  font-family: var(--font-tracked), Poppins, sans-serif;
-  font-weight: 600; font-size: 16px; letter-spacing: 0.32em;
-  text-transform: uppercase; color: var(--ab-mute);
-}
-.ab-ejec-view__window {
-  font-family: var(--font-mono), "IBM Plex Mono", monospace;
-  font-weight: 500; font-size: 52px; line-height: 1; letter-spacing: -0.01em;
-  color: var(--ab-green);
-}
-.ab-ejec-view__days {
-  font-family: var(--font-mono), "IBM Plex Mono", monospace;
-  font-weight: 400; font-size: 18px; letter-spacing: 0.18em;
-  text-transform: uppercase; color: var(--ab-sub);
-}
-.ab-ejec-puck {
-  width: 224px; height: 224px; border-radius: 50%;
-  background: var(--ab-ink);
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 4px;
-}
-.ab-ejec-puck__clp {
+.ab-ejec-eyebrow__l {
   font-family: var(--font-mono), "IBM Plex Mono", monospace;
   font-weight: 600; font-size: 18px; letter-spacing: 0.28em;
   text-transform: uppercase; color: var(--ab-ochre);
 }
+.ab-ejec-eyebrow__r {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 400; font-size: 16px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: #8B7B68;
+}
+
+/* Four dishes as hero — flex-distributed across the available height. */
+.ab-ejec-list {
+  flex: 1;
+  display: flex; flex-direction: column; justify-content: space-between;
+  list-style: none; margin: 0; padding: 52px 0 44px;
+  min-height: 0;
+}
+.ab-ejec-row { display: flex; flex-direction: column; gap: 10px; }
+.ab-ejec-row__head { display: flex; align-items: baseline; gap: 20px; }
+.ab-ejec-row__num {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 600; font-size: 18px; letter-spacing: 0.24em;
+  text-transform: uppercase; color: #8B7B68;
+}
+.ab-ejec-row__tag {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 600; font-size: 17px; letter-spacing: 0.28em;
+  text-transform: uppercase; color: var(--ab-ochre);
+}
+.ab-ejec-row__name {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic; font-weight: 400;
+  font-size: 96px; line-height: 1.0; letter-spacing: -0.02em;
+  color: #F4EDE6;
+}
+.ab-ejec-row__note {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic; font-weight: 300;
+  font-size: 60px; line-height: 1.08; letter-spacing: -0.01em;
+  color: #D7C7AB;
+  white-space: pre-line;
+}
+
+/* Service window + inverted cream price puck. */
+.ab-ejec-view__service {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  padding-top: 40px;
+  border-top: 1px solid #67594D;
+}
+.ab-ejec-view__service-col { display: flex; flex-direction: column; gap: 12px; }
+.ab-ejec-view__service-label {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 600; font-size: 16px; letter-spacing: 0.24em;
+  text-transform: uppercase; color: #8B7B68;
+}
+.ab-ejec-view__window {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 600; font-size: 56px; line-height: 1; letter-spacing: -0.01em;
+  color: var(--ab-ochre);
+}
+.ab-ejec-view__days {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 400; font-size: 18px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: #D7C7AB;
+}
+.ab-ejec-puck {
+  width: 240px; height: 240px; border-radius: 50%;
+  background: var(--ab-plaster);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px; flex-shrink: 0;
+}
+.ab-ejec-puck__clp {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 600; font-size: 18px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: #5E230F;
+}
 .ab-ejec-puck__amount {
   font-family: var(--font-mono), "IBM Plex Mono", monospace;
-  font-weight: 500; font-size: 64px; line-height: 1; letter-spacing: -0.01em;
-  color: var(--ab-plaster);
+  font-weight: 600; font-size: 76px; line-height: 1; letter-spacing: -0.01em;
+  color: #201812;
 }
+/* Dark colophon variant (cream-muted on the espresso ground). */
+.ab-stage--ejec .ab-colophon__rule { background: #67594D; }
+.ab-stage--ejec .ab-colophon__row,
+.ab-stage--ejec .ab-colophon__row > span:nth-child(2) { color: #A8927B; }
 
 /* === Colophon === */
 .ab-colophon { display: flex; flex-direction: column; gap: 10px; padding-top: 4px; }

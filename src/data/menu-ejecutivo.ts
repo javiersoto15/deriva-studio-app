@@ -5,8 +5,12 @@
 
 export type MenuEjecutivoCourse = {
   name: string;
-  /** Italic line under the dish, e.g. an alternative or pairing note. */
+  /** Italic line under the dish, e.g. an alternative or pairing note. Use
+   *  "\n" to split a two-option note across two lines. */
   note?: string;
+  /** Overrides the fixed course tag for this day — e.g. "a elección" when the
+   *  fondo offers two options instead of the default "plato del día". */
+  tag?: string;
 };
 
 export type MenuEjecutivoEdition = {
@@ -36,12 +40,13 @@ export const MENU_EJECUTIVO_FIXED = {
 export const MENU_EJECUTIVO_TODAY: MenuEjecutivoEdition = {
   courses: {
     bebida: { name: "Una bebida" },
-    entrada: { name: "Crema de verduras asada" },
+    entrada: { name: "Crema de verduras" },
     fondo: {
-      name: "Lomo vetado con papas fritas",
-      note: "ó con ensalada proteica"
+      name: "Ñoquis",
+      note: "con salsa roja y carne desmechada\nó al pesto",
+      tag: "a elección"
     },
-    queque: { name: "Un queque" }
+    queque: { name: "Queque" }
   }
 };
 
