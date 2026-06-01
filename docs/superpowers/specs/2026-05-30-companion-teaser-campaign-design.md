@@ -28,7 +28,7 @@ working app. We build a warm list first.
 ## Deliverables (first pass)
 
 1. Landing CTA section (derivastudio.cl)
-2. Welcome/confirmation email (react-email)
+2. Welcome/confirmation email (transactional, raw-HTML builder — sent on signup)
 3. Instagram story (1080×1920, Paper)
 
 Explicitly **out of scope** this pass: IG feed post, a "reveal" drip email, any change to the
@@ -103,22 +103,33 @@ landing CSS / editorial tokens; no new card component.
 
 ## 3. Welcome / confirmation email
 
-**File:** `src/emails/CompanionInterest.tsx` (react-email JSX, not raw HTML).
+**File:** extend `src/server/welcome-email.ts` with `buildCompanionWelcomeEmail()` +
+a `buildWelcomeEmailFor(campaign, …)` dispatcher.
+
+> **Architecture note:** the signup-confirmation email is the **synchronous transactional**
+> path — `subscribeToWaitlist` calls the raw-HTML builder in `welcome-email.ts` and sends it
+> inline via Resend on submit. This is deliberately *not* a react-email `.tsx`: the
+> `src/emails/*.tsx` react-email templates are reserved for **broadcast blasts** built to
+> `docs/email/*.html` and sent via scripts. The companion welcome mirrors the existing apertura
+> welcome builder, swapping masthead/headline/toolkit.
 
 **Design — chapbook signatures (per email design language):**
-- Corner brackets, IBM Plex Mono masthead (e.g. `CARTA DE LA DERIVA`), Regular + italic-green
-  hero on *Deriva*, restrained logo, exact palette.
-- Body: confirms they're on the list, teases the toolkit (carta · código · recompensas),
-  closes with *"Te escribimos cuando esté lista."* + signoff `— Equipo Deriva`.
-- Preserve the build pipeline's preload-strip; test via API send (not Resend Broadcasts preview).
+- Restrained logo, IBM Plex Mono masthead (`LA APP DE DERIVA · MUY PRONTO`), Cormorant
+  Regular + italic-green hero "Crea tu propia / Deriva." (*Deriva* the single green moment),
+  toolkit row (`Tu carta · Tu código · Tus recompensas`), exact palette.
+- Body: confirms they're on the list, teases the toolkit, closes with
+  *"Te escribimos cuando esté lista."* + signoff `— Equipo Deriva`.
+- Preserve the `{{{RESEND_UNSUBSCRIBE_URL}}}` token + privacy link in the footer.
 
-**Build:** `npm run email:build` → consumed by the companion welcome-email builder in
-`src/server/`.
+**Build / preview:** `npx tsx scripts/preview-companion-welcome.ts` renders the builder output
+to `docs/email/companion-welcome.html` for browser inspection (mirrors the inspectable-artifact
+pattern of `build-emails.ts`).
 
 ### Acceptance
 
-- `npm run email:build` produces valid HTML+text; renders correctly in a real API test send.
-- Subject/heading/body match the campaign voice; unsubscribe header present.
+- The preview script writes valid HTML+text; the HTML renders correctly when opened in a browser.
+- Submitting the companion form fires this email via Resend (live dev check, env permitting).
+- Subject/heading/body match the campaign voice; unsubscribe + privacy links present.
 
 ---
 
@@ -145,7 +156,7 @@ landing CSS / editorial tokens; no new card component.
 
 1. Subscription pipeline (server + config + form prop) — testable headless.
 2. Landing section Paper mock → approval → implementation.
-3. Companion email template → build → API test send.
+3. Companion welcome builder in `welcome-email.ts` → preview HTML artifact → live dev send.
 4. IG story Paper artboard → approval → export.
 
 Each visual deliverable (2, 4) is gated on founder approval of its Paper mock before any
