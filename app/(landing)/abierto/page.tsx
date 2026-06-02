@@ -7,6 +7,7 @@ import { menuSections, type MenuAddons } from "../../../src/data/menu";
 import { HOURS_LINES, isOpenNow } from "../../../src/lib/open-now";
 import { getEditionMarkUppercase } from "../../../src/lib/edition";
 import { MENU_EJECUTIVO_FIXED, MENU_EJECUTIVO_TODAY } from "../../../src/data/menu-ejecutivo";
+import { getPublicMenuView } from "../../../src/api/server";
 import { CrossfadeRotator } from "../../../src/components/landing/CrossfadeRotator";
 import "./abierto.css";
 
@@ -105,20 +106,37 @@ function getCafeteriaData(): { itemNames: string[]; addons: MenuAddons[] } {
   return { itemNames, addons: [...espressoAddons, ...sectionAddons] };
 }
 
+// Resolve today's four courses. The public backend's executive_menu is the
+// source of truth (set per service day by staff); we fall back to the static
+// MENU_EJECUTIVO_TODAY only if the backend is unreachable.
+async function resolveEjecutivoCourses(): Promise<
+  { roman: string; tag: string; name: string; note?: string }[]
+> {
+  const view = await getPublicMenuView({ locale: "es-CL" });
+  const backend = view?.sections.find((s) => s.executive_menu)?.executive_menu;
+  if (backend?.courses?.length) {
+    return backend.courses.map((c) => ({
+      roman: `${c.numeral}.`,
+      tag: c.tag,
+      name: c.name,
+      note: c.note
+    }));
+  }
+  const { courses: today } = MENU_EJECUTIVO_TODAY;
+  const { courseTags } = MENU_EJECUTIVO_FIXED;
+  return [
+    { roman: "i.", name: today.bebida.name, note: today.bebida.note, tag: today.bebida.tag ?? courseTags.bebida },
+    { roman: "ii.", name: today.entrada.name, note: today.entrada.note, tag: today.entrada.tag ?? courseTags.entrada },
+    { roman: "iii.", name: today.fondo.name, note: today.fondo.note, tag: today.fondo.tag ?? courseTags.fondo },
+    { roman: "iv.", name: today.queque.name, note: today.queque.note, tag: today.queque.tag ?? courseTags.queque }
+  ];
+}
+
 async function AbiertoEjecutivo() {
   await connection();
   const now = new Date();
   const editionMark = getEditionMarkUppercase(now);
-  const { courses: today } = MENU_EJECUTIVO_TODAY;
-  const { courseTags } = MENU_EJECUTIVO_FIXED;
-  // Spread the course first, then resolve the tag — a per-day `tag` override
-  // (e.g. "a elección" for a two-option fondo) wins over the fixed default.
-  const courses = [
-    { roman: "i.", ...today.bebida, tag: today.bebida.tag ?? courseTags.bebida },
-    { roman: "ii.", ...today.entrada, tag: today.entrada.tag ?? courseTags.entrada },
-    { roman: "iii.", ...today.fondo, tag: today.fondo.tag ?? courseTags.fondo },
-    { roman: "iv.", ...today.queque, tag: today.queque.tag ?? courseTags.queque }
-  ];
+  const courses = await resolveEjecutivoCourses();
 
   return (
     <main className="ab-stage ab-stage--ejec" aria-label="Menu Ejecutivo de hoy">
