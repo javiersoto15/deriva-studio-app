@@ -19,6 +19,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9
     },
     {
+      url: `${siteUrl}/resenas`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.5
+    },
+    {
       url: `${siteUrl}/privacidad`,
       lastModified,
       changeFrequency: "yearly",

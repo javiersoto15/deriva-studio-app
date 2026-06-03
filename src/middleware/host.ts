@@ -44,6 +44,7 @@ const LANDING_PREFIXES = [
   "/menu-display",
   "/abierto",
   "/privacidad",
+  "/resenas",
   "/unsubscribe",
   "/companion"
 ] as const;
