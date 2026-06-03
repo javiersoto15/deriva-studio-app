@@ -29,6 +29,7 @@ dist/
 # Editor / IDE
 .idea/
 .vscode/
+.worktrees/
 *.swp
 
 # Generated email templates (rebuilt by npm run email:build)
