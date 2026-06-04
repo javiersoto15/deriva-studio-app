@@ -3135,10 +3135,18 @@ address {
 }
 
 /* — Reseñas · Editorial Broadside (public review submission) ————————— */
+/* Sticky-footer shell: fills the viewport so the footer pins to the bottom when
+   content is short, and flows after the content when it's tall. */
+.resenas-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100svh;
+}
 .resenas-page {
-  /* Height follows content so the footer sits directly after the form (no gap),
-     and the form still reads as one screen on a laptop. The fixed solid nav
-     overlaps the top; the rail/column reserve top padding to clear it. */
+  /* Grows to push the footer to the bottom; the fixed solid nav overlaps the
+     top, so the rail/column reserve top padding to clear it. */
+  flex: 1 0 auto;
   background: var(--field);
   display: flex;
   justify-content: center;

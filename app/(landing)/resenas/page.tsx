@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 
 export default function ResenasPage() {
   return (
-    <>
+    <div className="resenas-shell">
       <SiteNav active="resenas" variant="solid" />
       <main className="resenas-page" aria-labelledby="resenas-title">
         <div className="resenas-spread">
@@ -96,6 +96,6 @@ export default function ResenasPage() {
         <span>Edición continuada · MMXXVI</span>
         <span>derivastudio.cl</span>
       </footer>
-    </>
+    </div>
   );
 }
