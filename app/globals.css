@@ -3240,9 +3240,10 @@ address {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  /* Top padding clears the fixed nav; content is vertically centred. */
-  padding: clamp(60px, 7vh, 78px) clamp(28px, 5vw, 72px) clamp(16px, 2vh, 28px);
+  justify-content: flex-start;
+  /* Top padding clears the fixed nav; content is top-anchored so there's no gap
+     above the headline (the full-height photo rail balances the column). */
+  padding: clamp(60px, 7vh, 78px) clamp(28px, 5vw, 72px) clamp(28px, 4vh, 44px);
 }
 
 .resenas-head {
