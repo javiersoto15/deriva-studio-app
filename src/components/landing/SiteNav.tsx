@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { todayHoursLabel } from "../../lib/open-now";
 
-type Tab = "inicio" | "carta" | "visita";
+type Tab = "inicio" | "carta" | "resenas" | "visita";
 
 export function SiteNav({
   active = "inicio",
@@ -54,6 +54,12 @@ export function SiteNav({
           className={`landing-nav__tab ${active === "carta" ? "is-active" : ""}`}
         >
           La carta
+        </Link>
+        <Link
+          href="/resenas"
+          className={`landing-nav__tab ${active === "resenas" ? "is-active" : ""}`}
+        >
+          Reseñas
         </Link>
         <Link
           href="/#visita"

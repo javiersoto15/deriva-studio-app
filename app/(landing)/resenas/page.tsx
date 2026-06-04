@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 export default function ResenasPage() {
   return (
     <>
-      <SiteNav active="inicio" />
+      <SiteNav active="resenas" variant="solid" />
       <main className="resenas-page" aria-labelledby="resenas-title">
         <div className="resenas-spread">
           {/* Left rail — la casa, with edition masthead + colophon. */}
@@ -88,6 +88,14 @@ export default function ResenasPage() {
           </div>
         </div>
       </main>
+      <footer className="landing-footer">
+        <span className="landing-footer__brand">
+          <span className="landing-diamond" aria-hidden="true" />
+          Deriva Coffee Studio
+        </span>
+        <span>Edición continuada · MMXXVI</span>
+        <span>derivastudio.cl</span>
+      </footer>
     </>
   );
 }

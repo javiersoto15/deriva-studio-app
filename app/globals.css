@@ -3136,8 +3136,9 @@ address {
 
 /* — Reseñas · Editorial Broadside (public review submission) ————————— */
 .resenas-page {
-  /* One-pager: height follows content (no forced 100vh) so the form + CTA fit a
-     laptop viewport without scrolling. */
+  /* Height follows content so the footer sits directly after the form (no gap),
+     and the form still reads as one screen on a laptop. The fixed solid nav
+     overlaps the top; the rail/column reserve top padding to clear it. */
   background: var(--field);
   display: flex;
   justify-content: center;
