@@ -30,7 +30,7 @@ export default function ResenasPage() {
           {/* Left rail — la casa, with edition masthead + colophon. */}
           <aside className="resenas-rail" aria-hidden="true">
             <DerivaImage
-              slug="interior"
+              slug="storefront"
               alt=""
               fill
               sizes="(max-width: 900px) 100vw, 46vw"
