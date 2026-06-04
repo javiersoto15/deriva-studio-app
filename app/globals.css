@@ -2269,7 +2269,10 @@ address {
   transition: background 220ms ease, border-color 220ms ease;
 }
 .landing-nav.is-scrolled {
-  background: rgba(26, 23, 20, 0.92);
+  /* Fully opaque so content/photos never bleed through the solid header. */
+  background: #1a1714;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   border-bottom-color: rgba(201, 165, 122, 0.18);
 }
 .landing-nav__brand {
@@ -3241,9 +3244,9 @@ address {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  /* Top padding clears the fixed nav; content is top-anchored so there's no gap
-     above the headline (the full-height photo rail balances the column). */
-  padding: clamp(54px, 6vh, 68px) clamp(28px, 5vw, 72px) clamp(12px, 2vh, 22px);
+  /* Top padding clears the 59px fixed nav with breathing room so the "§ Tu
+     visita" kicker doesn't sit under the header. */
+  padding: clamp(80px, 8.5vh, 96px) clamp(28px, 5vw, 72px) clamp(8px, 1.5vh, 16px);
 }
 
 .resenas-head {
@@ -3296,7 +3299,7 @@ address {
 .resenas-row__body {
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 8px;
   flex: 1 1 auto;
   min-width: 0;
 }
@@ -3350,7 +3353,7 @@ address {
 .resenas-textarea {
   width: 100%;
   min-width: 0;
-  padding: 12px 14px;
+  padding: 9px 14px;
   background: var(--field-light, #f2ebdd);
   border: 1px solid var(--hairline);
   border-radius: 2px;
@@ -3539,8 +3542,8 @@ address {
 .resenas-submitblock {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 12px 0 0 calc(40px + clamp(16px, 2vw, 28px));
+  gap: 6px;
+  padding: 8px 0 0 calc(40px + clamp(16px, 2vw, 28px));
 }
 .resenas-submit {
   align-self: flex-start;
