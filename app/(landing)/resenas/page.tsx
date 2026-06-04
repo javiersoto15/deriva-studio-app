@@ -60,25 +60,17 @@ export default function ResenasPage() {
                 <span>§ Tu visita</span>
               </div>
               <h1 id="resenas-title" className="resenas-head__title">
-                ¿Cómo estuvo <em>la ronda?</em>
+                ¿Cómo estuvo tu momento en <em>Deriva?</em>
               </h1>
             </header>
 
             <ReviewForm />
 
-            <section className="resenas-coda" aria-label="Después de la ronda">
-              <div className="landing-slug">
-                <span className="landing-slug__rule" aria-hidden="true" />
-                <span>§ Después de la ronda</span>
-              </div>
+            <section className="resenas-coda" aria-label="Después de tu visita">
               <div className="resenas-coda__app">
-                <div className="resenas-coda__pitch">
-                  <p className="resenas-coda__title">Crea tu propia Deriva.</p>
-                  <p className="resenas-coda__lede">
-                    Tu carta, tu código y tus recompensas. Te avisamos cuando la
-                    app esté lista.
-                  </p>
-                </div>
+                <p className="resenas-coda__title">
+                  Crea tu propia Deriva. <span>Tu carta y recompensas, muy pronto.</span>
+                </p>
                 <a className="resenas-coda__cta" href="/companion">
                   Sumarme a la app →
                 </a>
@@ -96,14 +88,6 @@ export default function ResenasPage() {
           </div>
         </div>
       </main>
-      <footer className="landing-footer">
-        <span className="landing-footer__brand">
-          <span className="landing-diamond" aria-hidden="true" />
-          Deriva Coffee Studio
-        </span>
-        <span>Edición continuada · MMXXVI</span>
-        <span>derivastudio.cl</span>
-      </footer>
     </>
   );
 }

@@ -129,10 +129,6 @@ export function ReviewForm() {
               {shown ? RATING_WORDS[shown] : "Sin nota"}
             </span>
           </div>
-          <div className="resenas-hexrow__anchors">
-            <span>Floja</span>
-            <span>Un ritual</span>
-          </div>
           {errors?.rating_overall && (
             <p className="resenas-error" role="alert">
               {errors.rating_overall}
@@ -215,7 +211,7 @@ export function ReviewForm() {
           <textarea
             id={bodyId}
             name="review_body"
-            rows={5}
+            rows={3}
             maxLength={MAX_BODY}
             required
             value={body}
