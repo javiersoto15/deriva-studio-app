@@ -61,3 +61,6 @@ android/app/release/
 *.jks
 *.keystore
 !debug.keystore
+
+# Stray duplicate service-worker copies (sw 2.js, sw 3.js…) — only sw.js is real
+public/sw [0-9]*.js
