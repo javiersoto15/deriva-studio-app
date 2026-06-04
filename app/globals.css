@@ -3243,22 +3243,22 @@ address {
   justify-content: flex-start;
   /* Top padding clears the fixed nav; content is top-anchored so there's no gap
      above the headline (the full-height photo rail balances the column). */
-  padding: clamp(60px, 7vh, 78px) clamp(28px, 5vw, 72px) clamp(28px, 4vh, 44px);
+  padding: clamp(54px, 6vh, 68px) clamp(28px, 5vw, 72px) clamp(12px, 2vh, 22px);
 }
 
 .resenas-head {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding-bottom: 12px;
+  gap: 6px;
+  padding-bottom: 10px;
   border-bottom: 1px solid var(--hairline);
 }
 .resenas-head__title {
   margin: 0;
   font-family: var(--display);
   font-weight: 500;
-  font-size: clamp(30px, 3vw, 42px);
-  line-height: 1.0;
+  font-size: clamp(25px, 2.5vw, 34px);
+  line-height: 1.04;
   letter-spacing: -0.014em;
   color: var(--ink);
   text-wrap: balance;
@@ -3278,7 +3278,7 @@ address {
   flex-direction: row;
   gap: clamp(16px, 2vw, 28px);
   align-items: flex-start;
-  padding: clamp(9px, 1.1vw, 13px) 0;
+  padding: clamp(6px, 0.8vw, 10px) 0;
   margin: 0;
   border: 0;
   border-bottom: 1px solid var(--hairline);
@@ -3296,7 +3296,7 @@ address {
 .resenas-row__body {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 9px;
   flex: 1 1 auto;
   min-width: 0;
 }
@@ -3479,7 +3479,7 @@ address {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 14px 0;
+  padding: 9px 0;
   cursor: pointer;
   list-style: none;
 }
@@ -3539,8 +3539,8 @@ address {
 .resenas-submitblock {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 16px 0 0 calc(40px + clamp(16px, 2vw, 28px));
+  gap: 8px;
+  padding: 12px 0 0 calc(40px + clamp(16px, 2vw, 28px));
 }
 .resenas-submit {
   align-self: flex-start;
@@ -3573,11 +3573,20 @@ address {
 /* Coda — companion CTA + Instagram follow. */
 .resenas-coda {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 12px;
-  padding-top: 14px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 24px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  padding-top: 10px;
   border-top: 1px solid var(--hairline);
+}
+.resenas-coda__links {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
 }
 .resenas-coda__app {
   display: flex;
@@ -3621,13 +3630,16 @@ address {
   color: var(--paper);
 }
 .resenas-coda__ig {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding-top: 12px;
-  border-top: 1px solid #ece3d3;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
   text-decoration: none;
-  flex-wrap: wrap;
+  white-space: nowrap;
+  transition: color 140ms ease;
+}
+.resenas-coda__ig:hover {
+  color: var(--green);
 }
 .resenas-coda__handle {
   font-family: var(--mono);

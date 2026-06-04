@@ -67,23 +67,20 @@ export default function ResenasPage() {
             <ReviewForm />
 
             <section className="resenas-coda" aria-label="Después de tu visita">
-              <div className="resenas-coda__app">
-                <p className="resenas-coda__title">
-                  Crea tu propia Deriva. <span>Tu carta y recompensas, muy pronto.</span>
-                </p>
+              <p className="resenas-coda__title">Crea tu propia Deriva.</p>
+              <div className="resenas-coda__links">
                 <a className="resenas-coda__cta" href="/companion">
                   Sumarme a la app →
                 </a>
+                <a
+                  className="resenas-coda__ig"
+                  href={INSTAGRAM_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  @deriva.coffee.studio →
+                </a>
               </div>
-              <a
-                className="resenas-coda__ig"
-                href={INSTAGRAM_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <span className="resenas-coda__handle">@deriva.coffee.studio</span>
-                <span className="resenas-coda__follow">Síguenos en Instagram →</span>
-              </a>
             </section>
           </div>
         </div>
