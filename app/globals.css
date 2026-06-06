@@ -3734,3 +3734,394 @@ address {
     transition: none;
   }
 }
+
+/* ===========================================================================
+   Deriva Match Up — limited campaign (/deriva-match-up).
+   Reuses the /resenas editorial form shell; only the net-new pieces (RUT note,
+   amount field, terms, matched-price reveal) live here.
+   =========================================================================== */
+
+/* Mono variant for identity-shaped inputs (RUT, amount) — same hairline field. */
+.resenas-input--mono {
+  font-family: var(--mono);
+  letter-spacing: 0.04em;
+}
+
+/* Privacy microcopy under the RUT field. */
+.matchup-note {
+  margin: 0;
+  max-width: 48ch;
+  font-family: var(--body);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* Amount field — $ sign + grouped input + CLP unit on one baseline. */
+.matchup-amount {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  border-bottom: 1px solid var(--hairline);
+}
+.matchup-amount:focus-within {
+  border-bottom-color: var(--copper);
+}
+.matchup-amount__sign {
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-size: 15px;
+  color: var(--muted);
+}
+.matchup-amount__input {
+  border-bottom: 0;
+  padding-left: 0;
+  max-width: 160px;
+}
+.matchup-amount__input:focus {
+  border-bottom-color: transparent;
+}
+.matchup-amount__unit {
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+
+/* Campaign terms — sits beside the submit, same place as the moderation note. */
+.matchup-terms {
+  margin: 0;
+  max-width: 52ch;
+  font-family: var(--mono);
+  font-size: 10px;
+  line-height: 1.6;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+/* Result states (success / duplicate / expired) reuse the resenas-success
+   type ramp; the matched-price reveal is the single green moment. */
+.matchup-result {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: clamp(28px, 4vw, 44px) 0;
+  text-align: left;
+}
+.matchup-reveal {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: clamp(18px, 2.4vw, 26px) clamp(20px, 2.6vw, 30px);
+  border: 1px solid var(--green);
+  border-radius: 2px;
+  max-width: 38ch;
+}
+.matchup-reveal__label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+.matchup-reveal__price {
+  font-family: var(--mono);
+  font-size: clamp(34px, 5vw, 48px);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--green);
+}
+.matchup-reveal__sub {
+  margin-top: 4px;
+  font-family: var(--body);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+/* Expired state reads as closed, not celebratory — dim the green moment. */
+.matchup-result__mark--dim {
+  background: var(--muted);
+}
+.matchup-result__title--dim {
+  color: var(--ink);
+}
+.matchup-link {
+  color: var(--green);
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+}
+.matchup-link:hover {
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .matchup-amount {
+    transition: none;
+  }
+}
+
+/* --- Public explainer extras (form-less /deriva-match-up) ----------------- */
+.matchup-lede {
+  margin: 4px 0 0;
+  max-width: 46ch;
+  font-family: var(--body);
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.matchup-steps {
+  display: flex;
+  flex-direction: column;
+}
+.matchup-step__body {
+  font-family: var(--body);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.matchup-terms--public {
+  margin: 2px 0 0;
+  padding-top: 4px;
+}
+
+/* --- Result base (success / duplicate / expired) ------------------------- */
+.matchup-result__mark {
+  width: 40px;
+  height: 2px;
+  background: var(--green);
+}
+.matchup-result__mark--dim {
+  background: var(--muted);
+}
+.matchup-result__title {
+  margin: 0;
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(30px, 4vw, 46px);
+  line-height: 1.04;
+  color: var(--green);
+}
+.matchup-result__title--dim {
+  color: var(--ink);
+}
+/* The staff charge reveal — the single oversized green moment. */
+.matchup-reveal--charge {
+  max-width: none;
+  width: fit-content;
+  padding: clamp(26px, 3vw, 38px) clamp(30px, 3.4vw, 42px);
+}
+.matchup-reveal--charge .matchup-reveal__price {
+  font-size: clamp(56px, 11vw, 96px);
+}
+
+/* --- Staff surface shell (staff.derivastudio.cl/match-up) ----------------- */
+.matchup-staff {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100svh;
+  background: var(--field);
+}
+.matchup-staff__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px clamp(28px, 6vw, 56px);
+  background: var(--paper);
+  border-bottom: 1px solid var(--hairline);
+}
+.matchup-staff__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.matchup-staff__signout {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--label);
+  cursor: pointer;
+  transition: color 140ms ease;
+}
+.matchup-staff__signout:hover {
+  color: var(--green);
+}
+.matchup-staff__body {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Staff form (top-anchored data entry) -------------------------------- */
+.matchup-staffform {
+  width: 100%;
+  max-width: 660px;
+  align-self: center;
+  padding: clamp(36px, 6vw, 52px) clamp(28px, 6vw, 56px);
+}
+.matchup-staffform__head {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 16px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--hairline);
+}
+
+/* "Igualar otro" / "Atender a otro" — solid green action on result states. */
+.matchup-staff__again {
+  align-self: flex-start;
+  margin-top: 4px;
+  padding: 15px 32px;
+  background: var(--green);
+  color: var(--paper);
+  border: 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 140ms ease;
+}
+.matchup-staff__again:hover {
+  background: #24332a;
+}
+
+/* --- Staff unlock (PIN gate) --------------------------------------------- */
+.matchup-unlock {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  width: 100%;
+  max-width: 380px;
+  align-self: center;
+  padding: 64px 28px;
+  text-align: center;
+}
+.matchup-unlock__crest {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.matchup-unlock__diamond {
+  width: 12px;
+  height: 12px;
+  background: var(--green);
+  transform: rotate(45deg);
+}
+.matchup-unlock__rule {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+.matchup-unlock__tick {
+  width: 22px;
+  height: 1px;
+  background: var(--copper);
+}
+.matchup-unlock__head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.matchup-unlock__title {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(34px, 8vw, 44px);
+  line-height: 1.04;
+  color: var(--ink);
+}
+.matchup-unlock__title em {
+  font-style: italic;
+  color: var(--green);
+}
+.matchup-unlock__sub {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.matchup-unlock__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+.matchup-unlock__input {
+  width: 100%;
+  padding: 15px 18px;
+  background: var(--field-light, #f2ebdd);
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  font-family: var(--mono);
+  font-size: 22px;
+  letter-spacing: 0.5em;
+  text-align: center;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 120ms ease;
+}
+.matchup-unlock__input:focus {
+  border-color: var(--copper);
+}
+.matchup-unlock__input[aria-invalid="true"] {
+  border-color: #5e230f;
+}
+.matchup-unlock__btn {
+  width: 100%;
+  padding: 16px 0;
+  background: var(--green);
+  color: var(--paper);
+  border: 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 140ms ease, opacity 140ms ease;
+}
+.matchup-unlock__btn:hover:not(:disabled) {
+  background: #24332a;
+}
+.matchup-unlock__btn:disabled {
+  opacity: 0.55;
+  cursor: progress;
+}
+.matchup-unlock__note {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--label);
+}
+
+@media (max-width: 560px) {
+  .matchup-staff__again {
+    align-self: stretch;
+    text-align: center;
+  }
+}

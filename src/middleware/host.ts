@@ -45,6 +45,7 @@ const LANDING_PREFIXES = [
   "/abierto",
   "/privacidad",
   "/resenas",
+  "/deriva-match-up",
   "/unsubscribe",
   "/companion"
 ] as const;
