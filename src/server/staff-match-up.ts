@@ -78,7 +78,9 @@ export async function unlockStaffMatchUp(
     httpOnly: true,
     secure: true,
     sameSite: "lax",
-    path: "/match-up",
+    // Host-scoped only — path "/" so the cookie is sent both at the prod URL
+    // (admin.derivastudio.cl/match-up) and the dev URL (/admin/match-up).
+    path: "/",
     maxAge: COOKIE_MAX_AGE
   });
   return { status: "ok" };
@@ -86,5 +88,5 @@ export async function unlockStaffMatchUp(
 
 /** Sign-out action ("Cerrar sesión"). */
 export async function signOutStaffMatchUp(): Promise<void> {
-  (await cookies()).delete({ name: COOKIE_NAME, path: "/match-up" });
+  (await cookies()).delete({ name: COOKIE_NAME, path: "/" });
 }

@@ -2,7 +2,7 @@
 
 **Date:** 2026-06-05
 **Status:** Design — pending user approval
-**Surfaces:** landing (`derivastudio.cl`), staff (`staff.derivastudio.cl`)
+**Surfaces:** landing (`derivastudio.cl`), admin host (`admin.derivastudio.cl`)
 **Campaign window:** through 2026-06-30
 
 ## Summary
@@ -64,8 +64,8 @@ between surfaces):
 
 ### ② Staff `/match-up` (staff host) — PIN-gated form
 
-- URL: `staff.derivastudio.cl/match-up` (dev: `localhost:3000/staff/match-up`).
-- File: `app/(staff)/match-up/page.tsx` — a **server component** that reads an
+- URL: `admin.derivastudio.cl/match-up` (dev: `localhost:3000/admin/match-up`).
+- File: `app/(admin)/match-up/page.tsx` — a **server component** that reads an
   HttpOnly cookie:
   - **no cookie** → render the **unlock screen** (single PIN field).
   - **cookie present** → render the **staff form**.
@@ -138,7 +138,7 @@ outbound body — all inside the server boundary. The success form state carries
   informational body + CTA row.
 
 **New**
-- `app/(staff)/match-up/page.tsx` — server component, cookie gate.
+- `app/(admin)/match-up/page.tsx` — server component, cookie gate.
 - `src/server/staff-match-up.ts` — `unlockStaffMatchUp` action + cookie helpers
   (set/verify), `signOutStaffMatchUp` (optional).
 - Staff unlock + form components (e.g. `app/(staff)/match-up/_components/`):
@@ -154,9 +154,9 @@ outbound body — all inside the server boundary. The success form state carries
 ## Routing & infra
 
 - `/deriva-match-up` stays in `LANDING_PREFIXES` (`src/middleware/host.ts`).
-- Staff host already rewrites all paths to the staff surface (no allowlist
-  gating yet), so `staff.derivastudio.cl/match-up` resolves
-  `app/(staff)/match-up/page.tsx`. Dev path `/staff/match-up` slices the
+- Admin host already rewrites all paths to the staff surface (no allowlist
+  gating yet), so `admin.derivastudio.cl/match-up` resolves
+  `app/(admin)/match-up/page.tsx`. Dev path `/staff/match-up` slices the
   `/staff` prefix to `/match-up` → same file. No host.ts change needed for the
   staff route.
 - Sitemap: keep the public `/deriva-match-up` entry; do **not** list the staff
