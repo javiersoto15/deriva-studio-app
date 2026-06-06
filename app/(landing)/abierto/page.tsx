@@ -200,6 +200,67 @@ async function AbiertoEjecutivo() {
   );
 }
 
+// Promo · Desayuno campesino · de a dos. A centered photo broadside that reuses
+// the .ab-stage skeleton (masthead + colophon) with a single green moment on the
+// price. Runs in the breakfast slot (open → 13:00) every day. The eyebrow is the
+// live edition mark — same as the splash — so it never goes stale.
+async function AbiertoPromo() {
+  await connection();
+  const now = new Date();
+  const labels = getDayLabels(now);
+  const editionMark = getEditionMarkUppercase(now);
+  return (
+    <main className="ab-stage ab-stage--promo" aria-label="Promo · Desayuno campesino">
+      <header className="ab-mast">
+        <div className="ab-mast__row">
+          <LogoLockup
+            isotipo={56}
+            wordmarkSize={34}
+            wordmarkLine={32}
+            subSize={10}
+            gap={14}
+            isotipoColor="#241B14"
+            wordmarkColor="#241B14"
+          />
+          <span className="ab-mast__edition">{editionMark}</span>
+        </div>
+        <span className="ab-mast__rule" aria-hidden="true" />
+      </header>
+
+      <div className="ab-promo__eyebrow">{labels.eyebrow}</div>
+
+      <div className="ab-promo__hero">
+        <img
+          src="https://media.derivastudio.cl/promos/desayuno-campesino.jpg"
+          alt="Dos desayunos campesinos sobre la mesa"
+          width={1600}
+          height={1600}
+          decoding="async"
+        />
+      </div>
+
+      <div className="ab-promo__stack">
+        <span className="ab-promo__mark">§ 01 · Desayuno</span>
+        <h1 className="ab-promo__headline">Desayuno campesino · de a dos.</h1>
+        <p className="ab-promo__sub">— para compartir entre dos —</p>
+        <div className="ab-promo__price">
+          <span className="ab-promo__price-label">Promo</span>
+          <span className="ab-promo__price-amount">$ 14.500</span>
+        </div>
+      </div>
+
+      <footer className="ab-colophon">
+        <span className="ab-colophon__rule" aria-hidden="true" />
+        <div className="ab-colophon__row">
+          <span>MAGNERE 1570 · LOCAL 105</span>
+          <span>@DERIVA.COFFEE.STUDIO</span>
+          <span>DERIVASTUDIO.CL</span>
+        </div>
+      </footer>
+    </main>
+  );
+}
+
 async function AbiertoDisplay() {
   await connection();
   const now = new Date();
@@ -464,7 +525,7 @@ async function AbiertoRotator({
   searchParams: Promise<{ view?: string }>;
 }) {
   await connection();
-  // QA hook: `?view=abierto|ejecutivo|noche` renders one view solid (no
+  // QA hook: `?view=abierto|ejecutivo|promo|noche` renders one view solid (no
   // rotation, no time gating) so a panel can be checked any time of day.
   // Read inside the Suspense boundary so the dynamic access doesn't block
   // the static shell from prerendering.
@@ -472,6 +533,7 @@ async function AbiertoRotator({
   if (preview) {
     const node =
       preview === "ejecutivo" ? <AbiertoEjecutivo /> :
+      preview === "promo" ? <AbiertoPromo /> :
       preview === "noche" ? <AbiertoNoche /> :
       <AbiertoDisplay />;
     return <CrossfadeRotator className="ab-rotator" views={[{ key: preview, node }]} />;
@@ -487,47 +549,26 @@ async function AbiertoRotator({
       hour12: false
     }).format(now)
   );
-  // Weekday lunch (until 16:00): a two-view loop — the Abierto splash (20s)
-  // and the Menu Ejecutivo panel (30s). The executive menu advertises ahead
-  // of + during service.
+  // The set is composed additively from independent time gates so a slot can
+  // coexist with another (e.g. the breakfast promo runs alongside the Menu
+  // Ejecutivo on weekday mornings). The Abierto splash always anchors the loop.
+  //
+  // Breakfast promo (Desayuno campesino, 30s): mornings every day, open → 13:00.
+  const showCampesino = isOpenNow(now) && santiagoHour < 13;
+  // Menu Ejecutivo (30s): weekday lunch until 16:00 — advertises ahead of +
+  // during service. NOT the carta schedule (which calls Fri "weekend").
   const showEjecutivo = isMenuEjecutivoDay(now) && santiagoHour < 16;
-  // From 16:00 until close the Menu Ejecutivo drops out and the evening night
-  // art (45s) takes the second slot. Gated on open hours so it never runs on
-  // Sunday (closed) or after the 21:00 close.
+  // Noche (45s): 16:00 until close. Gated on open hours so it never runs on
+  // Sunday (closed) or after the 21:00 close. Mutually exclusive with the
+  // morning gates above (≥16 vs <13/<16), so it never stacks with them.
   const showNoche = santiagoHour >= 16 && isOpenNow(now);
 
-  if (showEjecutivo) {
-    return (
-      <CrossfadeRotator
-        className="ab-rotator"
-        views={[
-          { key: "abierto", node: <AbiertoDisplay />, hold: 20 },
-          { key: "ejecutivo", node: <AbiertoEjecutivo />, hold: 30 }
-        ]}
-      />
-    );
-  }
+  const views = [{ key: "abierto", node: <AbiertoDisplay />, hold: 20 }];
+  if (showCampesino) views.push({ key: "promo", node: <AbiertoPromo />, hold: 30 });
+  if (showEjecutivo) views.push({ key: "ejecutivo", node: <AbiertoEjecutivo />, hold: 30 });
+  if (showNoche) views.push({ key: "noche", node: <AbiertoNoche />, hold: 45 });
 
-  if (showNoche) {
-    return (
-      <CrossfadeRotator
-        className="ab-rotator"
-        views={[
-          { key: "abierto", node: <AbiertoDisplay />, hold: 20 },
-          { key: "noche", node: <AbiertoNoche />, hold: 45 }
-        ]}
-      />
-    );
-  }
-
-  // Otherwise (weekend daytime, or weekday evening past close): the Abierto
-  // splash alone.
-  return (
-    <CrossfadeRotator
-      className="ab-rotator"
-      views={[{ key: "abierto", node: <AbiertoDisplay />, hold: 20 }]}
-    />
-  );
+  return <CrossfadeRotator className="ab-rotator" views={views} />;
 }
 
 export default function AbiertoPage({

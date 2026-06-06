@@ -16,10 +16,11 @@
 html, body { background: var(--ab-plaster); margin: 0; }
 
 /* === Rotator ===
-   /abierto cycles through a time-dependent set of 1080×1920 views:
-   Abierto splash, Menu Ejecutivo (weekday lunch), Promo (Desayuno
-   campesino), and La barra (cervezas, from lunch to close). We hoist
-   `zoom` to the rotator wrapper so all stages share the TV sizing (0.833).
+   /abierto cycles through a time-dependent set of 1080×1920 views, composed
+   additively per time gate: Abierto splash (always), Promo (Desayuno
+   campesino, mornings → 13:00), Menu Ejecutivo (weekday lunch → 16:00), and
+   Noche (16:00 → close). We hoist `zoom` to the rotator wrapper so all stages
+   share the TV sizing (0.833).
 
    Crossfade is CSS-driven (kiosk TVs throttle JS timers, so animations on
    the compositor are far more reliable). Each view holds 19s solo + 1s
@@ -273,6 +274,76 @@ html, body { background: var(--ab-plaster); margin: 0; }
   font-family: var(--font-mono), "IBM Plex Mono", monospace;
   font-weight: 500; font-size: 13px; letter-spacing: 0.3em;
   text-transform: uppercase; color: var(--ab-mute);
+}
+
+/* === Promo view (Desayuno campesino · de a dos) ===
+   Mirrors Paper artboard 9HL-0. Reuses .ab-stage skeleton + masthead
+   + colophon; replaces hero/medallions/especialidad/pull-quote with
+   a centered photo broadside + single green moment on the price. */
+.ab-stage--promo {
+  gap: 40px;
+}
+.ab-stage--promo .ab-colophon { margin-top: auto; }
+.ab-promo__eyebrow {
+  font-family: var(--font-tracked), Poppins, sans-serif;
+  font-weight: 600; font-size: 22px; letter-spacing: 0.32em;
+  text-transform: uppercase; color: var(--ab-sub);
+  text-align: center;
+}
+.ab-promo__hero {
+  align-self: center;
+  width: 760px; height: 760px;
+  border-radius: 28px;
+  overflow: hidden;
+  background: var(--ab-medallion-bg);
+  box-shadow: 0 24px 48px -28px rgba(36, 27, 20, 0.32);
+}
+.ab-promo__hero img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center 58%;
+  display: block;
+}
+.ab-promo__stack {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 20px; padding-top: 8px;
+}
+.ab-promo__mark {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 500; font-size: 22px; letter-spacing: 0.28em;
+  text-transform: uppercase; color: var(--ab-mute);
+}
+.ab-promo__headline {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic; font-weight: 500;
+  font-size: 92px; line-height: 1.0; letter-spacing: -0.012em;
+  color: var(--ab-ink);
+  text-align: center;
+  max-width: 880px;
+  margin: 0;
+}
+.ab-promo__sub {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic; font-weight: 400;
+  font-size: 34px; line-height: 1.2;
+  color: var(--ab-sub);
+  text-align: center;
+  margin: 0;
+}
+.ab-promo__price {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 10px; padding-top: 22px;
+}
+.ab-promo__price-label {
+  font-family: var(--font-tracked), Poppins, sans-serif;
+  font-weight: 600; font-size: 18px; letter-spacing: 0.32em;
+  text-transform: uppercase; color: var(--ab-mute);
+}
+.ab-promo__price-amount {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 500; font-size: 118px; line-height: 1;
+  letter-spacing: -0.015em;
+  color: var(--ab-green);
 }
 
 /* === Menu Ejecutivo full panel · v2 dark ===
