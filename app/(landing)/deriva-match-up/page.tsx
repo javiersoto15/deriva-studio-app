@@ -104,7 +104,10 @@ export default function DerivaMatchUpPage() {
 
             <p className="matchup-terms matchup-terms--public">
               Válido hasta el 30 de junio · una vez por RUT · solo café.
-              Guardamos tu RUT cifrado para validar una igualación por persona.
+              Guardamos tu RUT cifrado para validar una igualación por persona.{" "}
+              <a className="matchup-baseslink" href="/deriva-match-up/bases">
+                Ver bases →
+              </a>
             </p>
 
             <section className="resenas-coda" aria-label="Visítanos">
