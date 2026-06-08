@@ -4,7 +4,7 @@ import "server-only";
 //   `POST /public/campaigns/deriva-match-up/submissions`.
 //
 // CAMPAIGN: a customer brings a receipt ("boleta") from another café and Deriva
-// matches the coffee price (floored at 1600 CLP). The backend stores only a
+// matches the coffee price (floored at 1200 CLP). The backend stores only a
 // HASHED RUT — never the raw one — and dedups one submission per normalized RUT.
 //
 // BACKEND CONTRACT (source of truth):
@@ -12,7 +12,7 @@ import "server-only";
 //   Request:  { rut, competitor_place, coffee_name, competitor_price_clp }
 //   Response: { id, campaign_id, competitor_place, coffee_name,
 //               competitor_price_clp, matched_price_clp, submitted_at }
-//   200/201 → accepted; matched_price_clp = max(competitor_price_clp, 1600)
+//   200/201 → accepted; matched_price_clp = max(competitor_price_clp, 1200)
 //   400     → validation error
 //   409     → duplicate normalized RUT (already used this campaign)
 //   410     → campaign expired (valid until 2026-06-30)

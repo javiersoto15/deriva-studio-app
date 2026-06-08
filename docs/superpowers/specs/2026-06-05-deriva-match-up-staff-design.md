@@ -8,7 +8,7 @@
 ## Summary
 
 Deriva Match Up is a limited campaign: a customer brings a receipt ("boleta")
-from another café and Deriva matches their coffee price, floored at 1.600 CLP,
+from another café and Deriva matches their coffee price, floored at 1.200 CLP,
 once per person. Redemption is **staff-operated**: a barista verifies the
 customer's physical carnet + competitor boleta at the bar and enters the data
 into a PIN-gated staff form. The backend stores only a **hashed RUT** and
@@ -42,7 +42,7 @@ POST /public/campaigns/deriva-match-up/submissions   (public, no auth)
 Request:  { rut, competitor_place, coffee_name, competitor_price_clp }
 Response: { id, campaign_id, competitor_place, coffee_name,
             competitor_price_clp, matched_price_clp, submitted_at }
-200/201 → accepted; matched_price_clp = max(competitor_price_clp, 1600)
+200/201 → accepted; matched_price_clp = max(competitor_price_clp, 1200)
 400 → validation · 409 → duplicate RUT · 410 → campaign expired
 ```
 
@@ -57,7 +57,7 @@ between surfaces):
   footer, `SiteNav active="match-up"`).
 - Headline: **"Trae tu boleta, igualamos tu café."**
 - Body explains: bring your boleta from another café to the bar at Magnere 1570
-  Local 105; we match the price (mínimo Deriva $1.600); válido hasta el 30 de
+  Local 105; we match the price (mínimo Deriva $1.200); válido hasta el 30 de
   junio; una vez por RUT.
 - CTA row: cómo llegar / Instagram / app. **No form, no backend interaction** →
   remains a static prerender, ideal IG/QR destination.
@@ -100,7 +100,7 @@ Four fields, recopyed for the counter:
 
 Result states (staff-facing):
 
-- **success** → large **"Cóbrale $1.600"** + "Pagó $1.200 en La Vecina." so the
+- **success** → large **"Cóbrale $1.200"** + "Pagó $1.200 en La Vecina." so the
   barista knows exactly what to ring up. A **"Igualar otro"** button resets the
   form (PIN cookie persists) for the next customer.
 - **409** → "Este RUT ya usó su igualación." → staff declines.
@@ -178,7 +178,7 @@ outbound body — all inside the server boundary. The success form state carries
 - `npm run build` compiles; public `/deriva-match-up` prerenders static; staff
   `/match-up` builds.
 - Manual: unlock with correct/incorrect PIN; submit a valid match (see
-  "Cóbrale $X" with floor applied for sub-1600 prices); re-submit same RUT →
+  "Cóbrale $X" with floor applied for sub-1200 prices); re-submit same RUT →
   409 copy; confirm public page has no form.
 - Paper mockups (mobile + desktop) approved before any deploy
   (`feedback_paper_first_workflow`).

@@ -195,7 +195,7 @@ function MatchUpRound({ onReset }: { onReset: () => void }) {
         <SubmitButton />
         <p className="matchup-terms">
           Válido hasta el 30 de junio · una vez por RUT · precio mínimo Deriva{" "}
-          {clp.format(1600)}.
+          {clp.format(1200)}.
         </p>
       </div>
     </form>

@@ -37,7 +37,7 @@ const STEPS = [
   {
     n: "03",
     label: "Igualamos el precio",
-    body: "Pagas lo mismo que pagabas allá — precio mínimo Deriva $1.600."
+    body: "Pagas lo mismo que pagabas allá — precio mínimo Deriva $1.200."
   }
 ];
 

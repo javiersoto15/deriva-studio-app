@@ -7,7 +7,7 @@ const pageUrl = `${siteUrl}/deriva-match-up/bases`;
 export const metadata: Metadata = {
   title: "Bases · Deriva Match Up",
   description:
-    "Bases legales de la promoción Deriva Match Up. Vigente del 8 al 30 de junio de 2026, una vez por persona, solo cafés individuales, precio mínimo $1.600.",
+    "Bases legales de la promoción Deriva Match Up. Vigente del 8 al 30 de junio de 2026, una vez por persona, solo cafés individuales, precio mínimo $1.200.",
   alternates: { canonical: pageUrl },
   openGraph: {
     title: "Bases · Deriva Match Up",
@@ -34,7 +34,7 @@ const CLAUSES = [
   {
     n: "03",
     title: "Mecánica",
-    body: "Para participar, el cliente presenta en la barra una boleta vigente de otra cafetería correspondiente a la compra de un café. Deriva iguala el precio pagado en esa boleta, con un precio mínimo de $1.600 CLP: si el café costó menos de $1.600, el cliente paga $1.600."
+    body: "Para participar, el cliente presenta en la barra una boleta vigente de otra cafetería correspondiente a la compra de un café. Deriva iguala el precio pagado en esa boleta, con un precio mínimo de $1.200 CLP: si el café costó menos de $1.200, el cliente paga $1.200."
   },
   {
     n: "04",
