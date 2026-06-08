@@ -130,8 +130,8 @@ export function routeByHost(request: NextRequest): NextResponse {
       });
     }
     if (pathname === ADMIN_PREFIX || pathname.startsWith(`${ADMIN_PREFIX}/`)) {
-      url.pathname = pathname.slice(ADMIN_PREFIX.length) || "/admin-console";
-      if (url.pathname === "/") url.pathname = "/admin-console";
+      url.pathname = pathname.slice(ADMIN_PREFIX.length) || "/match-up";
+      if (url.pathname === "/") url.pathname = "/match-up";
       return NextResponse.rewrite(url, {
         request: { headers: withSurfaceHeader(request, "admin") }
       });
@@ -174,7 +174,9 @@ export function routeByHost(request: NextRequest): NextResponse {
     });
   }
   if (host.startsWith("admin.")) {
-    if (pathname === "/" || pathname === "") url.pathname = "/admin-console";
+    // admin. root lands on the live Match Up staff tool (the /admin-console
+    // stub isn't shipped yet). Other admin paths rewrite as-is.
+    if (pathname === "/" || pathname === "") url.pathname = "/match-up";
     return NextResponse.rewrite(url, {
       request: { headers: withSurfaceHeader(request, "admin") }
     });
