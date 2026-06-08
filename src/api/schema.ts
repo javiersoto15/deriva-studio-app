@@ -763,7 +763,7 @@ export interface paths {
                 query?: {
                     /** @description Resolve backend-driven menu copy for this locale. Defaults to es-CL and falls back to es-CL when unsupported. */
                     locale?: "es-CL" | "en" | "pt-BR";
-                    /** @description Preview the day-specific menu structure. Defaults to the current Santiago schedule; Friday/Saturday are weekend, Sunday is closed but returns weekday structure. */
+                    /** @description Preview the day-specific menu structure. Defaults to the current Santiago schedule; Saturday is weekend, Sunday is closed but returns weekday structure. */
                     schedule?: components["schemas"]["PublicMenuSchedule"];
                 };
                 header?: never;
@@ -882,6 +882,53 @@ export interface paths {
         };
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Submit an authenticated member review
+         * @description Authenticated companion review intake. The backend derives source=companion and member_id from the bearer token; member_id in the request body is ignored.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ReviewSubmissionRequest"];
+                };
+            };
+            responses: {
+                /** @description Pending member review created. */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Review"];
+                    };
+                };
+                400: components["responses"]["BadRequest"];
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                500: components["responses"]["InternalServerError"];
+            };
+        };
         delete?: never;
         options?: never;
         head?: never;
@@ -1376,7 +1423,7 @@ export interface paths {
                 query?: {
                     /** @description Resolve backend-driven menu copy for this locale. Defaults to es-CL and falls back to es-CL when unsupported. */
                     locale?: "es-CL" | "en" | "pt-BR";
-                    /** @description Preview the day-specific landing structure. Defaults to the current Santiago schedule; Friday/Saturday are weekend, Sunday is closed but returns weekday structure. */
+                    /** @description Preview the day-specific landing structure. Defaults to the current Santiago schedule; Saturday is weekend, Sunday is closed but returns weekday structure. */
                     schedule?: components["schemas"]["PublicMenuSchedule"];
                 };
                 header?: never;
@@ -1399,6 +1446,98 @@ export interface paths {
         };
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Submit an anonymous public review
+         * @description Anonymous website review intake. The backend derives source=public_web, runs validation and safety signals, and always creates a pending review for manual moderation before any public display.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ReviewSubmissionRequest"];
+                };
+            };
+            responses: {
+                /** @description Pending review created. */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Review"];
+                    };
+                };
+                400: components["responses"]["BadRequest"];
+                500: components["responses"]["InternalServerError"];
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/campaigns/deriva-match-up/submissions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Submit a Deriva Match Up campaign receipt
+         * @description Public June 2026 campaign intake. The backend normalizes and HMAC-hashes the submitted Chilean RUT, stores no raw RUT, records the competitor place, coffee, and price, applies a 1600 CLP minimum matched price, and allows one submission per RUT through 2026-06-30 America/Santiago.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["DerivaMatchUpSubmissionRequest"];
+                };
+            };
+            responses: {
+                /** @description Deriva Match Up submission accepted. */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["DerivaMatchUpSubmission"];
+                    };
+                };
+                400: components["responses"]["BadRequest"];
+                409: components["responses"]["Conflict"];
+                410: components["responses"]["Gone"];
+                500: components["responses"]["InternalServerError"];
+            };
+        };
         delete?: never;
         options?: never;
         head?: never;
@@ -1978,6 +2117,104 @@ export interface paths {
         };
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List submitted reviews for moderation
+         * @description Manager/owner moderation queue. Reviews can be filtered by status, source, or member_id.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    status?: components["schemas"]["ReviewStatus"];
+                    source?: components["schemas"]["ReviewSource"];
+                    member_id?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Review moderation queue. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AdminReviewListResponse"];
+                    };
+                };
+                400: components["responses"]["BadRequest"];
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                500: components["responses"]["InternalServerError"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/reviews/{review_id}/{action}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Moderate a pending review
+         * @description Manager/owner moderation action. Agents may suggest labels or actions, but this route is the human-approved publishing gate in v1.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    review_id: string;
+                    action: "approve" | "reject" | "private-feedback" | "flag-follow-up";
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ReviewModerationRequest"];
+                };
+            };
+            responses: {
+                /** @description Review after moderation. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Review"];
+                    };
+                };
+                400: components["responses"]["BadRequest"];
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                404: components["responses"]["NotFound"];
+                500: components["responses"]["InternalServerError"];
+            };
+        };
         delete?: never;
         options?: never;
         head?: never;
@@ -2892,6 +3129,76 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/today/shifts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List today shifts */
+        get: {
+            parameters: {
+                query?: {
+                    type?: components["parameters"]["TodayShiftTypeQuery"];
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Staff shift rows. Filter with `type=barista`, `type=cocina`, or `type=garzon`. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TodayShiftsResponse"];
+                    };
+                };
+                400: components["responses"]["TodayBadRequest"];
+            };
+        };
+        /**
+         * Replace today shifts by type
+         * @description Idempotently replaces all shift rows for the requested `type` query parameter.
+         */
+        put: {
+            parameters: {
+                query: {
+                    type: components["parameters"]["TodayShiftTypeQueryRequired"];
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["TodayShiftsResponse"];
+                };
+            };
+            responses: {
+                /** @description Updated staff shifts for the requested type. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TodayShiftsResponse"];
+                    };
+                };
+                400: components["responses"]["TodayBadRequest"];
+                422: components["responses"]["TodayUnprocessable"];
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/admin/today/seed": {
         parameters: {
             query?: never;
@@ -2902,7 +3209,7 @@ export interface paths {
         get?: never;
         /**
          * Replace all today content
-         * @description Transactional full replace of origins, baristas, and schedule for agent-driven restores.
+         * @description Transactional full replace of origins, baristas, schedule, and optional staff shifts for agent-driven restores.
          */
         put: {
             parameters: {
@@ -3165,6 +3472,8 @@ export interface components {
         };
         /** @enum {string} */
         TodayWeekday: "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
+        /** @enum {string} */
+        TodayShiftType: "barista" | "cocina" | "garzon";
         TodayLocalizedString: {
             "es-CL": string;
             en?: string;
@@ -3173,7 +3482,7 @@ export interface components {
         };
         TodayError: {
             /** @enum {string} */
-            code: "invalid_weekday" | "invalid_slug" | "invalid_time" | "missing_required_locale" | "missing_reference" | "in_use" | "invalid_json" | "not_found" | "internal_error";
+            code: "invalid_weekday" | "invalid_slug" | "invalid_time" | "invalid_date" | "invalid_shift_type" | "invalid_shift_range" | "invalid_hours" | "missing_required_field" | "missing_required_locale" | "missing_reference" | "in_use" | "invalid_json" | "not_found" | "internal_error";
             field?: string;
             locale?: string;
             id?: string;
@@ -3236,6 +3545,20 @@ export interface components {
             barista_id?: string;
             shift_end_local: string | null;
         };
+        TodayStaffShift: {
+            /** Format: date */
+            date: string;
+            weekday: components["schemas"]["TodayWeekday"];
+            type: components["schemas"]["TodayShiftType"];
+            staff_id: string;
+            staff_name: string;
+            starts_local: string;
+            ends_local: string;
+            break_start_local?: string;
+            break_end_local?: string;
+            hours: number;
+            sort_order: number;
+        };
         TodayOriginsResponse: {
             origins: components["schemas"]["TodayOrigin"][];
         };
@@ -3245,10 +3568,15 @@ export interface components {
         TodayScheduleResponse: {
             schedule: components["schemas"]["TodayScheduleEntry"][];
         };
+        TodayShiftsResponse: {
+            type: components["schemas"]["TodayShiftType"] | "";
+            shifts: components["schemas"]["TodayStaffShift"][];
+        };
         TodaySeed: {
             origins: components["schemas"]["TodayOrigin"][];
             baristas: components["schemas"]["TodayBarista"][];
             schedule: components["schemas"]["TodayScheduleEntry"][];
+            staff_shifts?: components["schemas"]["TodayStaffShift"][];
         };
         IssueCampaignTokensRequest: {
             campaign_id: string;
@@ -3695,6 +4023,9 @@ export interface components {
             subline: string;
             date_label?: string;
             courses: components["schemas"]["ExecutiveMenuCourse"][];
+            translations?: {
+                [key: string]: components["schemas"]["ExecutiveMenuTranslation"];
+            };
         };
         ExecutiveMenuAdminView: {
             /** Format: date */
@@ -3711,6 +4042,11 @@ export interface components {
             tag: string;
             name: string;
             note?: string;
+        };
+        ExecutiveMenuTranslation: {
+            hero: string;
+            subline: string;
+            courses: components["schemas"]["ExecutiveMenuCourse"][];
         };
         PublicMenuAddon: {
             label: string;
@@ -3823,8 +4159,11 @@ export interface components {
             tags?: string[];
             allergens?: string[];
             available?: boolean;
+            translations?: {
+                [key: string]: components["schemas"]["MenuItemTranslationInput"];
+            };
         };
-        /** @description Create payload for menu catalog items. Provide either section_id or section; id is generated by the backend and returned in the MenuItem response. */
+        /** @description Create payload for menu catalog items. Provide either section_id or section; id is generated by the backend and returned in the MenuItem response. Use translations.en and translations.pt-BR for customer-facing localized copy. */
         MenuItemCreateInput: {
             /** @enum {string} */
             category_id?: "coffee" | "beverage" | "breakfast" | "savory" | "entree" | "dessert";
@@ -3837,6 +4176,15 @@ export interface components {
             tags?: string[];
             allergens?: string[];
             available?: boolean;
+            translations?: {
+                [key: string]: components["schemas"]["MenuItemTranslationInput"];
+            };
+        };
+        MenuItemTranslationInput: {
+            name?: string;
+            description?: string;
+            tags?: string[];
+            allergens?: string[];
         };
         OriginCard: {
             id?: string;
@@ -3940,6 +4288,105 @@ export interface components {
         FeedbackRequest: {
             rating: number;
             note?: string;
+        };
+        /** @enum {string} */
+        ReviewSource: "public_web" | "companion";
+        /** @enum {string} */
+        ReviewStatus: "pending" | "approved" | "rejected" | "private_feedback" | "follow_up";
+        DerivaMatchUpSubmissionRequest: {
+            /** @description Chilean RUT entered by the customer. The API normalizes and hashes it server-side and never returns or stores this raw value. */
+            rut: string;
+            competitor_place: string;
+            coffee_name: string;
+            competitor_price_clp: number;
+        };
+        DerivaMatchUpSubmission: {
+            id: string;
+            /** @enum {string} */
+            campaign_id: "deriva_match_up_2026_06";
+            competitor_place: string;
+            coffee_name: string;
+            competitor_price_clp: number;
+            /** @description Price Deriva will match for the campaign, floored at 1600 CLP. */
+            matched_price_clp: number;
+            /** Format: date-time */
+            submitted_at: string;
+        };
+        ReviewSubmissionRequest: {
+            rating_overall: number;
+            rating_item?: number;
+            rating_service?: number;
+            rating_space?: number;
+            rating_value?: number;
+            review_body: string;
+            /** Format: date */
+            visit_date: string;
+            menu_item_id?: string;
+            item_name?: string;
+            /** @enum {string} */
+            review_context?: "place_only";
+            language?: string;
+            display_name?: string;
+            /** Format: email */
+            contact_email?: string;
+            contact_phone?: string;
+            consent_to_contact?: boolean;
+            display_consent?: boolean;
+            /** @description Hidden honeypot field; real users should leave it empty. */
+            website?: string;
+            /**
+             * Format: date-time
+             * @description Client render timestamp used only as an anti-spam timing signal.
+             */
+            rendered_at?: string;
+        };
+        ReviewSignals: {
+            spam_score?: number;
+            profanity_score?: number;
+            contains_profanity?: boolean;
+            needs_human_follow_up?: boolean;
+            /** @enum {string} */
+            sentiment?: "positive" | "mixed" | "negative" | "unknown";
+            agent_summary?: string;
+            agent_suggested_action?: string;
+        };
+        Review: {
+            id: string;
+            source: components["schemas"]["ReviewSource"];
+            status: components["schemas"]["ReviewStatus"];
+            member_id?: string;
+            rating_overall: number;
+            rating_item?: number;
+            rating_service?: number;
+            rating_space?: number;
+            rating_value?: number;
+            review_body: string;
+            /** Format: date */
+            visit_date: string;
+            menu_item_id?: string;
+            item_name?: string;
+            review_context?: string;
+            language?: string;
+            display_name?: string;
+            contact_email?: string;
+            contact_phone?: string;
+            consent_to_contact?: boolean;
+            display_consent?: boolean;
+            signals?: components["schemas"]["ReviewSignals"];
+            moderation_reason?: string;
+            moderated_by_actor_id?: string;
+            /** Format: date-time */
+            moderated_at?: string;
+            /** Format: date-time */
+            created_at: string;
+            /** Format: date-time */
+            updated_at: string;
+        };
+        AdminReviewListResponse: {
+            reviews: components["schemas"]["Review"][];
+        };
+        ReviewModerationRequest: {
+            reason?: string;
         };
         Redemption: {
             id: string;
@@ -4123,6 +4570,8 @@ export interface components {
         OrderID: string;
         TodayID: string;
         TodayWeekdayParam: components["schemas"]["TodayWeekday"];
+        TodayShiftTypeQuery: components["schemas"]["TodayShiftType"];
+        TodayShiftTypeQueryRequired: components["schemas"]["TodayShiftType"];
     };
     requestBodies: never;
     headers: never;
