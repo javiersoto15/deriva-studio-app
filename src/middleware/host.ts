@@ -43,6 +43,7 @@ const LANDING_PREFIXES = [
   "/menu",
   "/menu-display",
   "/abierto",
+  "/sala",
   "/privacidad",
   "/resenas",
   "/deriva-match-up",

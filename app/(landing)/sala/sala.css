@@ -1,0 +1,769 @@
+/* Deriva Sala — horizontal lounge display (1920×1080 landscape).
+   The screen-native sibling of the printed broadside: a turning set of
+   art-directed plates (Portada → Oficio → Destacado → Ahora en la barra),
+   on plaster × ink with a single green moment per plate. Distinct from
+   /abierto (1080×1920 bar TV) and /menu-display (vertical one-pager).
+
+   Sizing: the stage is authored at a fixed 1920×1080 and scaled to fit the
+   viewport by a tiny inline script (kiosk-safe, no React needed) so it fills
+   a 1080p panel exactly and still previews on a laptop / 4K. */
+
+:root {
+  --sala-plaster: #FAF5EC;
+  --sala-panel: #F4EDE6;
+  --sala-firma: #EFE6D6;
+  --sala-ink: #1A1410;
+  --sala-mute: #5E5348;
+  --sala-brown: #5E230F;
+  --sala-green: #00311F;
+  --sala-hair: rgba(94, 35, 15, 0.14);
+  --sala-hair-lt: rgba(94, 35, 15, 0.08);
+  --sala-espresso: #281A12;
+  --sala-cream: #FAF5EC;
+  --sala-cream-72: rgba(250, 245, 236, 0.72);
+  --sala-cream-84: rgba(250, 245, 236, 0.84);
+}
+
+html,
+body {
+  background: var(--sala-espresso);
+  margin: 0;
+}
+
+/* === Fit + rotator ======================================================= */
+.sala-fit {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--sala-espresso);
+  display: grid;
+  place-items: center;
+}
+.sala-scale {
+  width: 1920px;
+  height: 1080px;
+  transform-origin: center center;
+}
+.sala-rotator {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+}
+/* CrossfadeRotator emits layers with this class name (shared with /abierto,
+   but each page imports its own stylesheet so there's no collision). Opacity
+   keyframes are generated per view by the component; keep these as longhands
+   so a minifier never collapses them into `animation: none`. */
+.ab-rotator__layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ab-rotator__layer {
+    animation-duration: 0s !important;
+  }
+}
+
+/* === Plate base ========================================================== */
+.sala-plate {
+  position: absolute;
+  inset: 0;
+  width: 1920px;
+  height: 1080px;
+  background: var(--sala-plaster);
+  color: var(--sala-ink);
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.sala-plate * {
+  box-sizing: border-box;
+}
+
+.sala-mono {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+}
+.sala-tracked {
+  font-family: var(--font-tracked), Poppins, sans-serif;
+}
+
+/* Running header (Plex, tracked) — shared by Portada + Barra. */
+.sala-runhead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--sala-hair);
+}
+.sala-runhead span {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-size: 15px;
+  letter-spacing: 0.18em;
+  color: var(--sala-mute);
+}
+.sala-runhead__live {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sala-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--sala-brown);
+  flex: none;
+}
+
+/* Page dots */
+.sala-dots {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.sala-dots i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(94, 35, 15, 0.28);
+  display: block;
+}
+.sala-dots i.on {
+  width: 34px;
+  height: 3px;
+  border-radius: 0;
+  background: var(--sala-ink);
+}
+.sala-dots--dark i {
+  background: rgba(250, 245, 236, 0.45);
+}
+.sala-dots--dark i.on {
+  background: var(--sala-cream);
+}
+
+/* === Plate 01 · Portada (split cover) ==================================== */
+.sala-portada {
+  display: flex;
+  flex-direction: row;
+}
+.sala-portada__col {
+  display: flex;
+  flex-direction: column;
+  width: 1114px;
+  height: 1080px;
+  padding: 64px;
+}
+.sala-portada__lockup {
+  padding-top: 44px;
+}
+.sala-portada__claimwrap {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: center;
+  gap: 28px;
+}
+.sala-kicker {
+  font-family: var(--font-tracked), Poppins, sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: 0.26em;
+  color: var(--sala-mute);
+}
+.sala-portada__claim {
+  display: flex;
+  flex-direction: column;
+}
+.sala-portada__claim b,
+.sala-portada__claim em {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-weight: 500;
+  font-style: italic;
+  font-size: 152px;
+  line-height: 0.94;
+  letter-spacing: -0.01em;
+  color: var(--sala-ink);
+}
+.sala-portada__claim .green {
+  color: var(--sala-green);
+  font-weight: 600;
+}
+.sala-portada__lede {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic;
+  font-size: 30px;
+  line-height: 1.35;
+  color: var(--sala-mute);
+  max-width: 560px;
+}
+.sala-portada__foot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  width: 100%;
+  padding-top: 24px;
+  border-top: 1px solid var(--sala-hair);
+}
+.sala-portada__foot-l {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.sala-microlabel {
+  font-family: var(--font-tracked), Poppins, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.22em;
+  color: var(--sala-mute);
+}
+.sala-portada__season {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic;
+  font-size: 40px;
+  line-height: 1;
+  color: var(--sala-ink);
+}
+.sala-portada__num {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.sala-portada__num small {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-size: 18px;
+  letter-spacing: 0.1em;
+  color: var(--sala-mute);
+}
+.sala-portada__num strong {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 500;
+  font-size: 64px;
+  letter-spacing: 0.02em;
+  line-height: 0.9;
+  color: var(--sala-ink);
+}
+.sala-portada__photo {
+  position: relative;
+  width: 806px;
+  height: 1080px;
+  background: var(--sala-espresso);
+  overflow: hidden;
+}
+.sala-portada__photo img {
+  object-fit: cover;
+  object-position: center;
+}
+.sala-photo-cap {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 48px;
+}
+.sala-photo-cap__scrim {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 340px;
+  background: linear-gradient(to top, rgba(26, 20, 16, 0.82), rgba(26, 20, 16, 0));
+}
+.sala-photo-cap__k {
+  position: relative;
+  font-family: var(--font-tracked), Poppins, sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.24em;
+  color: var(--sala-cream-72);
+}
+.sala-photo-cap__t {
+  position: relative;
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic;
+  font-size: 46px;
+  line-height: 1;
+  color: var(--sala-cream);
+}
+
+/* === Plate 02 · Oficio (full-bleed craft) ================================ */
+.sala-oficio {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--sala-espresso);
+}
+.sala-oficio__img img {
+  position: absolute;
+  inset: 0;
+  width: 1920px;
+  height: 1080px;
+  object-fit: cover;
+  object-position: center 38%;
+}
+.sala-scrim-top {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1920px;
+  height: 240px;
+  background: linear-gradient(to bottom, rgba(26, 20, 16, 0.7), rgba(26, 20, 16, 0));
+}
+.sala-scrim-bot {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 1920px;
+  height: 560px;
+  background: linear-gradient(
+    to top,
+    rgba(26, 20, 16, 0.88),
+    rgba(26, 20, 16, 0.2) 60%,
+    rgba(26, 20, 16, 0)
+  );
+}
+.sala-mast-over {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 64px 64px 0 64px;
+}
+.sala-mast-over__ed {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-size: 15px;
+  letter-spacing: 0.18em;
+  color: var(--sala-cream-72);
+}
+.sala-deckle {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 64px 64px 64px;
+}
+.sala-deckle__body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 1180px;
+}
+.sala-deckle__k {
+  font-family: var(--font-tracked), Poppins, sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: 0.26em;
+  color: var(--sala-cream-72);
+}
+.sala-deckle__t {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-weight: 500;
+  font-style: italic;
+  font-size: 128px;
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+  color: var(--sala-cream);
+}
+.sala-deckle__sub {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic;
+  font-size: 34px;
+  line-height: 1.3;
+  color: var(--sala-cream-84);
+  max-width: 880px;
+}
+
+/* === Plate 03 · Destacado (split, editor's pick) ========================= */
+.sala-destacado {
+  display: flex;
+  flex-direction: row;
+  background: var(--sala-panel);
+}
+.sala-destacado__photo {
+  position: relative;
+  width: 1114px;
+  height: 1080px;
+  overflow: hidden;
+  background: var(--sala-espresso);
+}
+.sala-destacado__photo img {
+  object-fit: cover;
+  object-position: center;
+}
+.sala-livetag {
+  position: absolute;
+  left: 48px;
+  top: 48px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: rgba(26, 20, 16, 0.55);
+  border: 1px solid rgba(250, 245, 236, 0.3);
+}
+.sala-livetag i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--sala-cream);
+  display: block;
+}
+.sala-livetag span {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  color: var(--sala-cream);
+}
+.sala-destacado__panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 806px;
+  height: 1080px;
+  padding: 64px;
+}
+.sala-panelhead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--sala-hair);
+}
+.sala-panelhead__ed {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-size: 14px;
+  letter-spacing: 0.16em;
+  color: var(--sala-mute);
+}
+.sala-destacado__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: center;
+  gap: 22px;
+}
+.sala-kicker--brown {
+  color: var(--sala-brown);
+}
+.sala-destacado__name {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-weight: 500;
+  font-style: italic;
+  font-size: 96px;
+  line-height: 0.94;
+  letter-spacing: -0.01em;
+  color: var(--sala-ink);
+}
+.sala-destacado__desc {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic;
+  font-size: 30px;
+  line-height: 1.34;
+  color: var(--sala-mute);
+  max-width: 600px;
+}
+.sala-destacado__price {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding-top: 10px;
+}
+.sala-destacado__price small {
+  font-family: var(--font-tracked), Poppins, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.2em;
+  color: var(--sala-mute);
+}
+.sala-destacado__price strong {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 500;
+  font-size: 64px;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  color: var(--sala-green);
+}
+.sala-destacado__foot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  width: 100%;
+  padding-top: 24px;
+  border-top: 1px solid var(--sala-hair);
+}
+.sala-destacado__pair {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.sala-destacado__pair em {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic;
+  font-size: 30px;
+  line-height: 1;
+  color: var(--sala-ink);
+}
+
+/* === Plate 04 · Ahora en la barra (live list) ============================ */
+.sala-barra {
+  display: flex;
+  flex-direction: column;
+  padding: 64px;
+}
+.sala-barra__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  width: 100%;
+  padding-top: 26px;
+}
+.sala-barra__head-l {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.sala-barra__title {
+  display: flex;
+  align-items: baseline;
+}
+.sala-barra__title em {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-weight: 500;
+  font-style: italic;
+  font-size: 92px;
+  line-height: 0.92;
+  letter-spacing: -0.01em;
+  color: var(--sala-ink);
+}
+.sala-barra__title em.green {
+  color: var(--sala-green);
+  font-weight: 600;
+}
+.sala-barra__note {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic;
+  font-size: 26px;
+  color: var(--sala-mute);
+  max-width: 360px;
+  text-align: right;
+}
+.sala-main {
+  display: flex;
+  flex-direction: row;
+  gap: 56px;
+  width: 100%;
+  flex: 1;
+  padding: 34px 0;
+}
+.sala-lists {
+  display: flex;
+  flex-direction: row;
+  flex: 1.62;
+  gap: 64px;
+}
+.sala-col {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.sala-col__head {
+  font-family: var(--font-tracked), Poppins, sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.24em;
+  color: var(--sala-brown);
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--sala-hair);
+}
+.sala-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--sala-hair-lt);
+}
+.sala-item--firma {
+  background: var(--sala-firma);
+  padding: 15px 18px;
+}
+.sala-item__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+}
+.sala-item__name {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-weight: 500;
+  font-style: italic;
+  font-size: 38px;
+  line-height: 1;
+  color: var(--sala-ink);
+}
+.sala-item__price {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 500;
+  font-size: 26px;
+  color: var(--sala-ink);
+  flex: none;
+}
+.sala-item__meta {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-size: 14px;
+  letter-spacing: 0.07em;
+  color: var(--sala-mute);
+}
+.sala-item--firma .sala-item__meta {
+  color: var(--sala-brown);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+}
+
+/* Feature card — "lo más pedido" */
+.sala-feature {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  flex: 1;
+  overflow: hidden;
+  background: var(--sala-espresso);
+}
+.sala-feature img {
+  object-fit: cover;
+  object-position: center;
+}
+.sala-feature__scrim {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 60%;
+  background: linear-gradient(to top, rgba(26, 20, 16, 0.9), rgba(26, 20, 16, 0.1));
+}
+.sala-feature__tag {
+  position: absolute;
+  left: 32px;
+  top: 32px;
+  padding: 9px 15px;
+  background: var(--sala-cream);
+}
+.sala-feature__tag span {
+  font-family: var(--font-tracked), Poppins, sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  color: var(--sala-ink);
+}
+.sala-feature__cap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 36px;
+}
+.sala-feature__name {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-weight: 500;
+  font-style: italic;
+  font-size: 58px;
+  line-height: 0.96;
+  color: var(--sala-cream);
+}
+.sala-feature__desc {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic;
+  font-size: 24px;
+  line-height: 1.3;
+  color: var(--sala-cream-84);
+  max-width: 420px;
+}
+.sala-feature__price {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding-top: 6px;
+}
+.sala-feature__price strong {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 500;
+  font-size: 38px;
+  color: var(--sala-cream);
+}
+.sala-feature__price small {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  color: rgba(250, 245, 236, 0.7);
+}
+
+/* Menu Ejecutivo strip */
+.sala-ejec {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  width: 100%;
+  padding: 28px 36px;
+  background: var(--sala-espresso);
+}
+.sala-ejec__l {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: none;
+  width: 300px;
+}
+.sala-ejec__k {
+  font-family: var(--font-tracked), Poppins, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.24em;
+  color: rgba(250, 245, 236, 0.66);
+}
+.sala-ejec__hero {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-weight: 500;
+  font-style: italic;
+  font-size: 42px;
+  line-height: 1;
+  color: var(--sala-cream);
+}
+.sala-ejec__courses {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  flex: 1;
+}
+.sala-ejec__course {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.sala-ejec__course small {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: rgba(250, 245, 236, 0.5);
+}
+.sala-ejec__course em {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-style: italic;
+  font-size: 24px;
+  color: var(--sala-cream);
+}
+.sala-ejec__price {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  font-weight: 500;
+  font-size: 46px;
+  color: var(--sala-cream);
+  flex: none;
+}
