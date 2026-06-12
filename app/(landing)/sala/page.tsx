@@ -63,10 +63,19 @@ const FALLBACK_EJECUTIVO: SalaEjecutivo = {
   ]
 };
 
+// Price source mirrors the carta (src/ui/MenuRow.tsx + src/components/menu/
+// MenuItem.tsx): price_label is an optional override; the real value lives in
+// the price_clp number, formatted es-CL ("$ 3.000").
+function formatPrice(i: PublicMenuItem): string | undefined {
+  if (i.price_label) return i.price_label;
+  if (typeof i.price_clp === "number") return `$ ${i.price_clp.toLocaleString("es-CL")}`;
+  return undefined;
+}
+
 function toSalaItem(i: PublicMenuItem): SalaItem {
   return {
     name: i.name,
-    price: i.price_label,
+    price: formatPrice(i),
     meta: i.meta,
     signature: i.signature
   };
