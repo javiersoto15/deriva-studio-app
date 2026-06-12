@@ -78,18 +78,49 @@ function flattenItems(s: PublicMenuSection): PublicMenuItem[] {
   return [...direct, ...sub].filter((i) => i.available !== false);
 }
 
-// The two list columns come from the first two content sections of the live
-// view (executive_menu section excluded — it owns the strip). Their own titles
-// become the column heads. Falls back to the curated set if the live mapping
-// is empty/thin (backend down at prerender).
+// Retail "Café para llevar" sections (whole-bean bags) read poorly as a
+// now-serving column — detect them by title OR by bag-like item names
+// ("Bolsa…", "250 g") so they're skipped even if the title is generic.
+const COFFEE_RE = /cafeter|espresso|barra/i;
+function isRetailSection(s: PublicMenuSection, items: PublicMenuItem[]): boolean {
+  if (/llevar|bolsa|grano|retail|tienda/i.test(`${s.id} ${s.title}`)) return true;
+  if (items.length === 0) return false;
+  const bagish = items.filter((i) => /bolsa|grano|\b\d+\s?(g|kg)\b/i.test(i.name)).length;
+  return bagish / items.length >= 0.5;
+}
+
+// The two list columns are chosen from the live view (executive_menu section
+// excluded — it owns the strip): the coffee/barra section leads, paired with
+// the richest non-retail (food) section, ranked by emphasis then item count.
+// Their own titles become the column heads (rendered verbatim). Falls back to
+// the curated set when the backend is unreachable (e.g. build-time prerender).
 function salaColumns(view: PublicMenuView | null): SalaColumn[] {
   if (!view) return FALLBACK_COLUMNS;
-  const cols = view.sections
+  const emph = (e: PublicMenuSection["emphasis"]) =>
+    e === "hero" ? 2 : e === "primary" ? 1 : 0;
+
+  const cand = view.sections
     .filter((s) => !s.executive_menu)
-    .map((s) => ({ title: s.title, items: flattenItems(s).slice(0, 5).map(toSalaItem) }))
-    .filter((c) => c.items.length > 0);
+    .map((s) => ({ s, items: flattenItems(s) }))
+    .filter((x) => x.items.length > 0);
+  if (cand.length === 0) return FALLBACK_COLUMNS;
+
+  const nonRetail = cand.filter((x) => !isRetailSection(x.s, x.items));
+  const ranked = [...(nonRetail.length ? nonRetail : cand)].sort(
+    (a, b) => emph(b.s.emphasis) - emph(a.s.emphasis) || b.items.length - a.items.length
+  );
+
+  const coffee = ranked.find((x) => COFFEE_RE.test(`${x.s.id} ${x.s.title}`));
+  const lead = coffee ?? ranked[0];
+  const second = ranked.find((x) => x.s.id !== lead.s.id);
+  const picks = second ? [lead, second] : [lead];
+
+  const cols = picks.map((x) => ({
+    title: x.s.title,
+    items: x.items.slice(0, 5).map(toSalaItem)
+  }));
   const total = cols.reduce((n, c) => n + c.items.length, 0);
-  return total >= 4 ? cols.slice(0, 2) : FALLBACK_COLUMNS;
+  return total >= 2 ? cols : FALLBACK_COLUMNS;
 }
 
 function salaEjecutivo(view: PublicMenuView | null): SalaEjecutivo {
