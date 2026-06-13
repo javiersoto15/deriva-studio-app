@@ -4,9 +4,10 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { todayHoursLabel } from "../../lib/open-now";
 
-// "match-up" intentionally matches no rendered tab — standalone campaign pages
-// (reached via QR / Instagram) keep the nav for orientation but highlight none.
-type Tab = "inicio" | "carta" | "resenas" | "visita" | "match-up";
+// "match-up" and "mundial" intentionally match no rendered tab — standalone
+// campaign pages (reached via QR / Instagram) keep the nav for orientation
+// but highlight none.
+type Tab = "inicio" | "carta" | "resenas" | "visita" | "match-up" | "mundial";
 
 export function SiteNav({
   active = "inicio",
