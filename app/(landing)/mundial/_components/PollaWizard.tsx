@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useMemo, useRef, useState, type ReactNode } from "react";
+import { useActionState, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 import { submitPollaAction, type PollaFormState } from "../../../../src/server/world-cup";
 import type { WorldCupDay } from "../../../../src/api/world-cup";
@@ -38,6 +38,21 @@ export function PollaWizard({ day, edition }: { day: WorldCupDay; edition: strin
   );
   // step: -1 = cover, 0..M-1 = match steps, M = review
   const [step, setStep] = useState(-1);
+
+  // Desktop (≥1024px) skips the cover step: the persistent left aside already
+  // shows the hero + ladder, so the right pane starts directly at match 1.
+  // Mobile stays on the cover. Guard against 0-match days.
+  useEffect(() => {
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia("(min-width: 1024px)").matches &&
+      step === -1 &&
+      matches.length > 0
+    ) {
+      setStep(0);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const predictionsJson = useMemo(
     () =>
@@ -81,10 +96,12 @@ export function PollaWizard({ day, edition }: { day: WorldCupDay; edition: strin
 
   const closes = timeLabel(day.closes_at);
 
-  // ----- Cover -----
+  // ----- Cover (mobile only; desktop auto-advances to step 0) -----
   if (step === -1) {
     return (
-      <div className="polla__rail polla__step">
+      <div className="polla__grid">
+        <CoverAside edition={edition} matchCount={matches.length} closes={closes} />
+        <div className="polla__rail polla__step">
         <Masthead edition={edition} />
         <h1 id="polla-title" className="polla__title">
           Adivina el marcador<br />
@@ -130,6 +147,7 @@ export function PollaWizard({ day, edition }: { day: WorldCupDay; edition: strin
         >
           Llenar el cupón &rarr;
         </button>
+        </div>
       </div>
     );
   }
@@ -141,7 +159,9 @@ export function PollaWizard({ day, edition }: { day: WorldCupDay; edition: strin
     const nameInvalid = Boolean(error) && errorField === "full_name";
     const emailInvalid = Boolean(error) && (errorField === "email" || errorField === undefined);
     return (
-      <div className="polla__rail polla__step">
+      <div className="polla__grid">
+        <CoverAside edition={edition} matchCount={matches.length} closes={closes} />
+        <div className="polla__rail polla__step">
         <Masthead edition={edition} />
         <div className="polla__slug">
           <span className="polla__slug-rule" />
@@ -223,6 +243,7 @@ export function PollaWizard({ day, edition }: { day: WorldCupDay; edition: strin
             <SubmitButton />
           </div>
         </form>
+        </div>
       </div>
     );
   }
@@ -233,7 +254,9 @@ export function PollaWizard({ day, edition }: { day: WorldCupDay; edition: strin
   const kickoff = timeLabel(m.kickoff_at);
   const isLast = step + 1 === matches.length;
   return (
-    <div className="polla__rail polla__step" key={m.match_id}>
+    <div className="polla__grid">
+      <CoverAside edition={edition} matchCount={matches.length} closes={closes} />
+      <div className="polla__rail polla__step" key={m.match_id}>
       <Masthead edition={edition} />
       <p className="polla__progress">
         Partido {pad2(step + 1)} / {pad2(matches.length)}
@@ -283,6 +306,7 @@ export function PollaWizard({ day, edition }: { day: WorldCupDay; edition: strin
         >
           {isLast ? "Revisar →" : "Siguiente →"}
         </button>
+      </div>
       </div>
     </div>
   );
@@ -361,6 +385,65 @@ function Masthead({ edition }: { edition: string }) {
   );
 }
 
+/* Persistent left pane on desktop (≥1024px) — owns the editorial identity:
+   logo + edition mast, the cover hero, the prize ladder, and a bottom
+   colophon. CSS-hidden below 1024px (mobile keeps the in-rail cover). */
+function CoverAside({
+  edition,
+  matchCount,
+  closes
+}: {
+  edition: string;
+  matchCount?: number;
+  closes?: string;
+}) {
+  return (
+    <aside className="polla__aside" aria-hidden="true">
+      <Masthead edition={edition} />
+      <h1 className="polla__title">
+        Adivina el marcador<br />
+        <em>exacto.</em>
+      </h1>
+
+      {typeof matchCount === "number" && (
+        <div className="polla__perf">
+          <span className="polla__perf-line" />
+          <span className="polla__perf-cut">&#9986;</span>
+          <span>Cupón del día · {matchCount} {matchCount === 1 ? "partido" : "partidos"}</span>
+          <span className="polla__perf-line" />
+        </div>
+      )}
+
+      <ol className="polla__tiers">
+        <li className="polla__tier">
+          <span className="polla__tier-no">01</span>
+          <span className="polla__tier-cond">Aciertas un resultado del día</span>
+          <span className="polla__tier-arrow">&rarr;</span>
+          <span className="polla__tier-prize">Café simple gratis</span>
+        </li>
+        <li className="polla__tier">
+          <span className="polla__tier-no">02</span>
+          <span className="polla__tier-cond">Aciertas todos los ganadores/empates</span>
+          <span className="polla__tier-arrow">&rarr;</span>
+          <span className="polla__tier-prize">Campesino gratis</span>
+        </li>
+        <li className="polla__tier">
+          <span className="polla__tier-no">03</span>
+          <span className="polla__tier-cond">Aciertas todos los marcadores exactos</span>
+          <span className="polla__tier-arrow">&rarr;</span>
+          <span className="polla__tier-prize">Combo para dos Campesinos</span>
+        </li>
+      </ol>
+      <p className="polla__tiers-foot">
+        Recibes solo el mejor premio que te toque.
+        {closes && <> Cierra a las {closes}.</>}
+      </p>
+
+      <p className="polla__aside-colophon">Magnere 1570 &middot; Providencia</p>
+    </aside>
+  );
+}
+
 function Flag({ team, size = "lg" }: { team: string; size?: "lg" | "sm" }) {
   const iso = nationFlagIso(team);
   const cls = `polla-flag polla-flag--${size}`;
@@ -383,7 +466,9 @@ function Submitted({ email, fullName, edition }: { email: string; fullName: stri
   const hora = timeLabel(new Date().toISOString());
   const firstName = fullName.trim().split(/\s+/)[0] ?? "";
   return (
-    <div className="polla__rail">
+    <div className="polla__grid">
+      <CoverAside edition={edition} />
+      <div className="polla__rail">
       <Masthead edition={edition} />
       <div className="polla__terminal">
         <div className="polla__seal" aria-hidden="true">
@@ -399,6 +484,7 @@ function Submitted({ email, fullName, edition }: { email: string; fullName: stri
         </p>
         <p className="polla__colophon">Magnere 1570 &middot; Providencia</p>
       </div>
+      </div>
     </div>
   );
 }
@@ -413,13 +499,16 @@ function Terminal({
   body: string;
 }) {
   return (
-    <div className="polla__rail">
+    <div className="polla__grid">
+      <CoverAside edition={edition} />
+      <div className="polla__rail">
       <Masthead edition={edition} />
       <div className="polla__terminal">
         <p className="polla__terminal-eyebrow">La Polla del Mundial</p>
         <h1 className="polla__terminal-title">{title}</h1>
         <p className="polla__terminal-body">{body}</p>
         <p className="polla__colophon">Magnere 1570 &middot; Providencia</p>
+      </div>
       </div>
     </div>
   );
