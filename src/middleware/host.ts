@@ -24,6 +24,7 @@ const SHARED_INFRA_PREFIXES = [
   "/manifest.webmanifest",
   "/sitemap.xml",
   "/robots.txt",
+  "/llms.txt",
   "/favicon.ico",
   "/icon.svg",
   "/apple-icon.png",
