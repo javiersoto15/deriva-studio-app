@@ -13,6 +13,10 @@ import AperturaReminder, {
   AperturaReminderSubject,
   AperturaReminderPreview,
 } from "../src/emails/AperturaReminder";
+import PollaReward, {
+  PollaRewardSubject,
+  PollaRewardPreview,
+} from "../src/emails/PollaReward";
 
 function stripImagePreloads(html: string): string {
   return html.replace(
@@ -76,6 +80,25 @@ const templates: Template[] = [
           await render(AperturaReminder(props), { pretty: true }),
         ),
         text: await render(AperturaReminder(props), { plainText: true }),
+      };
+    },
+  },
+  {
+    name: "Polla Reward",
+    subject: PollaRewardSubject,
+    preview: PollaRewardPreview,
+    htmlOut: resolve("docs/email/polla-reward.html"),
+    txtOut: resolve("docs/email/polla-reward.txt"),
+    render: async () => {
+      // Build artifact uses static preview props so the file is inspectable.
+      // At send time, the backend supplies firstName / rewardLabel / shortCode /
+      // qrImageUrl / validityLabel per winner (rewardLabel rendered verbatim).
+      const props = PollaReward.PreviewProps;
+      return {
+        html: stripImagePreloads(
+          await render(PollaReward(props), { pretty: true }),
+        ),
+        text: await render(PollaReward(props), { plainText: true }),
       };
     },
   },
