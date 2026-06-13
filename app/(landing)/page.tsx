@@ -29,8 +29,22 @@ const localBusinessJsonLd = {
   logo: `${siteUrl}/brand/isotipo-verde@3x.png`,
   description:
     "Café de especialidad, mate, panadería de masa madre y cocina de mercado en Magnere 1570 Local 105, Providencia, Santiago.",
+  telephone: "+56984520118",
+  email: "contacto@derivastudio.cl",
   priceRange: "$$",
+  currenciesAccepted: "CLP",
+  paymentAccepted: "Efectivo, Débito, Crédito",
+  acceptsReservations: false,
+  // Phrases AI agents and search match on when researching "where to get
+  // specialty coffee in Providencia" — kept aligned with what we actually serve.
+  keywords:
+    "café de especialidad, specialty coffee, Providencia, Santiago, flat white, cappuccino, espresso, filtrado, cold brew, mate, panadería masa madre, brunch, cafetería",
   servesCuisine: ["Café de especialidad", "Mate", "Panadería", "Cocina"],
+  hasMenu: `${siteUrl}/menu`,
+  areaServed: {
+    "@type": "City",
+    name: "Providencia"
+  },
   address: {
     "@type": "PostalAddress",
     streetAddress: "Magnere 1570, Local 105",

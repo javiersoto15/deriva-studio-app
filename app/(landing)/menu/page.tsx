@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { connection } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { PRICING_OPEN_AT } from "../../../src/data/menu";
-import { getPublicMenuView, type PublicMenuView } from "../../../src/api/server";
+import { getPublicMenuView, type PublicMenuView, type PublicMenuItem } from "../../../src/api/server";
 import { getActiveBackendLocale } from "../../../src/i18n/server";
 import { MenuChipNav } from "../../../src/components/menu/MenuChipNav";
 import { MenuSection } from "../../../src/components/menu/MenuSection";
@@ -27,7 +27,35 @@ export const metadata: Metadata = {
   }
 };
 
-function buildMenuJsonLd(menu: PublicMenuView): Record<string, unknown> {
+// Maps one backend menu item to a schema.org MenuItem node. `showPrices`
+// mirrors the page's price-reveal gate so structured data never exposes a
+// price before it's visible to humans (Google wants markup to match the page).
+function menuItemJsonLd(
+  item: PublicMenuItem,
+  showPrices: boolean
+): Record<string, unknown> {
+  const node: Record<string, unknown> = {
+    "@type": "MenuItem",
+    name: item.name,
+    description: item.description
+  };
+  if (showPrices && typeof item.price_clp === "number") {
+    node.offers = {
+      "@type": "Offer",
+      price: item.price_clp,
+      priceCurrency: "CLP",
+      availability: item.available
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock"
+    };
+  }
+  return node;
+}
+
+function buildMenuJsonLd(
+  menu: PublicMenuView,
+  showPrices: boolean
+): Record<string, unknown> {
   return {
     "@context": "https://schema.org",
     "@type": "Menu",
@@ -43,11 +71,7 @@ function buildMenuJsonLd(menu: PublicMenuView): Record<string, unknown> {
       hasMenuItem: [
         ...(section.items ?? []),
         ...(section.subgroups?.flatMap((g) => g.items) ?? [])
-      ].map((item) => ({
-        "@type": "MenuItem",
-        name: item.name,
-        description: item.description
-      }))
+      ].map((item) => menuItemJsonLd(item, showPrices))
     }))
   };
 }
@@ -73,7 +97,7 @@ async function LiveMenu() {
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildMenuJsonLd(menu)) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildMenuJsonLd(menu, showPrices)) }}
       />
       <MenuChipNav sections={menu.sections} />
       <div className="menu-content">
@@ -87,6 +111,7 @@ async function LiveMenu() {
                   Cafetería
                 </a>
               </li>
+              <li><a href="#section-cafe-para-llevar">Café para llevar</a></li>
             </ul>
           </div>
           <div className="menu-sidebar__group">
