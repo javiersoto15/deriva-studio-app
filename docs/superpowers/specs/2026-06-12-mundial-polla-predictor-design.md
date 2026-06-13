@@ -191,3 +191,26 @@ Manual matrix: public Loading/Empty/Closed/Cover/Steps/Review/Submitted/409/410;
 - Identity reconciliation between campaign email and companion phone-auth (see `project_companion_identity_reconciliation.md`).
 - Any in-app QR camera scanner (native camera opens the URL).
 - Email template authoring for the reward (backend reuses the Resend/outbox pattern; copy/template is a separate task if owned by frontend).
+
+---
+
+## Revision — 2026-06-13 · Tiered rewards + full_name + duplicate UX
+
+Backend changed the campaign from "all-exact-or-nothing" to **tiered rewards**, evaluated server-side after results:
+- Any single correct **outcome** (win/draw) → **Café simple gratis**
+- All same-day **outcomes** correct → **Campesino gratis**
+- All same-day **exact scores** correct → **Combo para dos Campesinos**
+Each participant receives only the **best applicable** reward.
+
+Contract facts (from `openapi.yaml`, verified):
+- `WorldCupSubmissionRequest` now **requires `full_name`** (3–120) alongside `email` + `predictions`. `WorldCupSubmission` echoes `full_name`. Regen types via `npm run api:types`.
+- Email duplicate check canonicalizes (Gmail dots / `+tags`) before hashing; duplicate still surfaces as HTTP **409**.
+- Submission `status` enum is still `pending | won | lost` — the response does NOT reveal the tier at submit time (evaluation is later). The page **explains** the ladder; the prize arrives by email.
+- The verification states `submitted_pending_verification | verified_submission | duplicate_submission | reward_email_sent` are **not in the contract yet** — build a `mapSubmissionState()` abstraction ready to absorb them; do not fabricate fields.
+
+Frontend changes:
+- **Cover** (still first viewport, game-led): add a compact 3-tier **premios ladder** under the hero + footnote *"Recibes solo el mejor premio que te toque."* before `Empezar`.
+- **Review step**: add **required** `TU NOMBRE` field above email; helper *"Usaremos tu email para validar una sola participación por día y enviarte el premio si ganas."* No RUT, no anti-fraud language.
+- **Submitted**: tier-aware copy (*"…desde un café simple hasta un combo para dos."*).
+- **Duplicate (409)**: *"Ya recibimos una predicción para este email hoy."*
+- **Staff `/redemptions`**: no change — already renders `reward_label` verbatim (now tiered).
