@@ -21,6 +21,13 @@
   flex-direction: column;
 }
 
+/* ---- Logo masthead (top of every screen, above the edition mast) ------- */
+.polla__logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 22px;
+}
+
 /* ---- Edition mast (top of every screen) -------------------------------- */
 .polla__mast {
   display: flex;
@@ -155,6 +162,10 @@
   }
 }
 .polla__team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
   font-family: var(--display);
   font-style: normal;
   font-weight: 500;
@@ -163,8 +174,59 @@
   text-align: center;
   color: var(--ink);
   min-width: 0;
-  overflow-wrap: anywhere;
   margin: 0;
+}
+.polla__team-name {
+  overflow-wrap: anywhere;
+}
+
+/* ---- Flags — the ONLY allowed circles besides the RECIBIDO seal -------- */
+.polla-flag {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid var(--copper);
+  background: var(--paper);
+}
+.polla-flag .fi {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  border-radius: 0;
+}
+.polla-flag--lg {
+  width: 36px;
+  height: 36px;
+}
+.polla-flag--sm {
+  width: 22px;
+  height: 22px;
+}
+/* monogram fallback — copper ring roundel with the team's first letter */
+.polla-flag--mono {
+  font-family: var(--mono);
+  color: var(--copper);
+  background: var(--paper);
+}
+.polla-flag--mono.polla-flag--lg {
+  font-size: 16px;
+}
+.polla-flag--mono.polla-flag--sm {
+  font-size: 11px;
+}
+
+/* small flag pair before the review-row team label */
+.polla__review-flags {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 10px;
+  vertical-align: middle;
 }
 .polla__vs {
   align-self: center;

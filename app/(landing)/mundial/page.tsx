@@ -4,6 +4,7 @@ import { SiteNav } from "../../../src/components/landing/SiteNav";
 import { getTodaySlate } from "../../../src/api/world-cup";
 import { PollaWizard } from "./_components/PollaWizard";
 import { getEditionMark } from "../../../src/lib/edition";
+import "flag-icons/css/flag-icons.min.css";
 import "./mundial.css";
 
 const siteUrl = "https://derivastudio.cl";
@@ -13,7 +14,7 @@ const INSTAGRAM_URL = "https://www.instagram.com/deriva.coffee.studio/";
 export const metadata: Metadata = {
   title: "La Polla del Mundial",
   description:
-    "Cacha el marcador exacto de los partidos de hoy. Si le achuntas a todos, te ganas un café gratis en Deriva Coffee Studio para mañana.",
+    "Adivina el marcador exacto de los partidos de hoy. Si le achuntas a todos, te ganas un café gratis en Deriva Coffee Studio para mañana.",
   alternates: { canonical: pageUrl },
   openGraph: {
     title: "La Polla del Mundial · Deriva Coffee Studio",

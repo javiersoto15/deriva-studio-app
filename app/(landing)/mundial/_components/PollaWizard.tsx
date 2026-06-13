@@ -4,6 +4,8 @@ import { useActionState, useMemo, useRef, useState, type ReactNode } from "react
 import { useFormStatus } from "react-dom";
 import { submitPollaAction, type PollaFormState } from "../../../../src/server/world-cup";
 import type { WorldCupDay } from "../../../../src/api/world-cup";
+import { LogoLockup } from "../../../../src/ui/LogoLockup";
+import { nationFlagIso } from "../../../../src/data/world-cup-nations";
 
 const initialState: PollaFormState = { status: "idle" };
 const MAX_SCORE = 19;
@@ -83,9 +85,9 @@ export function PollaWizard({ day, edition }: { day: WorldCupDay; edition: strin
   if (step === -1) {
     return (
       <div className="polla__rail polla__step">
-        <Mast edition={edition} />
+        <Masthead edition={edition} />
         <h1 id="polla-title" className="polla__title">
-          Cacha el marcador<br />
+          Adivina el marcador<br />
           <em>exacto.</em>
         </h1>
 
@@ -119,7 +121,7 @@ export function PollaWizard({ day, edition }: { day: WorldCupDay; edition: strin
     const error = state.status === "error" ? state.message : undefined;
     return (
       <div className="polla__rail polla__step">
-        <Mast edition={edition} />
+        <Masthead edition={edition} />
         <div className="polla__slug">
           <span className="polla__slug-rule" />
           <span>§ Tu cupón</span>
@@ -128,7 +130,13 @@ export function PollaWizard({ day, edition }: { day: WorldCupDay; edition: strin
         <div className="polla__stub">
           {matches.map((m, i) => (
             <div className="polla__review-row" key={m.match_id}>
-              <span className="polla__review-teams">{m.home_team} vs {m.away_team}</span>
+              <span className="polla__review-teams">
+                <span className="polla__review-flags" aria-hidden="true">
+                  <Flag team={m.home_team} size="sm" />
+                  <Flag team={m.away_team} size="sm" />
+                </span>
+                {m.home_team} vs {m.away_team}
+              </span>
               <span className="polla__review-score">
                 {scores[m.match_id].home} <span className="polla__review-em">&mdash;</span> {scores[m.match_id].away}
               </span>
@@ -189,7 +197,7 @@ export function PollaWizard({ day, edition }: { day: WorldCupDay; edition: strin
   const isLast = step + 1 === matches.length;
   return (
     <div className="polla__rail polla__step" key={m.match_id}>
-      <Mast edition={edition} />
+      <Masthead edition={edition} />
       <p className="polla__progress">
         Partido {pad2(step + 1)} / {pad2(matches.length)}
       </p>
@@ -207,6 +215,7 @@ export function PollaWizard({ day, edition }: { day: WorldCupDay; edition: strin
         <div className="polla__fixture">
           <Stepper
             team={m.home_team}
+            flagPosition="above"
             value={s.home}
             onDec={() => setScore(m.match_id, "home", -1)}
             onInc={() => setScore(m.match_id, "home", +1)}
@@ -214,6 +223,7 @@ export function PollaWizard({ day, edition }: { day: WorldCupDay; edition: strin
           <span className="polla__vs">vs</span>
           <Stepper
             team={m.away_team}
+            flagPosition="below"
             value={s.away}
             onDec={() => setScore(m.match_id, "away", -1)}
             onInc={() => setScore(m.match_id, "away", +1)}
@@ -244,17 +254,26 @@ export function PollaWizard({ day, edition }: { day: WorldCupDay; edition: strin
 function Stepper({
   team,
   value,
+  flagPosition,
   onDec,
   onInc
 }: {
   team: string;
   value: number;
+  flagPosition: "above" | "below";
   onDec: () => void;
   onInc: () => void;
 }) {
+  const teamBlock = (
+    <p className="polla__team">
+      {flagPosition === "above" && <Flag team={team} size="lg" />}
+      <span className="polla__team-name">{team}</span>
+      {flagPosition === "below" && <Flag team={team} size="lg" />}
+    </p>
+  );
   return (
     <div>
-      <p className="polla__team">{team}</p>
+      {teamBlock}
       <div className="polla__stepper">
         <div className="polla__stepper-row">
           <button
@@ -291,12 +310,35 @@ function SubmitButton() {
   );
 }
 
-function Mast({ edition }: { edition: string }) {
+function Masthead({ edition }: { edition: string }) {
   return (
-    <div className="polla__mast">
-      <span>La Polla del Mundial &middot; {edition}</span>
-      <span className="polla__mast-tick" />
-    </div>
+    <>
+      <div className="polla__logo">
+        <LogoLockup isotipo={38} wordmarkSize={24} wordmarkLine={24} subSize={7.5} gap={10} />
+      </div>
+      <div className="polla__mast">
+        <span>La Polla del Mundial &middot; {edition}</span>
+        <span className="polla__mast-tick" />
+      </div>
+    </>
+  );
+}
+
+function Flag({ team, size = "lg" }: { team: string; size?: "lg" | "sm" }) {
+  const iso = nationFlagIso(team);
+  const cls = `polla-flag polla-flag--${size}`;
+  if (!iso) {
+    const letter = team.trim().charAt(0).toUpperCase() || "?";
+    return (
+      <span className={`${cls} polla-flag--mono`} aria-hidden="true">
+        {letter}
+      </span>
+    );
+  }
+  return (
+    <span className={cls} aria-hidden="true">
+      <span className={`fi fi-${iso}`} />
+    </span>
   );
 }
 
@@ -304,7 +346,7 @@ function Submitted({ email, edition }: { email: string; edition: string }) {
   const hora = timeLabel(new Date().toISOString());
   return (
     <div className="polla__rail">
-      <Mast edition={edition} />
+      <Masthead edition={edition} />
       <div className="polla__terminal">
         <div className="polla__seal" aria-hidden="true">
           {hora ? <>Recibido<br />{hora}</> : "Recibido"}
@@ -332,7 +374,7 @@ function Terminal({
 }) {
   return (
     <div className="polla__rail">
-      <Mast edition={edition} />
+      <Masthead edition={edition} />
       <div className="polla__terminal">
         <p className="polla__terminal-eyebrow">La Polla del Mundial</p>
         <h1 className="polla__terminal-title">{title}</h1>

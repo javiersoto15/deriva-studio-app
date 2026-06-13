@@ -43,6 +43,7 @@
     "@vercel/speed-insights": "^2.0.0",
     "clsx": "^2.1.1",
     "firebase": "^12.13.0",
+    "flag-icons": "^7.5.0",
     "msw": "^2.14.5",
     "next": "16.2.4",
     "next-intl": "^4.11.1",
