@@ -52,6 +52,7 @@ export type WorldCupPrediction = {
 
 export type WorldCupSubmissionRequest = {
   email: string;
+  full_name: string;
   predictions: WorldCupPrediction[];
 };
 
@@ -60,6 +61,7 @@ export type WorldCupSubmission = {
   campaign_id: string;
   campaign_date: string;
   email: string;
+  full_name: string;
   status: "pending" | "won" | "lost";
   reward_id?: string;
   submitted_at: string;
@@ -165,7 +167,7 @@ export async function submitPredictions(
       return { ok: true, submission };
     } catch {
       // 2xx with unreadable body — the submission was created; synthesize a minimal envelope.
-      return { ok: true, submission: { id: "", campaign_id: "", campaign_date: "", email: body.email, status: "pending", submitted_at: "", predictions: body.predictions } };
+      return { ok: true, submission: { id: "", campaign_id: "", campaign_date: "", email: body.email, full_name: body.full_name, status: "pending", submitted_at: "", predictions: body.predictions } };
     }
   }
 

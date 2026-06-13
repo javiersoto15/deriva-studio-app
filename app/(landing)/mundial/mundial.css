@@ -85,27 +85,75 @@
   line-height: 1;
 }
 
-.polla__rules {
+/* ---- Premios ladder (cover) — ink × copper, NO green ------------------- */
+.polla__tiers {
+  list-style: none;
+  margin: 26px 0 0;
+  padding: 0;
+  border-top: 1px solid var(--copper);
+}
+.polla__tier {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    "no cond cond"
+    "no arrow prize";
+  align-items: baseline;
+  column-gap: 12px;
+  row-gap: 2px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--copper);
+}
+.polla__tier-no {
+  grid-area: no;
   font-family: var(--mono);
   font-size: 13px;
-  line-height: 1.85;
-  color: var(--muted);
-  list-style: none;
-  margin: 0 0 28px;
-  padding: 0;
-}
-.polla__rules li {
-  display: flex;
-  gap: 10px;
-}
-.polla__rules li::before {
-  content: "—";
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
   color: var(--copper);
-  flex-shrink: 0;
+  align-self: center;
 }
-.polla__rules b {
+.polla__tier-cond {
+  grid-area: cond;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.polla__tier-arrow {
+  grid-area: arrow;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--copper);
+  align-self: baseline;
+}
+.polla__tier-prize {
+  grid-area: prize;
+  font-family: var(--display);
+  font-size: 17px;
+  line-height: 1.15;
   color: var(--ink);
-  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.polla__tiers-foot {
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  margin: 14px 0 28px;
+}
+
+/* On wider phones, lay each tier out on a single line. */
+@media (min-width: 380px) {
+  .polla__tier {
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    grid-template-areas: "no cond arrow prize";
+    column-gap: 12px;
+  }
+  .polla__tier-cond {
+    align-self: baseline;
+  }
 }
 
 /* ---- Match step: progress ruler ---------------------------------------- */

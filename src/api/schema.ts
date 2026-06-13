@@ -1596,7 +1596,7 @@ export interface paths {
         put?: never;
         /**
          * Submit World Cup score predictions
-         * @description Public campaign intake keyed by normalized email. The request must include one exact-score prediction for every same-day match returned by the backend.
+         * @description Public campaign intake keyed by full name and canonicalized email. The request must include a score prediction for every same-day match returned by the backend. Email duplicate checks collapse common alias attempts such as plus tags and Gmail dots before hashing. Evaluation is tiered after all same-day matches are final: any single correct outcome wins a free simple coffee, all correct outcomes win one Campesino, and all exact scores win a combo for two Campesinos.
          */
         post: {
             parameters: {
@@ -2507,7 +2507,7 @@ export interface paths {
         get?: never;
         /**
          * Record a World Cup match final score
-         * @description Manager/owner endpoint for backend-owned final scores. Recording a result triggers deterministic same-day submission evaluation and issues campaign QR rewards for exact-score winners once all matches for the day are final.
+         * @description Manager/owner endpoint for backend-owned final scores. Recording a result triggers deterministic same-day submission evaluation once all matches for the day are final. Rewards are tiered: any single correct outcome wins a free simple coffee, all correct outcomes win one Campesino, and all exact scores win a combo for two Campesinos.
          */
         put: {
             parameters: {
@@ -4652,6 +4652,8 @@ export interface components {
         WorldCupSubmissionRequest: {
             /** Format: email */
             email: string;
+            /** @description Participant display name. Used as a soft identity signal and shown in the submitted prediction response; duplicate enforcement is still based on canonicalized email hash. */
+            full_name: string;
             predictions: components["schemas"]["WorldCupPrediction"][];
         };
         WorldCupSubmission: {
@@ -4662,6 +4664,7 @@ export interface components {
             campaign_date: string;
             /** Format: email */
             email: string;
+            full_name: string;
             /** @enum {string} */
             status: "pending" | "won" | "lost";
             reward_id?: string;
@@ -4689,7 +4692,15 @@ export interface components {
             email: string;
             reward_label: string;
             reward_description?: string;
+            /**
+             * @description 12-character human-keyable campaign code. Frontends may display it as XXXX-XXXX-XXXX. Alphabet is uppercase Crockford-style `0123456789ABCDEFGHJKMNPQRSTVWXYZ` and excludes I, L, O, and U.
+             * @example 9K3M7Q2AW5XZ
+             */
             short_code: string;
+            /**
+             * Format: uri
+             * @description Full staff redemption URL opened by phone camera, for example https://admin.derivastudio.cl/redemptions/{token}.
+             */
             qr_payload_url: string;
             /** @enum {string} */
             status: "issued" | "redeemed" | "expired";

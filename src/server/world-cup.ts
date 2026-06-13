@@ -2,6 +2,7 @@
 
 import {
   submitPredictions,
+  type SubmitPollaResult,
   type WorldCupPrediction,
   type WorldCupSubmissionRequest
 } from "../api/world-cup";
@@ -13,20 +14,24 @@ import {
 
 export type PollaFormState =
   | { status: "idle" }
-  | { status: "success"; email: string }
+  | { status: "success"; email: string; fullName: string }
   | { status: "duplicate" }
   | { status: "closed" }
-  | { status: "error"; message: string };
+  | { status: "error"; message: string; field?: "email" | "full_name" };
 
 const MIN_FILL_MS = 2500; // bots submit instantly; a human reads + taps steppers.
 const MAX_PREDICTIONS = 32; // sanity bound on a single day's slate.
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const FULL_NAME_MIN = 3;
+const FULL_NAME_MAX = 120;
 
 const COPY = {
   generic: "No pudimos registrar tu polla. Inténtalo de nuevo en un momento.",
   rateLimited: "Recibimos varios intentos. Dale un respiro e inténtalo más tarde.",
   spam: "No pudimos validar tu envío. Vuelve a intentarlo.",
   email: "Revisa tu correo — lo necesitamos para avisarte si ganas.",
+  fullName: "Escribe tu nombre y apellido.",
+  duplicate: "Ya recibimos una predicción para este email hoy.",
   predictions: "Faltan marcadores. Vuelve atrás y completa todos los partidos."
 } as const;
 
@@ -94,31 +99,73 @@ export async function submitPollaAction(
     }
   }
 
-  // 3) Email.
-  const email = str(formData, "email").toLowerCase();
-  if (!EMAIL_RE.test(email) || email.length > 254) {
-    return { status: "error", message: COPY.email };
+  // 3) Full name (required; 3–120 chars after trim).
+  const fullName = str(formData, "full_name");
+  if (fullName.length < FULL_NAME_MIN || fullName.length > FULL_NAME_MAX) {
+    return { status: "error", message: COPY.fullName, field: "full_name" };
   }
 
-  // 4) Predictions.
+  // 4) Email.
+  const email = str(formData, "email").toLowerCase();
+  if (!EMAIL_RE.test(email) || email.length > 254) {
+    return { status: "error", message: COPY.email, field: "email" };
+  }
+
+  // 5) Predictions.
   const predictions = parsePredictions(str(formData, "predictions"));
   if (!predictions) {
     return { status: "error", message: COPY.predictions };
   }
 
-  // 5) Throttle (best-effort; backend authoritative). Key never leaves process.
+  // 6) Throttle (best-effort; backend authoritative). Key stays the normalized email.
   if (!throttle(email)) {
     return { status: "error", message: COPY.rateLimited };
   }
 
-  const payload: WorldCupSubmissionRequest = { email, predictions };
+  const payload: WorldCupSubmissionRequest = { email, full_name: fullName, predictions };
   const result = await submitPredictions(payload);
 
+  return mapSubmissionState(result, { email, fullName });
+}
+
+/**
+ * Centralizes mapping the fetcher result → UI state, so future backend reward
+ * semantics land in one place. The submit response is intentionally tier-blind:
+ * the tier (café simple / Campesino / combo) is decided backend-side LATER,
+ * after same-day results, and is NOT revealed here.
+ *
+ * FUTURE-PROOFING — the backend may later surface richer submission statuses.
+ * None of these exist on the current contract (do NOT read fields that aren't
+ * there yet); this is structural readiness only. When they ship, branch them
+ * here instead of in the action body:
+ *   - submitted_pending_verification → still "success" (verification in flight)
+ *   - verified_submission            → still "success"
+ *   - duplicate_submission           → "duplicate"
+ *   - reward_email_sent              → still "success" (reward already mailed)
+ *
+ * Internal sync helper (not exported): a "use server" module may only export
+ * async functions, and this mapper has no business being a callable action.
+ */
+function mapSubmissionState(
+  result: SubmitPollaResult,
+  identity: { email: string; fullName: string }
+): PollaFormState {
   if (result.ok) {
-    return { status: "success", email };
+    // TODO(backend tiers): once the response carries a settled status enum,
+    //   switch (result.submission.status as string) {
+    //     case "submitted_pending_verification":
+    //     case "verified_submission":
+    //     case "reward_email_sent":
+    //       return { status: "success", email: identity.email, fullName: identity.fullName };
+    //     case "duplicate_submission":
+    //       return { status: "duplicate" };
+    //   }
+    // Until then, a 2xx is simply a successful intake.
+    return { status: "success", email: identity.email, fullName: identity.fullName };
   }
   switch (result.kind) {
     case "duplicate":
+      // 409 — one participation per canonicalized email per day.
       return { status: "duplicate" };
     case "closed":
       return { status: "closed" };

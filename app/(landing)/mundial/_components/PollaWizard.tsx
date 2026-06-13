@@ -52,14 +52,14 @@ export function PollaWizard({ day, edition }: { day: WorldCupDay; edition: strin
   );
 
   if (state.status === "success") {
-    return <Submitted email={state.email} edition={edition} />;
+    return <Submitted email={state.email} fullName={state.fullName} edition={edition} />;
   }
   if (state.status === "duplicate") {
     return (
       <Terminal
         edition={edition}
-        title={<>Este cupón ya <em>se echó</em> hoy.</>}
-        body="Solo un cupón por correo al día. Si quieres correr de nuevo, vuelve mañana con la próxima jornada."
+        title={<>Ya <em>jugaste</em> hoy.</>}
+        body="Ya recibimos una predicción para este email hoy. Vuelve mañana con la próxima jornada."
       />
     );
   }
@@ -98,12 +98,30 @@ export function PollaWizard({ day, edition }: { day: WorldCupDay; edition: strin
           <span className="polla__perf-line" />
         </div>
 
-        <ul className="polla__rules">
-          <li>Predice <b>todos los partidos</b> de hoy.</li>
-          <li>Tiene que ser el <b>marcador exacto</b>.</li>
-          <li>Le achuntas a todos &rarr; <b>café gratis</b> mañana.</li>
-          {closes && <li>Cierra a las <b>{closes}</b>.</li>}
-        </ul>
+        <ol className="polla__tiers">
+          <li className="polla__tier">
+            <span className="polla__tier-no">01</span>
+            <span className="polla__tier-cond">Aciertas un resultado del día</span>
+            <span className="polla__tier-arrow" aria-hidden="true">&rarr;</span>
+            <span className="polla__tier-prize">Café simple gratis</span>
+          </li>
+          <li className="polla__tier">
+            <span className="polla__tier-no">02</span>
+            <span className="polla__tier-cond">Aciertas todos los ganadores/empates</span>
+            <span className="polla__tier-arrow" aria-hidden="true">&rarr;</span>
+            <span className="polla__tier-prize">Campesino gratis</span>
+          </li>
+          <li className="polla__tier">
+            <span className="polla__tier-no">03</span>
+            <span className="polla__tier-cond">Aciertas todos los marcadores exactos</span>
+            <span className="polla__tier-arrow" aria-hidden="true">&rarr;</span>
+            <span className="polla__tier-prize">Combo para dos Campesinos</span>
+          </li>
+        </ol>
+        <p className="polla__tiers-foot">
+          Recibes solo el mejor premio que te toque.
+          {closes && <> Cierra a las {closes}.</>}
+        </p>
 
         <button
           type="button"
@@ -119,6 +137,9 @@ export function PollaWizard({ day, edition }: { day: WorldCupDay; edition: strin
   // ----- Review + email -----
   if (step >= matches.length) {
     const error = state.status === "error" ? state.message : undefined;
+    const errorField = state.status === "error" ? state.field : undefined;
+    const nameInvalid = Boolean(error) && errorField === "full_name";
+    const emailInvalid = Boolean(error) && (errorField === "email" || errorField === undefined);
     return (
       <div className="polla__rail polla__step">
         <Masthead edition={edition} />
@@ -156,6 +177,22 @@ export function PollaWizard({ day, edition }: { day: WorldCupDay; edition: strin
           </div>
 
           <div className="polla__field">
+            <label className="polla__label" htmlFor="polla-name">Tu nombre</label>
+            <input
+              id="polla-name"
+              name="full_name"
+              type="text"
+              autoComplete="name"
+              required
+              minLength={3}
+              maxLength={120}
+              placeholder="Nombre y apellido"
+              className="polla__input"
+              aria-invalid={nameInvalid}
+            />
+          </div>
+
+          <div className="polla__field">
             <label className="polla__label" htmlFor="polla-email">Tu correo</label>
             <input
               id="polla-email"
@@ -166,11 +203,11 @@ export function PollaWizard({ day, edition }: { day: WorldCupDay; edition: strin
               required
               placeholder="hincha@correo.cl"
               className="polla__input"
-              aria-invalid={Boolean(error)}
+              aria-invalid={emailInvalid}
             />
             <p className="polla__consent">
-              Lo usamos solo para avisarte si ganas. Lee cómo cuidamos tus datos en{" "}
-              <a href="/privacidad">privacidad</a>.
+              Usaremos tu email para validar una sola participación por día y enviarte el premio si ganas.
+              Lee cómo cuidamos tus datos en <a href="/privacidad">privacidad</a>.
             </p>
             {error && <p className="polla__error" role="alert">{error}</p>}
           </div>
@@ -342,8 +379,9 @@ function Flag({ team, size = "lg" }: { team: string; size?: "lg" | "sm" }) {
   );
 }
 
-function Submitted({ email, edition }: { email: string; edition: string }) {
+function Submitted({ email, fullName, edition }: { email: string; fullName: string; edition: string }) {
   const hora = timeLabel(new Date().toISOString());
+  const firstName = fullName.trim().split(/\s+/)[0] ?? "";
   return (
     <div className="polla__rail">
       <Masthead edition={edition} />
@@ -352,10 +390,12 @@ function Submitted({ email, edition }: { email: string; edition: string }) {
           {hora ? <>Recibido<br />{hora}</> : "Recibido"}
         </div>
         <p className="polla__terminal-eyebrow">La Polla del Mundial</p>
-        <h1 className="polla__terminal-title">Tu cupón quedó echado.</h1>
+        <h1 className="polla__terminal-title">
+          {firstName ? <>Listo, {firstName}.</> : <>Tu cupón quedó echado.</>}
+        </h1>
         <p className="polla__terminal-body">
-          Si le achuntas a todos los marcadores de hoy, te llega un café gratis a{" "}
-          <strong>{email}</strong> para mañana. Revisa tu correo después de los partidos.
+          Si aciertas, te llega tu premio al correo &mdash; desde un café simple hasta un combo para
+          dos. Te avisamos a <strong>{email}</strong> después de los partidos.
         </p>
         <p className="polla__colophon">Magnere 1570 &middot; Providencia</p>
       </div>
