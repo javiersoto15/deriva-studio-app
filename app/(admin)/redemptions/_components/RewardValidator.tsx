@@ -113,7 +113,7 @@ function RewardCard({
           <dd>{reward.email}</dd>
         </div>
         <div>
-          <dt>Emitido</dt>
+          <dt>Válido desde</dt>
           <dd>{tz(reward.valid_from)}</dd>
         </div>
         <div>
