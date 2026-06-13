@@ -1544,6 +1544,94 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/public/campaigns/world-cup-predictor/matches/today": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get today's World Cup prediction matches
+         * @description Backend-owned same-day match list for the public prediction campaign. Submissions close at the first kickoff for the Santiago-local campaign date.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Same-day World Cup prediction slate. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["WorldCupDay"];
+                    };
+                };
+                404: components["responses"]["NotFound"];
+                500: components["responses"]["InternalServerError"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/campaigns/world-cup-predictor/submissions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Submit World Cup score predictions
+         * @description Public campaign intake keyed by normalized email. The request must include one exact-score prediction for every same-day match returned by the backend.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["WorldCupSubmissionRequest"];
+                };
+            };
+            responses: {
+                /** @description Prediction submission accepted. */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["WorldCupSubmission"];
+                    };
+                };
+                400: components["responses"]["BadRequest"];
+                409: components["responses"]["Conflict"];
+                410: components["responses"]["Gone"];
+                500: components["responses"]["InternalServerError"];
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/menu": {
         parameters: {
             query?: never;
@@ -1558,7 +1646,7 @@ export interface paths {
                     /** @description Filter active menu items by normalized category id. */
                     category?: "coffee" | "beverage" | "breakfast" | "savory" | "entree" | "dessert";
                     /** @description Filter active menu items by normalized section id. */
-                    section?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "onces" | "cakes-pies" | "bakes";
+                    section?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "cervezas-cocteles" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "onces" | "cakes-pies" | "bakes";
                     /** @description Resolve backend-driven menu copy for this locale. Defaults to es-CL and falls back to es-CL when unsupported. */
                     locale?: "es-CL" | "en" | "pt-BR";
                 };
@@ -1716,6 +1804,100 @@ export interface paths {
                 401: components["responses"]["Unauthorized"];
                 403: components["responses"]["Forbidden"];
                 404: components["responses"]["NotFound"];
+                500: components["responses"]["InternalServerError"];
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/staff/campaign-rewards/{code}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Validate a campaign reward QR or short code */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Raw QR token or campaign reward short code. */
+                    code: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Campaign reward state. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CampaignReward"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                404: components["responses"]["NotFound"];
+                500: components["responses"]["InternalServerError"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/staff/campaign-rewards/{code}/redeem": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Redeem a one-time campaign reward
+         * @description Staff marks a campaign QR reward as redeemed. This does not debit Deriva Points; it records campaign_reward.redeemed with the authenticated staff actor.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    code: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["CampaignRewardRedeemRequest"];
+                };
+            };
+            responses: {
+                /** @description Campaign reward redeemed. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CampaignReward"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                404: components["responses"]["NotFound"];
+                409: components["responses"]["Conflict"];
+                410: components["responses"]["Gone"];
                 500: components["responses"]["InternalServerError"];
             };
         };
@@ -2262,6 +2444,103 @@ export interface paths {
                 500: components["responses"]["InternalServerError"];
             };
         };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/campaigns/world-cup-predictor/matches/sync": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Sync World Cup predictor fixtures
+         * @description Manager/owner endpoint that imports or refreshes World Cup 2026 fixtures from the free OpenFootball JSON source. Imported knockout placeholders stay stored for later refresh but are not exposed by the public same-day prediction endpoint until both teams are confirmed.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["WorldCupSyncRequest"];
+                };
+            };
+            responses: {
+                /** @description Fixture sync completed. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["WorldCupSyncResponse"];
+                    };
+                };
+                400: components["responses"]["BadRequest"];
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                500: components["responses"]["InternalServerError"];
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/campaigns/world-cup-predictor/matches/{match_id}/result": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Record a World Cup match final score
+         * @description Manager/owner endpoint for backend-owned final scores. Recording a result triggers deterministic same-day submission evaluation and issues campaign QR rewards for exact-score winners once all matches for the day are final.
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    match_id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["WorldCupResultRequest"];
+                };
+            };
+            responses: {
+                /** @description Result recorded and same-day submissions evaluated if complete. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["WorldCupResultResponse"];
+                    };
+                };
+                400: components["responses"]["BadRequest"];
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                404: components["responses"]["NotFound"];
+                500: components["responses"]["InternalServerError"];
+            };
+        };
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -4081,7 +4360,7 @@ export interface components {
              * @description Normalized menu section id.
              * @enum {string}
              */
-            section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "onces" | "cakes-pies" | "bakes";
+            section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "cervezas-cocteles" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "onces" | "cakes-pies" | "bakes";
             section_label?: string;
             /** @description Legacy/display section value kept for backward compatibility. */
             section: string;
@@ -4125,7 +4404,7 @@ export interface components {
              * @description Normalized menu section id.
              * @enum {string}
              */
-            section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "onces" | "cakes-pies" | "bakes";
+            section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "cervezas-cocteles" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "onces" | "cakes-pies" | "bakes";
             section_label?: string;
             /** @description Legacy/display section value kept for backward compatibility. */
             section: string;
@@ -4151,7 +4430,7 @@ export interface components {
             /** @enum {string} */
             category_id?: "coffee" | "beverage" | "breakfast" | "savory" | "entree" | "dessert";
             /** @enum {string} */
-            section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "onces" | "cakes-pies" | "bakes";
+            section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "cervezas-cocteles" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "onces" | "cakes-pies" | "bakes";
             section?: string;
             name?: string;
             description?: string;
@@ -4168,7 +4447,7 @@ export interface components {
             /** @enum {string} */
             category_id?: "coffee" | "beverage" | "breakfast" | "savory" | "entree" | "dessert";
             /** @enum {string} */
-            section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "onces" | "cakes-pies" | "bakes";
+            section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "cervezas-cocteles" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "onces" | "cakes-pies" | "bakes";
             section?: string;
             name: string;
             description?: string;
@@ -4311,6 +4590,122 @@ export interface components {
             matched_price_clp: number;
             /** Format: date-time */
             submitted_at: string;
+        };
+        WorldCupDay: {
+            /** @enum {string} */
+            campaign_id: "world_cup_predictor_2026";
+            /** Format: date */
+            campaign_date: string;
+            submission_open: boolean;
+            /** Format: date-time */
+            closes_at: string;
+            matches: components["schemas"]["WorldCupMatch"][];
+        };
+        WorldCupMatch: {
+            match_id: string;
+            /** @enum {string} */
+            campaign_id: "world_cup_predictor_2026";
+            /** Format: date */
+            match_date: string;
+            /** Format: date-time */
+            kickoff_at: string;
+            home_team: string;
+            away_team: string;
+            stage?: string;
+            group_name?: string;
+            venue_name?: string;
+            /** @description False for unresolved knockout slots such as 1A, 2B, W74, or L101. Public same-day prediction responses only include confirmed-team matches. */
+            teams_confirmed: boolean;
+            /** @example openfootball */
+            source?: string;
+            /** @example openfootball:worldcup2026:001 */
+            source_match_id?: string;
+            /** Format: date-time */
+            last_synced_at?: string;
+            home_score?: number;
+            away_score?: number;
+            /** Format: date-time */
+            finalized_at?: string;
+            submissions_open: boolean;
+        };
+        WorldCupSyncRequest: {
+            /**
+             * Format: uri
+             * @description Optional override for tests or manual recovery. Defaults to the OpenFootball 2026 World Cup raw JSON URL.
+             */
+            source_url?: string;
+        };
+        WorldCupSyncResponse: {
+            imported_count: number;
+            confirmed_count: number;
+            placeholder_count: number;
+            /** @example openfootball */
+            source: string;
+            /** Format: date-time */
+            synced_at: string;
+        };
+        WorldCupPrediction: {
+            match_id: string;
+            home_score: number;
+            away_score: number;
+        };
+        WorldCupSubmissionRequest: {
+            /** Format: email */
+            email: string;
+            predictions: components["schemas"]["WorldCupPrediction"][];
+        };
+        WorldCupSubmission: {
+            id: string;
+            /** @enum {string} */
+            campaign_id: "world_cup_predictor_2026";
+            /** Format: date */
+            campaign_date: string;
+            /** Format: email */
+            email: string;
+            /** @enum {string} */
+            status: "pending" | "won" | "lost";
+            reward_id?: string;
+            /** Format: date-time */
+            submitted_at: string;
+            /** Format: date-time */
+            evaluated_at?: string;
+            /** Format: date-time */
+            reward_issued_at?: string;
+            predictions: components["schemas"]["WorldCupPrediction"][];
+        };
+        WorldCupResultRequest: {
+            home_score: number;
+            away_score: number;
+        };
+        WorldCupResultResponse: {
+            match: components["schemas"]["WorldCupMatch"];
+            winners: number;
+            rewards_issued: components["schemas"]["CampaignReward"][];
+        };
+        CampaignReward: {
+            id: string;
+            campaign_id: string;
+            /** Format: email */
+            email: string;
+            reward_label: string;
+            reward_description?: string;
+            short_code: string;
+            qr_payload_url: string;
+            /** @enum {string} */
+            status: "issued" | "redeemed" | "expired";
+            /** Format: date-time */
+            valid_from: string;
+            /** Format: date-time */
+            expires_at: string;
+            /** Format: date-time */
+            issued_at: string;
+            /** Format: date-time */
+            redeemed_at?: string;
+            redeemed_by_actor_id?: string;
+            redemption_notes?: string;
+        };
+        CampaignRewardRedeemRequest: {
+            notes?: string;
         };
         ReviewSubmissionRequest: {
             rating_overall: number;

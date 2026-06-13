@@ -72,7 +72,8 @@ export const SECTION_LABELS_ES: Record<NonNullable<MenuItem["section_id"]>, stri
   starters: "Entradas",
   mains: "Fondos",
   "cakes-pies": "Pies & Tortas",
-  bakes: "Queques & Brownies"
+  bakes: "Queques & Brownies",
+  "cervezas-cocteles": "Cervezas & Cócteles"
 };
 
 // Frontend-side "coming soon" overrides — used when the backend `available`
