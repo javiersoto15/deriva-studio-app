@@ -640,6 +640,138 @@ address {
   color: var(--landing-fg-faint);
 }
 
+/* — Mundial hero feature band ——————————————————————————————————— */
+.mundial-teaser {
+  background: #26201c;
+  padding: 72px 24px;
+  display: flex;
+  justify-content: center;
+}
+.mundial-teaser__inner {
+  width: min(100%, 1280px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 48px;
+}
+.mundial-teaser__text {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+.mundial-teaser__slug {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #c9a57a;
+}
+.mundial-teaser__slug-rule {
+  width: 32px;
+  height: 1px;
+  background: #c9a57a;
+  display: block;
+  flex-shrink: 0;
+}
+.mundial-teaser__heading {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(40px, 5vw, 60px);
+  line-height: 0.98;
+  letter-spacing: -1.5px;
+  color: #f6f1e6;
+}
+.mundial-teaser__heading em {
+  font-style: italic;
+  font-weight: 500;
+  color: #f6f1e6;
+}
+.mundial-teaser__heading-accent {
+  font-style: normal;
+  font-weight: 600;
+  color: #9db8a4;
+}
+.mundial-teaser__tiers {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: #d8ccba;
+}
+.mundial-teaser__tier-num {
+  color: #c9a57a;
+  font-weight: 600;
+}
+.mundial-teaser__tier-label {
+  color: #d8ccba;
+}
+.mundial-teaser__tier-dot {
+  color: #6b5f52;
+}
+.mundial-teaser__lede {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 14px;
+  line-height: 1.5;
+  color: #b9ac9b;
+  max-width: 540px;
+}
+.mundial-teaser__action {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+.mundial-teaser__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #f6f1e6;
+  color: #26201c;
+  text-decoration: none;
+  padding: 20px 32px;
+  border-radius: 0;
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  transition: background 180ms ease;
+}
+.mundial-teaser__cta:hover {
+  background: #fff;
+}
+.mundial-teaser__url {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: #6b5f52;
+}
+@media (max-width: 820px) {
+  .mundial-teaser {
+    padding: 48px 24px;
+  }
+  .mundial-teaser__inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 32px;
+  }
+  .mundial-teaser__action {
+    align-items: stretch;
+  }
+  .mundial-teaser__cta {
+    justify-content: center;
+    width: 100%;
+  }
+  .mundial-teaser__url {
+    text-align: center;
+  }
+}
+
 /* Waitlist form recolored for the dark teaser ground. */
 .app-teaser .waitlist {
   width: min(100%, 460px);
@@ -2234,11 +2366,20 @@ address {
      menu sidebar) offset their `top:` by this so they pin below the nav
      instead of sliding under it. */
   --landing-nav-h: 56px;
+  /* Height of the always-visible World Cup ribbon pinned above the nav on the
+     homepage only. The .has-mundial-ribbon wrapper offsets the nav down by it. */
+  --mundial-ribbon-h: 44px;
 }
 
 @media (max-width: 900px) {
   :root {
     --landing-nav-h: 48px;
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --mundial-ribbon-h: 40px;
   }
 }
 
@@ -2315,6 +2456,89 @@ address {
 .landing-nav__cue {
   justify-self: end;
   opacity: 0.85;
+}
+
+/* — Mundial ribbon (homepage-only, pinned above the nav) ————————— */
+/* Scoped to the homepage wrapper so /menu, /resenas, etc. keep top:0. */
+.has-mundial-ribbon .landing-nav {
+  top: var(--mundial-ribbon-h);
+}
+.mundial-ribbon {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  height: var(--mundial-ribbon-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  background: #2e4034;
+  color: #f6f1e6;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(246, 241, 230, 0.12);
+}
+.mundial-ribbon__inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 100%;
+  min-width: 0;
+}
+.mundial-ribbon__diamond {
+  flex-shrink: 0;
+  width: 7px;
+  height: 7px;
+  background: #c9a57a;
+  transform: rotate(45deg);
+  display: block;
+}
+.mundial-ribbon__copy {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #f6f1e6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.mundial-ribbon__copy--short {
+  display: none;
+}
+.mundial-ribbon__cta {
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #f6f1e6;
+  border: 1px solid rgba(246, 241, 230, 0.5);
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+@media (max-width: 640px) {
+  .mundial-ribbon {
+    gap: 0;
+    padding: 0 14px;
+  }
+  .mundial-ribbon__copy {
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+  }
+  .mundial-ribbon__copy--full {
+    display: none;
+  }
+  .mundial-ribbon__copy--short {
+    display: inline;
+  }
+  .mundial-ribbon__cta {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    padding: 3px 8px;
+  }
 }
 
 /* — Diamond punctuation ————————————————————————————————————————— */

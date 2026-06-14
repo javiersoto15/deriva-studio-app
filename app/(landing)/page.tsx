@@ -5,6 +5,8 @@ import { SiteNav } from "../../src/components/landing/SiteNav";
 import { CartaScroller, type CartaChip } from "../../src/components/landing/CartaScroller";
 import { DerivaImage } from "../../src/components/landing/DerivaImage";
 import { AppTeaser } from "../../src/components/landing/AppTeaser";
+import { MundialRibbon } from "../../src/components/landing/MundialRibbon";
+import { MundialTeaser } from "../../src/components/landing/MundialTeaser";
 import { isOpenNow } from "../../src/lib/open-now";
 import { PHOTO_BASE_URL } from "../../src/data/photos";
 
@@ -401,7 +403,7 @@ async function OpenNowStatus() {
 
 export default function HomePage() {
   return (
-    <>
+    <div className="has-mundial-ribbon">
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
@@ -409,9 +411,11 @@ export default function HomePage() {
           __html: JSON.stringify([localBusinessJsonLd, websiteJsonLd])
         }}
       />
+      <MundialRibbon />
       <SiteNav active="inicio" />
       <main className="landing">
         <Hero />
+        <MundialTeaser />
         <BarPanel />
         <CasaPanel />
         <CartaScroller chips={cartaChips} />
@@ -421,6 +425,6 @@ export default function HomePage() {
         <AppTeaserSection />
         <Footer />
       </main>
-    </>
+    </div>
   );
 }
