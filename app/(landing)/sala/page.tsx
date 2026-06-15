@@ -474,10 +474,6 @@ async function SalaRotator({
   return <CrossfadeRotator className="sala-rotator" views={views} />;
 }
 
-// Kiosk fit: scale the fixed 1920×1080 stage to fill the viewport. No React —
-// a bare script so it survives even if hydration never runs on a throttled TV.
-const FIT_SCRIPT = `(function(){function f(){var s=document.getElementById('sala-stage');if(!s)return;var z=Math.min(window.innerWidth/1920,window.innerHeight/1080);s.style.transform='scale('+z+')';}f();window.addEventListener('resize',f);})();`;
-
 export default function SalaPage({
   searchParams
 }: {
@@ -487,12 +483,12 @@ export default function SalaPage({
     <div className="sala-fit">
       {/* TV display: reload every 10 minutes to refresh date + edition + menu. */}
       <meta httpEquiv="refresh" content="600" />
-      <div className="sala-scale" id="sala-stage">
+      {/* Fixed 1920×1080 stage scaled to fit the screen via pure CSS (see sala.css). */}
+      <div className="sala-scale">
         <Suspense fallback={<div className="sala-rotator" />}>
           <SalaRotator searchParams={searchParams} />
         </Suspense>
       </div>
-      <script dangerouslySetInnerHTML={{ __html: FIT_SCRIPT }} />
     </div>
   );
 }

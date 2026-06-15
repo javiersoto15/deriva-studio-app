@@ -39,10 +39,17 @@ body {
   display: grid;
   place-items: center;
 }
+/* Pure-CSS scale-to-fit (no JS — TV browsers like Fire TV Silk don't reliably
+   run an inline scaler, which left the fixed stage unscaled in one corner of a
+   4K panel). Dividing lengths yields a unitless factor; min() fits the 16:9
+   stage to width OR height, filling a 1080p / 4K screen exactly and
+   letterboxing gracefully on odd aspect ratios. */
 .sala-scale {
   width: 1920px;
   height: 1080px;
+  flex: none;
   transform-origin: center center;
+  transform: scale(min(100vw / 1920px, 100vh / 1080px));
 }
 .sala-rotator {
   position: relative;
