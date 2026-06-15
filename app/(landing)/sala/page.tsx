@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { DerivaImage } from "../../../src/components/landing/DerivaImage";
 import { LogoLockup } from "../../../src/ui/LogoLockup";
 import { CrossfadeRotator } from "../../../src/components/landing/CrossfadeRotator";
+import { SalaKiosk } from "./SalaKiosk";
 import { getEditionMarkUppercase, getEditionParts } from "../../../src/lib/edition";
 import {
   getPublicMenuView,
@@ -481,9 +482,10 @@ export default function SalaPage({
 }) {
   return (
     <div className="sala-fit">
-      {/* TV display: reload every 10 minutes to refresh date + edition + menu. */}
-      <meta httpEquiv="refresh" content="600" />
-      {/* Fixed 1920×1080 stage scaled to fit the screen via pure CSS (see sala.css). */}
+      {/* Soft refresh (no hard reload) so the Fire TV Silk toolbar stays hidden;
+          also best-effort fullscreen on first remote press. */}
+      <SalaKiosk />
+      {/* 16:9 fluid stage (see sala.css). */}
       <div className="sala-scale">
         <Suspense fallback={<div className="sala-rotator" />}>
           <SalaRotator searchParams={searchParams} />
