@@ -4,6 +4,7 @@ import { SiteNav } from "../../../src/components/landing/SiteNav";
 import { getTodaySlate } from "../../../src/api/world-cup";
 import { PollaWizard } from "./_components/PollaWizard";
 import { getEditionMark } from "../../../src/lib/edition";
+import { slateDayLabel } from "../../../src/lib/slate-day";
 import "flag-icons/css/flag-icons.min.css";
 import "./mundial.css";
 
@@ -61,7 +62,7 @@ async function PollaSlate() {
           edition={edition}
           eyebrow="La Polla del Mundial"
           title={<>Hoy no hay <em>partidos</em>.</>}
-          body="No hay partidos para predecir hoy. Vuelve el próximo día de Mundial — lo anunciamos en Instagram."
+          body="Vuelve pronto para la próxima fecha del Mundial — la anunciamos en Instagram."
           ig
         />
       );
@@ -83,13 +84,15 @@ async function PollaSlate() {
       <Terminal
         edition={edition}
         eyebrow="La Polla del Mundial"
-        title={<>Hoy ya <em>cerró</em>.</>}
-        body="Las predicciones se cierran con el primer pitazo del día. Te esperamos en la próxima jornada."
+        title={<>Las predicciones <em>cerraron</em>.</>}
+        body="La fecha de hoy ya cerró. Vuelve pronto para la próxima fecha del Mundial."
       />
     );
   }
 
-  return <PollaWizard day={day} edition={edition} />;
+  const dayLabel = slateDayLabel(day.campaign_date);
+
+  return <PollaWizard day={day} edition={edition} dayLabel={dayLabel} />;
 }
 
 function Terminal({

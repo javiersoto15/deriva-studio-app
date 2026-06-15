@@ -28,7 +28,14 @@ function pad2(n: number): string {
   return String(n).padStart(2, "0");
 }
 
-export function PollaWizard({ day, edition }: { day: WorldCupDay; edition: string }) {
+// Natural-preposition glue for the slate-day label:
+//   "hoy" / "mañana" → "de hoy" / "de mañana"
+//   "el lunes"       → "del lunes"
+function withDe(label: string): string {
+  return label.startsWith("el ") ? `d${label}` : `de ${label}`;
+}
+
+export function PollaWizard({ day, edition, dayLabel }: { day: WorldCupDay; edition: string; dayLabel: string }) {
   const [state, formAction] = useActionState(submitPollaAction, initialState);
   const renderStarted = useRef(Date.now());
 
@@ -100,7 +107,7 @@ export function PollaWizard({ day, edition }: { day: WorldCupDay; edition: strin
   if (step === -1) {
     return (
       <div className="polla__grid">
-        <CoverAside edition={edition} matchCount={matches.length} closes={closes} />
+        <CoverAside edition={edition} dayLabel={dayLabel} matchCount={matches.length} closes={closes} />
         <div className="polla__rail polla__step">
         <Masthead edition={edition} />
         <h1 id="polla-title" className="polla__title">
@@ -108,13 +115,13 @@ export function PollaWizard({ day, edition }: { day: WorldCupDay; edition: strin
           con Deriva.
         </h1>
         <p className="polla__hook">
-          Adivina el marcador exacto de los partidos de cada día.
+          Adivina el marcador exacto de los partidos {withDe(dayLabel)}.
         </p>
 
         <div className="polla__perf">
           <span className="polla__perf-line" />
           <span className="polla__perf-cut" aria-hidden="true">&#9986;</span>
-          <span>Cupón del día · {matches.length} {matches.length === 1 ? "partido" : "partidos"}</span>
+          <span>Cupón {withDe(dayLabel)} · {matches.length} {matches.length === 1 ? "partido" : "partidos"}</span>
           <span className="polla__perf-line" />
         </div>
 
@@ -163,7 +170,7 @@ export function PollaWizard({ day, edition }: { day: WorldCupDay; edition: strin
     const emailInvalid = Boolean(error) && (errorField === "email" || errorField === undefined);
     return (
       <div className="polla__grid">
-        <CoverAside edition={edition} matchCount={matches.length} closes={closes} />
+        <CoverAside edition={edition} dayLabel={dayLabel} matchCount={matches.length} closes={closes} />
         <div className="polla__rail polla__step">
         <Masthead edition={edition} />
         <div className="polla__slug">
@@ -258,7 +265,7 @@ export function PollaWizard({ day, edition }: { day: WorldCupDay; edition: strin
   const isLast = step + 1 === matches.length;
   return (
     <div className="polla__grid">
-      <CoverAside edition={edition} matchCount={matches.length} closes={closes} />
+      <CoverAside edition={edition} dayLabel={dayLabel} matchCount={matches.length} closes={closes} />
       <div className="polla__rail polla__step" key={m.match_id}>
       <Masthead edition={edition} />
       <p className="polla__progress">
@@ -393,13 +400,16 @@ function Masthead({ edition }: { edition: string }) {
    colophon. CSS-hidden below 1024px (mobile keeps the in-rail cover). */
 function CoverAside({
   edition,
+  dayLabel,
   matchCount,
   closes
 }: {
   edition: string;
+  dayLabel?: string;
   matchCount?: number;
   closes?: string;
 }) {
+  const de = dayLabel ? withDe(dayLabel) : "de cada día";
   return (
     <aside className="polla__aside" aria-hidden="true">
       <Masthead edition={edition} />
@@ -408,14 +418,14 @@ function CoverAside({
         con Deriva.
       </h1>
       <p className="polla__hook">
-        Adivina el marcador exacto de los partidos de cada día.
+        Adivina el marcador exacto de los partidos {de}.
       </p>
 
       {typeof matchCount === "number" && (
         <div className="polla__perf">
           <span className="polla__perf-line" />
           <span className="polla__perf-cut">&#9986;</span>
-          <span>Cupón del día · {matchCount} {matchCount === 1 ? "partido" : "partidos"}</span>
+          <span>Cupón {dayLabel ? withDe(dayLabel) : "del día"} · {matchCount} {matchCount === 1 ? "partido" : "partidos"}</span>
           <span className="polla__perf-line" />
         </div>
       )}
