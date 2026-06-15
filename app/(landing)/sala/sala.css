@@ -1,12 +1,14 @@
-/* Deriva Sala — horizontal lounge display (1920×1080 landscape).
+/* Deriva Sala — horizontal lounge display (16:9 landscape).
    The screen-native sibling of the printed broadside: a turning set of
    art-directed plates (Portada → Oficio → Destacado → Ahora en la barra),
    on plaster × ink with a single green moment per plate. Distinct from
    /abierto (1080×1920 bar TV) and /menu-display (vertical one-pager).
 
-   Sizing: the stage is authored at a fixed 1920×1080 and scaled to fit the
-   viewport by a tiny inline script (kiosk-safe, no React needed) so it fills
-   a 1080p panel exactly and still previews on a laptop / 4K. */
+   Sizing: FULLY FLUID. The stage is 100vw wide × 56.25vw tall (16:9) and
+   every dimension is expressed in vw (1px @1920 = 0.0520833vw). No transform,
+   no JS, no length-division — so it fills a 1080p / 4K panel and renders in
+   Safari and TV browsers (Fire TV Silk) alike. On a 16:9 screen it fills
+   exactly; other aspect ratios letterbox via the centered .sala-fit. */
 
 :root {
   --sala-plaster: #FAF5EC;
@@ -28,6 +30,7 @@ html,
 body {
   background: var(--sala-espresso);
   margin: 0;
+  height: 100%;
 }
 
 /* === Fit + rotator ======================================================= */
@@ -36,25 +39,19 @@ body {
   inset: 0;
   overflow: hidden;
   background: var(--sala-espresso);
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-/* Pure-CSS scale-to-fit (no JS — TV browsers like Fire TV Silk don't reliably
-   run an inline scaler, which left the fixed stage unscaled in one corner of a
-   4K panel). Dividing lengths yields a unitless factor; min() fits the 16:9
-   stage to width OR height, filling a 1080p / 4K screen exactly and
-   letterboxing gracefully on odd aspect ratios. */
 .sala-scale {
-  width: 1920px;
-  height: 1080px;
+  width: 100vw;
+  height: 56.25vw;
   flex: none;
-  transform-origin: center center;
-  transform: scale(min(100vw / 1920px, 100vh / 1080px));
 }
 .sala-rotator {
   position: relative;
-  width: 1920px;
-  height: 1080px;
+  width: 100%;
+  height: 100%;
 }
 /* CrossfadeRotator emits layers with this class name (shared with /abierto,
    but each page imports its own stylesheet so there's no collision). Opacity
@@ -78,8 +75,8 @@ body {
 .sala-plate {
   position: absolute;
   inset: 0;
-  width: 1920px;
-  height: 1080px;
+  width: 100%;
+  height: 100%;
   background: var(--sala-plaster);
   color: var(--sala-ink);
   font-family: var(--font-display), "Cormorant Garamond", serif;
@@ -103,23 +100,23 @@ body {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding-bottom: 14px;
+  padding-bottom: 0.729vw;
   border-bottom: 1px solid var(--sala-hair);
 }
 .sala-runhead span {
   font-family: var(--font-mono), "IBM Plex Mono", monospace;
-  font-size: 15px;
+  font-size: 0.781vw;
   letter-spacing: 0.18em;
   color: var(--sala-mute);
 }
 .sala-runhead__live {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.521vw;
 }
 .sala-dot {
-  width: 8px;
-  height: 8px;
+  width: 0.417vw;
+  height: 0.417vw;
   border-radius: 50%;
   background: var(--sala-brown);
   flex: none;
@@ -129,18 +126,18 @@ body {
 .sala-dots {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 0.729vw;
 }
 .sala-dots i {
-  width: 8px;
-  height: 8px;
+  width: 0.417vw;
+  height: 0.417vw;
   border-radius: 50%;
   background: rgba(94, 35, 15, 0.28);
   display: block;
 }
 .sala-dots i.on {
-  width: 34px;
-  height: 3px;
+  width: 1.771vw;
+  height: 0.156vw;
   border-radius: 0;
   background: var(--sala-ink);
 }
@@ -159,24 +156,24 @@ body {
 .sala-portada__col {
   display: flex;
   flex-direction: column;
-  width: 1114px;
-  height: 1080px;
-  padding: 64px;
+  width: 58.021vw;
+  height: 100%;
+  padding: 3.333vw;
 }
 .sala-portada__lockup {
-  padding-top: 44px;
+  padding-top: 2.292vw;
 }
 .sala-portada__claimwrap {
   display: flex;
   flex-direction: column;
   flex: 1;
   justify-content: center;
-  gap: 28px;
+  gap: 1.458vw;
 }
 .sala-kicker {
   font-family: var(--font-tracked), Poppins, sans-serif;
   font-weight: 600;
-  font-size: 18px;
+  font-size: 0.938vw;
   letter-spacing: 0.26em;
   color: var(--sala-mute);
 }
@@ -189,7 +186,7 @@ body {
   font-family: var(--font-display), "Cormorant Garamond", serif;
   font-weight: 500;
   font-style: italic;
-  font-size: 152px;
+  font-size: 7.917vw;
   line-height: 0.94;
   letter-spacing: -0.01em;
   color: var(--sala-ink);
@@ -201,61 +198,61 @@ body {
 .sala-portada__lede {
   font-family: var(--font-display), "Cormorant Garamond", serif;
   font-style: italic;
-  font-size: 30px;
+  font-size: 1.563vw;
   line-height: 1.35;
   color: var(--sala-mute);
-  max-width: 560px;
+  max-width: 29.167vw;
 }
 .sala-portada__foot {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
   width: 100%;
-  padding-top: 24px;
+  padding-top: 1.25vw;
   border-top: 1px solid var(--sala-hair);
 }
 .sala-portada__foot-l {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.313vw;
 }
 .sala-microlabel {
   font-family: var(--font-tracked), Poppins, sans-serif;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 0.729vw;
   letter-spacing: 0.22em;
   color: var(--sala-mute);
 }
 .sala-portada__season {
   font-family: var(--font-display), "Cormorant Garamond", serif;
   font-style: italic;
-  font-size: 40px;
+  font-size: 2.083vw;
   line-height: 1;
   color: var(--sala-ink);
 }
 .sala-portada__num {
   display: flex;
   align-items: baseline;
-  gap: 10px;
+  gap: 0.521vw;
 }
 .sala-portada__num small {
   font-family: var(--font-mono), "IBM Plex Mono", monospace;
-  font-size: 18px;
+  font-size: 0.938vw;
   letter-spacing: 0.1em;
   color: var(--sala-mute);
 }
 .sala-portada__num strong {
   font-family: var(--font-mono), "IBM Plex Mono", monospace;
   font-weight: 500;
-  font-size: 64px;
+  font-size: 3.333vw;
   letter-spacing: 0.02em;
   line-height: 0.9;
   color: var(--sala-ink);
 }
 .sala-portada__photo {
   position: relative;
-  width: 806px;
-  height: 1080px;
+  width: 41.979vw;
+  height: 100%;
   background: var(--sala-espresso);
   overflow: hidden;
 }
@@ -270,22 +267,22 @@ body {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 48px;
+  gap: 0.417vw;
+  padding: 2.5vw;
 }
 .sala-photo-cap__scrim {
   position: absolute;
   left: 0;
   bottom: 0;
   width: 100%;
-  height: 340px;
+  height: 17.708vw;
   background: linear-gradient(to top, rgba(26, 20, 16, 0.82), rgba(26, 20, 16, 0));
 }
 .sala-photo-cap__k {
   position: relative;
   font-family: var(--font-tracked), Poppins, sans-serif;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 0.781vw;
   letter-spacing: 0.24em;
   color: var(--sala-cream-72);
 }
@@ -293,7 +290,7 @@ body {
   position: relative;
   font-family: var(--font-display), "Cormorant Garamond", serif;
   font-style: italic;
-  font-size: 46px;
+  font-size: 2.396vw;
   line-height: 1;
   color: var(--sala-cream);
 }
@@ -308,8 +305,8 @@ body {
 .sala-oficio__img img {
   position: absolute;
   inset: 0;
-  width: 1920px;
-  height: 1080px;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   object-position: center 38%;
 }
@@ -317,16 +314,16 @@ body {
   position: absolute;
   left: 0;
   top: 0;
-  width: 1920px;
-  height: 240px;
+  width: 100%;
+  height: 12.5vw;
   background: linear-gradient(to bottom, rgba(26, 20, 16, 0.7), rgba(26, 20, 16, 0));
 }
 .sala-scrim-bot {
   position: absolute;
   left: 0;
   bottom: 0;
-  width: 1920px;
-  height: 560px;
+  width: 100%;
+  height: 29.167vw;
   background: linear-gradient(
     to top,
     rgba(26, 20, 16, 0.88),
@@ -340,11 +337,11 @@ body {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 64px 64px 0 64px;
+  padding: 3.333vw 3.333vw 0 3.333vw;
 }
 .sala-mast-over__ed {
   font-family: var(--font-mono), "IBM Plex Mono", monospace;
-  font-size: 15px;
+  font-size: 0.781vw;
   letter-spacing: 0.18em;
   color: var(--sala-cream-72);
 }
@@ -354,18 +351,18 @@ body {
   align-items: flex-end;
   justify-content: space-between;
   width: 100%;
-  padding: 0 64px 64px 64px;
+  padding: 0 3.333vw 3.333vw 3.333vw;
 }
 .sala-deckle__body {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  max-width: 1180px;
+  gap: 0.938vw;
+  max-width: 61.458vw;
 }
 .sala-deckle__k {
   font-family: var(--font-tracked), Poppins, sans-serif;
   font-weight: 600;
-  font-size: 18px;
+  font-size: 0.938vw;
   letter-spacing: 0.26em;
   color: var(--sala-cream-72);
 }
@@ -373,7 +370,7 @@ body {
   font-family: var(--font-display), "Cormorant Garamond", serif;
   font-weight: 500;
   font-style: italic;
-  font-size: 128px;
+  font-size: 6.667vw;
   line-height: 0.9;
   letter-spacing: -0.01em;
   color: var(--sala-cream);
@@ -381,10 +378,10 @@ body {
 .sala-deckle__sub {
   font-family: var(--font-display), "Cormorant Garamond", serif;
   font-style: italic;
-  font-size: 34px;
+  font-size: 1.771vw;
   line-height: 1.3;
   color: var(--sala-cream-84);
-  max-width: 880px;
+  max-width: 45.833vw;
 }
 
 /* === Plate 03 · Destacado (split, editor's pick) ========================= */
@@ -395,8 +392,8 @@ body {
 }
 .sala-destacado__photo {
   position: relative;
-  width: 1114px;
-  height: 1080px;
+  width: 58.021vw;
+  height: 100%;
   overflow: hidden;
   background: var(--sala-espresso);
 }
@@ -406,18 +403,18 @@ body {
 }
 .sala-livetag {
   position: absolute;
-  left: 48px;
-  top: 48px;
+  left: 2.5vw;
+  top: 2.5vw;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 16px;
+  gap: 0.521vw;
+  padding: 0.521vw 0.833vw;
   background: rgba(26, 20, 16, 0.55);
   border: 1px solid rgba(250, 245, 236, 0.3);
 }
 .sala-livetag i {
-  width: 8px;
-  height: 8px;
+  width: 0.417vw;
+  height: 0.417vw;
   border-radius: 50%;
   background: var(--sala-cream);
   display: block;
@@ -425,7 +422,7 @@ body {
 .sala-livetag span {
   font-family: var(--font-mono), "IBM Plex Mono", monospace;
   font-weight: 500;
-  font-size: 13px;
+  font-size: 0.677vw;
   letter-spacing: 0.2em;
   color: var(--sala-cream);
 }
@@ -433,21 +430,21 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 806px;
-  height: 1080px;
-  padding: 64px;
+  width: 41.979vw;
+  height: 100%;
+  padding: 3.333vw;
 }
 .sala-panelhead {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding-bottom: 14px;
+  padding-bottom: 0.729vw;
   border-bottom: 1px solid var(--sala-hair);
 }
 .sala-panelhead__ed {
   font-family: var(--font-mono), "IBM Plex Mono", monospace;
-  font-size: 14px;
+  font-size: 0.729vw;
   letter-spacing: 0.16em;
   color: var(--sala-mute);
 }
@@ -456,7 +453,7 @@ body {
   flex-direction: column;
   flex: 1;
   justify-content: center;
-  gap: 22px;
+  gap: 1.146vw;
 }
 .sala-kicker--brown {
   color: var(--sala-brown);
@@ -465,7 +462,7 @@ body {
   font-family: var(--font-display), "Cormorant Garamond", serif;
   font-weight: 500;
   font-style: italic;
-  font-size: 96px;
+  font-size: 5vw;
   line-height: 0.94;
   letter-spacing: -0.01em;
   color: var(--sala-ink);
@@ -473,28 +470,28 @@ body {
 .sala-destacado__desc {
   font-family: var(--font-display), "Cormorant Garamond", serif;
   font-style: italic;
-  font-size: 30px;
+  font-size: 1.563vw;
   line-height: 1.34;
   color: var(--sala-mute);
-  max-width: 600px;
+  max-width: 31.25vw;
 }
 .sala-destacado__price {
   display: flex;
   align-items: baseline;
-  gap: 14px;
-  padding-top: 10px;
+  gap: 0.729vw;
+  padding-top: 0.521vw;
 }
 .sala-destacado__price small {
   font-family: var(--font-tracked), Poppins, sans-serif;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 0.729vw;
   letter-spacing: 0.2em;
   color: var(--sala-mute);
 }
 .sala-destacado__price strong {
   font-family: var(--font-mono), "IBM Plex Mono", monospace;
   font-weight: 500;
-  font-size: 64px;
+  font-size: 3.333vw;
   letter-spacing: 0.01em;
   line-height: 1;
   color: var(--sala-green);
@@ -504,18 +501,18 @@ body {
   align-items: flex-end;
   justify-content: space-between;
   width: 100%;
-  padding-top: 24px;
+  padding-top: 1.25vw;
   border-top: 1px solid var(--sala-hair);
 }
 .sala-destacado__pair {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.313vw;
 }
 .sala-destacado__pair em {
   font-family: var(--font-display), "Cormorant Garamond", serif;
   font-style: italic;
-  font-size: 30px;
+  font-size: 1.563vw;
   line-height: 1;
   color: var(--sala-ink);
 }
@@ -524,19 +521,19 @@ body {
 .sala-barra {
   display: flex;
   flex-direction: column;
-  padding: 64px;
+  padding: 3.333vw;
 }
 .sala-barra__head {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
   width: 100%;
-  padding-top: 26px;
+  padding-top: 1.354vw;
 }
 .sala-barra__head-l {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 0.729vw;
 }
 .sala-barra__title {
   display: flex;
@@ -546,7 +543,7 @@ body {
   font-family: var(--font-display), "Cormorant Garamond", serif;
   font-weight: 500;
   font-style: italic;
-  font-size: 92px;
+  font-size: 4.792vw;
   line-height: 0.92;
   letter-spacing: -0.01em;
   color: var(--sala-ink);
@@ -558,24 +555,24 @@ body {
 .sala-barra__note {
   font-family: var(--font-display), "Cormorant Garamond", serif;
   font-style: italic;
-  font-size: 26px;
+  font-size: 1.354vw;
   color: var(--sala-mute);
-  max-width: 360px;
+  max-width: 18.75vw;
   text-align: right;
 }
 .sala-main {
   display: flex;
   flex-direction: row;
-  gap: 56px;
+  gap: 2.917vw;
   width: 100%;
   flex: 1;
-  padding: 34px 0;
+  padding: 1.771vw 0;
 }
 .sala-lists {
   display: flex;
   flex-direction: row;
   flex: 1.62;
-  gap: 64px;
+  gap: 3.333vw;
 }
 .sala-col {
   display: flex;
@@ -585,47 +582,47 @@ body {
 .sala-col__head {
   font-family: var(--font-tracked), Poppins, sans-serif;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 0.781vw;
   letter-spacing: 0.24em;
   color: var(--sala-brown);
-  padding-bottom: 16px;
+  padding-bottom: 0.833vw;
   border-bottom: 1px solid var(--sala-hair);
 }
 .sala-item {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 15px 0;
+  gap: 0.208vw;
+  padding: 0.781vw 0;
   border-bottom: 1px solid var(--sala-hair-lt);
 }
 .sala-item--firma {
   background: var(--sala-firma);
-  padding: 15px 18px;
+  padding: 0.781vw 0.938vw;
 }
 .sala-item__row {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 14px;
+  gap: 0.729vw;
 }
 .sala-item__name {
   font-family: var(--font-display), "Cormorant Garamond", serif;
   font-weight: 500;
   font-style: italic;
-  font-size: 38px;
+  font-size: 1.979vw;
   line-height: 1;
   color: var(--sala-ink);
 }
 .sala-item__price {
   font-family: var(--font-mono), "IBM Plex Mono", monospace;
   font-weight: 500;
-  font-size: 26px;
+  font-size: 1.354vw;
   color: var(--sala-ink);
   flex: none;
 }
 .sala-item__meta {
   font-family: var(--font-mono), "IBM Plex Mono", monospace;
-  font-size: 14px;
+  font-size: 0.729vw;
   letter-spacing: 0.07em;
   color: var(--sala-mute);
 }
@@ -659,15 +656,15 @@ body {
 }
 .sala-feature__tag {
   position: absolute;
-  left: 32px;
-  top: 32px;
-  padding: 9px 15px;
+  left: 1.667vw;
+  top: 1.667vw;
+  padding: 0.469vw 0.781vw;
   background: var(--sala-cream);
 }
 .sala-feature__tag span {
   font-family: var(--font-tracked), Poppins, sans-serif;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 0.677vw;
   letter-spacing: 0.2em;
   color: var(--sala-ink);
 }
@@ -675,40 +672,40 @@ body {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 36px;
+  gap: 0.521vw;
+  padding: 1.875vw;
 }
 .sala-feature__name {
   font-family: var(--font-display), "Cormorant Garamond", serif;
   font-weight: 500;
   font-style: italic;
-  font-size: 58px;
+  font-size: 3.021vw;
   line-height: 0.96;
   color: var(--sala-cream);
 }
 .sala-feature__desc {
   font-family: var(--font-display), "Cormorant Garamond", serif;
   font-style: italic;
-  font-size: 24px;
+  font-size: 1.25vw;
   line-height: 1.3;
   color: var(--sala-cream-84);
-  max-width: 420px;
+  max-width: 21.875vw;
 }
 .sala-feature__price {
   display: flex;
   align-items: baseline;
-  gap: 12px;
-  padding-top: 6px;
+  gap: 0.625vw;
+  padding-top: 0.313vw;
 }
 .sala-feature__price strong {
   font-family: var(--font-mono), "IBM Plex Mono", monospace;
   font-weight: 500;
-  font-size: 38px;
+  font-size: 1.979vw;
   color: var(--sala-cream);
 }
 .sala-feature__price small {
   font-family: var(--font-mono), "IBM Plex Mono", monospace;
-  font-size: 15px;
+  font-size: 0.781vw;
   letter-spacing: 0.1em;
   color: rgba(250, 245, 236, 0.7);
 }
@@ -717,22 +714,22 @@ body {
 .sala-ejec {
   display: flex;
   align-items: center;
-  gap: 40px;
+  gap: 2.083vw;
   width: 100%;
-  padding: 28px 36px;
+  padding: 1.458vw 1.875vw;
   background: var(--sala-espresso);
 }
 .sala-ejec__l {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.313vw;
   flex: none;
-  width: 300px;
+  width: 15.625vw;
 }
 .sala-ejec__k {
   font-family: var(--font-tracked), Poppins, sans-serif;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 0.729vw;
   letter-spacing: 0.24em;
   color: rgba(250, 245, 236, 0.66);
 }
@@ -740,37 +737,37 @@ body {
   font-family: var(--font-display), "Cormorant Garamond", serif;
   font-weight: 500;
   font-style: italic;
-  font-size: 42px;
+  font-size: 2.188vw;
   line-height: 1;
   color: var(--sala-cream);
 }
 .sala-ejec__courses {
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 1.667vw;
   flex: 1;
 }
 .sala-ejec__course {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.104vw;
 }
 .sala-ejec__course small {
   font-family: var(--font-mono), "IBM Plex Mono", monospace;
-  font-size: 12px;
+  font-size: 0.625vw;
   letter-spacing: 0.12em;
   color: rgba(250, 245, 236, 0.5);
 }
 .sala-ejec__course em {
   font-family: var(--font-display), "Cormorant Garamond", serif;
   font-style: italic;
-  font-size: 24px;
+  font-size: 1.25vw;
   color: var(--sala-cream);
 }
 .sala-ejec__price {
   font-family: var(--font-mono), "IBM Plex Mono", monospace;
   font-weight: 500;
-  font-size: 46px;
+  font-size: 2.396vw;
   color: var(--sala-cream);
   flex: none;
 }
