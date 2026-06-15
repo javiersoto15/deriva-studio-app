@@ -2,7 +2,7 @@
    A printed football-pools coupon as a Deriva letterpress broadside.
    Letterpress, not SaaS. EVERYTHING 0px border-radius (squares, not pills/
    circles) — the ONE exception is the copper "RECIBIDO" seal on the submitted
-   state. The single green moment on the whole surface is the word "exacto" in
+   state. The single green moment on the whole surface is the word "Mundial" in
    the cover hero (.polla__title em). Nowhere else. */
 
 .polla {
@@ -145,6 +145,16 @@
   letter-spacing: 0.02em;
   color: var(--muted);
   margin: 14px 0 28px;
+}
+
+/* Short game hook under the hero (cover + desktop aside). */
+.polla__hook {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  margin: 12px 0 0;
 }
 
 /* On wider phones, lay each tier out on a single line. */
@@ -643,6 +653,133 @@
   }
   .polla__seal {
     opacity: 1;
+  }
+}
+
+/* ======================================================================== */
+/* Mobile single-viewport fit (<1024px). Every wizard view — cover, each match
+   step, review, and the terminal/submitted states — fits within the viewport
+   height and does NOT scroll. The wizard fills 100svh and centers its content;
+   on the tall steps (cover, review) the vertical rhythm is compacted to a
+   ~560–620px content budget so it clears 360×640, 375×812 and 390×844. The
+   ONLY thing allowed to scroll is the review match-row list (.polla__stub),
+   which gets its own max-height so the masthead + email + nav stay pinned.
+   None of this leaks into the desktop two-pane below (gated ≥1024px). */
+/* ======================================================================== */
+@media (max-width: 1023.98px) {
+  .polla {
+    height: 100svh;
+    min-height: 100svh;
+    /* Reduced nav-clearance padding (was up to 108px) reclaims vertical room. */
+    padding: clamp(60px, 8vh, 76px) 20px 24px;
+  }
+  /* The rail/step occupies the viewport and vertically centers its content so
+     nothing scrolls; overflow is clipped, never scrolled. */
+  .polla__grid {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  /* The rail fills the grid's height so its flex centering uses the full
+     viewport; the step rail (cover/match/review) is itself the rail. */
+  .polla__grid > .polla__rail {
+    flex: 1;
+    min-height: 0;
+  }
+  .polla__rail,
+  .polla__step {
+    width: 100%;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  /* ---- Masthead: tighter ---- */
+  .polla__logo {
+    margin-bottom: 12px;
+  }
+
+  /* ---- Cover hero: smaller type + tighter margins ---- */
+  .polla__title {
+    font-size: clamp(34px, 9vw, 46px);
+    margin: 14px 0 0;
+  }
+  .polla__hook {
+    margin: 8px 0 0;
+    line-height: 1.5;
+  }
+
+  /* ---- Perforation: compact ---- */
+  .polla__perf {
+    margin: 14px 0;
+  }
+
+  /* ---- Premios ladder: compact rows + a touch smaller ---- */
+  .polla__tiers {
+    margin: 14px 0 0;
+  }
+  .polla__tier {
+    padding: 8px 0;
+  }
+  .polla__tier-prize {
+    font-size: 15px;
+  }
+  .polla__tiers-foot {
+    margin: 10px 0 16px;
+  }
+
+  /* ---- Match step: compact progress block ---- */
+  .polla__progress {
+    margin: 14px 0 8px;
+  }
+  .polla__kickoff {
+    margin: 0 0 14px;
+  }
+  .polla__cell {
+    padding: 18px 16px;
+    gap: 12px;
+  }
+  .polla__score {
+    font-size: 44px;
+  }
+
+  /* ---- Review: compact slug, stub rows, fields ---- */
+  .polla__slug {
+    margin: 14px 0 4px;
+  }
+  .polla__stub {
+    margin: 10px 0 0;
+    /* Only the match-row list scrolls when matches are many; masthead + email +
+       nav stay pinned and visible. Common 1–4 matches never reach this cap. */
+    max-height: 34vh;
+    overflow-y: auto;
+  }
+  .polla__review-row {
+    padding: 10px 0;
+  }
+  .polla__field {
+    margin: 16px 0 6px;
+    gap: 8px;
+  }
+  .polla__consent {
+    line-height: 1.55;
+  }
+
+  /* ---- Nav: tighter top spacing ---- */
+  .polla__nav {
+    margin-top: 18px;
+  }
+
+  /* ---- Terminal states: pull up into the centered viewport ---- */
+  .polla__terminal {
+    padding-top: 0;
+  }
+  .polla__terminal-title {
+    margin: 12px 0;
+  }
+  .polla__colophon {
+    margin-top: 20px;
   }
 }
 

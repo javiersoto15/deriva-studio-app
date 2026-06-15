@@ -104,9 +104,12 @@ export function PollaWizard({ day, edition }: { day: WorldCupDay; edition: strin
         <div className="polla__rail polla__step">
         <Masthead edition={edition} />
         <h1 id="polla-title" className="polla__title">
-          Adivina el marcador<br />
-          <em>exacto.</em>
+          Vive el <em>Mundial</em><br />
+          con Deriva.
         </h1>
+        <p className="polla__hook">
+          Adivina el marcador exacto de los partidos de cada día.
+        </p>
 
         <div className="polla__perf">
           <span className="polla__perf-line" />
@@ -401,9 +404,12 @@ function CoverAside({
     <aside className="polla__aside" aria-hidden="true">
       <Masthead edition={edition} />
       <h1 className="polla__title">
-        Adivina el marcador<br />
-        <em>exacto.</em>
+        Vive el <em>Mundial</em><br />
+        con Deriva.
       </h1>
+      <p className="polla__hook">
+        Adivina el marcador exacto de los partidos de cada día.
+      </p>
 
       {typeof matchCount === "number" && (
         <div className="polla__perf">

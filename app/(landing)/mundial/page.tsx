@@ -60,7 +60,7 @@ async function PollaSlate() {
         <Terminal
           edition={edition}
           eyebrow="La Polla del Mundial"
-          title={<>Hoy no <em>corre</em> la polla.</>}
+          title={<>Hoy no hay <em>partidos</em>.</>}
           body="No hay partidos para predecir hoy. Vuelve el próximo día de Mundial — lo anunciamos en Instagram."
           ig
         />
@@ -83,7 +83,7 @@ async function PollaSlate() {
       <Terminal
         edition={edition}
         eyebrow="La Polla del Mundial"
-        title={<>La polla de hoy ya <em>cerró</em>.</>}
+        title={<>Hoy ya <em>cerró</em>.</>}
         body="Las predicciones se cierran con el primer pitazo del día. Te esperamos en la próxima jornada."
       />
     );
