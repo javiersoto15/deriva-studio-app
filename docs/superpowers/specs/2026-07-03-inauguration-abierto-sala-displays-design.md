@@ -21,9 +21,9 @@ Two in-café displays should engage the event, each composed for its own viewpor
 
 ## Approach
 
-**Additive, time-gated plate on each display. Zero edits to existing views.**
+**Exclusive takeover during the window. Zero edits to existing views.**
 
-Each rotator already builds its set from independent boolean gates. Add exactly one gate:
+For these 5 hours each display shows **only the inauguration plate** — the entire normal rotation is suppressed. All times are computed in **America/Santiago** (server clock irrelevant):
 
 ```ts
 // America/Santiago, this single night only
@@ -34,15 +34,23 @@ function isInauguracion(now: Date): boolean {
 }
 ```
 
-When true, push one new plate into the rotation. At 21:00 today (or when the date rolls over) the gate is false and both displays revert automatically — no manual step, no redeploy.
+Each rotator **early-returns a single-view rotator** carrying only the inauguration plate when the gate is true; otherwise it builds its normal set exactly as today. At 21:00 today (or when the date rolls over) the gate is false and both displays revert automatically — no manual step, no redeploy. A single view in `CrossfadeRotator` simply holds (no crossfade), the same path the `?view=` QA hook already uses.
 
-**Non-modification guarantee:** existing plate components and CSS classes are left byte-identical. New work is isolated to:
+```ts
+// e.g. in AbiertoRotator, before the normal additive build:
+if (isInauguracion(now)) {
+  return <CrossfadeRotator className="ab-rotator"
+    views={[{ key: "inauguracion", node: <AbiertoInauguracion /> }]} />;
+}
+```
+
+**Non-modification guarantee:** existing plate components and CSS classes are left byte-identical — they are simply not rendered during the window. New work is isolated to:
 - New components `AbiertoInauguracion` / `SalaInauguracion`.
 - New namespaced CSS blocks (`.ab-inaug*` / `.sala-inaug*`).
-- One added gate + one `views.push(...)` in each rotator.
+- One added gate + one early return in each rotator.
 - `inauguracion` added to each `?view=` QA switch.
 
-**Rejected alternatives:** (a) *replacing* the evening views during the window — risks the "don't modify originals" rule and drops the live Noche board; (b) a *single shared component* — impossible, the viewports are orthogonal (1080×1920 vs 1920×1080) and need distinct compositions.
+**Rejected alternatives:** (a) *additive* — mixing the plate into the normal rotation; the founder wants nothing but inauguration during the window. (b) A *single shared component* — impossible, the viewports are orthogonal (1080×1920 vs 1920×1080) and need distinct compositions.
 
 ## Shared campaign DNA
 
@@ -72,7 +80,7 @@ Reuses the `.ab-stage` skeleton register. Top→bottom:
 5. `§ El sorteo` — 4-row numbered ledger (roman i–iv, name, one-line descriptor). Cream type.
 6. Footer band: `DESDE LAS 16:00 · HOY` + `DESCUENTOS SELECCIONADOS · SORTEO` + socials/address.
 
-**Rotation on inauguration evening:** `[Abierto (20s), Inauguración (45s), Noche (45s)]` — inauguration inserted at index 1 (right after the splash) for prominence; the live Noche board is untouched and still runs. Outside the window: unchanged normal rotation.
+**Rotation 16:00–21:00 today:** `[Inauguración]` only — held solid, no crossfade. The Abierto splash, Menu Ejecutivo, promo, and Noche are all suppressed for the window. Outside the window: unchanged normal rotation.
 
 ## Composition — `/sala` (horizontal split)
 
@@ -81,7 +89,7 @@ Left type panel / right full-bleed photo, dark register (sits naturally alongsid
 - **Left panel:** masthead (cream lockup + edition mark) → eyebrow `§ INAUGURACIÓN OFICIAL · 3 JUL 2026` → hero headline *Salimos de la marcha blanca.* / **Llega la inauguración.** (cream) → `§ El sorteo` numbered ledger (4 items, roman numerals + descriptors) → footer line `DESDE LAS 16:00 · SORTEO · DESCUENTOS SELECCIONADOS`.
 - **Right panel:** full-bleed `interior` (fallback `storefront`) at ~1114px via `DerivaImage fill`, flat scrim + text-shadow, green claim caption **"a la Deriva."** (the plate's single **green moment**) + deckle "La primera noche".
 
-**Rotation on inauguration evening:** `[portada (16s), inauguración (22s), oficio (14s), destacado (14s), barra (24s)]` — inserted at index 1. Outside the window: unchanged 4-plate rotation.
+**Rotation 16:00–21:00 today:** `[Inauguración]` only — held solid, no crossfade. The portada / oficio / destacado / barra plates are all suppressed for the window. Outside the window: unchanged 4-plate rotation.
 
 > Green-moment split (intentional differentiation): `/abierto` greens the word "inauguración"; `/sala` greens the "a la Deriva." claim. Each plate keeps exactly one green.
 
@@ -91,6 +99,7 @@ Left type panel / right full-bleed photo, dark register (sits naturally alongsid
 - Time-gate unit reasoning: gate true only for `2026-07-03` hours 16–20 in America/Santiago; false at 15:59, at 21:00, and on 2026-07-04.
 - Visual: verify fill/letterbox at the target resolutions (`/abierto` 1080×1920; `/sala` 1280×720 / 1920×1080 / 3840×2160 per `project_sala_display`).
 - `npm run typecheck` clean.
+- **Refresh latency:** both displays reload every 10 min, so a screen already on at 15:55 flips into the takeover by ≤16:10 and reverts to normal by ≤21:10. Acceptable for an evening event; if an exact 16:00 flip matters, reload the TV manually at 16:00.
 
 ## Constraints & workflow
 
