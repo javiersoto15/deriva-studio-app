@@ -811,6 +811,8 @@ export interface paths {
                     day: components["schemas"]["TodayWeekday"];
                     /** @description Resolves localized JSONB fields. Unknown values fall back to es-CL. */
                     locale?: "es-CL" | "en" | "pt-BR";
+                    /** @description Santiago-local date in YYYY-MM-DD used to return date-specific staff shifts. Defaults to the current America/Santiago date. */
+                    date?: string;
                 };
                 header?: never;
                 path?: never;
@@ -1544,7 +1546,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/public/campaigns/world-cup-predictor/matches/today": {
+    "/public/campaigns/world-cup-predictor/matches/open": {
         parameters: {
             query?: never;
             header?: never;
@@ -1552,8 +1554,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get today's World Cup prediction matches
-         * @description Backend-owned same-day match list for the public prediction campaign. Submissions close at the first kickoff for the Santiago-local campaign date.
+         * Get the currently open World Cup prediction slate
+         * @description Backend-owned open match list for the public prediction campaign. If today's submission window is still open, returns today's matches. After today's first kickoff, rolls forward to the next future seeded match day whose first kickoff is still in the future. Returns 404 when there is no upcoming open slate.
          */
         get: {
             parameters: {
@@ -1564,7 +1566,49 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
-                /** @description Same-day World Cup prediction slate. */
+                /** @description Currently open World Cup prediction slate. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["WorldCupDay"];
+                    };
+                };
+                404: components["responses"]["NotFound"];
+                500: components["responses"]["InternalServerError"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/campaigns/world-cup-predictor/matches/today": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Deprecated alias for the currently open World Cup prediction slate
+         * @deprecated
+         * @description Deprecated alias of `/public/campaigns/world-cup-predictor/matches/open`. It now returns the currently open slate, not necessarily today's local date.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Currently open World Cup prediction slate. */
                 200: {
                     headers: {
                         [name: string]: unknown;
@@ -1596,7 +1640,7 @@ export interface paths {
         put?: never;
         /**
          * Submit World Cup score predictions
-         * @description Public campaign intake keyed by full name and canonicalized email. The request must include a score prediction for every same-day match returned by the backend. Email duplicate checks collapse common alias attempts such as plus tags and Gmail dots before hashing. Evaluation is tiered after all same-day matches are final: any single correct outcome wins a free simple coffee, all correct outcomes win one Campesino, and all exact scores win a combo for two Campesinos.
+         * @description Public campaign intake keyed by full name and canonicalized email. The request must include a score prediction for every match in the currently open slate returned by `/public/campaigns/world-cup-predictor/matches/open`. If `campaign_date` is omitted, the backend binds the submission to the currently open slate. If `campaign_date` is sent, it must match the currently open slate or the backend returns 410. Email duplicate checks collapse common alias attempts such as plus tags and Gmail dots before hashing, scoped per campaign date. From campaign date 2026-06-18 onward, evaluation is exact-score based: at least one exact score wins a free simple coffee, and exact scores for every same-day match win one Campesino. Earlier campaign dates keep their original tier rules. Issued rewards are valid for one week from the next local reward day.
          */
         post: {
             parameters: {
@@ -2497,6 +2541,53 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/campaigns/world-cup-predictor/matches": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get World Cup predictor matches for a campaign date
+         * @description Manager/owner read endpoint for the authoritative backend-owned match slate on any seeded campaign date. Local scoring workflows must use this endpoint before researching results so they do not miss matches from historical dates.
+         */
+        get: {
+            parameters: {
+                query: {
+                    /** @description Campaign date in YYYY-MM-DD. */
+                    campaign_date: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description World Cup prediction slate for the requested date. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["WorldCupDay"];
+                    };
+                };
+                400: components["responses"]["BadRequest"];
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                404: components["responses"]["NotFound"];
+                500: components["responses"]["InternalServerError"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/admin/campaigns/world-cup-predictor/matches/{match_id}/result": {
         parameters: {
             query?: never;
@@ -2507,7 +2598,7 @@ export interface paths {
         get?: never;
         /**
          * Record a World Cup match final score
-         * @description Manager/owner endpoint for backend-owned final scores. Recording a result triggers deterministic same-day submission evaluation once all matches for the day are final. Rewards are tiered: any single correct outcome wins a free simple coffee, all correct outcomes win one Campesino, and all exact scores win a combo for two Campesinos.
+         * @description Manager/owner endpoint for backend-owned final scores. Recording a result triggers deterministic same-day submission evaluation once all matches for the day are final. From campaign date 2026-06-18 onward, rewards are exact-score based: at least one exact score wins a free simple coffee, and exact scores for every same-day match win one Campesino. Earlier campaign dates keep their original tier rules.
          */
         put: {
             parameters: {
@@ -2770,7 +2861,35 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
-        delete?: never;
+        /**
+         * Soft-delete a menu item
+         * @description Manager/owner endpoint marking an item unavailable so it is hidden from public readers while remaining visible in admin catalog history. Actor is derived from the bearer token and every successful mutation emits an audit log entry.
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    item_id: components["parameters"]["ItemID"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Menu item marked unavailable. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MenuItem"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                404: components["responses"]["NotFound"];
+            };
+        };
         options?: never;
         head?: never;
         /**
@@ -2799,6 +2918,55 @@ export interface paths {
                     };
                     content: {
                         "application/json": components["schemas"]["MenuItem"];
+                    };
+                };
+                400: components["responses"]["BadRequest"];
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                404: components["responses"]["NotFound"];
+            };
+        };
+        trace?: never;
+    };
+    "/admin/menu/sections/{section_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update a public menu section
+         * @description Manager/owner endpoint for section-level menu copy and schedule edits, including localized title, lede, and service-window copy. Actor is derived from the bearer token and every successful mutation emits an audit log entry.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    section_id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["PublicMenuSectionPatch"];
+                };
+            };
+            responses: {
+                /** @description Updated public menu section template. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PublicMenuSectionTemplate"];
                     };
                 };
                 400: components["responses"]["BadRequest"];
@@ -3797,10 +3965,14 @@ export interface components {
         };
         TodayResponse: {
             day: components["schemas"]["TodayWeekday"];
+            /** Format: date */
+            date: string;
             hours: components["schemas"]["TodayHours"];
             destacado: components["schemas"]["TodayOriginView"];
             rotacion: components["schemas"]["TodayOriginView"][];
             barra: components["schemas"]["TodayBaristaView"] | null;
+            shifts: components["schemas"]["TodayShiftMap"];
+            /** @description Null until Deriva has real member receipt/order history. The backend must not synthesize customer order history. */
             last_order: components["schemas"]["TodayLastOrder"] | null;
         };
         TodayOrigin: {
@@ -3837,6 +4009,13 @@ export interface components {
             break_end_local?: string;
             hours: number;
             sort_order: number;
+        };
+        TodayShiftMap: {
+            /** Format: date */
+            date: string;
+            baristas: components["schemas"]["TodayStaffShift"][];
+            cocina: components["schemas"]["TodayStaffShift"][];
+            garzones: components["schemas"]["TodayStaffShift"][];
         };
         TodayOriginsResponse: {
             origins: components["schemas"]["TodayOrigin"][];
@@ -4251,6 +4430,25 @@ export interface components {
             addons?: components["schemas"]["PublicMenuAddon"][];
             addons_before?: string;
             executive_menu?: boolean;
+            translations?: {
+                [key: string]: components["schemas"]["PublicMenuSectionTranslation"];
+            };
+        };
+        PublicMenuSectionPatch: {
+            title?: string;
+            italic_word?: string;
+            lede?: string;
+            service_window?: string;
+            schedule?: components["schemas"]["PublicMenuSchedule"][];
+            translations?: {
+                [key: string]: components["schemas"]["PublicMenuSectionTranslation"];
+            };
+        };
+        PublicMenuSectionTranslation: {
+            title?: string;
+            italic_word?: string;
+            lede?: string;
+            service_window?: string;
         };
         PublicMenuSubgroupTemplate: {
             id: string;
@@ -4535,8 +4733,10 @@ export interface components {
             reason?: string;
         };
         StaffRedemptionRequest: {
-            member_id: string;
-            reward_id: string;
+            /** @description Optional. If omitted, the backend resolves it from the reward redemption token or short code. */
+            member_id?: string;
+            /** @description Optional. If omitted, the backend resolves it from the reward redemption token or short code. */
+            reward_id?: string;
             token?: string;
             /** @description Four-character manual fallback code from RewardRedemptionTokenResponse. Either token or short_code is required. */
             short_code?: string;
@@ -4609,7 +4809,9 @@ export interface components {
             match_date: string;
             /** Format: date-time */
             kickoff_at: string;
+            /** @description Spanish display name for confirmed national teams; unresolved knockout placeholders remain as source labels. */
             home_team: string;
+            /** @description Spanish display name for confirmed national teams; unresolved knockout placeholders remain as source labels. */
             away_team: string;
             stage?: string;
             group_name?: string;
@@ -4650,6 +4852,11 @@ export interface components {
             away_score: number;
         };
         WorldCupSubmissionRequest: {
+            /**
+             * Format: date
+             * @description Optional client echo of the open slate's campaign_date. If present, it must match the backend's current open slate.
+             */
+            campaign_date?: string;
             /** Format: email */
             email: string;
             /** @description Participant display name. Used as a soft identity signal and shown in the submitted prediction response; duplicate enforcement is still based on canonicalized email hash. */

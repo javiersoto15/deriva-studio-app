@@ -53,6 +53,8 @@ export type EditionParts = {
   seasonAndCampaign: string;
   /** Title-case Spanish day-and-date label e.g. "Lun 25 May". */
   shortDate: string;
+  /** Santiago-local ISO date used for backend date-specific content. */
+  date: string;
   /** "mon" | "tue" | ... — for content lookup by weekday. */
   weekday: "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
   /** Raw ISO-week of the year, useful for rotation indexing. */
@@ -86,6 +88,7 @@ export function getEditionParts(now: Date = new Date()): EditionParts {
     volumeAndWeek: `Vol. 001 · № ${String(weekNum).padStart(2, "0")}`,
     seasonAndCampaign: `${season} MMXXVI · Apertura`,
     shortDate: `${DAY_SHORT_ES[dayIdx]} ${d} ${MONTH_SHORT_ES[mo - 1]}`,
+    date: `${y}-${String(mo).padStart(2, "0")}-${String(d).padStart(2, "0")}`,
     weekday: DAY_TO_KEY[dayIdx] as EditionParts["weekday"],
     isoWeek: weekNum
   };

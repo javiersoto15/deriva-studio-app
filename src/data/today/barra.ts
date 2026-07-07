@@ -3,37 +3,37 @@ import type { Barista, Weekday } from "./types";
 // Degraded fallback only. Authenticated runtime content comes from GET /me/today.
 const SCHEDULE: Record<Weekday, Barista> = {
   mon: {
-    name: "Martina",
-    turnoUntil: "hasta las 14:00",
-    note: "Hoy estoy probando un Geisha en frío — si te animas, pregúntame."
+    name: "Maria",
+    turnoUntil: "hasta las 16:30",
+    note: "Estoy en barra hoy; te recomiendo partir por el Yirgacheffe si buscas un filtro mas floral."
   },
   tue: {
-    name: "Camila",
-    turnoUntil: "hasta las 14:00",
-    note: "Recién abrimos el lote de Cerrado. Vengan por un espresso."
+    name: "Maria",
+    turnoUntil: "hasta las 13:30",
+    note: "Estoy en barra hoy; te recomiendo partir por el Yirgacheffe si buscas un filtro mas floral."
   },
   wed: {
-    name: "Tomás",
-    turnoUntil: "hasta las 16:00",
-    note: "Chemex caliente, sin apuros. Pídelo doble si vas con tiempo."
+    name: "Carla",
+    turnoUntil: "hasta las 16:30",
+    note: "Estoy en barra hoy; si quieres algo sin cafeina, pregunta por Mexico Chiapas."
   },
   thu: {
-    name: "Martina",
-    turnoUntil: "hasta las 14:00",
-    note: "El honey de Huila pide leche apenas tibia."
+    name: "Maria",
+    turnoUntil: "hasta las 16:30",
+    note: "Estoy en barra hoy; te recomiendo partir por el Yirgacheffe si buscas un filtro mas floral."
   },
   fri: {
-    name: "Camila",
-    turnoUntil: "hasta las 16:00",
-    note: "Viernes de Antigua. Bien para acompañar masa madre."
+    name: "Carla",
+    turnoUntil: "hasta las 16:30",
+    note: "Estoy en barra hoy; si quieres algo sin cafeina, pregunta por Mexico Chiapas."
   },
   sat: {
-    name: "Tomás",
-    turnoUntil: "hasta las 15:00",
-    note: "Sábado pausado. Pide el filtrado y quédate."
+    name: "Fabian",
+    turnoUntil: "hasta las 18:30",
+    note: "Estoy en barra hoy; si quieres comparar House Blend y Yirgacheffe, te ayudo a elegir."
   },
   sun: {
-    name: "Martina",
+    name: "Deriva",
     turnoUntil: "cerrado",
     note: "Mañana abrimos a las 08:00."
   }

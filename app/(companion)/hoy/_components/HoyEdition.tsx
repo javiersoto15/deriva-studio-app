@@ -24,6 +24,7 @@ import { HeroCafeDelDia } from "./HeroCafeDelDia";
 import { MetricStrip } from "./MetricStrip";
 import { NotaTile } from "./NotaTile";
 import { RotacionTile } from "./RotacionTile";
+import { ShiftRoster, type ShiftRosterData } from "./ShiftRoster";
 
 type HoyViewModel = {
   cafeDelDia: DestacadoOrigin;
@@ -33,12 +34,13 @@ type HoyViewModel = {
   closesAt: string;
   isOpen: boolean;
   lastOrder: { name: string; when: string } | null;
+  shifts: ShiftRosterData;
 };
 
 export function HoyEdition({ edition }: { edition: EditionParts }) {
   const { status } = useAuth();
   const locale = useActiveBackendLocale();
-  const query = useToday(edition.weekday, locale, status === "authenticated");
+  const query = useToday(edition.weekday, locale, status === "authenticated", edition.date);
   const view = useMemo(
     () => buildHoyView(query.data, edition),
     [query.data, edition]
@@ -55,6 +57,8 @@ export function HoyEdition({ edition }: { edition: EditionParts }) {
       </div>
 
       <NotaTile nota={nota} />
+
+      <ShiftRoster shifts={view.shifts} />
 
       <MetricStrip
         openLabel={view.openLabel}
@@ -91,7 +95,8 @@ function buildHoyView(data: TodayResponse | undefined, edition: EditionParts): H
           name: data.last_order.name,
           when: formatLastOrder(data.last_order.placed_at_utc)
         }
-      : null
+      : null,
+    shifts: data.shifts
   };
 }
 
@@ -107,7 +112,13 @@ function degradedFallback(edition: EditionParts): HoyViewModel {
     openLabel: isOpen ? "Abierto" : "Cerrado",
     closesAt: isOpen ? "21:00" : "08:00",
     isOpen,
-    lastOrder: { name: "Flat white.", when: "sáb · 10:14" }
+    lastOrder: null,
+    shifts: {
+      date: edition.date,
+      baristas: [],
+      cocina: [],
+      garzones: []
+    }
   };
 }
 

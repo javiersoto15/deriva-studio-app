@@ -131,7 +131,7 @@ export async function submitPollaAction(
 /**
  * Centralizes mapping the fetcher result → UI state, so future backend reward
  * semantics land in one place. The submit response is intentionally tier-blind:
- * the tier (café simple / Campesino / combo) is decided backend-side LATER,
+ * the tier (café simple / Campesino) is decided backend-side LATER,
  * after same-day results, and is NOT revealed here.
  *
  * FUTURE-PROOFING — the backend may later surface richer submission statuses.

@@ -52,6 +52,19 @@
   padding: 28px 20px 48px;
 }
 
+.redeem__switch {
+  margin: 0 0 18px;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.redeem__switch a {
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 /* ── Lookup (manual entry) ───────────────────────────────────────────────── */
 .redeem__lookup {
   display: flex;

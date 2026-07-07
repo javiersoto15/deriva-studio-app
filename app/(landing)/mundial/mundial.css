@@ -146,6 +146,12 @@
   color: var(--muted);
   margin: 14px 0 28px;
 }
+.polla__tiers-foot p {
+  margin: 0;
+}
+.polla__tiers-foot p + p {
+  margin-top: 6px;
+}
 
 /* Short game hook under the hero (cover + desktop aside). */
 .polla__hook {

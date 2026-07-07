@@ -4,31 +4,36 @@ import { Suspense } from "react";
 import {
   isStaffUnlocked,
   signOutStaffMatchUp
-} from "../../../src/server/staff-match-up";
-import { StaffUnlock } from "../match-up/_components/StaffUnlock";
-import { RewardValidator } from "./_components/RewardValidator";
-import "./redemptions.css";
+} from "../../../../src/server/staff-match-up";
+import { StaffUnlock } from "../../match-up/_components/StaffUnlock";
+import { WalletRewardRedeemer } from "./_components/WalletRewardRedeemer";
+import "../redemptions.css";
 
-// Staff-only tool — never index it.
 export const metadata: Metadata = {
-  title: "Canje de recompensas · Barra",
+  title: "Canje de miembros · Barra",
   robots: { index: false, follow: false }
 };
 
-export default function RedemptionsPage() {
+export default function WalletRedemptionsPage({
+  searchParams
+}: {
+  searchParams: Promise<{ token?: string; short_code?: string; code?: string }>;
+}) {
   return (
     <div className="redeem-shell">
-      {/* The cookie read (isStaffUnlocked) is uncached dynamic data; under
-          Cache Components it must live inside a Suspense boundary so the rest
-          of the route can prerender. */}
       <Suspense fallback={<Bar />}>
-        <Gate />
+        <Gate searchParams={searchParams} />
       </Suspense>
     </div>
   );
 }
 
-async function Gate() {
+async function Gate({
+  searchParams
+}: {
+  searchParams: Promise<{ token?: string; short_code?: string; code?: string }>;
+}) {
+  const params = await searchParams;
   const unlocked = await isStaffUnlocked();
   return (
     <>
@@ -37,9 +42,12 @@ async function Gate() {
         {unlocked ? (
           <>
             <p className="redeem__switch">
-              <Link href="/redemptions/wallet">Canjes de miembros</Link>
+              <Link href="/redemptions">Canjes de campana</Link>
             </p>
-            <RewardValidator initialState={{ status: "idle" }} />
+            <WalletRewardRedeemer
+              initialToken={params.token ?? ""}
+              initialShortCode={params.short_code ?? params.code ?? ""}
+            />
           </>
         ) : (
           <StaffUnlock />
@@ -54,11 +62,9 @@ function Bar({ unlocked }: { unlocked?: boolean }) {
     <header className="redeem-bar">
       <span className="redeem-bar__brand">
         <span className="redeem-bar__diamond" aria-hidden="true" />
-        Barra · Canje
+        Barra · Miembros
       </span>
       {unlocked && (
-        // Server-action form: submitting deletes the cookie and Next
-        // re-renders the route back to the unlock screen. No client JS.
         <form action={signOutStaffMatchUp}>
           <button type="submit" className="redeem-bar__signout">
             Cerrar sesión

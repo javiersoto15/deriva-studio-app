@@ -15,11 +15,11 @@ const INSTAGRAM_URL = "https://www.instagram.com/deriva.coffee.studio/";
 export const metadata: Metadata = {
   title: "La Polla del Mundial",
   description:
-    "Adivina el marcador exacto de los partidos de hoy. Si le achuntas a todos, te ganas un café gratis en Deriva Coffee Studio para mañana.",
+    "Achúntale al marcador exacto de los partidos de hoy. Cada marcador exacto te gana un café gratis en Deriva Coffee Studio.",
   alternates: { canonical: pageUrl },
   openGraph: {
     title: "La Polla del Mundial · Deriva Coffee Studio",
-    description: "Predice los marcadores de hoy. Exacto gana café.",
+    description: "Achúntale al marcador exacto. Solo el acierto exacto gana café.",
     url: pageUrl,
     type: "website"
   }

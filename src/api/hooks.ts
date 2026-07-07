@@ -424,13 +424,14 @@ export function useCompanionMenu(
 export function useToday(
   day: TodayWeekday,
   locale: BackendLocale = DEFAULT_BACKEND_LOCALE,
-  enabled = true
+  enabled = true,
+  date?: string
 ) {
   return useQuery<TodayResponse>({
-    queryKey: ["me", "today", day, locale],
+    queryKey: ["me", "today", day, locale, date],
     queryFn: async () => {
       const { data, error } = await apiClient.GET("/me/today", {
-        params: { query: { day, locale } }
+        params: { query: { day, locale, date } }
       });
       if (error) throw error;
       return data as TodayResponse;

@@ -10,6 +10,12 @@ import { nationFlagIso } from "../../../../src/data/world-cup-nations";
 const initialState: PollaFormState = { status: "idle" };
 const MAX_SCORE = 19;
 
+// Reward rules changed for every slate on/after this campaign_date: only exact
+// scores earn a prize (no more "acierta el ganador" tier, no Combo). campaign_date
+// is YYYY-MM-DD (Santiago-local), so a plain string compare is correct + tz-safe.
+// A slate before this date (e.g. a 2026-06-17 carry-over) keeps the old 3-tier copy.
+const NEW_RULES_FROM = "2026-06-18";
+
 type Scores = Record<string, { home: number; away: number }>;
 
 function timeLabel(iso: string): string {
@@ -39,6 +45,7 @@ export function PollaWizard({ day, edition, dayLabel }: { day: WorldCupDay; edit
   const [state, formAction] = useActionState(submitPollaAction, initialState);
   const renderStarted = useRef(Date.now());
 
+  const newRules = day.campaign_date >= NEW_RULES_FROM;
   const matches = day.matches;
   const [scores, setScores] = useState<Scores>(() =>
     Object.fromEntries(matches.map((m) => [m.match_id, { home: 0, away: 0 }]))
@@ -74,14 +81,15 @@ export function PollaWizard({ day, edition, dayLabel }: { day: WorldCupDay; edit
   );
 
   if (state.status === "success") {
-    return <Submitted email={state.email} fullName={state.fullName} edition={edition} />;
+    return <Submitted email={state.email} fullName={state.fullName} edition={edition} newRules={newRules} />;
   }
   if (state.status === "duplicate") {
     return (
       <Terminal
         edition={edition}
+        newRules={newRules}
         title={<>Ya <em>jugaste</em> hoy.</>}
-        body="Ya recibimos una predicción para este email hoy. Vuelve mañana con la próxima jornada."
+        body="Ya recibimos una predicción para este email hoy. Cuando cierre la polla del día, se abrirá la próxima fecha disponible."
       />
     );
   }
@@ -89,8 +97,9 @@ export function PollaWizard({ day, edition, dayLabel }: { day: WorldCupDay; edit
     return (
       <Terminal
         edition={edition}
+        newRules={newRules}
         title={<>El cupón ya <em>cerró</em>.</>}
-        body="Las predicciones se cierran con el primer pitazo. Nos vemos en la próxima jornada."
+        body="Las predicciones se cierran con el primer pitazo. Cuando cierre la polla del día, se abrirá la próxima fecha disponible."
       />
     );
   }
@@ -107,7 +116,7 @@ export function PollaWizard({ day, edition, dayLabel }: { day: WorldCupDay; edit
   if (step === -1) {
     return (
       <div className="polla__grid">
-        <CoverAside edition={edition} dayLabel={dayLabel} matchCount={matches.length} closes={closes} />
+        <CoverAside edition={edition} dayLabel={dayLabel} matchCount={matches.length} closes={closes} newRules={newRules} />
         <div className="polla__rail polla__step">
         <Masthead edition={edition} />
         <h1 id="polla-title" className="polla__title">
@@ -115,7 +124,7 @@ export function PollaWizard({ day, edition, dayLabel }: { day: WorldCupDay; edit
           con Deriva.
         </h1>
         <p className="polla__hook">
-          Adivina el marcador exacto de los partidos {withDe(dayLabel)}.
+          {hookText(newRules, withDe(dayLabel))}
         </p>
 
         <div className="polla__perf">
@@ -125,30 +134,8 @@ export function PollaWizard({ day, edition, dayLabel }: { day: WorldCupDay; edit
           <span className="polla__perf-line" />
         </div>
 
-        <ol className="polla__tiers">
-          <li className="polla__tier">
-            <span className="polla__tier-no">01</span>
-            <span className="polla__tier-cond">Aciertas un resultado del día</span>
-            <span className="polla__tier-arrow" aria-hidden="true">&rarr;</span>
-            <span className="polla__tier-prize">Café simple gratis</span>
-          </li>
-          <li className="polla__tier">
-            <span className="polla__tier-no">02</span>
-            <span className="polla__tier-cond">Aciertas todos los ganadores/empates</span>
-            <span className="polla__tier-arrow" aria-hidden="true">&rarr;</span>
-            <span className="polla__tier-prize">Campesino gratis</span>
-          </li>
-          <li className="polla__tier">
-            <span className="polla__tier-no">03</span>
-            <span className="polla__tier-cond">Aciertas todos los marcadores exactos</span>
-            <span className="polla__tier-arrow" aria-hidden="true">&rarr;</span>
-            <span className="polla__tier-prize">Combo para dos Campesinos</span>
-          </li>
-        </ol>
-        <p className="polla__tiers-foot">
-          Recibes solo el mejor premio que te toque.
-          {closes && <> Cierra a las {closes}.</>}
-        </p>
+        <PrizeLadder newRules={newRules} />
+        <Fineprint newRules={newRules} closes={closes} />
 
         <button
           type="button"
@@ -170,7 +157,7 @@ export function PollaWizard({ day, edition, dayLabel }: { day: WorldCupDay; edit
     const emailInvalid = Boolean(error) && (errorField === "email" || errorField === undefined);
     return (
       <div className="polla__grid">
-        <CoverAside edition={edition} dayLabel={dayLabel} matchCount={matches.length} closes={closes} />
+        <CoverAside edition={edition} dayLabel={dayLabel} matchCount={matches.length} closes={closes} newRules={newRules} />
         <div className="polla__rail polla__step">
         <Masthead edition={edition} />
         <div className="polla__slug">
@@ -265,7 +252,7 @@ export function PollaWizard({ day, edition, dayLabel }: { day: WorldCupDay; edit
   const isLast = step + 1 === matches.length;
   return (
     <div className="polla__grid">
-      <CoverAside edition={edition} dayLabel={dayLabel} matchCount={matches.length} closes={closes} />
+      <CoverAside edition={edition} dayLabel={dayLabel} matchCount={matches.length} closes={closes} newRules={newRules} />
       <div className="polla__rail polla__step" key={m.match_id}>
       <Masthead edition={edition} />
       <p className="polla__progress">
@@ -395,6 +382,85 @@ function Masthead({ edition }: { edition: string }) {
   );
 }
 
+// Game hook under the hero. New rules lead with the exact-score call to action.
+function hookText(newRules: boolean, de: string): string {
+  return newRules
+    ? `Achúntale al marcador exacto de los partidos ${de}.`
+    : `Adivina el marcador exacto de los partidos ${de}.`;
+}
+
+/* The prize ladder. New rules (campaign_date ≥ 2026-06-18): only exact scores
+   earn a prize — two tiers, no Combo, no "acierta el ganador". Old rules keep
+   the original three tiers for any pre-cutover slate still served. */
+function PrizeLadder({ newRules }: { newRules: boolean }) {
+  if (newRules) {
+    return (
+      <ol className="polla__tiers">
+        <li className="polla__tier">
+          <span className="polla__tier-no">01</span>
+          <span className="polla__tier-cond">Un marcador exacto</span>
+          <span className="polla__tier-arrow" aria-hidden="true">&rarr;</span>
+          <span className="polla__tier-prize">Café simple gratis</span>
+        </li>
+        <li className="polla__tier">
+          <span className="polla__tier-no">02</span>
+          <span className="polla__tier-cond">Todos los marcadores exactos del día</span>
+          <span className="polla__tier-arrow" aria-hidden="true">&rarr;</span>
+          <span className="polla__tier-prize">Campesino gratis</span>
+        </li>
+      </ol>
+    );
+  }
+  return (
+    <ol className="polla__tiers">
+      <li className="polla__tier">
+        <span className="polla__tier-no">01</span>
+        <span className="polla__tier-cond">Aciertas un resultado del día</span>
+        <span className="polla__tier-arrow" aria-hidden="true">&rarr;</span>
+        <span className="polla__tier-prize">Café simple gratis</span>
+      </li>
+      <li className="polla__tier">
+        <span className="polla__tier-no">02</span>
+        <span className="polla__tier-cond">Aciertas todos los ganadores/empates</span>
+        <span className="polla__tier-arrow" aria-hidden="true">&rarr;</span>
+        <span className="polla__tier-prize">Campesino gratis</span>
+      </li>
+      <li className="polla__tier">
+        <span className="polla__tier-no">03</span>
+        <span className="polla__tier-cond">Aciertas todos los marcadores exactos</span>
+        <span className="polla__tier-arrow" aria-hidden="true">&rarr;</span>
+        <span className="polla__tier-prize">Combo para dos Campesinos</span>
+      </li>
+    </ol>
+  );
+}
+
+/* Fine print under the ladder. New rules spell out the exact-score change, the
+   one-week validity, and the daily loop. closes is the day's cutoff time. */
+function Fineprint({ newRules, closes }: { newRules: boolean; closes?: string }) {
+  return (
+    <div className="polla__tiers-foot">
+      <p>
+        Recibes solo el mejor premio que te toque.
+        {closes && <> Cierra a las {closes}.</>}
+      </p>
+      {newRules && (
+        <>
+          <p>
+            Desde el 18 de junio, solo los marcadores exactos tienen premio. Acertar solo el
+            ganador ya no entrega premio.
+          </p>
+          <p>Los premios son válidos durante una semana desde el día siguiente.</p>
+          <p>
+            Puedes jugar una vez por fecha. Cuando cierre la polla del día, se abrirá la próxima
+            fecha disponible.
+          </p>
+        </>
+      )}
+    </div>
+  );
+}
+
 /* Persistent left pane on desktop (≥1024px) — owns the editorial identity:
    logo + edition mast, the cover hero, the prize ladder, and a bottom
    colophon. CSS-hidden below 1024px (mobile keeps the in-rail cover). */
@@ -402,12 +468,14 @@ function CoverAside({
   edition,
   dayLabel,
   matchCount,
-  closes
+  closes,
+  newRules
 }: {
   edition: string;
   dayLabel?: string;
   matchCount?: number;
   closes?: string;
+  newRules: boolean;
 }) {
   const de = dayLabel ? withDe(dayLabel) : "de cada día";
   return (
@@ -417,9 +485,7 @@ function CoverAside({
         Vive el <em>Mundial</em><br />
         con Deriva.
       </h1>
-      <p className="polla__hook">
-        Adivina el marcador exacto de los partidos {de}.
-      </p>
+      <p className="polla__hook">{hookText(newRules, de)}</p>
 
       {typeof matchCount === "number" && (
         <div className="polla__perf">
@@ -430,30 +496,8 @@ function CoverAside({
         </div>
       )}
 
-      <ol className="polla__tiers">
-        <li className="polla__tier">
-          <span className="polla__tier-no">01</span>
-          <span className="polla__tier-cond">Aciertas un resultado del día</span>
-          <span className="polla__tier-arrow">&rarr;</span>
-          <span className="polla__tier-prize">Café simple gratis</span>
-        </li>
-        <li className="polla__tier">
-          <span className="polla__tier-no">02</span>
-          <span className="polla__tier-cond">Aciertas todos los ganadores/empates</span>
-          <span className="polla__tier-arrow">&rarr;</span>
-          <span className="polla__tier-prize">Campesino gratis</span>
-        </li>
-        <li className="polla__tier">
-          <span className="polla__tier-no">03</span>
-          <span className="polla__tier-cond">Aciertas todos los marcadores exactos</span>
-          <span className="polla__tier-arrow">&rarr;</span>
-          <span className="polla__tier-prize">Combo para dos Campesinos</span>
-        </li>
-      </ol>
-      <p className="polla__tiers-foot">
-        Recibes solo el mejor premio que te toque.
-        {closes && <> Cierra a las {closes}.</>}
-      </p>
+      <PrizeLadder newRules={newRules} />
+      <Fineprint newRules={newRules} closes={closes} />
 
       <p className="polla__aside-colophon">Magnere 1570 &middot; Providencia</p>
     </aside>
@@ -478,12 +522,12 @@ function Flag({ team, size = "lg" }: { team: string; size?: "lg" | "sm" }) {
   );
 }
 
-function Submitted({ email, fullName, edition }: { email: string; fullName: string; edition: string }) {
+function Submitted({ email, fullName, edition, newRules }: { email: string; fullName: string; edition: string; newRules: boolean }) {
   const hora = timeLabel(new Date().toISOString());
   const firstName = fullName.trim().split(/\s+/)[0] ?? "";
   return (
     <div className="polla__grid">
-      <CoverAside edition={edition} />
+      <CoverAside edition={edition} newRules={newRules} />
       <div className="polla__rail">
       <Masthead edition={edition} />
       <div className="polla__terminal">
@@ -495,8 +539,8 @@ function Submitted({ email, fullName, edition }: { email: string; fullName: stri
           {firstName ? <>Listo, {firstName}.</> : <>Tu cupón quedó echado.</>}
         </h1>
         <p className="polla__terminal-body">
-          Si aciertas, te llega tu premio al correo &mdash; desde un café simple hasta un combo para
-          dos. Te avisamos a <strong>{email}</strong> después de los partidos.
+          Si le achuntas a un marcador exacto, ganas un café simple; si los aciertas todos, un
+          Campesino. Te avisamos a <strong>{email}</strong> después de los partidos.
         </p>
         <p className="polla__colophon">Magnere 1570 &middot; Providencia</p>
       </div>
@@ -508,15 +552,17 @@ function Submitted({ email, fullName, edition }: { email: string; fullName: stri
 function Terminal({
   edition,
   title,
-  body
+  body,
+  newRules
 }: {
   edition: string;
   title: ReactNode;
   body: string;
+  newRules: boolean;
 }) {
   return (
     <div className="polla__grid">
-      <CoverAside edition={edition} />
+      <CoverAside edition={edition} newRules={newRules} />
       <div className="polla__rail">
       <Masthead edition={edition} />
       <div className="polla__terminal">

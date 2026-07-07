@@ -28,6 +28,15 @@ export default function CanjearPage() {
     () => formatShortCode(tokenQuery.data?.short_code),
     [tokenQuery.data?.short_code]
   );
+  const qrValue = useMemo(() => {
+    const baseUrl =
+      process.env.NEXT_PUBLIC_REDEMPTIONS_BASE_URL ?? "https://admin.derivastudio.cl";
+    if (!tokenQuery.data?.token) return `${baseUrl}/redemptions/wallet`;
+    const url = new URL("/redemptions/wallet", baseUrl);
+    url.searchParams.set("token", tokenQuery.data.token);
+    url.searchParams.set("short_code", tokenQuery.data.short_code);
+    return url.toString();
+  }, [tokenQuery.data?.short_code, tokenQuery.data?.token]);
 
   // Redirect to /cartera if the reward is unknown or not affordable. The
   // backend is authoritative, but the client should not mint a token for a
@@ -125,7 +134,7 @@ export default function CanjearPage() {
           display: "flex"
         }}
       >
-        <RewardQrCard seed={tokenQuery.data?.token ?? rewardId} />
+        <RewardQrCard value={qrValue} />
         <CountdownPod expiresAt={expiresAt} />
       </div>
 

@@ -119,8 +119,7 @@ async function LiveMenu() {
             <ul className="menu-sidebar__list">
               <li><a href="#section-desayunos">Desayunos y Brunch</a></li>
               <li><a href="#section-croissants">Croissants</a></li>
-              <li><a href="#section-baguettes">Baguettes</a></li>
-              <li><a href="#section-tostadas">Tostadas Gourmet</a></li>
+              <li><a href="#section-bagels">Bagels</a></li>
               <li><a href="#section-focaccias">Focaccias</a></li>
               <li><a href="#section-cocina">Cocina</a></li>
               <li><a href="#section-pasteleria">Pastelería y Dulces</a></li>
