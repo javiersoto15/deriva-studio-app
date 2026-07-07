@@ -13,12 +13,15 @@ export const PHOTO_FORMATS = [
 ] as const;
 
 export type PhotoSlug =
+  | "bagel-churrasco"
   | "bar"
   | "cappuccino"
   | "croissant-kasler"
+  | "espresso-tropical"
   | "filtrado"
   | "interior"
   | "latte"
+  | "mate"
   | "pour-over"
   | "storefront"
   | "tostada-italiana";
@@ -30,12 +33,15 @@ export type PhotoEntry = {
 };
 
 export const derivaPhotos: Record<PhotoSlug, PhotoEntry> = {
+  "bagel-churrasco": { slug: "bagel-churrasco", aspect: 0.5625, widths: [480, 960, 1440, 1920] },
   "bar": { slug: "bar", aspect: 1.5002, widths: [480, 960, 1440, 1920] },
   "cappuccino": { slug: "cappuccino", aspect: 0.6665, widths: [480, 960, 1440, 1920] },
   "croissant-kasler": { slug: "croissant-kasler", aspect: 0.6667, widths: [480, 960, 1440, 1920] },
-  "filtrado": { slug: "filtrado", aspect: 0.6667, widths: [480, 960, 1440, 1920] },
+  "espresso-tropical": { slug: "espresso-tropical", aspect: 0.5625, widths: [480, 960, 1440, 1920] },
+  "filtrado": { slug: "filtrado", aspect: 0.6666, widths: [480, 960, 1440, 1920] },
   "interior": { slug: "interior", aspect: 1.5000, widths: [480, 960, 1440, 1920] },
   "latte": { slug: "latte", aspect: 0.6667, widths: [480, 960, 1440, 1920] },
+  "mate": { slug: "mate", aspect: 0.5625, widths: [480, 960, 1440, 1920] },
   "pour-over": { slug: "pour-over", aspect: 0.6667, widths: [480, 960, 1440, 1920] },
   "storefront": { slug: "storefront", aspect: 1.5000, widths: [480, 960, 1440, 1920] },
   "tostada-italiana": { slug: "tostada-italiana", aspect: 0.6667, widths: [480, 960, 1440, 1920] },

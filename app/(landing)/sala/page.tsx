@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { DerivaImage } from "../../../src/components/landing/DerivaImage";
+import type { PhotoSlug } from "../../../src/data/photos";
 import { LogoLockup } from "../../../src/ui/LogoLockup";
 import { CrossfadeRotator } from "../../../src/components/landing/CrossfadeRotator";
 import { SalaKiosk } from "./SalaKiosk";
@@ -81,6 +82,49 @@ function toSalaItem(i: PublicMenuItem): SalaItem {
     signature: i.signature
   };
 }
+
+// Resolve a single live item by matching on NAME (not id) — the backend's Mate
+// carries a stale id ("capuccino"), so name is the only reliable key. Searches
+// every section + subgroup. Returns undefined when the item isn't in the live
+// payload (e.g. the Bagel, created in SumUp but not yet surfaced by /public/menu).
+function findItemByName(
+  view: PublicMenuView | null,
+  matcher: RegExp
+): PublicMenuItem | undefined {
+  if (!view) return undefined;
+  for (const s of view.sections) {
+    for (const grp of [s, ...(s.subgroups ?? [])]) {
+      for (const i of grp.items ?? []) {
+        if (i.available !== false && matcher.test(i.name)) return i;
+      }
+    }
+  }
+  return undefined;
+}
+
+// Hero price for the feature cards + Destacado: live price wins (price_label or
+// "$4.900" from price_clp — no space, to match the plate's display), curated
+// fallback when the item is absent. Mate resolves live; Espresso Tropical (a
+// signature item) and the Bagel use fallbacks today and auto-upgrade the moment
+// the backend lists them.
+function heroPrice(view: PublicMenuView | null, matcher: RegExp, fallback: string): string {
+  const i = findItemByName(view, matcher);
+  if (!i) return fallback;
+  if (i.price_label) return i.price_label;
+  if (typeof i.price_clp === "number") return `$${i.price_clp.toLocaleString("es-CL")}`;
+  return fallback;
+}
+
+// The two live drink cards in the Barra rail (portrait, full-bleed photo).
+type SalaFeature = {
+  slug: PhotoSlug;
+  alt: string;
+  objectPosition: string;
+  kicker: string;
+  name: string;
+  price: string;
+  priceMeta: string;
+};
 
 function flattenItems(s: PublicMenuSection): PublicMenuItem[] {
   const direct = s.items ?? [];
@@ -289,11 +333,17 @@ function SalaOficio({ editionMark }: { editionMark: string }) {
 }
 
 // ---- Plate 03 · Destacado (split, editor's pick) ---------------------------
-function SalaDestacado({ editionMark }: { editionMark: string }) {
+function SalaDestacado({ editionMark, price }: { editionMark: string; price: string }) {
   return (
     <main className="sala-plate sala-destacado" aria-label="El destacado de la carta">
       <div className="sala-destacado__photo">
-        <DerivaImage slug="croissant-kasler" alt="Sándwich Kasler" sizes="1114px" fill />
+        <DerivaImage
+          slug="bagel-churrasco"
+          alt="Bagel Churrasco Italiano"
+          sizes="1114px"
+          fill
+          style={{ objectPosition: "center 55%" }}
+        />
         <div className="sala-livetag">
           <i aria-hidden="true" />
           <span>EL DESTACADO · DE LA CARTA</span>
@@ -317,23 +367,23 @@ function SalaDestacado({ editionMark }: { editionMark: string }) {
         <div className="sala-destacado__body">
           <span className="sala-kicker sala-kicker--brown">HOY · EL DESTACADO</span>
           <div>
-            <div className="sala-destacado__name">Sándwich</div>
-            <div className="sala-destacado__name">Kasler</div>
+            <div className="sala-destacado__name">Bagel</div>
+            <div className="sala-destacado__name">Churrasco Italiano</div>
           </div>
           <p className="sala-destacado__desc">
-            Cerdo ahumado, queso mantecoso y pickles de la casa sobre croissant horneado al
-            momento. Plato de mediodía.
+            Churrasco de lomo, tomate, palta y mayo de la casa sobre bagel de sésamo. Con
+            papas rústicas.
           </p>
           <div className="sala-destacado__price">
             <small>DESDE</small>
-            <strong>$6.900</strong>
+            <strong>{price}</strong>
           </div>
         </div>
 
         <div className="sala-destacado__foot">
           <div className="sala-destacado__pair">
             <span className="sala-microlabel">VA BIEN CON</span>
-            <em>un Flat White o un Filtrado.</em>
+            <em>un Cortado o un Espresso Tropical.</em>
           </div>
           <Dots active={2} />
         </div>
@@ -346,11 +396,13 @@ function SalaDestacado({ editionMark }: { editionMark: string }) {
 function SalaBarra({
   columns,
   ejecutivo,
-  showEjecutivo
+  showEjecutivo,
+  features
 }: {
   columns: SalaColumn[];
   ejecutivo: SalaEjecutivo;
   showEjecutivo: boolean;
+  features: SalaFeature[];
 }) {
   return (
     <main className="sala-plate sala-barra" aria-label="Ahora en la barra">
@@ -398,26 +450,27 @@ function SalaBarra({
           ))}
         </div>
 
-        <div className="sala-feature">
-          <DerivaImage slug="cappuccino" alt="Cappuccino de la casa" sizes="600px" fill />
-          <span className="sala-feature__scrim" aria-hidden="true" />
-          <div className="sala-feature__tag">
-            <span>LO MÁS PEDIDO</span>
-          </div>
-          <div className="sala-feature__cap">
-            <span className="sala-feature__name">
-              Cappuccino
-              <br />
-              de la casa
-            </span>
-            <span className="sala-feature__desc">
-              Doble ristretto, leche texturada y un dibujo distinto cada vez.
-            </span>
-            <div className="sala-feature__price">
-              <strong>$4.000</strong>
-              <small>· 200 ML</small>
+        <div className="sala-features">
+          {features.map((f) => (
+            <div className="sala-feat" key={f.slug}>
+              <DerivaImage
+                slug={f.slug}
+                alt={f.alt}
+                sizes="340px"
+                fill
+                style={{ objectPosition: f.objectPosition }}
+              />
+              <span className="sala-feat__scrim" aria-hidden="true" />
+              <div className="sala-feat__cap">
+                <span className="sala-feat__k">{f.kicker}</span>
+                <span className="sala-feat__name">{f.name}</span>
+                <div className="sala-feat__price">
+                  <strong>{f.price}</strong>
+                  <small>{f.priceMeta}</small>
+                </div>
+              </div>
             </div>
-          </div>
+          ))}
         </div>
       </div>
 
@@ -533,12 +586,42 @@ async function SalaRotator({
   const ejecutivo = salaEjecutivo(view);
   const showEjecutivo = isWeekday(now) && santiagoHour(now) < 16;
 
+  // Prices resolve from the live menu (name-matched); curated fallbacks cover
+  // the build-time prerender and the Bagel (created in SumUp, not yet in the
+  // public menu payload).
+  const bagelPrice = heroPrice(view, /bagel/i, "$10.490");
+  const features: SalaFeature[] = [
+    {
+      slug: "espresso-tropical",
+      alt: "Espresso Tropical servido en vaso tallado",
+      objectPosition: "center 44%",
+      kicker: "DE FIRMA · FRÍA",
+      name: "Espresso Tropical",
+      price: heroPrice(view, /espresso\s*tropical/i, "$4.900"),
+      priceMeta: "· 300 ML"
+    },
+    {
+      slug: "mate",
+      alt: "Mate de la casa, gourd grabado Deriva",
+      objectPosition: "center 36%",
+      kicker: "DE LA CASA · PARA COMPARTIR",
+      name: "Mate",
+      price: heroPrice(view, /^mate$/i, "$4.290"),
+      priceMeta: "· TERMO INCLUIDO"
+    }
+  ];
+
   const plates = {
     portada: <SalaPortada edition={edition} />,
     oficio: <SalaOficio editionMark={editionMark} />,
-    destacado: <SalaDestacado editionMark={editionMark} />,
+    destacado: <SalaDestacado editionMark={editionMark} price={bagelPrice} />,
     barra: (
-      <SalaBarra columns={columns} ejecutivo={ejecutivo} showEjecutivo={showEjecutivo} />
+      <SalaBarra
+        columns={columns}
+        ejecutivo={ejecutivo}
+        showEjecutivo={showEjecutivo}
+        features={features}
+      />
     ),
     inauguracion: <SalaInauguracion edition={edition} />
   } as const;
