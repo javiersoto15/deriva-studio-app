@@ -7,7 +7,7 @@ import { menuSections, type MenuAddons } from "../../../src/data/menu";
 import { HOURS_LINES, isOpenNow } from "../../../src/lib/open-now";
 import { getEditionMarkUppercase } from "../../../src/lib/edition";
 import { MENU_EJECUTIVO_FIXED, MENU_EJECUTIVO_TODAY } from "../../../src/data/menu-ejecutivo";
-import { getPublicMenuView } from "../../../src/api/server";
+import { getPublicMenuView, type PublicMenuView, type PublicMenuItem } from "../../../src/api/server";
 import { CrossfadeRotator } from "../../../src/components/landing/CrossfadeRotator";
 import "./abierto.css";
 
@@ -128,6 +128,94 @@ function getCafeteriaData(): { itemNames: string[]; addons: MenuAddons[] } {
       : [cafe.addons]
     : [];
   return { itemNames, addons: [...espressoAddons, ...sectionAddons] };
+}
+
+// --- Café de autor (live, name-matched with curated fallbacks) --------------
+// The public payload has no "Café de autor" grouping — resolve each signature
+// by name across sections/subgroups, same as /sala. Curated fallbacks (from the
+// 2026-07-13 SumUp delta) render at build time and until the backend lists them.
+type AutorItem = { roman: string; name: string; price: string; description: string };
+
+const AUTOR_RE = /espresso\s*tropical|tierra\s*&?\s*hierbas|pre.?infusi[oó]n/i;
+
+const AUTOR_FALLBACK = {
+  tropical: {
+    name: "Espresso Tropical",
+    price: "$4.990",
+    description:
+      "Syrup casero de maracuyá, tónica fría y doble espresso Etiopía. Fresco, cítrico y cafetero."
+  },
+  tierra: {
+    name: "Tierra & Hierbas",
+    price: "$5.090",
+    description:
+      "Café Etiopía molido con rooibos Earl Grey, terminado en pour over. Balanceado, floral y herbal."
+  },
+  preinfusion: {
+    name: "Pre-Infusion",
+    price: "$8.290",
+    description:
+      "Nuestra lectura del espresso martini: vodka infusionado en mate, syrup de mate y espresso de la casa."
+  }
+} as const;
+
+function findItemByName(
+  view: PublicMenuView | null,
+  matcher: RegExp
+): PublicMenuItem | undefined {
+  if (!view) return undefined;
+  for (const s of view.sections) {
+    for (const grp of [s, ...(s.subgroups ?? [])]) {
+      for (const i of grp.items ?? []) {
+        if (i.available !== false && matcher.test(i.name)) return i;
+      }
+    }
+  }
+  return undefined;
+}
+
+function livePrice(item: PublicMenuItem | undefined, fallback: string): string {
+  if (!item) return fallback;
+  if (item.price_label) return item.price_label;
+  if (typeof item.price_clp === "number") return `$${item.price_clp.toLocaleString("es-CL")}`;
+  return fallback;
+}
+
+function resolveAutorItems(view: PublicMenuView | null): AutorItem[] {
+  const specs = [
+    { roman: "i.", key: "tropical" as const, re: /espresso\s*tropical/i },
+    { roman: "ii.", key: "tierra" as const, re: /tierra\s*&?\s*hierbas/i },
+    { roman: "iii.", key: "preinfusion" as const, re: /pre.?infusi[oó]n/i }
+  ];
+  return specs.map(({ roman, key, re }) => {
+    const fb = AUTOR_FALLBACK[key];
+    const live = findItemByName(view, re);
+    return {
+      roman,
+      name: live?.name ?? fb.name,
+      price: livePrice(live, fb.price),
+      description: live?.description || fb.description
+    };
+  });
+}
+
+// Live Cafetería list for §01 — the coffee section's item names (Autor items
+// excluded, they're featured above), capped at 7. Falls back to the static
+// menu.ts espresso subgroup when the backend is unreachable (build-time).
+function resolveCafeteriaNames(view: PublicMenuView | null): string[] {
+  const fallback = getCafeteriaData().itemNames;
+  if (!view) return fallback;
+  const coffee = view.sections.find((s) =>
+    /cafeter|espresso|barra/i.test(`${s.id} ${s.title}`)
+  );
+  if (!coffee) return fallback;
+  const names: string[] = [];
+  for (const grp of [coffee, ...(coffee.subgroups ?? [])]) {
+    for (const i of grp.items ?? []) {
+      if (i.available !== false && !AUTOR_RE.test(i.name)) names.push(i.name);
+    }
+  }
+  return names.length ? names.slice(0, 7) : fallback;
 }
 
 // Resolve today's four courses. The public backend's executive_menu is the
