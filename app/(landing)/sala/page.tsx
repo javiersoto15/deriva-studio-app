@@ -371,8 +371,7 @@ function SalaDestacado({ editionMark, price }: { editionMark: string; price: str
             <div className="sala-destacado__name">Churrasco Italiano</div>
           </div>
           <p className="sala-destacado__desc">
-            Churrasco de lomo, tomate, palta y mayo de la casa sobre bagel de sésamo. Con
-            papas rústicas.
+            Churrasco de lomo, tomate, palta y mayo de la casa sobre bagel de sésamo.
           </p>
           <div className="sala-destacado__price">
             <small>DESDE</small>
