@@ -52,30 +52,6 @@ const NOCHE = {
   ]
 } as const;
 
-// Inauguration takeover · one night only. On Fri 3 Jul 2026, 16:00–21:00
-// America/Santiago, both TV displays drop their normal rotation and show only
-// the inauguration plate. Outside the window the gate is false and the rotation
-// reverts automatically — no redeploy. Server clock is irrelevant: date and hour
-// are both resolved in America/Santiago.
-const INAUGURACION_PRIZES = [
-  { roman: "i.", name: "Café en grano · 100 g", note: "Bolsa de origen, molida a tu método." },
-  { roman: "ii.", name: "Taza Deriva", note: "Cerámica esmaltada, emblema grabado." },
-  { roman: "iii.", name: "Termo Deriva", note: "Para el café de camino." },
-  { roman: "iv.", name: "Libreta Deriva", note: "Tapa dura, para tus notas." }
-] as const;
-
-function isInauguracion(now: Date): boolean {
-  const date = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Santiago" }).format(now);
-  const hour = Number(
-    new Intl.DateTimeFormat("en-GB", {
-      timeZone: "America/Santiago",
-      hour: "2-digit",
-      hour12: false
-    }).format(now)
-  );
-  return date === "2026-07-03" && hour >= 16 && hour < 21;
-}
-
 // Capitalised Spanish weekday in Chilean time — "Lunes", "Martes", … — for
 // the night view's day-aware kicker.
 function santiagoWeekday(now: Date): string {
@@ -649,83 +625,6 @@ async function AbiertoNoche() {
   );
 }
 
-// Inauguración · one-night takeover (dark evening broadside, copper accent —
-// matching the ejec/noche dark surfaces, which drop green for legibility on the
-// espresso ground). Reuses the .ab-stage skeleton + masthead + colophon. Photo
-// is an atmospheric interior shot from the CDN slug set; the giveaways are a
-// text sorteo ledger (no product photos exist).
-async function AbiertoInauguracion() {
-  await connection();
-  const now = new Date();
-  const editionMark = getEditionMarkUppercase(now);
-  return (
-    <main className="ab-stage ab-stage--inaug" aria-label="Inauguración oficial de Deriva">
-      <header className="ab-mast">
-        <div className="ab-mast__row">
-          <LogoLockup
-            isotipo={56}
-            wordmarkSize={34}
-            wordmarkLine={32}
-            subSize={10}
-            gap={14}
-            isotipoColor="#F4EDE6"
-            wordmarkColor="#F4EDE6"
-          />
-          <span className="ab-mast__edition">{editionMark}</span>
-        </div>
-        <span className="ab-mast__rule" aria-hidden="true" />
-      </header>
-
-      <div className="ab-inaug__head">
-        <span className="ab-inaug__eyebrow">§ Inauguración oficial · 3 Jul 2026</span>
-        <h1 className="ab-inaug__hero">
-          <span className="ab-inaug__hero-sm">Salimos de la marcha blanca.</span>
-          <span className="ab-inaug__hero-lg">
-            Llega la <span className="ab-inaug__hero-accent">inauguración.</span>
-          </span>
-        </h1>
-        <p className="ab-inaug__lede">
-          La primera noche de Deriva — desde las 16:00, hoy. Café, cocina, descuentos
-          seleccionados y un sorteo entre los presentes.
-        </p>
-      </div>
-
-      <div className="ab-inaug__photo">
-        <DerivaImage slug="interior" alt="El interior de Deriva de noche" sizes="968px" priority />
-        <span className="ab-inaug__photo-scrim" aria-hidden="true" />
-        <span className="ab-inaug__photo-cap">La casa, esta noche · Magnere 1570</span>
-      </div>
-
-      <div className="ab-inaug__sorteo">
-        <div className="ab-inaug__sorteo-head">
-          <span className="ab-inaug__sorteo-k">§ El sorteo de la noche</span>
-          <span className="ab-inaug__sorteo-sub">Entre los presentes</span>
-        </div>
-        <ul className="ab-inaug__list">
-          {INAUGURACION_PRIZES.map((p) => (
-            <li key={p.roman} className="ab-inaug__row">
-              <span className="ab-inaug__row-num">{p.roman}</span>
-              <span className="ab-inaug__row-body">
-                <span className="ab-inaug__row-name">{p.name}</span>
-                <span className="ab-inaug__row-note">{p.note}</span>
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <footer className="ab-colophon">
-        <span className="ab-colophon__rule" aria-hidden="true" />
-        <div className="ab-colophon__row">
-          <span>DESDE LAS 16:00 · HOY</span>
-          <span>SORTEO · DESCUENTOS</span>
-          <span>@DERIVA.COFFEE.STUDIO</span>
-        </div>
-      </footer>
-    </main>
-  );
-}
-
 async function AbiertoRotator({
   searchParams
 }: {
@@ -742,7 +641,6 @@ async function AbiertoRotator({
       preview === "ejecutivo" ? <AbiertoEjecutivo /> :
       preview === "promo" ? <AbiertoPromo /> :
       preview === "noche" ? <AbiertoNoche /> :
-      preview === "inauguracion" ? <AbiertoInauguracion /> :
       <AbiertoDisplay />;
     return <CrossfadeRotator className="ab-rotator" views={[{ key: preview, node }]} />;
   }
@@ -750,16 +648,6 @@ async function AbiertoRotator({
   // re-evaluates within 10 minutes, and CrossfadeRotator generates keyframes
   // for whatever count is active.
   const now = new Date();
-  // One-night takeover: 16:00–21:00 on 3 Jul 2026 the display shows ONLY the
-  // inauguration plate (normal rotation fully suppressed). Reverts on its own.
-  if (isInauguracion(now)) {
-    return (
-      <CrossfadeRotator
-        className="ab-rotator"
-        views={[{ key: "inauguracion", node: <AbiertoInauguracion /> }]}
-      />
-    );
-  }
   const santiagoHour = Number(
     new Intl.DateTimeFormat("en-GB", {
       timeZone: "America/Santiago",

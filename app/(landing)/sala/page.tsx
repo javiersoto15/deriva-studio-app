@@ -196,22 +196,6 @@ function santiagoHour(now: Date): number {
   );
 }
 
-// Inauguration takeover · one night only. Fri 3 Jul 2026, 16:00–21:00
-// America/Santiago the display drops its normal 4-plate rotation and shows only
-// the inauguration plate. Reverts automatically outside the window (no redeploy).
-const INAUGURACION_PRIZES = [
-  { roman: "i.", name: "Café en grano · 100 g", note: "BOLSA DE ORIGEN · A TU MÉTODO" },
-  { roman: "ii.", name: "Taza Deriva", note: "CERÁMICA · EMBLEMA GRABADO" },
-  { roman: "iii.", name: "Termo Deriva", note: "PARA EL CAFÉ DE CAMINO" },
-  { roman: "iv.", name: "Libreta Deriva", note: "TAPA DURA · PARA TUS NOTAS" }
-] as const;
-
-function isInauguracion(now: Date): boolean {
-  const date = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Santiago" }).format(now);
-  const hour = santiagoHour(now);
-  return date === "2026-07-03" && hour >= 16 && hour < 21;
-}
-
 // Menu Ejecutivo runs Lunes a viernes (Fri included — NOT the carta's
 // getCurrentSchedule, which treats Friday as weekend).
 function isWeekday(now: Date): boolean {
@@ -494,77 +478,6 @@ function SalaBarra({
   );
 }
 
-// ---- Plate · Inauguración (one-night takeover) -----------------------------
-// Light editorial split, mirroring the Portada: a plaster type panel (masthead
-// → headline → sorteo ledger) beside a full-bleed atmospheric storefront photo.
-// The single green moment lands on "inauguración" in the claim. The four
-// giveaways are text mentions (no product photos exist), listed as sorteo prizes.
-function SalaInauguracion({ edition }: { edition: { season: string; week: string } }) {
-  return (
-    <main className="sala-plate sala-inaug" aria-label="Inauguración oficial de Deriva">
-      <div className="sala-inaug__col">
-        <div className="sala-runhead">
-          <span>VOL. 001 · INAUGURACIÓN OFICIAL</span>
-          <span>3 JUL 2026 · PROVIDENCIA · MMXXVI</span>
-        </div>
-
-        <div className="sala-inaug__lockup">
-          <LogoLockup
-            isotipo={52}
-            wordmarkSize={40}
-            wordmarkLine={36}
-            subSize={11}
-            gap={15}
-            isotipoColor="#1A1410"
-            wordmarkColor="#1A1410"
-          />
-        </div>
-
-        <div className="sala-inaug__claimwrap">
-          <span className="sala-kicker">§ LA PRIMERA NOCHE DE DERIVA</span>
-          <div className="sala-inaug__claim">
-            <b className="sala-inaug__claim-sm">Salimos de la marcha blanca.</b>
-            <b>
-              Llega la <span className="green">inauguración.</span>
-            </b>
-          </div>
-          <p className="sala-inaug__lede">
-            Desde las 16:00, hoy. Café, cocina, descuentos seleccionados y un sorteo entre
-            los presentes.
-          </p>
-        </div>
-
-        <div className="sala-inaug__sorteo">
-          <div className="sala-inaug__sorteo-head">
-            <span className="sala-microlabel">§ EL SORTEO DE LA NOCHE</span>
-            <span className="sala-inaug__sorteo-sub">Entre los presentes</span>
-          </div>
-          <div className="sala-inaug__grid">
-            {INAUGURACION_PRIZES.map((p) => (
-              <div className="sala-inaug__prize" key={p.roman}>
-                <span className="sala-inaug__prize-num">{p.roman}</span>
-                <div className="sala-inaug__prize-body">
-                  <span className="sala-inaug__prize-name">{p.name}</span>
-                  <span className="sala-inaug__prize-note">{p.note}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="sala-inaug__photo">
-        <DerivaImage slug="storefront" alt="La fachada de Deriva" sizes="806px" priority fill />
-        <span className="sala-inaug__photo-scrim" aria-hidden="true" />
-        <div className="sala-photo-cap sala-inaug__photo-cap">
-          <span className="sala-photo-cap__k">MAGNERE 1570 · LOCAL 105 · {edition.season} MMXXVI</span>
-          <span className="sala-photo-cap__t">Te esperamos.</span>
-        </div>
-      </div>
-    </main>
-  );
-}
-
 // ---- Rotator (dynamic: reads time + live menu) -----------------------------
 async function SalaRotator({
   searchParams
@@ -621,28 +534,16 @@ async function SalaRotator({
         showEjecutivo={showEjecutivo}
         features={features}
       />
-    ),
-    inauguracion: <SalaInauguracion edition={edition} />
+    )
   } as const;
 
-  // QA hook: ?view=portada|oficio|destacado|barra|inauguracion renders one plate
+  // QA hook: ?view=portada|oficio|destacado|barra renders one plate
   // solid (no rotation) so a panel can be checked any time. Read inside the
   // Suspense boundary so the dynamic access doesn't block the static shell.
   const { view: preview } = await searchParams;
   if (preview && preview in plates) {
     const node = plates[preview as keyof typeof plates];
     return <CrossfadeRotator className="sala-rotator" views={[{ key: preview, node }]} />;
-  }
-
-  // One-night takeover: 16:00–21:00 on 3 Jul 2026 the display shows ONLY the
-  // inauguration plate (normal rotation fully suppressed). Reverts on its own.
-  if (isInauguracion(now)) {
-    return (
-      <CrossfadeRotator
-        className="sala-rotator"
-        views={[{ key: "inauguracion", node: plates.inauguracion }]}
-      />
-    );
   }
 
   // Dwell/lounge pacing: longer holds, the live list longest (most to read).
