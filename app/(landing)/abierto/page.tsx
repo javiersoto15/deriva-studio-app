@@ -380,6 +380,11 @@ async function AbiertoDisplay() {
   const editionMark = getEditionMarkUppercase(now);
   const open = isOpenNow(now);
   const cafeteria = getCafeteriaData();
+  const view = await getPublicMenuView({ locale: "es-CL" });
+  const autor = resolveAutorItems(view);
+  const cafeteriaNames = resolveCafeteriaNames(view);
+  const bagel = findItemByName(view, /bagel\s*churrasco/i);
+  const bagelName = bagel?.name ?? "Bagel Churrasco";
   // Menu Ejecutivo runs weekdays 13:00–16:00. Announce it on the splash
   // only while the window is still ahead (hide once 16:00 passes so the
   // strip never advertises a closed service).
@@ -421,22 +426,22 @@ async function AbiertoDisplay() {
           </h1>
           <p className="ab-hero__manifesto">
             {open
-              ? "Café de especialidad, una pausa sin apuro, un rato a la deriva."
+              ? "Café de especialidad, barra de autor, un rato a la deriva."
               : "Volvemos mañana. Te esperamos a la deriva."}
           </p>
         </div>
         <div className="ab-feature">
           <div className="ab-feature__med">
             <DerivaImage
-              slug="latte"
-              alt="Latte servido en taza roja"
+              slug="espresso-tropical"
+              alt="Espresso Tropical servido frío"
               sizes="340px"
               priority
             />
           </div>
           <div className="ab-feature__cap">
-            <span className="ab-feature__num">№ 01 · DE LA BARRA</span>
-            <span className="ab-feature__name">Latte</span>
+            <span className="ab-feature__num">№ 01 · CAFÉ DE AUTOR</span>
+            <span className="ab-feature__name">{autor[0].name}</span>
           </div>
         </div>
       </section>
@@ -469,36 +474,49 @@ async function AbiertoDisplay() {
         </div>
       ) : null}
 
-      {/* Three medallions */}
-      <section className="ab-trio" aria-label="Destacados">
+      {/* § Café de autor — the new signature line (live, name-matched) */}
+      <section className="ab-autor" aria-label="Café de autor">
+        <div className="ab-autor__head">
+          <span className="ab-autor__section">§ 00</span>
+          <span className="ab-autor__title">Café de autor</span>
+          <span className="ab-autor__caption">lo nuevo de la barra</span>
+        </div>
+        <ul className="ab-autor__list" style={{ listStyle: "none", margin: 0, padding: 0 }}>
+          {autor.map((a) => (
+            <li key={a.roman} className="ab-autor__row">
+              <span className="ab-autor__num">{a.roman}</span>
+              <div className="ab-autor__body">
+                <div className="ab-autor__line">
+                  <span className="ab-autor__name">{a.name}</span>
+                  <span className="ab-autor__price">{a.price}</span>
+                </div>
+                <span className="ab-autor__desc">{a.description}</span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* Destacados — Tierra & Hierbas (autor) + the new Bagel */}
+      <section className="ab-trio ab-trio--pair" aria-label="Destacados">
         <article className="ab-med">
           <div className="ab-med__circle">
-            <DerivaImage slug="pour-over" alt="Pour Over en Chemex" sizes="280px" />
+            <DerivaImage slug="filtrado" alt="Tierra & Hierbas, café e infusión" sizes="280px" />
           </div>
           <div className="ab-med__cap">
-            <span className="ab-med__num">№ 02 · FILTRADO</span>
-            <span className="ab-med__name">Pour Over</span>
-            <span className="ab-med__note">V60 · Chemex</span>
+            <span className="ab-med__num">№ 02 · FILTRADO DE AUTOR</span>
+            <span className="ab-med__name">{autor[1].name}</span>
+            <span className="ab-med__note">café Etiopía · rooibos · pour over</span>
           </div>
         </article>
         <article className="ab-med">
           <div className="ab-med__circle">
-            <DerivaImage slug="croissant-kasler" alt="Croissant Kasler House" sizes="280px" />
+            <DerivaImage slug="bagel-churrasco" alt="Bagel Churrasco Italiano" sizes="280px" />
           </div>
           <div className="ab-med__cap">
-            <span className="ab-med__num">№ 03 · A TODA HORA</span>
-            <span className="ab-med__name">Kasler House</span>
-            <span className="ab-med__note">kasler, hummus, palta, cebolla encurtida</span>
-          </div>
-        </article>
-        <article className="ab-med">
-          <div className="ab-med__circle">
-            <DerivaImage slug="tostada-italiana" alt="Tostada Italiana" sizes="280px" />
-          </div>
-          <div className="ab-med__cap">
-            <span className="ab-med__num">№ 04 · MASA MADRE</span>
-            <span className="ab-med__name">Italiana</span>
-            <span className="ab-med__note">ricotta, rúcula, tomate cherry, aceituna</span>
+            <span className="ab-med__num">№ 03 · A LA MESA</span>
+            <span className="ab-med__name">{bagelName}</span>
+            <span className="ab-med__note">churrasco, palta, tomate, mayo de la casa</span>
           </div>
         </article>
       </section>
@@ -514,7 +532,7 @@ async function AbiertoDisplay() {
             <span className="ab-esp__caption">de la barra</span>
           </div>
           <ul className="ab-esp__list" style={{ listStyle: "none", margin: 0, padding: 0 }}>
-            {cafeteria.itemNames.map((name) => (
+            {cafeteriaNames.map((name) => (
               <li key={name} className="ab-esp__item">{name}</li>
             ))}
           </ul>
