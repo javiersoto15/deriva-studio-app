@@ -756,7 +756,7 @@ export interface paths {
         };
         /**
          * Get the authenticated companion menu view
-         * @description Authenticated companion-safe alias for the canonical public menu presentation. Returns the same PublicMenuView shape and is served by the same backend PublicMenuView builder/store path as GET /public/menu, including weekday/weekend structure, Sunday closed-state, add-ons, and Menu Ejecutivo.
+         * @description Authenticated companion-safe alias for the canonical public menu presentation. Returns the same PublicMenuView shape and is served by the same backend PublicMenuView builder/store path as GET /public/menu, including weekday/weekend structure, Sunday closed-state, add-ons, and Menu Ejecutivo first only Monday-Friday 17:00-20:00 UTC.
          */
         get: {
             parameters: {
@@ -1418,7 +1418,7 @@ export interface paths {
         };
         /**
          * Get the public landing menu view
-         * @description Backend-owned menu presentation view for the public landing menu. Keeps /menu as the flat companion item list while exposing the canonical weekday/weekend landing structure, including Menu Ejecutivo on weekdays and the regular weekend menu split. The public view is composed from persisted menu_items plus persisted public menu presentation rows so the live site consumes backend data instead of static frontend/menu code.
+         * @description Backend-owned menu presentation view for the public landing menu. Keeps /menu as the flat companion item list while exposing the canonical weekday/weekend landing structure, including Menu Ejecutivo as the first section only Monday-Friday 17:00-20:00 UTC and the regular weekend menu split. The public view is composed from persisted menu_items plus persisted public menu presentation rows so the live site consumes backend data instead of static frontend/menu code.
          */
         get: {
             parameters: {
@@ -4558,6 +4558,9 @@ export interface components {
             id: string;
             title: string;
             description: string;
+            /** Format: uri */
+            image_url?: string;
+            detail?: components["schemas"]["PublicMenuOfferDetail"];
             item_ids?: string[];
             section_ids?: string[];
         };
@@ -4570,13 +4573,42 @@ export interface components {
             /** Format: date-time */
             visible_until?: string;
             schedule?: components["schemas"]["PublicMenuSchedule"][];
+            detail?: components["schemas"]["PublicMenuOfferDetailAdmin"];
             translations?: {
                 [key: string]: components["schemas"]["PublicMenuOfferText"];
             };
         };
+        PublicMenuOfferDetail: {
+            title?: string;
+            description?: string;
+            items: components["schemas"]["PublicMenuOfferDetailItem"][];
+        };
+        PublicMenuOfferDetailItem: {
+            item: components["schemas"]["PublicMenuItem"];
+            quantity: number;
+            pricing?: components["schemas"]["PublicMenuOfferItemPricing"];
+        };
+        PublicMenuOfferDetailAdmin: {
+            title?: string;
+            description?: string;
+            items: components["schemas"]["PublicMenuOfferDetailItemAdmin"][];
+        };
+        PublicMenuOfferDetailItemAdmin: {
+            item_id: string;
+            quantity: number;
+            sort_order: number;
+            pricing?: components["schemas"]["PublicMenuOfferItemPricing"];
+        };
+        PublicMenuOfferItemPricing: {
+            /** @enum {string} */
+            kind: "included" | "fixed" | "supplement";
+            amount_clp?: number;
+        };
         PublicMenuOfferText: {
             title: string;
             description: string;
+            detail_title?: string;
+            detail_description?: string;
         };
         PublicMenuSectionPatch: {
             title?: string;
