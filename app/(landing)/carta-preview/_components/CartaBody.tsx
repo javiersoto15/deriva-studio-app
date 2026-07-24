@@ -222,17 +222,24 @@ function Section({ section, showPrices }: { section: MenuSectionX; showPrices: b
 // ── Carta de autor spotlight ────────────────────────────────────────────
 function AutorSpotlight({ items, showPrices }: { items: MenuItemX[]; showPrices: boolean }) {
   const railRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef(0);
   const [active, setActive] = useState(0);
 
   if (!items.length) return null;
 
-  // Track scroll position → which card is centered, for the progress indicator.
+  // Track scroll position → active card, for the progress indicator. Throttled
+  // to one update per frame so the re-render never lands mid-scroll (which,
+  // with mandatory snap, used to yank the rail back to the first card).
   function onScroll() {
-    const el = railRef.current;
-    if (!el) return;
-    const max = el.scrollWidth - el.clientWidth;
-    const frac = max > 0 ? el.scrollLeft / max : 0;
-    setActive(Math.round(frac * (items.length - 1)));
+    if (rafRef.current) return;
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = 0;
+      const el = railRef.current;
+      if (!el) return;
+      const max = el.scrollWidth - el.clientWidth;
+      const frac = max > 0 ? el.scrollLeft / max : 0;
+      setActive(Math.round(frac * (items.length - 1)));
+    });
   }
 
   return (

@@ -732,7 +732,11 @@
   gap: 14px;
   padding: 0 20px;
   overflow-x: auto;
-  scroll-snap-type: x mandatory;
+  /* proximity (not mandatory): mandatory + the on-scroll indicator re-render
+     makes the browser snap back to the first card. proximity only snaps when
+     the scroll settles near a card, and never force-resets. */
+  scroll-snap-type: x proximity;
+  scroll-padding-left: 20px;
   scrollbar-width: none;
 }
 .autorCarousel::-webkit-scrollbar {
