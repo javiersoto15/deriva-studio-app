@@ -151,7 +151,9 @@ function EjecutivoInsert({ em }: { em: ExecutiveMenu }) {
 // A full section (chapter). Hero chapters with a banner get a photo opener.
 function Section({ section, showPrices }: { section: MenuSectionX; showPrices: boolean }) {
   const banner = sectionBanner(section);
-  const isHero = section.emphasis === "hero";
+  // hero + primary sections (without a photo banner) get the monumental numeral;
+  // utility sections get the lighter seal divider.
+  const isFeature = section.emphasis === "hero" || section.emphasis === "primary";
   const directItems = (section.items ?? []) as MenuItemX[];
 
   return (
@@ -164,8 +166,8 @@ function Section({ section, showPrices }: { section: MenuSectionX; showPrices: b
             {section.lede ? <span className={styles.openerLede}>{section.lede}</span> : null}
           </div>
         </div>
-      ) : isHero ? (
-        // Hero chapters (emphasis=hero) without a banner photo → monumental numeral.
+      ) : isFeature ? (
+        // Hero/primary chapters without a banner photo → monumental numeral.
         <div className={styles.plateHead}>
           <span className={styles.plateRule} aria-hidden="true" />
           <div className={styles.plateNumWrap}>
