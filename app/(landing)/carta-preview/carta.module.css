@@ -725,72 +725,106 @@
   margin-top: 8px;
   max-width: 40ch;
 }
-.autorCards {
+.autorCarousel {
   display: flex;
   flex-direction: row;
   align-items: stretch;
-  gap: 12px;
+  gap: 14px;
   padding: 0 20px;
   overflow-x: auto;
+  scroll-snap-type: x mandatory;
   scrollbar-width: none;
 }
-.autorCards::-webkit-scrollbar {
+.autorCarousel::-webkit-scrollbar {
   display: none;
 }
 .autorCard {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  width: 158px;
-  flex-shrink: 0;
-  text-decoration: none;
+  flex: 0 0 clamp(280px, 82%, 360px);
+  scroll-snap-align: start;
 }
+/* photo fills the card; name + price ride on a scrim at the bottom */
 .autorCardPhoto {
-  width: 158px;
-  height: 196px;
-  background: var(--panel) center / cover no-repeat;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  background: var(--panel) center 42% / cover no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.autorCardOverlay {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  background: rgba(15, 11, 8, 0.55);
+  padding: 14px 16px;
 }
 .autorCardName {
   font-family: var(--f-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 29px;
+  line-height: 0.95;
+  color: #faf5ec;
+}
+.autorCardPrice {
+  font-family: var(--f-mono);
   font-weight: 500;
-  font-size: 21px;
-  line-height: 1.1;
-  color: var(--ink);
-  margin-top: 12px;
+  font-size: 16px;
+  color: #faf5ec;
+  flex-shrink: 0;
 }
-.autorCardFoot {
+.autorCardBody {
   display: flex;
-  flex-direction: row;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-top: 5px;
-  gap: 8px;
+  flex-direction: column;
+  gap: 5px;
+  padding: 14px 2px 0;
 }
-.autorFooter {
+.autorCardMeta {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.autorCardDesc {
+  font-family: var(--f-display);
+  font-style: italic;
+  font-size: 16px;
+  line-height: 1.3;
+  color: var(--ink-muted);
+}
+.autorScroll {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 10px;
-  padding: 16px 20px 0;
+  justify-content: space-between;
+  padding: 18px 20px 0;
 }
-.autorTick {
+.autorScrollBar {
   display: flex;
+  flex-direction: row;
+  align-items: center;
   gap: 5px;
 }
-.autorTickOn {
-  width: 16px;
+.autorScrollSeg {
   height: 2px;
+  width: 12px;
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+  transition: width 180ms ease, background 180ms ease;
+}
+.autorScrollSegOn {
+  width: 28px;
   background: var(--accent);
 }
-.autorTickOff {
-  width: 6px;
-  height: 2px;
-  background: var(--hairline-strong);
-}
-.autorFootText {
+.autorScrollText {
   font-family: var(--f-mono);
   font-size: 10px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ink-muted);
 }
@@ -1037,24 +1071,18 @@
   .autorSub {
     font-size: 20px;
   }
-  .autorCards {
+  .autorCarousel {
     padding: 0 48px;
-    overflow: visible;
-    gap: 18px;
+    gap: 20px;
   }
   .autorCard {
-    width: auto;
-    flex: 1;
-  }
-  .autorCardPhoto {
-    width: 100%;
-    height: 340px;
+    flex: 0 0 clamp(320px, 44%, 420px);
   }
   .autorCardName {
-    font-size: 24px;
+    font-size: 32px;
   }
-  .autorFooter {
-    padding: 18px 48px 0;
+  .autorScroll {
+    padding: 20px 48px 0;
   }
 
   /* highlighted item → photo beside text */

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import type {
   PublicMenuView,
@@ -221,7 +221,20 @@ function Section({ section, showPrices }: { section: MenuSectionX; showPrices: b
 
 // ── Carta de autor spotlight ────────────────────────────────────────────
 function AutorSpotlight({ items, showPrices }: { items: MenuItemX[]; showPrices: boolean }) {
+  const railRef = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(0);
+
   if (!items.length) return null;
+
+  // Track scroll position → which card is centered, for the progress indicator.
+  function onScroll() {
+    const el = railRef.current;
+    if (!el) return;
+    const max = el.scrollWidth - el.clientWidth;
+    const frac = max > 0 ? el.scrollLeft / max : 0;
+    setActive(Math.round(frac * (items.length - 1)));
+  }
+
   return (
     <div className={styles.autor}>
       <div className={styles.autorHead}>
@@ -229,31 +242,40 @@ function AutorSpotlight({ items, showPrices }: { items: MenuItemX[]; showPrices:
         <span className={styles.autorTitle}>Café de autor</span>
         <span className={styles.autorSub}>Tres recetas que sólo existen aquí. Rotan con la temporada.</span>
       </div>
-      <div className={styles.autorCards}>
+      <div className={styles.autorCarousel} ref={railRef} onScroll={onScroll}>
         {items.map((item) => {
           const photo = itemPhoto(item);
           return (
-            <a key={item.id} href="#sec-cafeteria" className={styles.autorCard}>
+            <article key={item.id} className={styles.autorCard}>
               <div
                 className={styles.autorCardPhoto}
                 style={photo ? { backgroundImage: `url(${photo})` } : undefined}
-              />
-              <span className={styles.autorCardName}>{item.name}</span>
-              <div className={styles.autorCardFoot}>
-                {item.meta ? <span className={styles.meta}>{item.meta}</span> : <span />}
-                {showPrices ? <span className={styles.price}>{priceText(item)}</span> : null}
+              >
+                <div className={styles.autorCardOverlay}>
+                  <span className={styles.autorCardName}>{item.name}</span>
+                  {showPrices ? <span className={styles.autorCardPrice}>{priceText(item)}</span> : null}
+                </div>
               </div>
-            </a>
+              <div className={styles.autorCardBody}>
+                {item.meta ? <span className={styles.autorCardMeta}>{item.meta}</span> : null}
+                {item.description ? <span className={styles.autorCardDesc}>{item.description}</span> : null}
+              </div>
+            </article>
           );
         })}
       </div>
-      <div className={styles.autorFooter}>
-        <div className={styles.autorTick}>
-          <span className={styles.autorTickOn} />
-          <span className={styles.autorTickOff} />
-          <span className={styles.autorTickOff} />
+      <div className={styles.autorScroll}>
+        <div className={styles.autorScrollBar} aria-hidden="true">
+          {items.map((item, i) => (
+            <span
+              key={item.id}
+              className={`${styles.autorScrollSeg} ${i === active ? styles.autorScrollSegOn : ""}`}
+            />
+          ))}
         </div>
-        <span className={styles.autorFootText}>Desliza · rota cada semana</span>
+        <span className={styles.autorScrollText}>
+          Desliza · {String(active + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}
+        </span>
       </div>
     </div>
   );
