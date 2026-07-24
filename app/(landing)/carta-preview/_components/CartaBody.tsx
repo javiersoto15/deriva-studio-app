@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import type {
   PublicMenuView,
@@ -297,6 +297,59 @@ export function CartaBody({
 
   const sections = menu.sections as MenuSectionX[];
 
+  const shellRef = useRef<HTMLDivElement>(null);
+  const chipNavRef = useRef<HTMLElement | null>(null);
+  const chipRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
+  const spyRaf = useRef(0);
+  const [activeSec, setActiveSec] = useState<string>(sections[0]?.id ?? "");
+
+  // Measure the fixed site-nav + sticky chip-bar → offsets for the sticky top
+  // and the section scroll-margin (so anchor jumps land below both bars).
+  useEffect(() => {
+    const shell = shellRef.current;
+    const nav = document.querySelector<HTMLElement>(".landing-nav");
+    const measure = () => {
+      const navH = nav?.offsetHeight ?? 56;
+      const chipH = chipNavRef.current?.offsetHeight ?? 56;
+      shell?.style.setProperty("--chipnav-top", `${navH}px`);
+      shell?.style.setProperty("--section-offset", `${navH + chipH + 8}px`);
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
+
+  // Scroll-spy: active section = the last one whose top has scrolled above the
+  // bottom of the sticky bars. Throttled to one rAF per scroll.
+  useEffect(() => {
+    function compute() {
+      spyRaf.current = 0;
+      const line = (chipNavRef.current?.getBoundingClientRect().bottom ?? 120) + 12;
+      let current = sections[0]?.id ?? "";
+      for (const s of sections) {
+        const el = document.getElementById(`sec-${s.id}`);
+        if (el && el.getBoundingClientRect().top <= line) current = s.id;
+      }
+      setActiveSec(current);
+    }
+    function onScroll() {
+      if (spyRaf.current) return;
+      spyRaf.current = requestAnimationFrame(compute);
+    }
+    compute();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [sections]);
+
+  // Keep the active chip centered in the horizontal rail.
+  useEffect(() => {
+    const rail = chipNavRef.current;
+    const chip = chipRefs.current[activeSec];
+    if (!rail || !chip) return;
+    const target = chip.offsetLeft - rail.clientWidth / 2 + chip.clientWidth / 2;
+    rail.scrollTo({ left: Math.max(0, target), behavior: "smooth" });
+  }, [activeSec]);
+
   // Pull the carta-de-autor subgroup out of Cafetería and feature it up top.
   const cafeteria = sections.find((s) => s.id === "cafeteria");
   const autorItems =
@@ -313,7 +366,7 @@ export function CartaBody({
   const heroPhoto = heroItem ? itemPhoto(heroItem) : undefined;
 
   return (
-    <div className={styles.shell} data-theme={theme}>
+    <div className={styles.shell} data-theme={theme} ref={shellRef}>
       <div className={styles.previewFlag}>Vista previa · carta nueva (no definitiva)</div>
 
       <div className={styles.page}>
@@ -384,9 +437,16 @@ export function CartaBody({
         </div>
       </div>
 
-      <nav className={styles.chipNav} aria-label="Secciones">
-        {sections.map((s, i) => (
-          <a key={s.id} href={`#sec-${s.id}`} className={`${styles.chip} ${i === 0 ? styles.chipActive : ""}`}>
+      <nav className={styles.chipNav} aria-label="Secciones" ref={chipNavRef}>
+        {sections.map((s) => (
+          <a
+            key={s.id}
+            href={`#sec-${s.id}`}
+            ref={(el) => {
+              chipRefs.current[s.id] = el;
+            }}
+            className={`${styles.chip} ${activeSec === s.id ? styles.chipActive : ""}`}
+          >
             {s.title.replace(/[.·]+$/, "")}
           </a>
         ))}

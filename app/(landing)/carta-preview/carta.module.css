@@ -22,7 +22,9 @@
   background: var(--ground);
   color: var(--ink);
   min-height: 100vh;
-  overflow-x: hidden;
+  /* clip (not hidden): hidden makes .shell a scroll container and breaks the
+     sticky chip bar; clip contains horizontal overflow without that. */
+  overflow-x: clip;
 }
 
 .shell[data-theme="light"] {
@@ -209,11 +211,15 @@
 
 /* ── Chip nav ─────────────────────────────────────────────────────────── */
 .chipNav {
+  position: sticky;
+  top: var(--chipnav-top, 56px);
+  z-index: 40;
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 7px;
   padding: 14px 20px;
+  background: var(--ground);
   border-bottom: 1px solid var(--nav-border, rgba(201, 165, 122, 0.18));
   overflow-x: auto;
   scrollbar-width: none;
@@ -346,8 +352,8 @@
 
 /* ── Chapter ──────────────────────────────────────────────────────────── */
 .chapter {
-  /* clear the fixed SiteNav when a chip-nav anchor jumps here */
-  scroll-margin-top: 96px;
+  /* clear both the fixed SiteNav and the sticky chip bar on anchor jump */
+  scroll-margin-top: var(--section-offset, 150px);
 }
 .chapterHead {
   display: flex;
