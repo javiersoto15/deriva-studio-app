@@ -164,14 +164,26 @@ function Section({ section, showPrices }: { section: MenuSectionX; showPrices: b
             {section.lede ? <span className={styles.openerLede}>{section.lede}</span> : null}
           </div>
         </div>
-      ) : (
-        <div className={`${styles.chapterHead} ${isHero ? styles.chapterHeadHero : ""}`}>
-          <div className={styles.chapterTitleRow}>
-            <span className={styles.numeral}>§{section.numeral}</span>
-            <span className={`${styles.chapterTitle} ${isHero ? styles.chapterTitleHero : ""}`}>
-              {section.title}
-            </span>
+      ) : isHero ? (
+        // Hero chapters (emphasis=hero) without a banner photo → monumental numeral.
+        <div className={styles.plateHead}>
+          <span className={styles.plateRule} aria-hidden="true" />
+          <div className={styles.plateNumWrap}>
+            <span className={styles.plateNum}>{section.numeral}</span>
+            <span className={styles.plateKicker}>Sección</span>
           </div>
+          <span className={`${styles.chapterTitle} ${styles.chapterTitleHero}`}>{section.title}</span>
+          {section.lede ? <span className={styles.chapterLede}>{section.lede}</span> : null}
+        </div>
+      ) : (
+        // Standard sections → diamond + label + rule divider.
+        <div className={styles.sealHead}>
+          <div className={styles.sealDivider}>
+            <span className={styles.sealDiamond} aria-hidden="true" />
+            <span className={styles.sealLabel}>Sección {section.numeral}</span>
+            <span className={styles.sealRule} aria-hidden="true" />
+          </div>
+          <span className={styles.chapterTitle}>{section.title}</span>
           {section.lede ? <span className={styles.chapterLede}>{section.lede}</span> : null}
         </div>
       )}

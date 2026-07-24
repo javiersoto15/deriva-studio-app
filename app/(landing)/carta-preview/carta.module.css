@@ -394,6 +394,84 @@
   max-width: 34ch;
 }
 
+/* ── Section break · standard (Regla con sello) ───────────────────────── */
+.sealHead {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 42px 20px 4px;
+}
+.sealDivider {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  align-self: stretch;
+}
+.sealDiamond {
+  width: 9px;
+  height: 9px;
+  background: var(--accent);
+  transform: rotate(45deg);
+  flex-shrink: 0;
+}
+.sealLabel {
+  font-family: var(--f-mono);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.sealRule {
+  flex: 1;
+  height: 1px;
+  background: color-mix(in srgb, var(--accent) 35%, transparent);
+}
+.sealHead .chapterTitle {
+  margin-top: 16px;
+}
+
+/* ── Section break · hero (Placa · numeral monumental) ────────────────── */
+.plateHead {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 44px 20px 4px;
+}
+.plateRule {
+  align-self: stretch;
+  height: 1px;
+  background: color-mix(in srgb, var(--accent) 40%, transparent);
+  margin-bottom: 24px;
+}
+.plateNumWrap {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 6px;
+}
+.plateNum {
+  font-family: var(--f-display);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 150px;
+  line-height: 0.78;
+  color: var(--accent);
+}
+.plateKicker {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 20px;
+}
+.plateHead .chapterTitle {
+  margin-top: 12px;
+}
+
 /* opener photo band for a chapter */
 .opener {
   position: relative;
@@ -890,8 +968,15 @@
     row-gap: 8px;
   }
 
-  .chapterHead {
-    padding: 46px 48px 6px;
+  .chapterHead,
+  .sealHead {
+    padding: 48px 48px 6px;
+  }
+  .plateHead {
+    padding: 52px 48px 6px;
+  }
+  .plateNum {
+    font-size: 208px;
   }
   .chapterTitle {
     font-size: 54px;
