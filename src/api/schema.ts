@@ -3048,6 +3048,124 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/public-menu/offers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List public-menu offers */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Editable display-only offers. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PublicMenuOfferAdmin"][];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Create public-menu offer */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["PublicMenuOfferAdmin"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/public-menu/offers/{offer_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Replace public-menu offer */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    offer_id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["PublicMenuOfferAdmin"];
+                };
+            };
+            responses: {
+                /** @description Updated */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        post?: never;
+        /** Delete public-menu offer */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    offer_id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Deleted */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/admin/menu-ejecutivo": {
         parameters: {
             query?: never;
@@ -4424,6 +4542,8 @@ export interface components {
             lede: string;
             lede_italic?: boolean;
             service_window?: string;
+            /** Format: uri */
+            banner_image_url?: string;
             schedule?: components["schemas"]["PublicMenuSchedule"][];
             items?: string[];
             subgroups?: components["schemas"]["PublicMenuSubgroupTemplate"][];
@@ -4434,11 +4554,37 @@ export interface components {
                 [key: string]: components["schemas"]["PublicMenuSectionTranslation"];
             };
         };
+        PublicMenuOffer: {
+            id: string;
+            title: string;
+            description: string;
+            item_ids?: string[];
+            section_ids?: string[];
+        };
+        PublicMenuOfferAdmin: components["schemas"]["PublicMenuOffer"] & {
+            section_id: string;
+            sort_order: number;
+            published: boolean;
+            /** Format: date-time */
+            visible_from?: string;
+            /** Format: date-time */
+            visible_until?: string;
+            schedule?: components["schemas"]["PublicMenuSchedule"][];
+            translations?: {
+                [key: string]: components["schemas"]["PublicMenuOfferText"];
+            };
+        };
+        PublicMenuOfferText: {
+            title: string;
+            description: string;
+        };
         PublicMenuSectionPatch: {
             title?: string;
             italic_word?: string;
             lede?: string;
             service_window?: string;
+            /** Format: uri */
+            banner_image_url?: string;
             schedule?: components["schemas"]["PublicMenuSchedule"][];
             translations?: {
                 [key: string]: components["schemas"]["PublicMenuSectionTranslation"];
@@ -4484,6 +4630,7 @@ export interface components {
             addons?: components["schemas"]["PublicMenuAddon"][];
             addons_before?: string;
             executive_menu?: components["schemas"]["ExecutiveMenu"];
+            offers?: components["schemas"]["PublicMenuOffer"][];
         };
         PublicMenuSubgroup: {
             id: string;
@@ -4534,6 +4681,9 @@ export interface components {
             id: string;
             name: string;
             description: string;
+            /** Format: uri */
+            image_url?: string;
+            highlighted?: boolean;
             meta?: string;
             price_clp?: number;
             price_label?: string;
