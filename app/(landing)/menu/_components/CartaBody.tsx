@@ -7,6 +7,8 @@ import type {
   PublicMenuSection,
   PublicMenuSubgroup,
   PublicMenuAddon,
+  PublicMenuOffer,
+  PublicMenuOfferItemPricing,
   ExecutiveMenu
 } from "../../../../src/api/server";
 import { LOCALE_COOKIE, locales, type Locale } from "../../../../src/i18n/locale";
@@ -148,6 +150,199 @@ function EjecutivoInsert({ em }: { em: ExecutiveMenu }) {
   );
 }
 
+// ── Offers / combos ─────────────────────────────────────────────────────
+// Display-only: the pricing metadata is rendered verbatim as a label, never
+// summed. `included` → "Incluido", `fixed`+amount → "Promo · CLP $X",
+// `supplement`+amount → "+ CLP $X". No amount → no label.
+function offerPriceLabel(pricing?: PublicMenuOfferItemPricing): string | null {
+  if (!pricing) return null;
+  if (pricing.kind === "included") return "Incluido";
+  if (typeof pricing.amount_clp !== "number") return null;
+  if (pricing.kind === "fixed") return `Promo · CLP ${clp(pricing.amount_clp)}`;
+  if (pricing.kind === "supplement") return `+ CLP ${clp(pricing.amount_clp)}`;
+  return null;
+}
+
+// Themed dialog that mirrors src/ui/Sheet.tsx's focus behavior (scroll lock,
+// ESC dismiss, backdrop dismiss, focus-first) but wears the Carta dark/day
+// palette instead of the companion's light beige. Rendered inside the themed
+// `.shell` so the --ground/--ink custom properties cascade in; not portalled
+// (the shell has no transformed ancestor, so fixed positions to the viewport).
+function OfferDialog({
+  offer,
+  open,
+  onClose,
+  showPrices
+}: {
+  offer: PublicMenuOffer;
+  open: boolean;
+  onClose: () => void;
+  showPrices: boolean;
+}) {
+  const panelRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const titleId = `offer-${offer.id}-title`;
+
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open, onClose]);
+
+  useEffect(() => {
+    if (open) closeRef.current?.focus({ preventScroll: true });
+  }, [open]);
+
+  if (!open) return null;
+  const detail = offer.detail;
+
+  return (
+    <div className={styles.dlgScrim} role="presentation" onClick={onClose}>
+      <div
+        ref={panelRef}
+        className={styles.dlg}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className={styles.dlgHead}>
+          <div className={styles.dlgHeadText}>
+            <span className={styles.offersLabel}>Oferta</span>
+            <span id={titleId} className={styles.dlgTitle}>
+              {offer.title}
+            </span>
+            {offer.description ? <span className={styles.dlgPreview}>{offer.description}</span> : null}
+          </div>
+          <button
+            ref={closeRef}
+            type="button"
+            className={styles.dlgClose}
+            onClick={onClose}
+            aria-label="Cerrar"
+          >
+            ×
+          </button>
+        </div>
+
+        <div className={styles.dlgBody}>
+          {detail?.title || detail?.description ? (
+            <div className={styles.dlgDetail}>
+              {detail.title ? <span className={styles.dlgDetailTitle}>{detail.title}</span> : null}
+              {detail.description ? (
+                <span className={styles.dlgDetailDesc}>{detail.description}</span>
+              ) : null}
+            </div>
+          ) : null}
+
+          {detail?.items?.length ? (
+            <ul className={styles.dlgItems}>
+              {detail.items.map((row, i) => {
+                const it = row.item;
+                const photo = itemPhoto(it);
+                const priceLabel = offerPriceLabel(row.pricing);
+                const unavailable = it.available === false;
+                return (
+                  <li
+                    key={`${it.id}-${i}`}
+                    className={`${styles.dlgItem} ${unavailable ? styles.dlgItemOff : ""}`}
+                  >
+                    {photo ? (
+                      <span
+                        className={styles.dlgItemThumb}
+                        style={{ backgroundImage: `url(${photo})` }}
+                        aria-hidden="true"
+                      />
+                    ) : null}
+                    <div className={styles.dlgItemMain}>
+                      <div className={styles.dlgItemNameLine}>
+                        <span className={styles.dlgItemName}>{it.name}</span>
+                        {row.quantity > 1 ? (
+                          <span className={styles.dlgItemQty}>×{row.quantity}</span>
+                        ) : null}
+                        {unavailable ? (
+                          <span className={styles.dlgItemFlag}>Agotado</span>
+                        ) : null}
+                      </div>
+                      {showPrices && (it.price_label || typeof it.price_clp === "number") ? (
+                        <span className={styles.dlgItemNormal}>{priceText(it)}</span>
+                      ) : null}
+                    </div>
+                    {priceLabel ? <span className={styles.dlgItemPricing}>{priceLabel}</span> : null}
+                  </li>
+                );
+              })}
+            </ul>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// One offer inside a section's offers block. Simple offers (no `detail`) render
+// exactly as before — a static title/description. Offers WITH a `detail` become
+// a clickable card that opens OfferDialog; `detail` presence is the openability
+// signal (there is no backend `modal` flag).
+function OfferRow({ offer, showPrices }: { offer: PublicMenuOffer; showPrices: boolean }) {
+  const [open, setOpen] = useState(false);
+  const btnRef = useRef<HTMLButtonElement>(null);
+
+  if (!offer.detail) {
+    return (
+      <div className={styles.offer}>
+        <span className={styles.offerTitle}>{offer.title}</span>
+        <span className={styles.offerDesc}>{offer.description}</span>
+      </div>
+    );
+  }
+
+  const image = offer.image_url;
+  return (
+    <>
+      <button
+        ref={btnRef}
+        type="button"
+        className={`${styles.offer} ${styles.offerButton}`}
+        onClick={() => setOpen(true)}
+        aria-haspopup="dialog"
+      >
+        {image ? (
+          <span
+            className={styles.offerThumb}
+            style={{ backgroundImage: `url(${image})` }}
+            aria-hidden="true"
+          />
+        ) : null}
+        <span className={styles.offerButtonBody}>
+          <span className={styles.offerTitle}>{offer.title}</span>
+          <span className={styles.offerDesc}>{offer.description}</span>
+          <span className={styles.offerCue} aria-hidden="true">
+            Ver detalle →
+          </span>
+        </span>
+      </button>
+      <OfferDialog
+        offer={offer}
+        open={open}
+        onClose={() => {
+          setOpen(false);
+          btnRef.current?.focus();
+        }}
+        showPrices={showPrices}
+      />
+    </>
+  );
+}
+
 // A full section (chapter). Hero chapters with a banner get a photo opener.
 function Section({ section, showPrices }: { section: MenuSectionX; showPrices: boolean }) {
   const banner = sectionBanner(section);
@@ -180,10 +375,7 @@ function Section({ section, showPrices }: { section: MenuSectionX; showPrices: b
         <div className={styles.offers}>
           <span className={styles.offersLabel}>Combos & ofertas</span>
           {section.offers.map((o) => (
-            <div key={o.id} className={styles.offer}>
-              <span className={styles.offerTitle}>{o.title}</span>
-              <span className={styles.offerDesc}>{o.description}</span>
-            </div>
+            <OfferRow key={o.id} offer={o as PublicMenuOffer} showPrices={showPrices} />
           ))}
         </div>
       ) : null}
@@ -367,8 +559,6 @@ export function CartaBody({
 
   return (
     <div className={styles.shell} data-theme={theme} ref={shellRef}>
-      <div className={styles.previewFlag}>Vista previa · carta nueva (no definitiva)</div>
-
       <div className={styles.page}>
       {heroPhoto ? (
         <div className={styles.hero} style={{ backgroundImage: `url(${heroPhoto})` }}>

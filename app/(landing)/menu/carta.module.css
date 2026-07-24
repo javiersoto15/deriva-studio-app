@@ -336,6 +336,246 @@
   color: var(--ink-muted);
 }
 
+/* Openable offer (has backend `detail`) → clickable card. Keeps the .offer
+   frame; adds an optional thumbnail, a "ver detalle" cue and hover/focus feedback. */
+.offerButton {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border-radius: 0;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+  transition: background-color 0.15s ease;
+}
+.offerButton:hover,
+.offerButton:focus-visible {
+  background: var(--panel-2);
+}
+.offerButton:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+.offerThumb {
+  flex: 0 0 auto;
+  width: 52px;
+  height: 52px;
+  border-radius: 3px;
+  background-color: var(--panel-2);
+  background-size: cover;
+  background-position: center;
+}
+.offerButtonBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.offerCue {
+  margin-top: 4px;
+  font-family: var(--f-tracked);
+  font-weight: 600;
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* ── Offer dialog (openable combos) ───────────────────────────────────── */
+.dlgScrim {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(12, 8, 5, 0.62);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.dlg {
+  width: 100%;
+  max-width: 480px;
+  max-height: min(88vh, 720px);
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  border: 1px solid var(--hairline-strong);
+  border-top: 3px solid var(--accent);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+}
+.dlgHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--hairline);
+}
+.dlgHeadText {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+.dlgTitle {
+  font-family: var(--f-display);
+  font-style: italic;
+  font-size: 26px;
+  line-height: 1.1;
+  color: var(--ink);
+}
+.dlgPreview {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+  color: var(--ink-muted);
+}
+.dlgClose {
+  flex: 0 0 auto;
+  margin: -6px -6px 0 0;
+  width: 34px;
+  height: 34px;
+  background: transparent;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 50%;
+  cursor: pointer;
+  font-family: var(--f-mono);
+  font-size: 18px;
+  line-height: 1;
+  color: var(--ink-muted);
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.dlgClose:hover,
+.dlgClose:focus-visible {
+  color: var(--ink);
+  border-color: var(--accent);
+  outline: none;
+}
+.dlgBody {
+  padding: 16px 20px 22px;
+  overflow-y: auto;
+}
+.dlgDetail {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 14px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--hairline);
+}
+.dlgDetailTitle {
+  font-family: var(--f-tracked);
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.dlgDetailDesc {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  line-height: 1.55;
+  color: var(--ink-muted);
+}
+.dlgItems {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.dlgItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--hairline);
+}
+.dlgItem:first-child {
+  border-top: none;
+}
+.dlgItemOff {
+  opacity: 0.5;
+}
+.dlgItemThumb {
+  flex: 0 0 auto;
+  width: 46px;
+  height: 46px;
+  border-radius: 3px;
+  background-color: var(--panel-2);
+  background-size: cover;
+  background-position: center;
+}
+.dlgItemMain {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.dlgItemNameLine {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.dlgItemName {
+  font-family: var(--f-display);
+  font-size: 17px;
+  line-height: 1.15;
+  color: var(--ink);
+}
+.dlgItemQty {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--ink-muted);
+}
+.dlgItemFlag {
+  font-family: var(--f-tracked);
+  font-weight: 600;
+  font-size: 8px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.dlgItemNormal {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  color: var(--ink-faint);
+}
+.dlgItemPricing {
+  flex: 0 0 auto;
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+/* Narrow phones: dock the dialog to the bottom as a full-width sheet. */
+@media (max-width: 520px) {
+  .dlgScrim {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .dlg {
+    max-width: none;
+    max-height: 92dvh;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    border-top: 3px solid var(--accent);
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+  }
+}
+
 /* signature (de la casa) marker */
 .sigTag {
   font-family: var(--f-tracked);
@@ -950,18 +1190,6 @@
   font-size: 20px;
   letter-spacing: 0.02em;
   color: var(--ink);
-}
-
-/* preview ribbon so nobody mistakes this for the live carta */
-.previewFlag {
-  font-family: var(--f-mono);
-  font-size: 10px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  text-align: center;
-  padding: 6px;
-  background: var(--accent);
-  color: var(--on-accent);
 }
 
 .footer {

@@ -130,6 +130,9 @@ export type PublicMenuSection = components["schemas"]["PublicMenuSection"];
 export type PublicMenuSubgroup = components["schemas"]["PublicMenuSubgroup"];
 export type PublicMenuItem = components["schemas"]["PublicMenuItem"];
 export type PublicMenuAddon = components["schemas"]["PublicMenuAddon"];
+export type PublicMenuOffer = components["schemas"]["PublicMenuOffer"];
+export type PublicMenuOfferDetailItem = components["schemas"]["PublicMenuOfferDetailItem"];
+export type PublicMenuOfferItemPricing = components["schemas"]["PublicMenuOfferItemPricing"];
 export type ExecutiveMenu = components["schemas"]["ExecutiveMenu"];
 export type PublicMenuSchedule = components["schemas"]["PublicMenuSchedule"];
 
