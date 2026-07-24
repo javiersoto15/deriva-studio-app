@@ -15,7 +15,6 @@ import {
   itemPhoto,
   isHighlighted,
   sectionBanner,
-  displayTitle,
   type MenuItemX,
   type MenuSectionX
 } from "./menu-fields";
@@ -161,7 +160,7 @@ function Section({ section, showPrices }: { section: MenuSectionX; showPrices: b
         <div className={styles.opener} style={{ backgroundImage: `url(${banner})` }}>
           <div className={styles.openerPanel}>
             <span className={styles.openerNumeral}>§{section.numeral}</span>
-            <span className={styles.openerTitle}>{displayTitle(section)}</span>
+            <span className={styles.openerTitle}>{section.title}</span>
             {section.lede ? <span className={styles.openerLede}>{section.lede}</span> : null}
           </div>
         </div>
@@ -170,7 +169,7 @@ function Section({ section, showPrices }: { section: MenuSectionX; showPrices: b
           <div className={styles.chapterTitleRow}>
             <span className={styles.numeral}>§{section.numeral}</span>
             <span className={`${styles.chapterTitle} ${isHero ? styles.chapterTitleHero : ""}`}>
-              {displayTitle(section)}
+              {section.title}
             </span>
           </div>
           {section.lede ? <span className={styles.chapterLede}>{section.lede}</span> : null}
@@ -359,7 +358,7 @@ export function CartaBody({
       <nav className={styles.chipNav} aria-label="Secciones">
         {sections.map((s, i) => (
           <a key={s.id} href={`#sec-${s.id}`} className={`${styles.chip} ${i === 0 ? styles.chipActive : ""}`}>
-            {displayTitle(s).replace(/[.·]+$/, "")}
+            {s.title.replace(/[.·]+$/, "")}
           </a>
         ))}
       </nav>
