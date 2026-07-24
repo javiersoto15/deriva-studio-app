@@ -4624,6 +4624,8 @@ export interface components {
             lede: string;
             lede_italic?: boolean;
             service_window?: string;
+            /** Format: uri */
+            banner_image_url?: string;
             schedule?: components["schemas"]["PublicMenuSchedule"][];
             items?: components["schemas"]["PublicMenuItem"][];
             subgroups?: components["schemas"]["PublicMenuSubgroup"][];
