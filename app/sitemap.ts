@@ -25,12 +25,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.5
     },
     {
-      url: `${siteUrl}/mundial`,
-      lastModified,
-      changeFrequency: "daily",
-      priority: 0.6
-    },
-    {
       // Limited campaign — drops out of the sitemap after 2026-06-30.
       url: `${siteUrl}/deriva-match-up`,
       lastModified,

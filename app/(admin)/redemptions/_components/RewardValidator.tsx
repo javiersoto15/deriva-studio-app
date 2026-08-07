@@ -90,7 +90,7 @@ function RewardCard({
   return (
     <div className="redeem__card">
       <div className="redeem__head">
-        <span className="redeem__mast">Polla del Mundial · Canje</span>
+        <span className="redeem__mast">Recompensas · Canje</span>
         <span className="redeem__code">{reward.short_code}</span>
       </div>
 
