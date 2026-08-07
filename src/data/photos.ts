@@ -15,16 +15,21 @@ export const PHOTO_FORMATS = [
 export type PhotoSlug =
   | "bagel-churrasco"
   | "bar"
+  | "brunch"
   | "cappuccino"
+  | "citrus-bloom"
   | "croissant-kasler"
   | "espresso-tropical"
   | "filtrado"
   | "interior"
   | "latte"
   | "mate"
+  | "mediterraneo"
   | "pour-over"
+  | "rose"
   | "storefront"
-  | "tostada-italiana";
+  | "tostada-italiana"
+  | "valdiviano";
 
 export type PhotoEntry = {
   slug: PhotoSlug;
@@ -35,14 +40,19 @@ export type PhotoEntry = {
 export const derivaPhotos: Record<PhotoSlug, PhotoEntry> = {
   "bagel-churrasco": { slug: "bagel-churrasco", aspect: 0.5625, widths: [480, 960, 1440, 1920] },
   "bar": { slug: "bar", aspect: 1.5002, widths: [480, 960, 1440, 1920] },
+  "brunch": { slug: "brunch", aspect: 0.5625, widths: [480, 960, 1440, 1920] },
   "cappuccino": { slug: "cappuccino", aspect: 0.6665, widths: [480, 960, 1440, 1920] },
+  "citrus-bloom": { slug: "citrus-bloom", aspect: 0.6665, widths: [480, 960, 1440, 1920] },
   "croissant-kasler": { slug: "croissant-kasler", aspect: 0.6667, widths: [480, 960, 1440, 1920] },
   "espresso-tropical": { slug: "espresso-tropical", aspect: 0.5625, widths: [480, 960, 1440, 1920] },
   "filtrado": { slug: "filtrado", aspect: 0.6666, widths: [480, 960, 1440, 1920] },
   "interior": { slug: "interior", aspect: 1.5000, widths: [480, 960, 1440, 1920] },
   "latte": { slug: "latte", aspect: 0.6667, widths: [480, 960, 1440, 1920] },
   "mate": { slug: "mate", aspect: 0.5625, widths: [480, 960, 1440, 1920] },
+  "mediterraneo": { slug: "mediterraneo", aspect: 0.5625, widths: [480, 960, 1440, 1920] },
   "pour-over": { slug: "pour-over", aspect: 0.6667, widths: [480, 960, 1440, 1920] },
+  "rose": { slug: "rose", aspect: 0.6665, widths: [480, 960, 1440, 1920] },
   "storefront": { slug: "storefront", aspect: 1.5000, widths: [480, 960, 1440, 1920] },
   "tostada-italiana": { slug: "tostada-italiana", aspect: 0.6667, widths: [480, 960, 1440, 1920] },
+  "valdiviano": { slug: "valdiviano", aspect: 0.6665, widths: [480, 960, 1440, 1920] },
 };
