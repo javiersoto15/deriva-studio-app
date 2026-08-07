@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { connection } from "next/server";
 
-import { PRICING_OPEN_AT } from "../../../src/data/menu";
 import {
   getPublicMenuView,
   type PublicMenuView,
@@ -11,6 +9,7 @@ import {
 import { getActiveLocale, getActiveBackendLocale } from "../../../src/i18n/server";
 import { SiteNav } from "../../../src/components/landing/SiteNav";
 import { CartaBody } from "./_components/CartaBody";
+import { CartaSkeleton } from "./_components/CartaSkeleton";
 
 const siteUrl = "https://derivastudio.cl";
 const pageUrl = `${siteUrl}/menu`;
@@ -74,17 +73,18 @@ function buildMenuJsonLd(menu: PublicMenuView, showPrices: boolean): Record<stri
 
 // El Mercado carta — the live public /menu. The locale-cookie read + menu fetch
 // are dynamic, so they live in a Suspense boundary (Cache Components / PPR)
-// rather than a force-dynamic export. `connection()` keeps the price-reveal gate
-// per-request.
+// rather than a force-dynamic export.
 async function CartaContent() {
-  await connection();
   const [uiLocale, backendLocale] = await Promise.all([
     getActiveLocale(),
     getActiveBackendLocale()
   ]);
   const menu = await getPublicMenuView({ locale: backendLocale });
-  const forceShow = process.env.DERIVA_SHOW_PRICES === "1";
-  const showPrices = forceShow || Date.now() >= PRICING_OPEN_AT.getTime();
+  // The pricing embargo lifted on 2026-05-17 (PRICING_OPEN_AT), so the gate is
+  // permanently open. Dropping the Date.now() comparison also drops the
+  // `await connection()` it required under Cache Components — the cookie reads
+  // above already make this subtree dynamic.
+  const showPrices = true;
 
   if (!menu) {
     return (
@@ -110,7 +110,12 @@ export default function MenuPage() {
     <>
       <SiteNav active="carta" variant="solid" />
       <main className="menu-page menu-page--with-nav">
-        <Suspense fallback={null}>
+        {/* A real fallback, not null: the carta's own ground is nocturno
+            (#1a1410) while the empty .menu-page shell is cream, so an absent
+            fallback made every navigation flash light-then-dark. The skeleton
+            establishes the dark ground and the static masthead in the
+            prerendered shell; only backend-derived rows resolve later. */}
+        <Suspense fallback={<CartaSkeleton />}>
           <CartaContent />
         </Suspense>
       </main>
