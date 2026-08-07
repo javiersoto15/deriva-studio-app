@@ -36,8 +36,8 @@ function resolveBaseUrl(): string {
   return process.env.DERIVA_BACKEND_PROXY_URL ?? "http://localhost:8080";
 }
 
-async function getJson<T>(path: string): Promise<T> {
-  const res = await fetch(`${resolveBaseUrl()}${path}`);
+async function getJson<T>(path: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(`${resolveBaseUrl()}${path}`, init);
   if (!res.ok) {
     throw new Error(`GET ${path} failed: ${res.status}`);
   }
@@ -48,9 +48,9 @@ async function getJson<T>(path: string): Promise<T> {
 // build time the backend usually isn't reachable (ECONNREFUSED), so we wrap the
 // throw and return null. Callers handle null with a placeholder shell. The
 // cached null entry is short-lived (`minutes`) so the next real hit refreshes.
-async function tryGetJson<T>(path: string): Promise<T | null> {
+async function tryGetJson<T>(path: string, init?: RequestInit): Promise<T | null> {
   try {
-    return await getJson<T>(path);
+    return await getJson<T>(path, init);
   } catch {
     return null;
   }
@@ -147,4 +147,14 @@ export async function getPublicMenuView(opts?: {
   params.set("locale", opts?.locale ?? "es-CL");
   if (opts?.schedule) params.set("schedule", opts.schedule);
   return tryGetJson<PublicMenuView>(`/public/menu?${params.toString()}`);
+}
+
+// Operational displays need today's published edition even when the customer
+// menu intentionally hides Menu Ejecutivo outside the lunch window.
+export async function getPublicExecutiveMenu(
+  locale: "es-CL" | "en" | "pt-BR" = "es-CL"
+): Promise<ExecutiveMenu | null> {
+  return tryGetJson<ExecutiveMenu>(`/public/menu-ejecutivo?locale=${locale}`, {
+    cache: "no-store"
+  });
 }

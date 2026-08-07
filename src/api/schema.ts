@@ -756,7 +756,7 @@ export interface paths {
         };
         /**
          * Get the authenticated companion menu view
-         * @description Authenticated companion-safe alias for the canonical public menu presentation. Returns the same PublicMenuView shape and is served by the same backend PublicMenuView builder/store path as GET /public/menu, including weekday/weekend structure, Sunday closed-state, add-ons, and Menu Ejecutivo first only Monday-Friday 17:00-20:00 UTC.
+         * @description Authenticated companion-safe alias for the canonical public menu presentation. Returns the same PublicMenuView shape and is served by the same backend PublicMenuView builder/store path as GET /public/menu, including weekday/weekend structure, Sunday closed-state, add-ons, and Menu Ejecutivo first only Monday-Friday 16:30-20:00 UTC.
          */
         get: {
             parameters: {
@@ -1418,7 +1418,7 @@ export interface paths {
         };
         /**
          * Get the public landing menu view
-         * @description Backend-owned menu presentation view for the public landing menu. Keeps /menu as the flat companion item list while exposing the canonical weekday/weekend landing structure, including Menu Ejecutivo as the first section only Monday-Friday 17:00-20:00 UTC and the regular weekend menu split. The public view is composed from persisted menu_items plus persisted public menu presentation rows so the live site consumes backend data instead of static frontend/menu code.
+         * @description Backend-owned menu presentation view for the public landing menu. Keeps /menu as the flat companion item list while exposing the canonical weekday/weekend landing structure, including Menu Ejecutivo as the first section only Monday-Friday 16:30-20:00 UTC and the regular weekend menu split. The public view is composed from persisted menu_items plus persisted public menu presentation rows so the live site consumes backend data instead of static frontend/menu code.
          */
         get: {
             parameters: {
@@ -1443,6 +1443,50 @@ export interface paths {
                         "application/json": components["schemas"]["PublicMenuView"];
                     };
                 };
+                500: components["responses"]["InternalServerError"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/menu-ejecutivo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get the published daily Menu Ejecutivo edition
+         * @description Returns the current Chilean service date's published date-specific Menu Ejecutivo edition independently of public menu layout visibility. Intended for operational displays such as Sala, Abierto, and Menu Display. Returns 404 when no published date-specific edition exists.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description Resolve the daily edition for this locale. Defaults to es-CL and falls back to es-CL when unsupported. */
+                    locale?: "es-CL" | "en" | "pt-BR";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Published daily Menu Ejecutivo edition. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ExecutiveMenu"];
+                    };
+                };
+                404: components["responses"]["NotFound"];
                 500: components["responses"]["InternalServerError"];
             };
         };

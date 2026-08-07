@@ -17,12 +17,8 @@ import {
   isClosedToday,
   matchesSchedule
 } from "../../../src/data/menu-schedule";
-import {
-  MENU_EJECUTIVO_FIXED,
-  MENU_EJECUTIVO_TODAY,
-  getMenuEjecutivoDateLabel
-} from "../../../src/data/menu-ejecutivo";
-import { getPublicMenuView, type ExecutiveMenu } from "../../../src/api/server";
+import { getMenuEjecutivoDateLabel } from "../../../src/data/menu-ejecutivo";
+import { getPublicExecutiveMenu, type ExecutiveMenu } from "../../../src/api/server";
 import { LogoLockup } from "../../../src/ui/LogoLockup";
 import { getEditionMark } from "../../../src/lib/edition";
 import "./menu-display.css";
@@ -248,38 +244,16 @@ function MenuEjecutivoBox({
   showPrices: boolean;
   backendExecutive: ExecutiveMenu | null;
 }) {
-  // Prefer backend data (resolves today's rotation server-side); fall back to
-  // the local static constant if the API is unreachable so signage never
-  // goes blank on a TV.
-  const priceLabel =
-    backendExecutive?.price_label ?? MENU_EJECUTIVO_FIXED.priceLabel;
-  const subline = backendExecutive?.subline ?? MENU_EJECUTIVO_FIXED.subline;
+  if (!backendExecutive) return null;
+  const priceLabel = backendExecutive.price_label;
+  const subline = backendExecutive.subline;
 
   type Course = { tag: string; name: string; note?: string };
-  const courses: Course[] = backendExecutive
-    ? backendExecutive.courses.map((c) => ({ tag: c.tag, name: c.name, note: c.note }))
-    : [
-        {
-          tag: MENU_EJECUTIVO_FIXED.courseTags.bebida,
-          name: MENU_EJECUTIVO_TODAY.courses.bebida.name,
-          note: MENU_EJECUTIVO_TODAY.courses.bebida.note
-        },
-        {
-          tag: MENU_EJECUTIVO_FIXED.courseTags.entrada,
-          name: MENU_EJECUTIVO_TODAY.courses.entrada.name,
-          note: MENU_EJECUTIVO_TODAY.courses.entrada.note
-        },
-        {
-          tag: MENU_EJECUTIVO_FIXED.courseTags.fondo,
-          name: MENU_EJECUTIVO_TODAY.courses.fondo.name,
-          note: MENU_EJECUTIVO_TODAY.courses.fondo.note
-        },
-        {
-          tag: MENU_EJECUTIVO_FIXED.courseTags.queque,
-          name: MENU_EJECUTIVO_TODAY.courses.queque.name,
-          note: MENU_EJECUTIVO_TODAY.courses.queque.note
-        }
-      ];
+  const courses: Course[] = backendExecutive.courses.map((c) => ({
+    tag: c.tag,
+    name: c.name,
+    note: c.note
+  }));
 
   const CourseCol = ({ tag, name, note }: Course) => (
     <div className="md-ejec__course-col">
@@ -440,12 +414,7 @@ export async function LiveMenuDisplay() {
   const dateLabel = getMenuEjecutivoDateLabel(now);
   const closedToday = isClosedToday(now);
   const editionMark = getEditionMark(now);
-  // Backend resolves today's Menu Ejecutivo courses; pull only that block.
-  // Sections/items still come from menu.ts. If the API is unreachable the
-  // box silently falls back to MENU_EJECUTIVO_TODAY.
-  const publicMenu = await getPublicMenuView();
-  const backendExecutive =
-    publicMenu?.sections.find((s) => s.executive_menu)?.executive_menu ?? null;
+  const backendExecutive = await getPublicExecutiveMenu();
   return (
     <MenuDisplayShell
       showPrices={showPrices}

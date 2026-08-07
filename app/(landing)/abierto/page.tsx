@@ -6,8 +6,13 @@ import { LogoLockup } from "../../../src/ui/LogoLockup";
 import { menuSections, type MenuAddons } from "../../../src/data/menu";
 import { HOURS_LINES, isOpenNow } from "../../../src/lib/open-now";
 import { getEditionMarkUppercase } from "../../../src/lib/edition";
-import { MENU_EJECUTIVO_FIXED, MENU_EJECUTIVO_TODAY } from "../../../src/data/menu-ejecutivo";
-import { getPublicMenuView, type PublicMenuView, type PublicMenuItem } from "../../../src/api/server";
+import {
+  getPublicExecutiveMenu,
+  getPublicMenuView,
+  type ExecutiveMenu,
+  type PublicMenuView,
+  type PublicMenuItem
+} from "../../../src/api/server";
 import { CrossfadeRotator } from "../../../src/components/landing/CrossfadeRotator";
 import "./abierto.css";
 
@@ -194,37 +199,15 @@ function resolveCafeteriaNames(view: PublicMenuView | null): string[] {
   return names.length ? names.slice(0, 7) : fallback;
 }
 
-// Resolve today's four courses. The public backend's executive_menu is the
-// source of truth (set per service day by staff); we fall back to the static
-// MENU_EJECUTIVO_TODAY only if the backend is unreachable.
-async function resolveEjecutivoCourses(): Promise<
-  { roman: string; tag: string; name: string; note?: string }[]
-> {
-  const view = await getPublicMenuView({ locale: "es-CL" });
-  const backend = view?.sections.find((s) => s.executive_menu)?.executive_menu;
-  if (backend?.courses?.length) {
-    return backend.courses.map((c) => ({
-      roman: `${c.numeral}.`,
-      tag: c.tag,
-      name: c.name,
-      note: c.note
-    }));
-  }
-  const { courses: today } = MENU_EJECUTIVO_TODAY;
-  const { courseTags } = MENU_EJECUTIVO_FIXED;
-  return [
-    { roman: "i.", name: today.bebida.name, note: today.bebida.note, tag: today.bebida.tag ?? courseTags.bebida },
-    { roman: "ii.", name: today.entrada.name, note: today.entrada.note, tag: today.entrada.tag ?? courseTags.entrada },
-    { roman: "iii.", name: today.fondo.name, note: today.fondo.note, tag: today.fondo.tag ?? courseTags.fondo },
-    { roman: "iv.", name: today.queque.name, note: today.queque.note, tag: today.queque.tag ?? courseTags.queque }
-  ];
-}
-
-async function AbiertoEjecutivo() {
-  await connection();
+function AbiertoEjecutivo({ executive }: { executive: ExecutiveMenu }) {
   const now = new Date();
   const editionMark = getEditionMarkUppercase(now);
-  const courses = await resolveEjecutivoCourses();
+  const courses = executive.courses.map((course) => ({
+    roman: `${course.numeral}.`,
+    tag: course.tag,
+    name: course.name,
+    note: course.note
+  }));
 
   return (
     <main className="ab-stage ab-stage--ejec" aria-label="Menu Ejecutivo de hoy">
@@ -372,6 +355,7 @@ async function AbiertoDisplay() {
     }).format(now)
   );
   const showEjecutivo = isMenuEjecutivoDay(now) && santiagoHour < 16;
+  const executive = showEjecutivo ? await getPublicExecutiveMenu("es-CL") : null;
 
   return (
     <main className="ab-stage" aria-label="Pantalla abierto">
@@ -436,7 +420,7 @@ async function AbiertoDisplay() {
       </div>
 
       {/* Menu Ejecutivo strip — only while today's window is still open */}
-      {showEjecutivo ? (
+      {executive ? (
         <div className="ab-ejec-strip" aria-label="Menu Ejecutivo hoy">
           <span className="ab-ejec-strip__dash" aria-hidden="true">—</span>
           <span className="ab-ejec-strip__eyebrow">Hoy</span>
@@ -445,7 +429,7 @@ async function AbiertoDisplay() {
           <span className="ab-ejec-strip__sep">·</span>
           <span className="ab-ejec-strip__window">13:00 — 16:00</span>
           <span className="ab-ejec-strip__sep">·</span>
-          <span className="ab-ejec-strip__price">{MENU_EJECUTIVO_FIXED.priceLabel}</span>
+          <span className="ab-ejec-strip__price">{executive.price_label}</span>
           <span className="ab-ejec-strip__dash" aria-hidden="true">—</span>
         </div>
       ) : null}
@@ -637,8 +621,9 @@ async function AbiertoRotator({
   // the static shell from prerendering.
   const { view: preview } = await searchParams;
   if (preview) {
+    const executive = preview === "ejecutivo" ? await getPublicExecutiveMenu("es-CL") : null;
     const node =
-      preview === "ejecutivo" ? <AbiertoEjecutivo /> :
+      preview === "ejecutivo" && executive ? <AbiertoEjecutivo executive={executive} /> :
       preview === "promo" ? <AbiertoPromo /> :
       preview === "noche" ? <AbiertoNoche /> :
       <AbiertoDisplay />;
@@ -664,6 +649,7 @@ async function AbiertoRotator({
   // Menu Ejecutivo (30s): weekday lunch until 16:00 — advertises ahead of +
   // during service. NOT the carta schedule (which calls Fri "weekend").
   const showEjecutivo = isMenuEjecutivoDay(now) && santiagoHour < 16;
+  const executive = showEjecutivo ? await getPublicExecutiveMenu("es-CL") : null;
   // Noche (45s): 16:00 until close. Gated on open hours so it never runs on
   // Sunday (closed) or after the 21:00 close. Mutually exclusive with the
   // morning gates above (≥16 vs <13/<16), so it never stacks with them.
@@ -671,7 +657,7 @@ async function AbiertoRotator({
 
   const views = [{ key: "abierto", node: <AbiertoDisplay />, hold: 20 }];
   if (showCampesino) views.push({ key: "promo", node: <AbiertoPromo />, hold: 30 });
-  if (showEjecutivo) views.push({ key: "ejecutivo", node: <AbiertoEjecutivo />, hold: 30 });
+  if (executive) views.push({ key: "ejecutivo", node: <AbiertoEjecutivo executive={executive} />, hold: 30 });
   if (showNoche) views.push({ key: "noche", node: <AbiertoNoche />, hold: 45 });
 
   return <CrossfadeRotator className="ab-rotator" views={views} />;

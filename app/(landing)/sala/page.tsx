@@ -9,6 +9,8 @@ import { SalaKiosk } from "./SalaKiosk";
 import { getEditionMarkUppercase, getEditionParts } from "../../../src/lib/edition";
 import {
   getPublicMenuView,
+  getPublicExecutiveMenu,
+  type ExecutiveMenu,
   type PublicMenuView,
   type PublicMenuSection,
   type PublicMenuItem
@@ -30,7 +32,10 @@ export const viewport: Viewport = { themeColor: "#FAF5EC" };
 // prerender). Prices are never invented here.
 type SalaItem = { name: string; price?: string; meta?: string; signature?: boolean };
 type SalaColumn = { title: string; items: SalaItem[] };
-type SalaEjecutivo = { priceLabel: string; courses: { tag: string; name: string }[] };
+type SalaEjecutivo = {
+  priceLabel: string;
+  courses: { tag: string; name: string; note?: string }[];
+};
 
 const FALLBACK_COLUMNS: SalaColumn[] = [
   {
@@ -54,16 +59,6 @@ const FALLBACK_COLUMNS: SalaColumn[] = [
     ]
   }
 ];
-
-const FALLBACK_EJECUTIVO: SalaEjecutivo = {
-  priceLabel: "$10.990",
-  courses: [
-    { tag: "BEBIDA", name: "Limonada de menta" },
-    { tag: "ENTRADA", name: "Crema de zapallo" },
-    { tag: "FONDO", name: "Pollo al romero" },
-    { tag: "QUEQUE", name: "Naranja & almendra" }
-  ]
-};
 
 // Price source mirrors the carta (src/ui/MenuRow.tsx + src/components/menu/
 // MenuItem.tsx): price_label is an optional override; the real value lives in
@@ -177,12 +172,15 @@ function salaColumns(view: PublicMenuView | null): SalaColumn[] {
   return total >= 2 ? cols : FALLBACK_COLUMNS;
 }
 
-function salaEjecutivo(view: PublicMenuView | null): SalaEjecutivo {
-  const ex = view?.sections.find((s) => s.executive_menu)?.executive_menu;
-  if (!ex?.courses?.length) return FALLBACK_EJECUTIVO;
+function salaEjecutivo(ex: ExecutiveMenu | null): SalaEjecutivo | null {
+  if (!ex?.courses?.length) return null;
   return {
     priceLabel: ex.price_label,
-    courses: ex.courses.map((c) => ({ tag: c.tag.toUpperCase(), name: c.name }))
+    courses: ex.courses.map((c) => ({
+      tag: c.tag.toUpperCase(),
+      name: c.name,
+      note: c.note
+    }))
   };
 }
 
@@ -383,7 +381,7 @@ function SalaBarra({
   features
 }: {
   columns: SalaColumn[];
-  ejecutivo: SalaEjecutivo;
+  ejecutivo: SalaEjecutivo | null;
   showEjecutivo: boolean;
   features: SalaFeature[];
 }) {
@@ -457,7 +455,7 @@ function SalaBarra({
         </div>
       </div>
 
-      {showEjecutivo ? (
+      {showEjecutivo && ejecutivo ? (
         <div className="sala-ejec" aria-label="Menu Ejecutivo de hoy">
           <div className="sala-ejec__l">
             <span className="sala-ejec__k">MENÚ EJECUTIVO · LUN–VIE 13–16H</span>
@@ -468,6 +466,7 @@ function SalaBarra({
               <div className="sala-ejec__course" key={c.tag}>
                 <small>{c.tag}</small>
                 <em>{c.name}</em>
+                {c.note ? <span className="sala-ejec__note">{c.note}</span> : null}
               </div>
             ))}
           </div>
@@ -495,8 +494,8 @@ async function SalaRotator({
 
   const view = await getPublicMenuView({ locale: "es-CL" });
   const columns = salaColumns(view);
-  const ejecutivo = salaEjecutivo(view);
-  const showEjecutivo = isWeekday(now) && santiagoHour(now) < 16;
+  const ejecutivo = salaEjecutivo(await getPublicExecutiveMenu("es-CL"));
+  const showEjecutivo = isWeekday(now) && santiagoHour(now) < 16 && ejecutivo !== null;
 
   // Prices resolve from the live menu (name-matched); curated fallbacks cover
   // the build-time prerender and the Bagel (created in SumUp, not yet in the

@@ -764,6 +764,13 @@ body {
   line-height: 1;
   color: var(--sala-cream);
 }
+.sala-ejec__note {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-size: 1.458vw;
+  font-style: italic;
+  line-height: 1;
+  color: var(--sala-cream-72);
+}
 .sala-ejec__price {
   font-family: var(--font-mono), "IBM Plex Mono", monospace;
   font-weight: 500;
