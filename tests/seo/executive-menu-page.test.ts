@@ -7,6 +7,8 @@ import { EXECUTIVE_MENU_STABLE_HOURS } from "../../src/seo/executive-menu";
 const pagePath = "app/(landing)/menu-ejecutivo/page.tsx";
 const bodyPath =
   "app/(landing)/menu-ejecutivo/_components/ExecutiveMenuBody.tsx";
+const stylePath =
+  "app/(landing)/menu-ejecutivo/menu-ejecutivo.module.css";
 
 function routeSource() {
   return {
@@ -41,6 +43,66 @@ test("keeps daily dishes and pricing API-backed", () => {
   );
   assert.match(body, /presentation\.priceLabel/);
   assert.match(body, /presentation\.courses\.map/);
+});
+
+test("composes the focused landing page from the Carta's fixed dark primitives", () => {
+  const { body } = routeSource();
+
+  assert.match(
+    body,
+    /import cartaStyles from ["']\.\.\/\.\.\/menu\/carta\.module\.css["']/
+  );
+  assert.match(body, /className={cartaStyles\.shell}\s+data-theme=["']dark["']/);
+  assert.match(body, /cartaStyles\.masthead/);
+  assert.match(body, /cartaStyles\.mastTitle/);
+  assert.match(body, /cartaStyles\.mastLede/);
+  assert.match(body, /cartaStyles\.insert/);
+  assert.match(body, /cartaStyles\.courses/);
+  assert.match(body, /className={cartaStyles\.course}/);
+  assert.match(body, /className={cartaStyles\.courseNum}/);
+  assert.match(body, /className={cartaStyles\.courseTag}/);
+  assert.match(body, /className={cartaStyles\.courseName}/);
+  assert.doesNotMatch(body, /aria-label=["'](?:Tema|Idioma)["']/);
+  assert.doesNotMatch(body, /cartaStyles\.(?:toggle|toggleSeg|langGroup|langBtn)/);
+});
+
+test("links to the single Carta route with the approved CTA copy", () => {
+  const { body } = routeSource();
+
+  assert.match(
+    body,
+    /<Link[\s\S]*?href=["']\/menu["'][\s\S]*?>\s*Ver el menú\s*<\/Link>/
+  );
+  assert.doesNotMatch(body, /Ver la carta completa/);
+});
+
+test("keeps the semantic course list free of browser-default markers", () => {
+  const { body } = routeSource();
+  const css = readFileSync(stylePath, "utf8");
+
+  assert.match(
+    body,
+    /className={`\$\{cartaStyles\.courses} \$\{styles\.courseList}`}/
+  );
+  assert.match(css, /\.courseList\s*{[^}]*list-style:\s*none/s);
+});
+
+test("keeps the long heading and service hours readable on mobile", () => {
+  const { body } = routeSource();
+  const css = readFileSync(stylePath, "utf8");
+
+  assert.match(
+    body,
+    /className={`\$\{cartaStyles\.insertTop} \$\{styles\.insertTop}`}/
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 520px\)[\s\S]*?\.mastTitle\s*{[^}]*max-width:\s*none;[^}]*overflow-wrap:\s*normal;/
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 520px\)[\s\S]*?\.insertTop\s*{[^}]*flex-direction:\s*column;/
+  );
 });
 
 test("escapes hostile closing tags before embedding JSON-LD", () => {

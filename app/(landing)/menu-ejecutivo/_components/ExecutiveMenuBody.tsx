@@ -5,6 +5,7 @@ import {
   type buildExecutiveMenuPresentation
 } from "../../../../src/seo/executive-menu";
 import { MAPS_URL } from "../../../../src/seo/local-business";
+import cartaStyles from "../../menu/carta.module.css";
 import styles from "../menu-ejecutivo.module.css";
 
 type ExecutiveMenuPresentation = ReturnType<
@@ -17,82 +18,115 @@ export function ExecutiveMenuBody({
   presentation: ExecutiveMenuPresentation;
 }) {
   return (
-    <div className={styles.body}>
-      <header className={styles.hero}>
-        <div className={styles.slug}>
-          <span className={styles.slugRule} aria-hidden="true" />
-          <span>§ Almuerzo de semana · Magnere 1570</span>
-        </div>
-        <h1 className={styles.title}>Menú Ejecutivo en Providencia</h1>
-        <p className={styles.hours}>{EXECUTIVE_MENU_STABLE_HOURS}</p>
-        <p className={styles.lede}>
-          Una pausa en cuatro tiempos: bebida, entrada, fondo y postre. La
-          edición cambia cada jornada y se publica con los datos del servicio.
-        </p>
-      </header>
+    <div className={cartaStyles.shell} data-theme="dark">
+      <div className={`${cartaStyles.page} ${styles.page}`}>
+        <header className={`${cartaStyles.masthead} ${styles.masthead}`}>
+          <div className={cartaStyles.editionRow}>
+            <span className={cartaStyles.edition}>
+              §07 · Almuerzo de semana · Magnere 1570
+            </span>
+          </div>
+          <h1 className={`${cartaStyles.mastTitle} ${styles.mastTitle}`}>
+            Menú Ejecutivo en Providencia
+          </h1>
+          <p className={cartaStyles.mastLede}>
+            Una pausa en cuatro tiempos: bebida, entrada, fondo y postre. La
+            edición cambia cada jornada y se publica con los datos del servicio.
+          </p>
+          <div className={cartaStyles.mastNote}>
+            <span className={cartaStyles.mastDot} aria-hidden="true" />
+            <span className={cartaStyles.mastNoteText}>
+              {EXECUTIVE_MENU_STABLE_HOURS}
+            </span>
+          </div>
+        </header>
 
-      <section
-        className={styles.edition}
-        aria-labelledby="executive-menu-edition"
-      >
-        {presentation.availableToday ? (
-          <>
-            <div className={styles.editionHead}>
-              <div>
-                <p className={styles.eyebrow}>Edición publicada</p>
-                <h2 className={styles.editionTitle} id="executive-menu-edition">
+        <section
+          className={`${cartaStyles.insert} ${styles.insert}`}
+          aria-labelledby="executive-menu-edition"
+        >
+          <div className={`${cartaStyles.insertTop} ${styles.insertTop}`}>
+            <span className={cartaStyles.insertKicker}>§ Edición del día</span>
+            <span className={cartaStyles.insertHours}>
+              {EXECUTIVE_MENU_STABLE_HOURS}
+            </span>
+          </div>
+
+          {presentation.availableToday ? (
+            <>
+              <div className={cartaStyles.insertHead}>
+                <span className={cartaStyles.autorKicker}>Menú Ejecutivo</span>
+                <h2
+                  className={`${cartaStyles.insertHero} ${styles.editionTitle}`}
+                  id="executive-menu-edition"
+                >
                   {presentation.dateLabel}
                 </h2>
+                <span className={cartaStyles.insertSub}>
+                  Bebida, entrada, fondo y postre.
+                </span>
               </div>
-              <p className={styles.price} aria-label={`Precio ${presentation.priceLabel}`}>
-                {presentation.priceLabel}
-              </p>
-            </div>
 
-            <ol className={styles.courses}>
-              {presentation.courses.map((course) => (
-                <li className={styles.course} key={course.id}>
-                  <span className={styles.numeral} aria-hidden="true">
-                    {course.numeral}
-                  </span>
-                  <span className={styles.courseText}>
-                    <span className={styles.courseTag}>{course.tag}</span>
-                    <span className={styles.courseName}>{course.name}</span>
+              <ol className={`${cartaStyles.courses} ${styles.courseList}`}>
+                {presentation.courses.map((course) => (
+                  <li className={cartaStyles.course} key={course.id}>
+                    <span className={cartaStyles.courseNum} aria-hidden="true">
+                      {course.numeral}
+                    </span>
+                    <span className={cartaStyles.rowMain}>
+                      <span className={cartaStyles.courseTag}>{course.tag}</span>
+                      <span className={cartaStyles.courseName}>{course.name}</span>
+                    </span>
+                  </li>
+                ))}
+                <li className={cartaStyles.insertPrice}>
+                  <span className={cartaStyles.insertPriceLabel}>Precio fijo</span>
+                  <span
+                    className={cartaStyles.insertPriceValue}
+                    aria-label={`Precio ${presentation.priceLabel}`}
+                  >
+                    {presentation.priceLabel}
                   </span>
                 </li>
-              ))}
-            </ol>
-          </>
-        ) : (
-          <div className={styles.unavailable}>
-            <p className={styles.eyebrow}>Edición de hoy</p>
-            <h2 className={styles.editionTitle} id="executive-menu-edition">
-              Aún no hay una edición publicada.
-            </h2>
-            <p className={styles.unavailableCopy}>{presentation.subline}</p>
-          </div>
-        )}
-      </section>
+              </ol>
+            </>
+          ) : (
+            <div className={`${cartaStyles.insertHead} ${styles.unavailable}`}>
+              <span className={cartaStyles.autorKicker}>Menú Ejecutivo</span>
+              <h2
+                className={`${cartaStyles.insertHero} ${styles.editionTitle}`}
+                id="executive-menu-edition"
+              >
+                Aún no hay una edición publicada.
+              </h2>
+              <span className={cartaStyles.insertSub}>
+                {presentation.subline}
+              </span>
+            </div>
+          )}
+        </section>
 
-      <footer className={styles.footer}>
-        <p className={styles.address}>
-          Deriva Coffee Studio
-          <span>Magnere 1570, Local 105 · Providencia</span>
-        </p>
-        <div className={styles.actions}>
-          <Link className={styles.primaryAction} href="/menu">
-            Ver la carta completa
-          </Link>
-          <a
-            className={styles.secondaryAction}
-            href={MAPS_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Cómo llegar
-          </a>
-        </div>
-      </footer>
+        <footer className={`${cartaStyles.footer} ${styles.footer}`}>
+          <p className={cartaStyles.footerText}>
+            Deriva Coffee Studio
+            <br />
+            Magnere 1570, Local 105 · Providencia
+          </p>
+          <div className={styles.actions}>
+            <Link className={styles.primaryAction} href="/menu">
+              Ver el menú
+            </Link>
+            <a
+              className={styles.secondaryAction}
+              href={MAPS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Cómo llegar
+            </a>
+          </div>
+        </footer>
+      </div>
     </div>
   );
 }

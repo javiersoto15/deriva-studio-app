@@ -8,6 +8,7 @@ import {
   buildExecutiveMenuGraph,
   buildExecutiveMenuPresentation
 } from "../../../src/seo/executive-menu";
+import cartaStyles from "../menu/carta.module.css";
 import { ExecutiveMenuBody } from "./_components/ExecutiveMenuBody";
 import styles from "./menu-ejecutivo.module.css";
 
@@ -47,22 +48,24 @@ async function ExecutiveMenuContent() {
 
 function ExecutiveMenuFallback() {
   return (
-    <div className={styles.fallback} role="status" aria-live="polite">
-      <span className={styles.fallbackMark} aria-hidden="true" />
-      <span>Consultando la edición de hoy…</span>
+    <div className={cartaStyles.shell} data-theme="dark">
+      <div className={styles.fallback} role="status" aria-live="polite">
+        <span className={styles.fallbackMark} aria-hidden="true" />
+        <span>Consultando la edición de hoy…</span>
+      </div>
     </div>
   );
 }
 
 export default function ExecutiveMenuPage() {
   return (
-    <div className={styles.shell}>
+    <>
       <SiteNav active="carta" variant="solid" />
-      <main className={styles.page}>
+      <main>
         <Suspense fallback={<ExecutiveMenuFallback />}>
           <ExecutiveMenuContent />
         </Suspense>
       </main>
-    </div>
+    </>
   );
 }
