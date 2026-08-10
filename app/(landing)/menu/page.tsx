@@ -1,75 +1,27 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
-import {
-  getPublicMenuView,
-  type PublicMenuView,
-  type PublicMenuItem
-} from "../../../src/api/server";
+import { getPublicMenuView } from "../../../src/api/server";
 import { getActiveLocale, getActiveBackendLocale } from "../../../src/i18n/server";
 import { SiteNav } from "../../../src/components/landing/SiteNav";
+import { MENU_URL } from "../../../src/seo/local-business";
+import { buildMenuGraph } from "../../../src/seo/menu-schema";
 import { CartaBody } from "./_components/CartaBody";
 import { CartaSkeleton } from "./_components/CartaSkeleton";
 
-const siteUrl = "https://derivastudio.cl";
-const pageUrl = `${siteUrl}/menu`;
-
 export const metadata: Metadata = {
-  title: "La carta",
+  title: "Carta de café de especialidad en Providencia",
   description:
-    "Café de especialidad, panadería de masa madre y cocina de mercado en Deriva Coffee Studio. Carta de temporada vigente al servicio en Magnere 1570 Local 105, Providencia, Santiago.",
-  alternates: { canonical: pageUrl },
+    "Carta completa de Deriva Coffee Studio en Providencia, Santiago: espresso, V60, Chemex, Coffee Flight, cafés de autor, desayunos, cocina, onces y pastelería.",
+  alternates: { canonical: MENU_URL },
   openGraph: {
-    title: "La carta · Deriva Coffee Studio",
+    title: "Carta de café de especialidad en Providencia · Deriva Coffee Studio",
     description:
-      "Café de especialidad, panadería de masa madre y cocina de mercado. Carta de temporada vigente al servicio.",
-    url: pageUrl,
+      "Espresso, V60, Chemex, Coffee Flight, cafés de autor, desayunos y cocina en Magnere 1570.",
+    url: MENU_URL,
     type: "website"
   }
 };
-
-// Maps one backend menu item to a schema.org MenuItem node. `showPrices`
-// mirrors the page's price-reveal gate so structured data never exposes a
-// price before it's visible to humans (Google wants markup to match the page).
-function menuItemJsonLd(item: PublicMenuItem, showPrices: boolean): Record<string, unknown> {
-  const node: Record<string, unknown> = {
-    "@type": "MenuItem",
-    name: item.name,
-    description: item.description
-  };
-  if (showPrices && typeof item.price_clp === "number") {
-    node.offers = {
-      "@type": "Offer",
-      price: item.price_clp,
-      priceCurrency: "CLP",
-      availability: item.available
-        ? "https://schema.org/InStock"
-        : "https://schema.org/OutOfStock"
-    };
-  }
-  return node;
-}
-
-function buildMenuJsonLd(menu: PublicMenuView, showPrices: boolean): Record<string, unknown> {
-  return {
-    "@context": "https://schema.org",
-    "@type": "Menu",
-    "@id": `${pageUrl}#menu`,
-    name: `${menu.name} · ${menu.season}`,
-    inLanguage: menu.locale ?? "es-CL",
-    url: pageUrl,
-    provider: { "@id": `${siteUrl}/#cafe` },
-    hasMenuSection: menu.sections.map((section) => ({
-      "@type": "MenuSection",
-      name: section.title.replace(/\.$/, ""),
-      description: section.lede,
-      hasMenuItem: [
-        ...(section.items ?? []),
-        ...(section.subgroups?.flatMap((g) => g.items) ?? [])
-      ].map((item) => menuItemJsonLd(item, showPrices))
-    }))
-  };
-}
 
 // El Mercado carta — the live public /menu. The locale-cookie read + menu fetch
 // are dynamic, so they live in a Suspense boundary (Cache Components / PPR)
@@ -98,7 +50,7 @@ async function CartaContent() {
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildMenuJsonLd(menu, showPrices)) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildMenuGraph(menu, showPrices)) }}
       />
       <CartaBody menu={menu} locale={uiLocale} showPrices={showPrices} />
     </>
