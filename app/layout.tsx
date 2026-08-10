@@ -3,6 +3,11 @@ import { Cormorant_Garamond, IBM_Plex_Mono, Poppins } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { derivaColors } from "../src/brand";
+import {
+  LOCAL_SEO_DESCRIPTION,
+  SITE_NAME,
+  SITE_URL
+} from "../src/seo/local-business";
 import "../src/design/tokens.css";
 import "./globals.css";
 
@@ -28,35 +33,32 @@ const poppins = Poppins({
   display: "swap"
 });
 
-const siteUrl = "https://derivastudio.cl";
-const siteName = "Deriva Coffee Studio";
-const description =
-  "Deriva Coffee Studio: café de especialidad, mate y cocina en Magnere 1570 Local 105, Providencia, Santiago. Únete a nuestra lista para conocer la fecha de apertura.";
-
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: `${siteName} | Café de especialidad en Providencia`,
-    template: `%s · ${siteName}`
+    default: `${SITE_NAME} | Café de especialidad en Providencia`,
+    template: `%s · ${SITE_NAME}`
   },
-  description,
-  applicationName: siteName,
+  description: LOCAL_SEO_DESCRIPTION,
+  applicationName: SITE_NAME,
   generator: "Next.js",
   keywords: [
     "café de especialidad",
-    "specialty coffee",
-    "Providencia",
-    "Santiago",
-    "Magnere",
-    "mate",
-    "cafetería",
-    "Deriva",
-    "Deriva Studio",
-    "coffee studio"
+    "cafetería en Providencia",
+    "café en Santiago",
+    "espresso",
+    "café filtrado",
+    "V60",
+    "Chemex",
+    "café de autor",
+    "Coffee Flight",
+    "granos de café",
+    "desayunos",
+    "brunch"
   ],
-  authors: [{ name: siteName, url: siteUrl }],
-  creator: siteName,
-  publisher: siteName,
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
   category: "food",
   alternates: {
     canonical: "/",
@@ -67,15 +69,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "es_CL",
-    url: siteUrl,
-    siteName,
-    title: `${siteName} | Café de especialidad en Providencia`,
-    description
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    title: `${SITE_NAME} | Café de especialidad en Providencia`,
+    description: LOCAL_SEO_DESCRIPTION
   },
   twitter: {
     card: "summary_large_image",
-    title: `${siteName} | Café de especialidad en Providencia`,
-    description
+    title: `${SITE_NAME} | Café de especialidad en Providencia`,
+    description: LOCAL_SEO_DESCRIPTION
   },
   robots: {
     index: true,

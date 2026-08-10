@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import {
@@ -33,5 +34,17 @@ test("links the organization, cafe, and website without unverified claims", () =
   assert.doesNotMatch(
     serialized,
     /Masa Madre Duo|Brochetas Mixtas|Sobrecostilla Braseada|Tiramisú/
+  );
+});
+
+test("the app consumes canonical SEO facts instead of stale launch copy", () => {
+  const layout = readFileSync("app/layout.tsx", "utf8");
+  const homepage = readFileSync("app/(landing)/page.tsx", "utf8");
+
+  assert.match(layout, /LOCAL_SEO_DESCRIPTION/);
+  assert.match(homepage, /buildLocalBusinessGraph/);
+  assert.doesNotMatch(
+    `${layout}\n${homepage}`,
+    /Únete a nuestra lista para conocer la fecha de apertura/
   );
 });

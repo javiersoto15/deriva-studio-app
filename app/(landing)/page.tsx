@@ -6,84 +6,11 @@ import { CartaScroller, type CartaChip } from "../../src/components/landing/Cart
 import { DerivaImage } from "../../src/components/landing/DerivaImage";
 import { AppTeaser } from "../../src/components/landing/AppTeaser";
 import { isOpenNow } from "../../src/lib/open-now";
-import { PHOTO_BASE_URL } from "../../src/data/photos";
-
-const siteUrl = "https://derivastudio.cl";
-
-const MAPS_URL =
-  "https://www.google.com/maps/search/?api=1&query=Magnere+1570+Providencia+Santiago";
-const INSTAGRAM_URL = "https://www.instagram.com/deriva.coffee.studio/";
-
-const localBusinessJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "CafeOrCoffeeShop",
-  "@id": `${siteUrl}/#cafe`,
-  name: "Deriva Coffee Studio",
-  alternateName: "Deriva",
-  url: siteUrl,
-  image: [
-    `${PHOTO_BASE_URL}/storefront-1920.jpg`,
-    `${PHOTO_BASE_URL}/interior-1920.jpg`,
-    `${PHOTO_BASE_URL}/bar-1920.jpg`
-  ],
-  logo: `${siteUrl}/brand/isotipo-verde@3x.png`,
-  description:
-    "Café de especialidad, mate, panadería de masa madre y cocina de mercado en Magnere 1570 Local 105, Providencia, Santiago.",
-  telephone: "+56984520118",
-  email: "contacto@derivastudio.cl",
-  priceRange: "$$",
-  currenciesAccepted: "CLP",
-  paymentAccepted: "Efectivo, Débito, Crédito",
-  acceptsReservations: false,
-  // Phrases AI agents and search match on when researching "where to get
-  // specialty coffee in Providencia" — kept aligned with what we actually serve.
-  keywords:
-    "café de especialidad, specialty coffee, Providencia, Santiago, flat white, cappuccino, espresso, filtrado, cold brew, mate, panadería masa madre, brunch, cafetería",
-  servesCuisine: ["Café de especialidad", "Mate", "Panadería", "Cocina"],
-  hasMenu: `${siteUrl}/menu`,
-  areaServed: {
-    "@type": "City",
-    name: "Providencia"
-  },
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "Magnere 1570, Local 105",
-    addressLocality: "Providencia",
-    addressRegion: "Región Metropolitana",
-    postalCode: "7500000",
-    addressCountry: "CL"
-  },
-  geo: {
-    "@type": "GeoCoordinates",
-    latitude: -33.42575151317108,
-    longitude: -70.61869843019804
-  },
-  hasMap: MAPS_URL,
-  sameAs: [INSTAGRAM_URL],
-  openingHoursSpecification: [
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-      opens: "08:00",
-      closes: "21:00"
-    },
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: "Saturday",
-      opens: "10:00",
-      closes: "21:00"
-    }
-  ]
-};
-
-const websiteJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "@id": `${siteUrl}/#website`,
-  url: siteUrl,
-  name: "Deriva Coffee Studio",
-  inLanguage: "es-CL"
-};
+import {
+  INSTAGRAM_URL,
+  MAPS_URL,
+  buildLocalBusinessGraph
+} from "../../src/seo/local-business";
 
 const cartaChips: CartaChip[] = [
   {
@@ -406,7 +333,7 @@ export default function HomePage() {
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify([localBusinessJsonLd, websiteJsonLd])
+          __html: JSON.stringify(buildLocalBusinessGraph())
         }}
       />
       <SiteNav active="inicio" />
