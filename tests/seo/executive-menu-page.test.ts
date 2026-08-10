@@ -79,12 +79,19 @@ test("links to the single Carta route with the approved CTA copy", () => {
 test("keeps the semantic course list free of browser-default markers", () => {
   const { body } = routeSource();
   const css = readFileSync(stylePath, "utf8");
+  const courseList = body.match(/<ol[\s\S]*?<\/ol>/)?.[0];
 
   assert.match(
     body,
-    /className={`\$\{cartaStyles\.courses} \$\{styles\.courseList}`}/
+    /<div className={cartaStyles\.courses}>\s*<ol className={styles\.courseList}>/
   );
   assert.match(css, /\.courseList\s*{[^}]*list-style:\s*none/s);
+  assert.ok(courseList);
+  assert.doesNotMatch(courseList, /cartaStyles\.insertPrice/);
+  assert.match(
+    body,
+    /<\/ol>\s*<div className={cartaStyles\.insertPrice}>/
+  );
 });
 
 test("keeps the long heading and service hours readable on mobile", () => {

@@ -67,19 +67,21 @@ export function ExecutiveMenuBody({
                 </span>
               </div>
 
-              <ol className={`${cartaStyles.courses} ${styles.courseList}`}>
-                {presentation.courses.map((course) => (
-                  <li className={cartaStyles.course} key={course.id}>
-                    <span className={cartaStyles.courseNum} aria-hidden="true">
-                      {course.numeral}
-                    </span>
-                    <span className={cartaStyles.rowMain}>
-                      <span className={cartaStyles.courseTag}>{course.tag}</span>
-                      <span className={cartaStyles.courseName}>{course.name}</span>
-                    </span>
-                  </li>
-                ))}
-                <li className={cartaStyles.insertPrice}>
+              <div className={cartaStyles.courses}>
+                <ol className={styles.courseList}>
+                  {presentation.courses.map((course) => (
+                    <li className={cartaStyles.course} key={course.id}>
+                      <span className={cartaStyles.courseNum} aria-hidden="true">
+                        {course.numeral}
+                      </span>
+                      <span className={cartaStyles.rowMain}>
+                        <span className={cartaStyles.courseTag}>{course.tag}</span>
+                        <span className={cartaStyles.courseName}>{course.name}</span>
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+                <div className={cartaStyles.insertPrice}>
                   <span className={cartaStyles.insertPriceLabel}>Precio fijo</span>
                   <span
                     className={cartaStyles.insertPriceValue}
@@ -87,8 +89,8 @@ export function ExecutiveMenuBody({
                   >
                     {presentation.priceLabel}
                   </span>
-                </li>
-              </ol>
+                </div>
+              </div>
             </>
           ) : (
             <div className={`${cartaStyles.insertHead} ${styles.unavailable}`}>
