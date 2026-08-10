@@ -8,10 +8,24 @@ import {
 } from "../../src/seo/local-business";
 
 test("uses current Spanish local specialty-coffee positioning", () => {
-  assert.match(LOCAL_SEO_DESCRIPTION, /café de especialidad/i);
+  assert.match(LOCAL_SEO_DESCRIPTION, /cafetería de especialidad en Providencia/i);
   assert.match(LOCAL_SEO_DESCRIPTION, /Providencia/);
   assert.match(LOCAL_SEO_DESCRIPTION, /Santiago/);
+  assert.match(LOCAL_SEO_DESCRIPTION, /brunch/i);
+  assert.match(LOCAL_SEO_DESCRIPTION, /almuerzos/i);
+  assert.match(LOCAL_SEO_DESCRIPTION, /Menú Ejecutivo de lunes a viernes/i);
   assert.doesNotMatch(LOCAL_SEO_DESCRIPTION, /abrimos pronto|fecha de apertura|waitlist/i);
+});
+
+test("covers supporting local dining intents in cafe discovery facts", () => {
+  const cafe = buildLocalBusinessGraph()["@graph"][1];
+  const keywords = String(cafe.keywords);
+
+  assert.match(keywords, /café de especialidad en Providencia/i);
+  assert.match(keywords, /brunch en Providencia/i);
+  assert.match(keywords, /Menú Ejecutivo en Providencia/i);
+  assert.ok(cafe.servesCuisine.includes("Almuerzos"));
+  assert.ok(cafe.servesCuisine.includes("Menú Ejecutivo"));
 });
 
 test("links the organization, cafe, and website without unverified claims", () => {
@@ -40,8 +54,12 @@ test("links the organization, cafe, and website without unverified claims", () =
 test("the app consumes canonical SEO facts instead of stale launch copy", () => {
   const layout = readFileSync("app/layout.tsx", "utf8");
   const homepage = readFileSync("app/(landing)/page.tsx", "utf8");
+  const localBusiness = readFileSync("src/seo/local-business.ts", "utf8");
 
   assert.match(layout, /LOCAL_SEO_DESCRIPTION/);
+  assert.match(layout, /LOCAL_SEARCH_INTENTS/);
+  assert.doesNotMatch(layout, /keywords:\s*\[\s*"/);
+  assert.match(localBusiness, /keywords:\s*LOCAL_SEARCH_INTENTS/);
   assert.match(homepage, /buildLocalBusinessGraph/);
   assert.doesNotMatch(
     `${layout}\n${homepage}`,

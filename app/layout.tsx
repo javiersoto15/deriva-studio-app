@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { derivaColors } from "../src/brand";
 import {
+  LOCAL_SEARCH_INTENTS,
   LOCAL_SEO_DESCRIPTION,
   SITE_NAME,
   SITE_URL
@@ -42,20 +43,7 @@ export const metadata: Metadata = {
   description: LOCAL_SEO_DESCRIPTION,
   applicationName: SITE_NAME,
   generator: "Next.js",
-  keywords: [
-    "café de especialidad",
-    "cafetería en Providencia",
-    "café en Santiago",
-    "espresso",
-    "café filtrado",
-    "V60",
-    "Chemex",
-    "café de autor",
-    "Coffee Flight",
-    "granos de café",
-    "desayunos",
-    "brunch"
-  ],
+  keywords: [...LOCAL_SEARCH_INTENTS],
   authors: [{ name: SITE_NAME, url: SITE_URL }],
   creator: SITE_NAME,
   publisher: SITE_NAME,

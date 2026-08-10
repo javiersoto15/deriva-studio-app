@@ -8,7 +8,16 @@ export const INSTAGRAM_URL =
 export const MAPS_URL =
   "https://www.google.com/maps/search/?api=1&query=Magnere+1570+Providencia+Santiago";
 export const LOCAL_SEO_DESCRIPTION =
-  "Deriva Coffee Studio: café de especialidad en Providencia, Santiago, con espresso, filtrados V60 y Chemex, cafés de autor, desayunos y cocina en Magnere 1570 Local 105.";
+  "Deriva Coffee Studio es una cafetería de especialidad en Providencia, Santiago, con desayunos, brunch, almuerzos y Menú Ejecutivo de lunes a viernes, además de espresso, filtrados y cafés de autor.";
+export const LOCAL_SEARCH_INTENTS = [
+  "café de especialidad en Providencia",
+  "cafetería en Providencia",
+  "brunch en Providencia",
+  "desayuno en Providencia",
+  "almuerzo en Providencia",
+  "Menú Ejecutivo en Providencia",
+  "Menú Ejecutivo de lunes a viernes"
+] as const;
 
 export function buildLocalBusinessGraph() {
   return {
@@ -48,12 +57,13 @@ export function buildLocalBusinessGraph() {
         currenciesAccepted: "CLP",
         paymentAccepted: "Efectivo, Débito, Crédito",
         acceptsReservations: false,
-        keywords:
-          "café de especialidad, cafetería en Providencia, café en Santiago, espresso, cappuccino, flat white, V60, Chemex, café filtrado, Coffee Flight, café de autor, granos de café",
+        keywords: LOCAL_SEARCH_INTENTS,
         servesCuisine: [
           "Café de especialidad",
           "Desayunos",
           "Brunch",
+          "Almuerzos",
+          "Menú Ejecutivo",
           "Cocina",
           "Pastelería"
         ],
