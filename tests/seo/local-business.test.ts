@@ -8,7 +8,7 @@ import {
 } from "../../src/seo/local-business";
 
 test("uses current Spanish local specialty-coffee positioning", () => {
-  assert.match(LOCAL_SEO_DESCRIPTION, /cafetería de especialidad en Providencia/i);
+  assert.match(LOCAL_SEO_DESCRIPTION, /café de especialidad en Providencia/i);
   assert.match(LOCAL_SEO_DESCRIPTION, /Providencia/);
   assert.match(LOCAL_SEO_DESCRIPTION, /Santiago/);
   assert.match(LOCAL_SEO_DESCRIPTION, /brunch/i);
