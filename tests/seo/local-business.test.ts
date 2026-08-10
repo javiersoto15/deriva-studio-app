@@ -48,3 +48,18 @@ test("the app consumes canonical SEO facts instead of stale launch copy", () => 
     /Únete a nuestra lista para conocer la fecha de apertura/
   );
 });
+
+test("discovery surfaces contain only current canonical public routes", () => {
+  const sitemap = readFileSync("app/sitemap.ts", "utf8");
+  const llms = readFileSync("app/llms.txt/route.ts", "utf8");
+
+  assert.match(sitemap, /`\$\{siteUrl\}\/menu`/);
+  assert.match(sitemap, /`\$\{siteUrl\}\/resenas`/);
+  assert.match(sitemap, /`\$\{siteUrl\}\/privacidad`/);
+  assert.doesNotMatch(sitemap, /deriva-match-up|new Date\(\)/);
+
+  assert.match(llms, /café de especialidad en Providencia/i);
+  assert.match(llms, /V60|Chemex/);
+  assert.match(llms, /\$\{siteUrl\}\/menu/);
+  assert.doesNotMatch(llms, /specialty coffee Santiago|English/i);
+});
