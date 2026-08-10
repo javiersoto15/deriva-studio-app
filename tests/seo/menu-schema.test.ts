@@ -74,10 +74,21 @@ test("omits offers when prices are not visible", () => {
   assert.doesNotMatch(serialized, /"@type":"Offer"/);
 });
 
-test("the public menu page uses the linked graph and local Spanish metadata", () => {
+test("the public menu page uses the linked graph and broad local Spanish metadata", () => {
   const source = readFileSync("app/(landing)/menu/page.tsx", "utf8");
 
   assert.match(source, /buildMenuGraph/);
   assert.match(source, /Carta de café de especialidad en Providencia/);
+  assert.match(source, /desayunos?/i);
+  assert.match(source, /brunch/i);
+  assert.match(source, /almuerzos?/i);
+  assert.match(source, /Menú Ejecutivo/);
+  assert.match(source, /onces/i);
+  assert.match(source, /pastelería/i);
+  assert.match(source, /alternates:\s*\{\s*canonical:\s*MENU_URL\s*\}/);
   assert.doesNotMatch(source, /function buildMenuJsonLd|function menuItemJsonLd/);
+  assert.doesNotMatch(
+    source,
+    /Masa Madre Duo|Brochetas Mixtas|Sobrecostilla Braseada|Tiramisú/
+  );
 });

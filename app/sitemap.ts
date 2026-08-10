@@ -15,6 +15,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9
     },
     {
+      url: `${siteUrl}/menu-ejecutivo`,
+      changeFrequency: "daily",
+      priority: 0.9
+    },
+    {
       url: `${siteUrl}/resenas`,
       changeFrequency: "monthly",
       priority: 0.5

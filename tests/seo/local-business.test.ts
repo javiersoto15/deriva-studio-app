@@ -6,6 +6,8 @@ import {
   LOCAL_SEO_DESCRIPTION,
   buildLocalBusinessGraph
 } from "../../src/seo/local-business";
+import sitemap from "../../app/sitemap";
+import { GET as getLlmsTxt } from "../../app/llms.txt/route";
 
 test("uses current Spanish local specialty-coffee positioning", () => {
   assert.match(LOCAL_SEO_DESCRIPTION, /café de especialidad en Providencia/i);
@@ -67,6 +69,34 @@ test("the app consumes canonical SEO facts instead of stale launch copy", () => 
   );
 });
 
+test("the sitemap indexes the permanent daily Menú Ejecutivo page", () => {
+  const entries = sitemap();
+  const executiveMenu = entries.find(
+    (entry) => entry.url === "https://derivastudio.cl/menu-ejecutivo"
+  );
+
+  assert.deepEqual(executiveMenu, {
+    url: "https://derivastudio.cl/menu-ejecutivo",
+    changeFrequency: "daily",
+    priority: 0.9
+  });
+});
+
+test("llms.txt describes broad local service without a volatile daily edition", async () => {
+  const response = getLlmsTxt();
+  const llms = await response.text();
+
+  assert.match(llms, /café de especialidad en Providencia/i);
+  assert.match(llms, /brunch/i);
+  assert.match(llms, /Menú Ejecutivo/);
+  assert.match(llms, /lunes a viernes[^\n]*13:00–16:00/i);
+  assert.match(llms, /https:\/\/derivastudio\.cl\/menu-ejecutivo/);
+  assert.doesNotMatch(
+    llms,
+    /CLP\s*\$|\$\s*10[.,]?990|Una bebida|Crema de verduras|Pollo al curry|Postre del día/i
+  );
+});
+
 test("discovery surfaces contain only current canonical public routes", () => {
   const sitemap = readFileSync("app/sitemap.ts", "utf8");
   const llms = readFileSync("app/llms.txt/route.ts", "utf8");
@@ -80,4 +110,8 @@ test("discovery surfaces contain only current canonical public routes", () => {
   assert.match(llms, /V60|Chemex/);
   assert.match(llms, /\$\{siteUrl\}\/menu/);
   assert.doesNotMatch(llms, /specialty coffee Santiago|English/i);
+  assert.doesNotMatch(
+    `${sitemap}\n${llms}`,
+    /deriva-match-up|Masa Madre Duo|Brochetas Mixtas|Sobrecostilla Braseada|Tiramisú/
+  );
 });

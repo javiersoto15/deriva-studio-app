@@ -12,12 +12,12 @@ import { CartaSkeleton } from "./_components/CartaSkeleton";
 export const metadata: Metadata = {
   title: "Carta de café de especialidad en Providencia",
   description:
-    "Carta completa de Deriva Coffee Studio en Providencia, Santiago: espresso, V60, Chemex, Coffee Flight, cafés de autor, desayunos, cocina, onces y pastelería.",
+    "Carta de Deriva Coffee Studio en Providencia, Santiago: café de especialidad, desayunos y brunch, almuerzos con Menú Ejecutivo, onces y pastelería.",
   alternates: { canonical: MENU_URL },
   openGraph: {
     title: "Carta de café de especialidad en Providencia · Deriva Coffee Studio",
     description:
-      "Espresso, V60, Chemex, Coffee Flight, cafés de autor, desayunos y cocina en Magnere 1570.",
+      "Café de especialidad, desayunos, brunch, almuerzos con Menú Ejecutivo, onces y pastelería en Magnere 1570.",
     url: MENU_URL,
     type: "website"
   }
