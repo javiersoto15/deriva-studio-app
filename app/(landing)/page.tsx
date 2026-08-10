@@ -8,6 +8,7 @@ import { AppTeaser } from "../../src/components/landing/AppTeaser";
 import { getPublicMenuView } from "../../src/api/server";
 import { isOpenNow } from "../../src/lib/open-now";
 import { selectLandingCoffeeHighlights } from "../../src/seo/landing-coffee-highlights";
+import { EXECUTIVE_MENU_STABLE_HOURS } from "../../src/seo/executive-menu";
 import {
   INSTAGRAM_URL,
   MAPS_URL,
@@ -37,8 +38,9 @@ function Hero() {
           y cocina. <em>Sin atajos.</em>
         </h1>
         <p className="landing-hero__lede">
-          Una cafetería de especialidad en Providencia, Santiago. Espresso, filtrados V60 y
-          Chemex, cafés de autor y cocina de mercado.
+          Una cafetería de especialidad en Providencia, Santiago, con desayunos, brunch,
+          almuerzos y Menú Ejecutivo de lunes a viernes, además de espresso, filtrados y cafés
+          de autor.
         </p>
         <div className="landing-hero__ctas">
           <a
@@ -149,13 +151,44 @@ function CasaPanel() {
   );
 }
 
+function MiddaySection() {
+  return (
+    <section className="landing-midday" aria-labelledby="midday-title">
+      <div className="landing-midday__inner">
+        <div className="landing-midday__head">
+          <div className="landing-slug landing-slug--on-dark">
+            <span className="landing-slug__rule" aria-hidden="true" />
+            <span>§ V · El mediodía</span>
+          </div>
+          <h2 id="midday-title" className="landing-display landing-display--on-dark">
+            La pausa
+            <br />
+            <em>también se cocina.</em>
+          </h2>
+        </div>
+        <div className="landing-midday__copy">
+          <span className="landing-midday__hours">{EXECUTIVE_MENU_STABLE_HOURS}</span>
+          <p className="landing-midday__body">
+            Entre semana, el mediodía tiene su propia edición: una propuesta de cocina pensada
+            para sentarse, hacer una pausa y volver al día. Publicamos la selección vigente en su
+            página antes de cada servicio.
+          </p>
+          <Link className="landing-midday__link" href="/menu-ejecutivo">
+            Ver el Menú Ejecutivo vigente →
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function VisitaSection({ openNow }: { openNow: boolean }) {
   return (
     <section id="visita" className="landing-visita" aria-labelledby="visita-title">
       <div className="landing-visita__head">
         <div className="landing-slug">
           <span className="landing-slug__rule" aria-hidden="true" />
-          <span>§ V · Visita · Magnere 1570</span>
+          <span>§ VI · Visita · Magnere 1570</span>
         </div>
         <h2 id="visita-title" className="landing-display landing-display--xl">
           Pasa
@@ -293,6 +326,7 @@ export default function HomePage() {
         >
           <CartaHighlights />
         </Suspense>
+        <MiddaySection />
         <Suspense fallback={<VisitaSection openNow={false} />}>
           <OpenNowStatus />
         </Suspense>

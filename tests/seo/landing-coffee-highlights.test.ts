@@ -131,3 +131,32 @@ test("the homepage reads public menu highlights and has no stale card prices", (
   assert.match(scroller, /seasonLabel/);
   assert.doesNotMatch(scroller, /Otoño 2026/);
 });
+
+test("the homepage visibly introduces breakfast, brunch, and weekday lunch", () => {
+  const homepage = readFileSync("app/(landing)/page.tsx", "utf8");
+
+  assert.match(homepage, /desayunos/i);
+  assert.match(homepage, /brunch/i);
+  assert.match(homepage, /almuerzos/i);
+  assert.match(homepage, /Menú Ejecutivo de lunes a viernes/i);
+  assert.match(homepage, /href="\/menu-ejecutivo"/);
+});
+
+test("the homepage includes a substantial visible midday editorial section", () => {
+  const homepage = readFileSync("app/(landing)/page.tsx", "utf8");
+
+  assert.match(
+    homepage,
+    /<section[^>]*className="landing-midday"[^>]*aria-labelledby="midday-title"[\s\S]*?<h2[^>]*id="midday-title"[\s\S]*?<p className="landing-midday__body">[\s\S]{120,}?<\/p>[\s\S]*?<Link[^>]*href="\/menu-ejecutivo"[^>]*>[\s\S]*?<\/Link>[\s\S]*?<\/section>/
+  );
+});
+
+test("the homepage does not freeze a daily executive menu or its current price", () => {
+  const homepage = readFileSync("app/(landing)/page.tsx", "utf8");
+
+  assert.doesNotMatch(homepage, /10[.]?990/);
+  assert.doesNotMatch(
+    homepage,
+    /Entrada|Fondo|Principal|Postre|Bebida|Sopa del día|Plato del día/i
+  );
+});

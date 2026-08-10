@@ -2840,6 +2840,74 @@ address {
   font-weight: 600;
 }
 
+/* — Midday editorial ————————————————————————————————————————————— */
+.landing-midday {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  padding: 112px 88px;
+  overflow: hidden;
+  background: var(--landing-ink-2);
+  color: var(--landing-fg);
+}
+.landing-midday__inner {
+  width: 100%;
+  max-width: 1280px;
+  min-width: 0;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.6fr);
+  align-items: end;
+  gap: clamp(48px, 8vw, 120px);
+}
+.landing-midday__head,
+.landing-midday__copy {
+  min-width: 0;
+}
+.landing-midday__head {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.landing-midday__copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  padding-top: 28px;
+  border-top: 1px solid rgba(201, 165, 122, 0.35);
+}
+.landing-midday__hours {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--landing-copper);
+}
+.landing-midday__body {
+  max-width: 46ch;
+  margin: 0;
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  font-size: 18px;
+  font-style: italic;
+  line-height: 1.65;
+  color: var(--landing-fg-dim);
+}
+.landing-midday__link {
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--landing-copper);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--landing-fg);
+}
+.landing-midday__link:hover {
+  color: var(--landing-copper);
+}
+
 /* — Visita —————————————————————————————————————————————————————— */
 .landing-visita {
   background: var(--landing-plaster);
@@ -3118,6 +3186,18 @@ address {
   .carta-chip--ejecutivo .carta-chip__accent-title {
     font-size: 40px;
   }
+  .landing-midday {
+    padding: 72px 24px;
+  }
+  .landing-midday__inner {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 40px;
+  }
+  .landing-midday__body {
+    max-width: 100%;
+    font-size: 16px;
+  }
   .landing-visita {
     padding: 64px 24px;
     gap: 32px;
@@ -3149,6 +3229,10 @@ address {
 
   .landing-nav__cue {
     display: none;
+  }
+
+  .landing-midday {
+    padding-inline: 20px;
   }
 }
 
