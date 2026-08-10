@@ -2,84 +2,17 @@ import { Suspense } from "react";
 import { connection } from "next/server";
 import Link from "next/link";
 import { SiteNav } from "../../src/components/landing/SiteNav";
-import { CartaScroller, type CartaChip } from "../../src/components/landing/CartaScroller";
+import { CartaScroller } from "../../src/components/landing/CartaScroller";
 import { DerivaImage } from "../../src/components/landing/DerivaImage";
 import { AppTeaser } from "../../src/components/landing/AppTeaser";
+import { getPublicMenuView } from "../../src/api/server";
 import { isOpenNow } from "../../src/lib/open-now";
+import { selectLandingCoffeeHighlights } from "../../src/seo/landing-coffee-highlights";
 import {
   INSTAGRAM_URL,
   MAPS_URL,
   buildLocalBusinessGraph
 } from "../../src/seo/local-business";
-
-const cartaChips: CartaChip[] = [
-  {
-    slug: "filtrado",
-    section: "Cafetería",
-    index: "01",
-    name: "Filtrado",
-    italic: "del día",
-    notes: "Etiopía Yirgacheffe · floral, cítrico, té negro.",
-    price: "$4.500",
-    href: "/menu#section-cafeteria",
-    photo: "filtrado",
-  },
-  {
-    slug: "cappuccino",
-    section: "Cafetería",
-    index: "02",
-    name: "Cappuccino",
-    italic: "de la casa",
-    notes: "Espresso doble · microfoam cremoso · canela opcional.",
-    price: "$3.900",
-    href: "/menu#section-cafeteria",
-    photo: "cappuccino",
-  },
-  {
-    slug: "tostada-italiana",
-    section: "Cocina",
-    index: "03",
-    name: "Tostada",
-    italic: "Italiana",
-    notes: "Tomate confit, ricotta, alcaparrones, rúcula sobre masa madre.",
-    price: "$6.500",
-    href: "/menu#section-tostadas",
-    photo: "tostada-italiana",
-  },
-  {
-    slug: "menu-ejecutivo",
-    section: "Prix-fixe",
-    index: "diario",
-    name: "Menú",
-    italic: "Ejecutivo",
-    notes: "Bebida · Entrada · Fondo · Queque.",
-    price: "$10.990",
-    href: "/menu#section-menu-ejecutivo",
-    accent: "ejecutivo"
-  },
-  {
-    slug: "pour-over",
-    section: "Cafetería",
-    index: "04",
-    name: "Pour",
-    italic: "Over",
-    notes: "Filtrado lento en Chemex. Origen único, perfil floral.",
-    price: "$5.200",
-    href: "/menu#section-cafeteria",
-    photo: "pour-over",
-  },
-  {
-    slug: "croissant-kasler",
-    section: "Cocina",
-    index: "05",
-    name: "Croissant",
-    italic: "Kasler House",
-    notes: "Croissant 72h + pavo Kasler, cebolla encurtida, rúcula.",
-    price: "$7.500",
-    href: "/menu#section-croissants",
-    photo: "croissant-kasler",
-  }
-];
 
 function Hero() {
   return (
@@ -104,8 +37,8 @@ function Hero() {
           y cocina. <em>Sin atajos.</em>
         </h1>
         <p className="landing-hero__lede">
-          Una casa abierta en Magnere. Café de especialidad, mate, panadería de masa madre y
-          cocina de mercado.
+          Una cafetería de especialidad en Providencia, Santiago. Espresso, filtrados V60 y
+          Chemex, cafés de autor y cocina de mercado.
         </p>
         <div className="landing-hero__ctas">
           <a
@@ -326,6 +259,20 @@ async function OpenNowStatus() {
   return <VisitaSection openNow={isOpenNow()} />;
 }
 
+async function CartaHighlights() {
+  const menu = await getPublicMenuView({ locale: "es-CL" });
+  if (!menu) {
+    return <CartaScroller chips={[]} seasonLabel="Carta vigente" />;
+  }
+
+  return (
+    <CartaScroller
+      chips={selectLandingCoffeeHighlights(menu)}
+      seasonLabel={menu.season || "Carta vigente"}
+    />
+  );
+}
+
 export default function HomePage() {
   return (
     <>
@@ -341,7 +288,11 @@ export default function HomePage() {
         <Hero />
         <BarPanel />
         <CasaPanel />
-        <CartaScroller chips={cartaChips} />
+        <Suspense
+          fallback={<CartaScroller chips={[]} seasonLabel="Carta vigente" />}
+        >
+          <CartaHighlights />
+        </Suspense>
         <Suspense fallback={<VisitaSection openNow={false} />}>
           <OpenNowStatus />
         </Suspense>

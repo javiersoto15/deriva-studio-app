@@ -22,7 +22,13 @@ export type CartaChip = {
   accent?: "ejecutivo";
 };
 
-export function CartaScroller({ chips }: { chips: CartaChip[] }) {
+export function CartaScroller({
+  chips,
+  seasonLabel
+}: {
+  chips: CartaChip[];
+  seasonLabel: string;
+}) {
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const [index, setIndex] = useState(1);
 
@@ -61,34 +67,40 @@ export function CartaScroller({ chips }: { chips: CartaChip[] }) {
         <div className="carta-scroller__heading">
           <div className="landing-slug">
             <span className="landing-slug__rule" aria-hidden="true" />
-            <span>§ IV · La carta · Otoño 2026</span>
+            <span>§ IV · La carta · {seasonLabel}</span>
           </div>
           <h2 className="landing-display">
             Hoy se sirve <em>esto.</em>
           </h2>
         </div>
-        <div className="carta-scroller__controls">
-          <div className="carta-scroller__arrows">
-            <button
-              type="button"
-              aria-label="Anterior"
-              onClick={() => scrollBy(-1)}
-            >
-              ←
-            </button>
-            <button
-              type="button"
-              aria-label="Siguiente"
-              onClick={() => scrollBy(1)}
-              className="is-primary"
-            >
-              →
-            </button>
+        {chips.length > 0 ? (
+          <div className="carta-scroller__controls">
+            <div className="carta-scroller__arrows">
+              <button
+                type="button"
+                aria-label="Anterior"
+                onClick={() => scrollBy(-1)}
+              >
+                ←
+              </button>
+              <button
+                type="button"
+                aria-label="Siguiente"
+                onClick={() => scrollBy(1)}
+                className="is-primary"
+              >
+                →
+              </button>
+            </div>
+            <span className="carta-scroller__counter">
+              Desliza · {current} / {total}
+            </span>
           </div>
-          <span className="carta-scroller__counter">
-            Desliza · {current} / {total}
-          </span>
-        </div>
+        ) : (
+          <Link className="landing-cta landing-cta--dark" href="/menu">
+            Ver la carta completa →
+          </Link>
+        )}
       </div>
       <div ref={scrollerRef} className="carta-scroller__strip scrollbar-hide">
         {chips.map((chip) => (
