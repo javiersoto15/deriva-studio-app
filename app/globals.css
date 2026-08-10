@@ -2425,6 +2425,9 @@ address {
   line-height: 0.94;
   letter-spacing: -0.015em;
   color: var(--landing-fg);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   margin: 0;
   text-shadow: 0 2px 24px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0, 0, 0, 0.35);
 }
@@ -2439,7 +2442,9 @@ address {
   line-height: 1.5;
   color: var(--landing-fg);
   opacity: 0.9;
+  width: 100%;
   max-width: 540px;
+  min-width: 0;
   margin: 0;
   text-shadow: 0 1px 12px rgba(0, 0, 0, 0.5);
 }
@@ -3134,6 +3139,16 @@ address {
     padding: 32px 24px;
     text-align: center;
     font-size: 10px;
+  }
+}
+
+@media (max-width: 430px) {
+  .landing-nav {
+    grid-template-columns: 1fr;
+  }
+
+  .landing-nav__cue {
+    display: none;
   }
 }
 
