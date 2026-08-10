@@ -43,3 +43,25 @@ test("the midday editorial section becomes one column on mobile and compact widt
     /@media \(max-width:\s*430px\)[\s\S]*?\.landing-midday\s*{[^}]*padding-inline:\s*20px;/
   );
 });
+
+test("the hero enters safe document flow on short compact viewports", () => {
+  assert.match(
+    css,
+    /@media \(max-width:\s*430px\) and \(max-height:\s*640px\)[\s\S]*?\.landing-hero\s*{[^}]*height:\s*auto;[^}]*min-height:\s*720px;/
+  );
+  assert.match(
+    css,
+    /@media \(max-width:\s*430px\) and \(max-height:\s*640px\)[\s\S]*?\.landing-hero__content\s*{[^}]*position:\s*relative;[^}]*left:\s*auto;[^}]*right:\s*auto;[^}]*bottom:\s*auto;[^}]*min-height:\s*720px;/
+  );
+});
+
+test("the midday link has a touch-sized target and visible keyboard focus", () => {
+  assert.match(
+    css,
+    /\.landing-midday__link\s*{[^}]*display:\s*inline-flex;[^}]*align-items:\s*center;[^}]*min-height:\s*44px;/s
+  );
+  assert.match(
+    css,
+    /\.landing-midday__link:focus-visible\s*{[^}]*outline:\s*[^;]+;[^}]*outline-offset:\s*[^;]+;/s
+  );
+});
