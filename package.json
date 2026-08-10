@@ -9,6 +9,7 @@
     "dev:reset": "lsof -ti:3000 -ti:3001 -ti:3002 | xargs -r kill -9 2>/dev/null; rm -rf .next node_modules/.cache && next dev",
     "build": "next build",
     "typecheck": "tsc --noEmit",
+    "test:seo": "tsx --test tests/seo/*.test.ts",
     "email:build": "tsx scripts/build-emails.ts",
     "email:test-send": "tsx scripts/send-test-apertura.ts",
     "send:apertura": "tsx scripts/send-apertura-codes.ts",
