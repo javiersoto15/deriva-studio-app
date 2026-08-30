@@ -5,6 +5,7 @@ import test from "node:test";
 import {
   groupByTier,
   originName,
+  pricesPerOrigin,
   renderableOrigins,
   type PricedOrigin
 } from "../../src/api/origin-pricing";
@@ -20,10 +21,27 @@ const item = JSON.parse(
 );
 const options: PricedOrigin[] = item.origin_options;
 
-test("the public row keeps a single headline price from the backend", () => {
-  // price_label wins; the frontend never composes "Desde" for this surface.
+test("an origin-priced item suppresses its headline price", () => {
+  // The backend still sends the "Desde" summary...
   assert.equal(item.price_label, "Desde $3.990");
   assert.equal(item.price_clp, 3990);
+  // ...but the carta hides it, because the beans below restate it. The frontend
+  // still never composes that string itself — it just declines to render it.
+  assert.equal(pricesPerOrigin(options), true);
+});
+
+test("an ordinary item still shows its headline price", () => {
+  assert.equal(pricesPerOrigin(undefined), false);
+  assert.equal(pricesPerOrigin([]), false);
+  // Origins that cannot be priced or served do not suppress the item price:
+  // otherwise an item would end up with no price shown at all.
+  assert.equal(
+    pricesPerOrigin([
+      { id: "a", name: "Agotado", price_clp: 4890, tier: "premium", available: false },
+      { id: "b", name: "Sin precio", tier: "regular", available: true }
+    ]),
+    false
+  );
 });
 
 test("every available bean is listed with its own backend price", () => {

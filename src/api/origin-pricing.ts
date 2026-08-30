@@ -51,6 +51,15 @@ export function groupByTier(origins: readonly PricedOrigin[]): OriginTierGroup[]
   return [...groups.values()];
 }
 
+/**
+ * True when an item carries its own per-origin prices. Surfaces use this to
+ * decide whether the item's headline price is redundant: on the public carta the
+ * beans ARE the price, so the "Desde …" line is suppressed in favour of them.
+ */
+export function pricesPerOrigin(origins: readonly PricedOrigin[] = []): boolean {
+  return renderableOrigins(origins).length > 0;
+}
+
 /** Display label for one origin. Never falls back to a raw id. */
 export function originName(origin: PricedOrigin): string {
   return origin.display_name ?? origin.name;

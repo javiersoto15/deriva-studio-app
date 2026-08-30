@@ -16,6 +16,7 @@ import styles from "../carta.module.css";
 import {
   groupByTier,
   originName,
+  pricesPerOrigin,
   renderableOrigins
 } from "../../../../src/api/origin-pricing";
 import {
@@ -77,7 +78,12 @@ function OriginLines({ item }: { item: MenuItemX }) {
 function ItemRow({ item, showPrices }: { item: MenuItemX; showPrices: boolean }) {
   // The origin lines carry prices, so they follow the same showPrices gate as
   // the item price itself (the carta renders priceless on some surfaces).
-  const hasOrigins = showPrices && renderableOrigins(item.origin_options).length > 0;
+  //
+  // When an item prices per origin, the beans ARE the price: the backend's
+  // "Desde $3.990" headline would just restate the cheapest row sitting two
+  // lines below it. So the item price is suppressed and the origin lines carry
+  // the whole price story. Items without origins keep the ordinary price cell.
+  const hasOrigins = showPrices && pricesPerOrigin(item.origin_options);
 
   return (
     <div className={hasOrigins ? styles.rowBlock : ""}>
@@ -95,7 +101,7 @@ function ItemRow({ item, showPrices }: { item: MenuItemX; showPrices: boolean })
           {item.description ? <span className={styles.desc}>{item.description}</span> : null}
           {item.tasting_note ? <span className={styles.desc}>{item.tasting_note}</span> : null}
         </div>
-        {showPrices ? (
+        {showPrices && !hasOrigins ? (
           <div className={styles.priceCol}>
             <span className={styles.price}>{priceText(item)}</span>
           </div>
@@ -120,7 +126,9 @@ function HighlightCard({ item, showPrices }: { item: MenuItemX; showPrices: bool
           </div>
           {item.description ? <span className={styles.desc}>{item.description}</span> : null}
         </div>
-        {showPrices ? <span className={styles.price}>{priceText(item)}</span> : null}
+        {showPrices && !pricesPerOrigin(item.origin_options) ? (
+          <span className={styles.price}>{priceText(item)}</span>
+        ) : null}
         {showPrices ? <OriginLines item={item} /> : null}
       </div>
     </div>

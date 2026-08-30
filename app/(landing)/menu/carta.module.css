@@ -894,9 +894,12 @@
 }
 .originPrice {
   font-family: var(--f-mono);
-  font-size: 12px;
+  /* These are the only prices on an origin-priced row, so they carry full ink
+     weight rather than the muted treatment of a secondary detail. */
+  font-size: 13px;
+  font-weight: 500;
   letter-spacing: 0.02em;
-  color: var(--ink-muted);
+  color: var(--ink);
   text-align: right;
   white-space: nowrap;
   flex-shrink: 0;
