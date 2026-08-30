@@ -164,16 +164,7 @@ export type OriginCardView = {
   barista_attrib: string;
 };
 
-export type ItemDetail = {
-  id: string;
-  name: string;
-  section_eyebrow: string;
-  size_note: string;
-  price_clp: number;
-  spec: { label: string; value: string }[];
-  allergens: string[];
-  barista_note: string;
-};
+export type ItemDetail = components["schemas"]["MenuItemView"];
 
 export type Claim = {
   id: string;

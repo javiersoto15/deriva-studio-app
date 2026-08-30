@@ -1,0 +1,98 @@
+{
+  "id": "pourover",
+  "name": "Pour Over",
+  "price_clp": 3990,
+  "price_label": "Desde $3.990",
+  "meta": "300 ml",
+  "description": "Preparación manual en V60 o Chemex con origen rotativo de barra. Taza limpia, aromática y de acidez clara.",
+  "available": true,
+  "origin_options": [
+    {
+      "id": "orig_etiopia_yirgacheffe_dach",
+      "name": "Etiopia Yirgacheffe · DACH",
+      "display_name": "Etiopia Yirgacheffe",
+      "role": "Specialty rotation",
+      "method": "Espresso de origen · filtrado",
+      "country": "Etiopia",
+      "region": "Yirgacheffe",
+      "tasting_notes": [
+        "chocolate negro",
+        "jazmin",
+        "te negro",
+        "acidez malica/citrica",
+        "cuerpo cremoso"
+      ],
+      "price_clp": 3990,
+      "tier": "regular",
+      "tier_label": "Regular",
+      "default": true,
+      "available": true
+    },
+    {
+      "id": "orig_house_blend_dach",
+      "name": "House Blend · DACH",
+      "display_name": "House Blend",
+      "role": "All-purpose house blend",
+      "method": "Espresso · leche · bebidas frias",
+      "country": "Nicaragua, Colombia y Kenia",
+      "region": "Blend multiorigen",
+      "tasting_notes": [
+        "chocolate",
+        "fruta tropical",
+        "durazno",
+        "avellana",
+        "caramelo",
+        "te negro"
+      ],
+      "price_clp": 3990,
+      "tier": "regular",
+      "tier_label": "Regular",
+      "default": false,
+      "available": true
+    },
+    {
+      "id": "orig_mexico_descafeinado_dach",
+      "name": "Mexico Descafeinado · DACH",
+      "display_name": "Mexico Descafeinado",
+      "role": "Decaf option",
+      "method": "Espresso descafeinado · filtrado",
+      "country": "Mexico",
+      "region": "Chiapas",
+      "tasting_notes": [
+        "canela",
+        "tabaco",
+        "vainilla",
+        "azucar de cana",
+        "caramelo claro",
+        "especias"
+      ],
+      "price_clp": 3990,
+      "tier": "regular",
+      "tier_label": "Regular",
+      "default": false,
+      "available": true
+    },
+    {
+      "id": "orig_colibri_colombia_cenicafe",
+      "name": "Colibri Colombia Cenicafe",
+      "display_name": "Colibri Colombia Cenicafe",
+      "method": "V60 · 20g / 300ml",
+      "price_clp": 4890,
+      "tier": "premium",
+      "tier_label": "Premium",
+      "default": false,
+      "available": true
+    },
+    {
+      "id": "orig_504_tasty_roast",
+      "name": "504 Tasty Roast",
+      "display_name": "504 Tasty Roast",
+      "method": "V60 · 20g / 300ml",
+      "price_clp": 4890,
+      "tier": "premium",
+      "tier_label": "Premium",
+      "default": false,
+      "available": true
+    }
+  ]
+}

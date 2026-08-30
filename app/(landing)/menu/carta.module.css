@@ -840,6 +840,68 @@
   color: var(--ink-muted);
   max-width: 44ch;
 }
+/* ── Origin price lines ────────────────────────────────────────────────
+   Beans and their prices, listed under the item they belong to. Deliberately
+   one step quieter than the item row: smaller display type, mono prices in the
+   same right-hand lane, no boxes. Premium borrows the accent on its heading
+   only — never on a price or a bean name. */
+.rowBlock {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--hairline);
+}
+.rowNoRule {
+  border-bottom: none;
+  padding-bottom: 4px;
+}
+.origins {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 6px 0 14px;
+}
+.originGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.originTier {
+  font-family: var(--f-mono);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  padding-bottom: 2px;
+}
+.originTierPremium {
+  color: var(--accent);
+}
+.originRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 3px 0;
+}
+.originName {
+  font-family: var(--f-display);
+  font-size: 17px;
+  line-height: 1.2;
+  color: var(--ink);
+  /* Long bean names wrap; they must never push the price off-screen. */
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.originPrice {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--ink-muted);
+  text-align: right;
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 58px;
+}
 .priceCol {
   display: flex;
   flex-direction: column;
@@ -855,6 +917,10 @@
   letter-spacing: 0.02em;
   color: var(--ink);
   text-align: right;
+  /* price_label can now be a long backend string ("Desde $3.990"), so the
+     price lane must never wrap or be squeezed by a long item name. */
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .priceStrike {
   font-family: var(--f-mono);

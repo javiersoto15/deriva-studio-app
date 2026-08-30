@@ -14,6 +14,7 @@ import {
   ItemSaveButton,
   ItemUsualCta
 } from "./_components/ItemActions";
+import { ItemPriceRow, OriginPriceList } from "./_components/OriginPriceList";
 
 // Item detail (non-origin) — matches Paper artboard 26X-0. Zero green moments.
 // Phase 2B.5 — Converted to RSC. Spec sheet, allergens, barista note are all
@@ -94,6 +95,7 @@ async function ItemBody({ id }: { id: string }) {
 
   const spec = data?.spec ?? FALLBACK_SPEC;
   const allergens = data?.allergens ?? [];
+  const originOptions = data?.origin_options ?? [];
 
   return (
     <>
@@ -126,21 +128,20 @@ async function ItemBody({ id }: { id: string }) {
         </span>
       </div>
 
-      {/* Price row */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "14px 0",
-          borderTop: `1px solid ${colors.hairline}`
-        }}
-      >
-        <span style={labelStyle}>{t("price")}</span>
-        <span style={{ fontFamily: "var(--font-mono), monospace", fontSize: 20, color: colors.ink900 }}>
-          $ {(data?.price_clp ?? 3400).toLocaleString("es-CL")}
-        </span>
-      </div>
+      {/* Price row — always the backend price_clp. Prefixed with the localized
+          "Desde" only when the available origins carry more than one price. */}
+      <ItemPriceRow
+        priceClp={data?.price_clp}
+        origins={originOptions}
+        label={t("price")}
+        fromPrefix={t("price_from")}
+      />
+
+      <OriginPriceList
+        origins={originOptions}
+        label={t("origins")}
+        defaultMarker={t("default_origin")}
+      />
 
       {/* Spec sheet */}
       <section style={{ display: "flex", flexDirection: "column" }}>

@@ -10,6 +10,7 @@
     "build": "next build",
     "typecheck": "tsc --noEmit",
     "test:seo": "tsx --test tests/seo/*.test.ts",
+    "test:menu": "tsx --test tests/menu/*.test.tsx",
     "email:build": "tsx scripts/build-emails.ts",
     "email:test-send": "tsx scripts/send-test-apertura.ts",
     "send:apertura": "tsx scripts/send-apertura-codes.ts",

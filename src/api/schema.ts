@@ -2972,6 +2972,55 @@ export interface paths {
         };
         trace?: never;
     };
+    "/admin/menu/items/{item_id}/origins": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Replace the priced origin choices for a menu item
+         * @description Manager/owner endpoint that atomically replaces an item's ordered origin choices, upserts their canonical names, updates the item's base price to the minimum available origin price, and emits an audit log entry. Exactly one origin must be the default.
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    item_id: components["parameters"]["ItemID"];
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["MenuItemOriginOptionsInput"];
+                };
+            };
+            responses: {
+                /** @description Replaced priced origin choices. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MenuItemOriginOptionsResponse"];
+                    };
+                };
+                400: components["responses"]["BadRequest"];
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                404: components["responses"]["NotFound"];
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/admin/menu/sections/{section_id}": {
         parameters: {
             query?: never;
@@ -4770,6 +4819,8 @@ export interface components {
             available: boolean;
             tags?: string[];
             allergens?: string[];
+            /** @description Ordered bean choices and their prices when the item supports origin-level pricing. */
+            origin_options?: components["schemas"]["MenuOriginSummary"][];
             schedule?: components["schemas"]["PublicMenuSchedule"][];
         };
         MenuItem: {
@@ -4795,6 +4846,7 @@ export interface components {
             price_clp: number;
             tags?: string[];
             allergens?: string[];
+            origin_options?: components["schemas"]["MenuOriginSummary"][];
             available: boolean;
         };
         MenuOriginSummary: {
@@ -4809,8 +4861,32 @@ export interface components {
             country?: string;
             region?: string;
             tasting_notes?: string[];
+            /** @description Price for this origin when it is a priced menu-item choice. */
+            price_clp?: number;
+            /** @enum {string} */
+            tier?: "regular" | "premium";
+            /** @description Locale-resolved customer label for the pricing tier. */
+            tier_label?: string;
             /** @description True when this origin is the default origin for the item. */
             default?: boolean;
+            /** @description True when this origin can currently be selected for the item. */
+            available?: boolean;
+        };
+        MenuItemOriginOptionsInput: {
+            origin_options: components["schemas"]["MenuItemOriginOptionInput"][];
+        };
+        MenuItemOriginOptionInput: {
+            id: string;
+            name: string;
+            display_name?: string;
+            price_clp: number;
+            /** @enum {string} */
+            tier: "regular" | "premium";
+            default: boolean;
+            available: boolean;
+        };
+        MenuItemOriginOptionsResponse: {
+            origin_options: components["schemas"]["MenuOriginSummary"][];
         };
         MenuItemSpecRow: {
             label: string;

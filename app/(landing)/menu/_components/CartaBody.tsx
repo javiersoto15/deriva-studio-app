@@ -14,6 +14,11 @@ import type {
 import { LOCALE_COOKIE, locales, type Locale } from "../../../../src/i18n/locale";
 import styles from "../carta.module.css";
 import {
+  groupByTier,
+  originName,
+  renderableOrigins
+} from "../../../../src/api/origin-pricing";
+import {
   itemPhoto,
   isHighlighted,
   sectionBanner,
@@ -32,24 +37,71 @@ function priceText(item: MenuItemX): string {
   return item.price_label ?? clp(item.price_clp);
 }
 
+// ── Origin price lines ──────────────────────────────────────────────────
+// Items priced per coffee origin (Pour Over today, anything tomorrow) list their
+// beans and prices directly in the carta — the founder's call: people choosing a
+// coffee at the table shouldn't have to open a detail page to see what a bean
+// costs. Generic: driven purely by the presence of priced `origin_options`.
+//
+// Every value is backend-owned — group order, tier headings, per-origin prices.
+function OriginLines({ item }: { item: MenuItemX }) {
+  const available = renderableOrigins(item.origin_options);
+  if (available.length === 0) return null;
+
+  return (
+    <div className={styles.origins}>
+      {groupByTier(available).map((group, index) => (
+        <div key={group.tier ?? `tier-${index}`} className={styles.originGroup}>
+          {group.tierLabel ? (
+            <span
+              className={`${styles.originTier} ${
+                group.tier === "premium" ? styles.originTierPremium : ""
+              }`}
+            >
+              {group.tierLabel}
+            </span>
+          ) : null}
+          {group.origins.map((origin) => (
+            <div key={origin.id} className={styles.originRow}>
+              <span className={styles.originName}>{originName(origin)}</span>
+              <span className={styles.originPrice}>{clp(origin.price_clp)}</span>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // ── Item row ────────────────────────────────────────────────────────────
 function ItemRow({ item, showPrices }: { item: MenuItemX; showPrices: boolean }) {
+  // The origin lines carry prices, so they follow the same showPrices gate as
+  // the item price itself (the carta renders priceless on some surfaces).
+  const hasOrigins = showPrices && renderableOrigins(item.origin_options).length > 0;
+
   return (
-    <div className={`${styles.row} ${item.available === false ? styles.rowUnavailable : ""}`}>
-      <div className={styles.rowMain}>
-        <div className={styles.rowTitleLine}>
-          <span className={styles.name}>{item.name}</span>
-          {item.meta ? <span className={styles.meta}>{item.meta}</span> : null}
-          {item.signature ? <span className={styles.sigTag}>✦ de la casa</span> : null}
+    <div className={hasOrigins ? styles.rowBlock : ""}>
+      <div
+        className={`${styles.row} ${item.available === false ? styles.rowUnavailable : ""} ${
+          hasOrigins ? styles.rowNoRule : ""
+        }`}
+      >
+        <div className={styles.rowMain}>
+          <div className={styles.rowTitleLine}>
+            <span className={styles.name}>{item.name}</span>
+            {item.meta ? <span className={styles.meta}>{item.meta}</span> : null}
+            {item.signature ? <span className={styles.sigTag}>✦ de la casa</span> : null}
+          </div>
+          {item.description ? <span className={styles.desc}>{item.description}</span> : null}
+          {item.tasting_note ? <span className={styles.desc}>{item.tasting_note}</span> : null}
         </div>
-        {item.description ? <span className={styles.desc}>{item.description}</span> : null}
-        {item.tasting_note ? <span className={styles.desc}>{item.tasting_note}</span> : null}
+        {showPrices ? (
+          <div className={styles.priceCol}>
+            <span className={styles.price}>{priceText(item)}</span>
+          </div>
+        ) : null}
       </div>
-      {showPrices ? (
-        <div className={styles.priceCol}>
-          <span className={styles.price}>{priceText(item)}</span>
-        </div>
-      ) : null}
+      {hasOrigins ? <OriginLines item={item} /> : null}
     </div>
   );
 }
@@ -69,6 +121,7 @@ function HighlightCard({ item, showPrices }: { item: MenuItemX; showPrices: bool
           {item.description ? <span className={styles.desc}>{item.description}</span> : null}
         </div>
         {showPrices ? <span className={styles.price}>{priceText(item)}</span> : null}
+        {showPrices ? <OriginLines item={item} /> : null}
       </div>
     </div>
   );
