@@ -311,6 +311,83 @@ Both root causes named in the coverage diagnosis are now fixed **on the website 
 
 **Do not treat the campaign as active.** The landing pages are fixed and verified in production; the business-name asset is not yet resubmitted, and serving has not been observed.
 
+## 2026-09-02 (later same day) - Ads console reached; appeal submitted and live state read back
+
+The earlier entry recorded the Ads work as blocked by a `Verify it's you` interstitial. The founder re-authenticated. The console session lives in a **different Chrome profile** from the one first used, which is why the first tab kept hitting the sign-in wall while other Ads tabs looked signed in; the browser named `Deriva` holds the working session. Everything below is live readback from account 934-597-8419.
+
+### Business-name asset - APPEAL SUBMITTED
+
+Asset row before: `Deriva Studio` - Business name - Campaign level - `Not eligible / Disapproved (Business Information - Name Prominence)`, last updated May 22 2026.
+
+The appeal was submitted from the asset's policy panel with:
+
+- Reason for appeal: **Made changes to comply with policy** (accurate - the landing pages were changed and verified in production earlier today).
+- Scope: **All affected ads in the account**.
+- The attestation checkbox was accepted on the basis that the fix is real and verifiable at `https://derivastudio.cl/`, `/menu` and `/menu-ejecutivo`.
+
+Google returned **`Appeal accepted.`** and the panel's action changed from `Appeal` to **`Track appeal`**. The asset name was NOT changed: it remains `Deriva Studio`.
+
+The asset status stays `Not eligible` while the review runs - Google states explicitly that the status will not change during the review process.
+
+### Budget - verified compliant
+
+Live campaign row: **`CLP9,800/day`**. Account total row: **`CLP9,800/day`**. That is CLP 297,920 over Google's 30.4-day month, inside the CLP 300,000 cap and below the CLP 9,868/day ceiling. **Not changed** - it was already compliant. Raising it to 9,868 would recover about CLP 2,067/month; left alone deliberately rather than touching a live budget for a ~0.7% gain.
+
+### Conversion objectives - verified, calls are off
+
+From Goals > Conversions > Summary, read directly off the goal cards:
+
+| Goal | Campaigns using it | Status |
+| --- | --- | --- |
+| Get directions | **1 of 1** | Active |
+| Store visit | **1 of 1** | Needs attention |
+| Phone call lead (account-default) | **0 of 1** | Needs attention |
+| Contact | **0 of 1** | Active |
+
+Calls are **not** a campaign objective (`0 of 1`). Directions and store visits are the campaign's conversion intent, and Get directions - the primary physical-visit signal - is **Active**.
+
+The `Needs attention` on Store visit resolves to the generic notice: *"You may need to fix some issues to use this goal in optimization and see it in results reporting. Check your conversion actions' Status and Actions columns for issues."* It is a measurement/reporting caveat on store-visit modelling, not a serving block, and Get directions is unaffected.
+
+### Campaign state - enabled, eligible, and serving
+
+Precise distinction, since these are not the same thing:
+
+- **Enabled** - yes. Green status dot on the campaign row.
+- **Eligible** - yes. Status column reads `Eligible`.
+- **Asset groups** - both `Café, desayuno y brunch` and `Menú Ejecutivo y almuerzo` are enabled and now read **`Eligible`**. This is a change from the previous entry, where both were `Pending - Asset group under review`. Ad Strength on both is still **`Incomplete`**.
+- **Actually serving** - yes. Reporting window Aug 26 - Sep 1 2026: **62,215 impressions, CLP 109,358 cost**, optimization score 81%. The campaign is transacting in the auction. (That window still contains days at the old CLP 17,200/day budget; the reduction to CLP 9,800/day was made on 2026-09-02, so this spend rate is not the go-forward rate.)
+
+So the campaign is serving in aggregate. What is *not* demonstrated is serving on the six specific target queries.
+
+### Ad Preview and Diagnosis - all six target searches
+
+Tool configured for Location `Providencia, Santiago Metro...`, Language `Spanish`, Device `Mobile`, Audience `Users not in any audience`.
+
+| Query | Result |
+| --- | --- |
+| menu ejecutivo providencia | Your ad isn't showing |
+| menú ejecutivo providencia | Your ad isn't showing |
+| almuerzo providencia | Your ad isn't showing |
+| almuerzo cerca | Your ad isn't showing |
+| café en providencia | Your ad isn't showing |
+| cafe providencia | Your ad isn't showing |
+
+Every query returned the same Results-tab reason: **`No diagnoses results were found because no keywords in your account matched your query`**.
+
+**This is not evidence that the search themes are ineligible.** Ad Preview and Diagnosis is a keyword-based diagnostic. This account runs Performance Max, which uses search themes, not keywords, so the tool has nothing to match against and cannot report on PMax eligibility for a given query. The correct reading is: *this diagnostic cannot answer the question for this campaign type*. It is the same result recorded in the earlier entry and it did not change with the landing-page fix, because the fix does not create keywords.
+
+### Cause attribution for the six queries
+
+Ranked by what the evidence actually supports:
+
+1. **Diagnostic blind spot (confirmed).** The tool cannot evaluate PMax search themes. Absence in Ad Preview is uninformative here.
+2. **Business-name asset still not eligible (confirmed).** Appeal submitted today, under review; status will not change until Google finishes.
+3. **Ad Strength `Incomplete` on both asset groups (confirmed).** Weaker asset coverage limits how often PMax can assemble an eligible ad for a given query.
+4. **Ad Rank / auction dynamics at CLP 9,800/day (not measurable from here).** A lower budget reduces auction participation; PMax never guarantees coverage of a named query.
+5. **Not a targeting or budget-exhaustion issue** as far as can be shown: geo, language and device match the intended Providencia audience, the campaign is Eligible, and it is spending.
+
+**Conclusion:** the two web-side blockers are fixed and verified in production, the appeal is submitted and accepted, budget and conversion goals are confirmed correct, and the campaign is enabled, eligible and serving. The specific high-intent queries remain unproven, and the honest next lever - if guaranteed coverage of those exact searches is the goal - is a tightly bounded Search campaign with exact/phrase keywords, which would also make Ad Preview meaningful. That decision is still open.
+
 ## Pending live mutations
 
 - [x] Campaign goals changed to Store visits and Get directions.
@@ -329,8 +406,12 @@ Both root causes named in the coverage diagnosis are now fixed **on the website 
 - [x] CLP 9,800/day budget saved and verified in both campaign and account-total rows.
 - [x] Landing-page prominence for `Deriva Studio` implemented and verified live on `/`, `/menu` and `/menu-ejecutivo`, with the asset name unchanged (2026-09-02).
 - [x] `/menu-ejecutivo` serves HTTP 200 in production instead of redirecting to `/` (2026-09-02).
-- [ ] Business-name asset resubmitted or appealed — BLOCKED on Google account re-authentication.
-- [ ] Budget re-read live; optional raise from CLP 9,800 to CLP 9,868/day — BLOCKED on re-authentication.
-- [ ] Conversion goals and enabled/eligible/serving state re-verified live — BLOCKED on re-authentication.
-- [ ] Ad Preview and Diagnosis re-run for the six target queries — BLOCKED on re-authentication.
+- [x] Business-name asset appealed as `Made changes to comply with policy`; Google returned `Appeal accepted.` Asset name unchanged (2026-09-02).
+- [x] Budget verified live at CLP 9,800/day on both campaign and account rows — within the CLP 9,868/day ceiling. Deliberately not raised.
+- [x] Conversion goals verified live: Get directions 1 of 1 Active, Store visit 1 of 1, Phone call lead 0 of 1.
+- [x] Campaign verified Enabled + Eligible and demonstrably serving (62,215 impressions, CLP 109,358, Aug 26 - Sep 1).
+- [x] Both asset groups now read `Eligible` (previously pending review); Ad Strength still `Incomplete` on both.
+- [x] Ad Preview and Diagnosis run for all six target queries — all `Your ad isn't showing`, all with the keyword-matching diagnostic limitation.
+- [ ] Google review of the business-name appeal completed — pending; status stays `Not eligible` during review.
+- [ ] Ad Strength raised from `Incomplete` on both asset groups.
 - [ ] Decide whether exact-query coverage warrants a separate Search campaign after asset review.
