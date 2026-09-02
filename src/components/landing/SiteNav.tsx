@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { todayHoursLabel } from "../../lib/open-now";
+import { SITE_NAME } from "../../seo/local-business";
 
 // "match-up" intentionally matches no rendered tab — standalone campaign
 // pages (reached via QR / Instagram) keep the nav for orientation but
@@ -43,7 +44,7 @@ export function SiteNav({
     >
       <Link href="/" className="landing-nav__brand">
         <span className="landing-nav__diamond" aria-hidden="true" />
-        <span>Deriva Coffee Studio</span>
+        <span>{SITE_NAME}</span>
       </Link>
       <div className="landing-nav__tabs">
         <Link

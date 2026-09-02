@@ -3,6 +3,8 @@ import test from "node:test";
 
 import type { ExecutiveMenu } from "../../src/api/server";
 import {
+  EXECUTIVE_MENU_FALLBACK_BODY,
+  EXECUTIVE_MENU_FALLBACK_TITLE,
   EXECUTIVE_MENU_STABLE_HOURS,
   EXECUTIVE_MENU_URL,
   buildExecutiveMenuGraph,
@@ -71,11 +73,13 @@ test("returns stable service copy without inventing a daily edition", () => {
   assert.equal(result.availableToday, false);
   assert.equal(result.hours, "Lunes a viernes · 13:00–16:00");
   assert.equal(result.hours, EXECUTIVE_MENU_STABLE_HOURS);
-  assert.equal(result.hero, "Menú Ejecutivo en Providencia");
-  assert.equal(
-    result.subline,
-    "La edición del día se publica cada jornada de servicio."
-  );
+  assert.equal(result.hero, EXECUTIVE_MENU_FALLBACK_TITLE);
+  assert.equal(result.hero, "Menú Ejecutivo de lunes a viernes");
+  assert.equal(result.subline, EXECUTIVE_MENU_FALLBACK_BODY);
+  // Honest fallback: states the program and the hours, claims nothing about
+  // today beyond "may not be published yet / may be over".
+  assert.match(result.subline, /13:00 a 16:00/);
+  assert.doesNotMatch(result.subline, /\$|CLP|disponible ahora/i);
   assert.equal(result.priceLabel, undefined);
   assert.equal(result.priceClp, undefined);
   assert.equal(result.dateLabel, undefined);

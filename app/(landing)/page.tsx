@@ -10,8 +10,10 @@ import { isOpenNow } from "../../src/lib/open-now";
 import { selectLandingCoffeeHighlights } from "../../src/seo/landing-coffee-highlights";
 import { EXECUTIVE_MENU_STABLE_HOURS } from "../../src/seo/executive-menu";
 import {
+  BUSINESS_DESCRIPTOR,
   INSTAGRAM_URL,
   MAPS_URL,
+  SITE_NAME,
   buildLocalBusinessGraph
 } from "../../src/seo/local-business";
 
@@ -279,8 +281,9 @@ function Footer() {
     <footer className="landing-footer">
       <span className="landing-footer__brand">
         <span className="landing-diamond" aria-hidden="true" />
-        Deriva Coffee Studio
+        {SITE_NAME}
       </span>
+      <span>{BUSINESS_DESCRIPTOR}</span>
       <span>Edición continuada · MMXXVI</span>
       <span>derivastudio.cl</span>
     </footer>

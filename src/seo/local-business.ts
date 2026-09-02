@@ -1,14 +1,24 @@
 import { PHOTO_BASE_URL } from "../data/photos";
 
 export const SITE_URL = "https://derivastudio.cl";
-export const SITE_NAME = "Deriva Coffee Studio";
+// Umbrella business identity. This is the name Google Ads carries and the name
+// that must be visibly rendered on every paid landing destination (/, /menu,
+// /menu-ejecutivo) — a Business Information asset fails Name Prominence review
+// when the advertised name is not human-readable on the page. "Deriva Coffee
+// Studio" stays an alternate name: the business is coffee AND kitchen AND mate,
+// so the umbrella must not be narrowed to the coffee line.
+export const SITE_NAME = "Deriva Studio";
+export const SITE_ALTERNATE_NAMES = ["Deriva Coffee Studio", "Deriva"] as const;
+// Offerings described separately from the name, so the identity stays broad.
+export const BUSINESS_DESCRIPTOR =
+  "Café de especialidad, cocina y mate en Providencia";
 export const MENU_URL = `${SITE_URL}/menu`;
 export const INSTAGRAM_URL =
   "https://www.instagram.com/deriva.coffee.studio/";
 export const MAPS_URL =
   "https://www.google.com/maps/search/?api=1&query=Magnere+1570+Providencia+Santiago";
 export const LOCAL_SEO_DESCRIPTION =
-  "Deriva Coffee Studio es un café de especialidad en Providencia, Santiago, con desayunos, brunch, almuerzos y Menú Ejecutivo de lunes a viernes, además de espresso, filtrados y cafés de autor.";
+  "Deriva Studio es un café de especialidad en Providencia, Santiago, con desayunos, brunch, almuerzos y Menú Ejecutivo de lunes a viernes, además de espresso, filtrados y cafés de autor.";
 export const LOCAL_SEARCH_INTENTS = [
   "café de especialidad en Providencia",
   "cafetería en Providencia",
@@ -27,7 +37,7 @@ export function buildLocalBusinessGraph() {
         "@type": "Organization",
         "@id": `${SITE_URL}/#organization`,
         name: SITE_NAME,
-        alternateName: "Deriva",
+        alternateName: SITE_ALTERNATE_NAMES,
         url: SITE_URL,
         logo: {
           "@type": "ImageObject",
@@ -42,7 +52,7 @@ export function buildLocalBusinessGraph() {
         "@type": "CafeOrCoffeeShop",
         "@id": `${SITE_URL}/#cafe`,
         name: SITE_NAME,
-        alternateName: "Deriva",
+        alternateName: SITE_ALTERNATE_NAMES,
         url: SITE_URL,
         parentOrganization: { "@id": `${SITE_URL}/#organization` },
         image: [

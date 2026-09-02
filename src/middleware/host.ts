@@ -42,6 +42,11 @@ const SHARED_INFRA_PREFIXES = [
 // (e.g. /menu/foo) ride along under their parent prefix.
 const LANDING_PREFIXES = [
   "/menu",
+  // `/menu-ejecutivo` is a SIBLING of `/menu`, not a child: matchesPrefix only
+  // accepts an exact hit or a following slash, so `/menu` never covered it and
+  // the apex fallback 302'd it to `/`. Any future `/menu-*` route needs its own
+  // entry here for the same reason.
+  "/menu-ejecutivo",
   "/menu-display",
   "/abierto",
   "/sala",

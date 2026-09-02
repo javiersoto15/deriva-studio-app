@@ -11,6 +11,8 @@
     "typecheck": "tsc --noEmit",
     "test:seo": "tsx --test tests/seo/*.test.ts",
     "test:menu": "tsx --test tests/menu/*.test.ts tests/menu/*.test.tsx",
+    "test:routing": "tsx --test tests/routing/*.test.ts",
+    "test": "npm run test:seo && npm run test:menu && npm run test:routing",
     "email:build": "tsx scripts/build-emails.ts",
     "email:test-send": "tsx scripts/send-test-apertura.ts",
     "send:apertura": "tsx scripts/send-apertura-codes.ts",

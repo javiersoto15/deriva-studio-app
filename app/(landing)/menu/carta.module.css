@@ -1814,3 +1814,17 @@
     width: 100%;
   }
 }
+
+/* Umbrella business name in the carta colophon. Rendered visibly (not just in
+   metadata) so the Google Ads Business Information asset passes Name
+   Prominence review on this paid landing destination. */
+.footerBrand {
+  display: inline-block;
+  margin-bottom: 6px;
+  color: var(--ink);
+  font-family: var(--f-tracked);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}

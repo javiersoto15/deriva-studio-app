@@ -14,6 +14,10 @@ import type {
 import { LOCALE_COOKIE, locales, type Locale } from "../../../../src/i18n/locale";
 import styles from "../carta.module.css";
 import {
+  BUSINESS_DESCRIPTOR,
+  SITE_NAME
+} from "../../../../src/seo/local-business";
+import {
   groupByTier,
   originName,
   pricesPerOrigin,
@@ -933,6 +937,10 @@ export function CartaBody({
 
       <footer className={styles.footer}>
         <p className={styles.footerText}>
+          <strong className={styles.footerBrand}>{SITE_NAME}</strong>
+          <br />
+          {BUSINESS_DESCRIPTOR}
+          <br />
           Carta vigente al servicio · precios definitivos en local
           <br />
           Magnere 1570 Local 105 · Providencia · Santiago

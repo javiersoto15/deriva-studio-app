@@ -3,6 +3,7 @@ import { Suspense } from "react";
 
 import { getPublicExecutiveMenu } from "../../../src/api/server";
 import { SiteNav } from "../../../src/components/landing/SiteNav";
+import { SITE_NAME } from "../../../src/seo/local-business";
 import {
   EXECUTIVE_MENU_URL,
   buildExecutiveMenuGraph,
@@ -14,13 +15,12 @@ import styles from "./menu-ejecutivo.module.css";
 
 export const metadata: Metadata = {
   title: "Menú Ejecutivo en Providencia",
-  description:
-    "Menú Ejecutivo de lunes a viernes en Deriva Coffee Studio, Providencia: cuatro tiempos para una pausa de almuerzo en Magnere 1570.",
+  description: `Menú Ejecutivo de lunes a viernes, 13:00–16:00, en ${SITE_NAME}: cuatro tiempos para una pausa de almuerzo en Magnere 1570, Providencia.`,
   alternates: { canonical: EXECUTIVE_MENU_URL },
   openGraph: {
-    title: "Menú Ejecutivo en Providencia · Deriva Coffee Studio",
+    title: `Menú Ejecutivo en Providencia · ${SITE_NAME}`,
     description:
-      "Almuerzo de cuatro tiempos de lunes a viernes en Magnere 1570, Providencia.",
+      "Almuerzo de cuatro tiempos de lunes a viernes, 13:00–16:00, en Magnere 1570, Providencia.",
     url: EXECUTIVE_MENU_URL,
     type: "website"
   }

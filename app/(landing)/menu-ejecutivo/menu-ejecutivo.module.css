@@ -8,6 +8,15 @@
   border-top: 1px solid var(--hairline-strong);
 }
 
+/* The carta's edition strip is a single nowrap line; at 320px it clips
+   mid-word ("MAGNERE 15…"). This is a paid landing destination, so let it
+   wrap rather than truncate the address. */
+.masthead .edition,
+.editionLine {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
 .mastTitle {
   max-width: 11ch;
   font-size: clamp(56px, 8vw, 92px);
@@ -158,5 +167,238 @@
 @media (max-width: 350px) {
   .mastTitle {
     font-size: 44px;
+  }
+
+  .brandDescriptor,
+  .statusNote {
+    font-size: 12px;
+  }
+}
+
+/* --- Umbrella business name (Google Ads Name Prominence) ------------------ */
+
+.brandLine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 14px;
+  margin: 0 0 18px;
+}
+
+.brandName {
+  color: var(--ink);
+  font-family: var(--f-tracked);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.brandDescriptor {
+  color: var(--ink-muted);
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+.footerBrand {
+  display: inline-block;
+  margin-bottom: 6px;
+  color: var(--ink);
+  font-family: var(--f-tracked);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* --- Live service status -------------------------------------------------- */
+
+.status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 12px;
+  margin: 18px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--hairline);
+}
+
+.statusMark {
+  width: 7px;
+  height: 7px;
+  align-self: center;
+  flex: 0 0 auto;
+  transform: rotate(45deg);
+  background: var(--ink-muted);
+}
+
+.status[data-state="now"] .statusMark {
+  background: var(--accent);
+}
+
+.statusBadge {
+  color: var(--ink);
+  font-family: var(--f-tracked);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.status[data-state="now"] .statusBadge {
+  color: var(--accent);
+}
+
+.statusNote {
+  color: var(--ink-muted);
+  font-family: var(--f-mono);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* --- Published edition ---------------------------------------------------- */
+
+.courseNote {
+  display: block;
+  margin-top: 4px;
+  color: var(--ink-muted);
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+.fallbackBody {
+  max-width: 60ch;
+  margin: 16px 0 26px;
+  color: var(--ink-muted);
+  font-family: var(--f-display);
+  font-size: 19px;
+  line-height: 1.6;
+}
+
+/* --- "Cómo funciona" rotation explainer ----------------------------------- */
+
+/* carta.module.css puts the page gutter on each BLOCK (.masthead, .footer),
+   not on .page — a new sibling section has to supply its own 20px or it sits
+   flush against the viewport edge on mobile. */
+.shape {
+  padding: clamp(24px, 4vw, 36px) 20px 0;
+  margin-top: clamp(36px, 6vw, 68px);
+  border-top: 1px solid var(--hairline-strong);
+}
+
+.shapeTitle {
+  max-width: 20ch;
+  margin: 18px 0 0;
+  /* Display face + italic, matching the carta mastheads. Without an explicit
+     family this inherits --body, which aliases IBM Plex Mono. */
+  font-family: var(--f-display);
+  font-style: italic;
+  font-size: clamp(28px, 4vw, 38px);
+  font-weight: 400;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+.shapeLede {
+  max-width: 62ch;
+  margin: 14px 0 30px;
+  color: var(--ink-muted);
+  font-family: var(--f-display);
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.shapeLede em {
+  color: var(--ink);
+  font-style: italic;
+}
+
+.shapeList {
+  display: grid;
+  gap: 22px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shapeItem {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 14px;
+  align-items: baseline;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.shapeItem:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.shapeNum {
+  color: var(--ink-muted);
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.shapeMain {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.shapeTag {
+  color: var(--ink);
+  font-family: var(--f-tracked);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.shapeExample {
+  color: var(--ink-muted);
+  font-family: var(--f-display);
+  font-size: 17px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.shapeExampleLabel {
+  color: var(--ink-muted);
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+@media (max-width: 520px) {
+  .status {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  /* align-self:center centres the diamond horizontally once the row becomes a
+     column — pin it back to the start edge. */
+  .statusMark {
+    align-self: flex-start;
+  }
+
+  .shapeItem {
+    grid-template-columns: 26px 1fr;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 350px) {
+  .shapeItem {
+    grid-template-columns: 1fr;
+    gap: 6px;
   }
 }
