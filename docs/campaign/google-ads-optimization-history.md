@@ -159,16 +159,19 @@ This file is the durable, non-sensitive audit trail for Deriva Coffee Studio Goo
 
 **Budget request:** Increase the monthly campaign ceiling to CLP 300,000. The safe average-daily equivalent selected was CLP 9,800/day, which maps to CLP 297,920 using Google's 30.4-day monthly calculation.
 
-**Mutation state:** The CLP 9,800/day value was entered, but Google required a passkey or device confirmation for a budget increase beyond its security threshold. The live campaign readback remained CLP 4,100/day; therefore the increase is not recorded as applied. Complete the Google reauthentication, save again, and require a CLP 9,800/day read-after-write before marking this item complete.
+**Mutation state:** Google initially requested passkey or device confirmation for a budget increase beyond its security threshold. On retry, Google presented a temporary security skip and the authorized change was saved. The campaign row and account-total row both displayed `CLP9,800/day`, equivalent to CLP 297,920 using the 30.4-day monthly calculation.
 
 **Coverage diagnosis:**
 
 - The campaign remained Enabled and Eligible with campaign-specific `Get directions, Store visits` goals.
 - Both refreshed asset groups still displayed `Pending - Asset group under review`; the Menú Ejecutivo group also displayed `Incomplete` ad strength and zero post-creation metrics.
 - Google Ads' Ad Preview and Diagnosis tool, configured for Providencia, Spanish and mobile, returned `Your ad isn't showing` for both reported queries. Its detailed reason was `No diagnoses results were found because no keywords in your account matched your query`. This account currently uses Performance Max search themes rather than Search-campaign keywords, so that diagnostic does not prove the search themes are ineligible; it confirms there is no keyword-based Search campaign matching those queries.
-- Policy Manager showed the campaign-level business-name asset `Deriva Studio` as `Not eligible - Disapproved (Business Information - Name Prominence)`. The website prominently uses `Deriva Coffee Studio`, so the legacy shortened asset should be replaced or corrected after the budget authentication is completed.
+- Policy Manager showed the campaign-level business-name asset `Deriva Studio` as `Not eligible - Disapproved (Business Information - Name Prominence)`. The website prominently uses `Deriva Coffee Studio`, so the exact legacy name is not currently clear enough on the paid landing pages for Google's prominence check.
+- Live inspection showed `https://derivastudio.cl/menu-ejecutivo` resolving to the homepage rather than retaining a dedicated Menú Ejecutivo URL, which weakens the page-specific paid-search relevance intended by that asset group's URL rule.
 
 **Interpretation:** The lower budget materially reduced auction capacity, while asset review and the disapproved business-name asset add serving uncertainty. Raising the budget is appropriate, but a Performance Max campaign cannot guarantee impression coverage for particular search queries. If consistent coverage for these exact high-intent searches is required, plan a tightly bounded Search campaign using exact/phrase keywords after the current assets clear review.
+
+**Business-name decision:** Keep the legacy `Deriva Studio` business-name asset because it matches the umbrella brand and `derivastudio.cl` domain. Do not rename it to `Deriva Coffee Studio`. Google's rule requires the submitted name to be clearly present on the ad landing page; the live pages currently emphasize `Deriva Coffee Studio`. Resolve the policy issue, if pursued, by making `Deriva Studio` visibly prominent on the paid landing pages or by appealing with domain/brand evidence, without changing the asset name.
 
 ## Pending live mutations
 
@@ -185,6 +188,6 @@ This file is the durable, non-sensitive audit trail for Deriva Coffee Studio Goo
 - [ ] Google review completed for both refreshed asset groups.
 - [ ] Menú Ejecutivo asset-group ad strength rechecked after policy review.
 - [ ] Store-visit goal `Needs attention` status rechecked at the first measurement checkpoint.
-- [ ] CLP 9,800/day budget saved after Google passkey confirmation and verified live.
-- [ ] Disapproved `Deriva Studio` business-name asset corrected to the prominent website name and resubmitted.
+- [x] CLP 9,800/day budget saved and verified in both campaign and account-total rows.
+- [ ] Legacy `Deriva Studio` business-name prominence resolved without renaming the asset.
 - [ ] Decide whether exact-query coverage warrants a separate Search campaign after asset review.
