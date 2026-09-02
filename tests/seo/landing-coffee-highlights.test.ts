@@ -3,7 +3,12 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import type { PublicMenuView } from "../../src/api/server";
-import { selectLandingCoffeeHighlights } from "../../src/seo/landing-coffee-highlights";
+import {
+  HIGHLIGHT_CANDIDATES,
+  LANDING_CHIP_COUNT,
+  selectLandingCoffeeHighlights
+} from "../../src/seo/landing-coffee-highlights";
+import { derivaPhotos } from "../../src/data/photos";
 
 function publicMenu(items: Array<{
   id: string;
@@ -33,17 +38,17 @@ function publicMenu(items: Array<{
 
 const visibleItems = [
   {
-    id: "espresso",
-    name: "Espresso",
-    description: "Espresso de la casa.",
-    price_clp: 2000,
-    available: true
-  },
-  {
     id: "cappuccino",
     name: "Cappuccino",
     description: "Espresso y leche texturizada.",
     price_label: "$3.200",
+    available: true
+  },
+  {
+    id: "latte",
+    name: "Latte",
+    description: "Espresso con leche.",
+    price_clp: 3500,
     available: true
   },
   {
@@ -54,13 +59,6 @@ const visibleItems = [
     available: true
   },
   {
-    id: "coffee-flight",
-    name: "Coffee Flight",
-    description: "Tres lecturas del café de barra.",
-    price_clp: 6590,
-    available: true
-  },
-  {
     id: "decaf-filter",
     name: "Espresso Tropical",
     description: "Maracuyá, tónica y espresso Etiopía.",
@@ -68,10 +66,31 @@ const visibleItems = [
     available: true
   },
   {
-    id: "bolsa-de-cafe-250-g",
-    name: "Bolsa de Café 250 g",
-    description: "Café de especialidad para llevar.",
-    price_clp: 11500,
+    id: "capuccino-mediterraneo",
+    name: "Cappuccino Mediterráneo",
+    description: "Cappuccino de autor.",
+    price_clp: 5490,
+    available: true
+  },
+  {
+    id: "bosque-valdiviano",
+    name: "Bosque Valdiviano",
+    description: "Café de autor del sur.",
+    price_clp: 5490,
+    available: true
+  },
+  {
+    id: "espresso-rose",
+    name: "Espresso Rose",
+    description: "Reserva con fotografía propia.",
+    price_clp: 5490,
+    available: true
+  },
+  {
+    id: "espresso",
+    name: "Espresso",
+    description: "Sin fotografía — no debe aparecer en la tira.",
+    price_clp: 2000,
     available: true
   },
   {
@@ -89,19 +108,69 @@ test("selects current public coffee highlights in a stable order", () => {
   assert.deepEqual(
     chips.map((chip) => chip.slug),
     [
-      "espresso",
       "cappuccino",
+      "latte",
       "pourover",
-      "coffee-flight",
       "decaf-filter",
-      "bolsa-de-cafe-250-g"
+      "capuccino-mediterraneo",
+      "bosque-valdiviano"
     ]
   );
   assert.deepEqual(
     chips.map((chip) => chip.price),
-    ["$2.000", "$3.200", "$4.290", "$6.590", "$5.190", "$11.500"]
+    ["$3.200", "$3.500", "$4.290", "$5.190", "$5.490", "$5.490"]
   );
   assert.equal(chips.some((chip) => chip.name === "Tiramisú"), false);
+  // `espresso` is live and available but has no photography, so it must not be
+  // featured — a photo-less chip renders as a bare text placeholder.
+  assert.equal(chips.some((chip) => chip.slug === "espresso"), false);
+});
+
+test("every rendered chip carries a photo — never a bare text placeholder", () => {
+  const chips = selectLandingCoffeeHighlights(publicMenu(visibleItems));
+
+  assert.ok(chips.length > 0);
+  for (const chip of chips) {
+    assert.ok(chip.photo, `chip ${chip.slug} has no photo`);
+    assert.ok(
+      chip.photo && chip.photo in derivaPhotos,
+      `chip ${chip.slug} points at an unregistered photo slug: ${chip.photo}`
+    );
+  }
+});
+
+test("every configured candidate points at a registered photo slug", () => {
+  assert.ok(HIGHLIGHT_CANDIDATES.length >= LANDING_CHIP_COUNT);
+  for (const candidate of HIGHLIGHT_CANDIDATES) {
+    assert.ok(
+      candidate.photo in derivaPhotos,
+      `candidate ${candidate.id} points at an unregistered photo slug: ${candidate.photo}`
+    );
+  }
+  // No duplicate items, and no photo reused across two chips in one strip.
+  const ids = HIGHLIGHT_CANDIDATES.map((c) => c.id);
+  assert.equal(new Set(ids).size, ids.length);
+  const photos = HIGHLIGHT_CANDIDATES.map((c) => c.photo);
+  assert.equal(new Set(photos).size, photos.length);
+});
+
+test("an unavailable item is backfilled by the next candidate, not left as a hole", () => {
+  const menu = publicMenu(
+    visibleItems.map((item) =>
+      item.id === "capuccino-mediterraneo" ? { ...item, available: false } : item
+    )
+  );
+  const chips = selectLandingCoffeeHighlights(menu);
+
+  assert.equal(chips.length, LANDING_CHIP_COUNT);
+  assert.equal(chips.some((chip) => chip.slug === "capuccino-mediterraneo"), false);
+  // The reserve steps up rather than the strip shrinking.
+  assert.ok(chips.some((chip) => chip.slug === "espresso-rose"));
+  // Numbering stays gapless.
+  assert.deepEqual(
+    chips.map((chip) => chip.index),
+    ["01", "02", "03", "04", "05", "06"]
+  );
 });
 
 test("omits missing and unavailable configured items instead of inventing fallbacks", () => {
@@ -113,7 +182,7 @@ test("omits missing and unavailable configured items instead of inventing fallba
 
   assert.deepEqual(
     selectLandingCoffeeHighlights(menu).map((chip) => chip.slug),
-    ["espresso", "pourover"]
+    ["cappuccino", "pourover"]
   );
 });
 
