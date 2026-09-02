@@ -4654,10 +4654,17 @@ export interface components {
             /** Format: uri */
             image_url?: string;
             detail?: components["schemas"]["PublicMenuOfferDetail"];
+            variants?: components["schemas"]["PublicMenuOfferVariant"][];
+            service_windows?: components["schemas"]["PublicMenuOfferServiceWindow"][];
             item_ids?: string[];
             section_ids?: string[];
         };
-        PublicMenuOfferAdmin: components["schemas"]["PublicMenuOffer"] & {
+        PublicMenuOfferAdmin: {
+            id: string;
+            title: string;
+            description: string;
+            /** Format: uri */
+            image_url?: string;
             section_id: string;
             sort_order: number;
             published: boolean;
@@ -4667,9 +4674,63 @@ export interface components {
             visible_until?: string;
             schedule?: components["schemas"]["PublicMenuSchedule"][];
             detail?: components["schemas"]["PublicMenuOfferDetailAdmin"];
+            variants?: components["schemas"]["PublicMenuOfferVariantAdmin"][];
+            service_windows?: components["schemas"]["PublicMenuOfferServiceWindowAdmin"][];
+            item_ids?: string[];
+            section_ids?: string[];
             translations?: {
                 [key: string]: components["schemas"]["PublicMenuOfferText"];
             };
+        };
+        PublicMenuOfferVariant: {
+            id: string;
+            label: string;
+            price_clp: number;
+            components?: components["schemas"]["PublicMenuOfferVariantComponent"][];
+        };
+        PublicMenuOfferVariantComponent: {
+            id: string;
+            quantity: number;
+            item?: components["schemas"]["PublicMenuItem"];
+            display_label?: string;
+        } & (unknown | unknown);
+        PublicMenuOfferVariantAdmin: {
+            id: string;
+            label: string;
+            price_clp: number;
+            sort_order: number;
+            pos_reference?: string;
+            components?: components["schemas"]["PublicMenuOfferVariantComponentAdmin"][];
+            translations?: {
+                [key: string]: components["schemas"]["PublicMenuOfferVariantText"];
+            };
+        };
+        PublicMenuOfferVariantText: {
+            label: string;
+        };
+        PublicMenuOfferVariantComponentAdmin: {
+            id: string;
+            menu_item_id?: string;
+            display_label?: string;
+            quantity: number;
+            sort_order: number;
+            translations?: {
+                [key: string]: components["schemas"]["PublicMenuOfferVariantComponentText"];
+            };
+        } & (unknown | unknown);
+        PublicMenuOfferVariantComponentText: {
+            display_label: string;
+        };
+        /** @enum {string} */
+        PublicMenuWeekday: "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday";
+        PublicMenuOfferServiceWindow: {
+            id: string;
+            weekdays: components["schemas"]["PublicMenuWeekday"][];
+            start_time: string;
+            end_time?: string;
+        };
+        PublicMenuOfferServiceWindowAdmin: components["schemas"]["PublicMenuOfferServiceWindow"] & {
+            sort_order: number;
         };
         PublicMenuOfferDetail: {
             title?: string;

@@ -1,0 +1,425 @@
+[
+  {
+    "id": "oficina-deriva",
+    "title": "Deriva Office",
+    "description": "Coffee and the daily pastry selection for 2, 3, or 4 people. Pastries are assigned according to the day's availability.",
+    "variants": [
+      {
+        "id": "x2-americano",
+        "label": "2× Americano",
+        "price_clp": 10500,
+        "components": [
+          {
+            "id": "coffee",
+            "quantity": 2,
+            "item": {
+              "id": "americano",
+              "name": "Americano",
+              "price_clp": 2400,
+              "available": true,
+              "meta": "240 ml"
+            }
+          },
+          {
+            "id": "daily-pastry",
+            "quantity": 2,
+            "display_label": "Daily pastry selection"
+          }
+        ]
+      },
+      {
+        "id": "x2-cappuccino",
+        "label": "2× Cappuccino",
+        "price_clp": 12000,
+        "components": [
+          {
+            "id": "coffee",
+            "quantity": 2,
+            "item": {
+              "id": "cappuccino",
+              "name": "Cappuccino",
+              "price_clp": 3200,
+              "available": true,
+              "meta": "180 ml"
+            }
+          },
+          {
+            "id": "daily-pastry",
+            "quantity": 2,
+            "display_label": "Daily pastry selection"
+          }
+        ]
+      },
+      {
+        "id": "x2-latte",
+        "label": "2× Latte",
+        "price_clp": 12000,
+        "components": [
+          {
+            "id": "coffee",
+            "quantity": 2,
+            "item": {
+              "id": "latte",
+              "name": "Latte",
+              "price_clp": 3400,
+              "available": true,
+              "meta": "240 ml"
+            }
+          },
+          {
+            "id": "daily-pastry",
+            "quantity": 2,
+            "display_label": "Daily pastry selection"
+          }
+        ]
+      },
+      {
+        "id": "x3-americano",
+        "label": "3× Americano",
+        "price_clp": 15800,
+        "components": [
+          {
+            "id": "coffee",
+            "quantity": 3,
+            "item": {
+              "id": "americano",
+              "name": "Americano",
+              "price_clp": 2400,
+              "available": true,
+              "meta": "240 ml"
+            }
+          },
+          {
+            "id": "daily-pastry",
+            "quantity": 3,
+            "display_label": "Daily pastry selection"
+          }
+        ]
+      },
+      {
+        "id": "x3-cappuccino",
+        "label": "3× Cappuccino",
+        "price_clp": 17900,
+        "components": [
+          {
+            "id": "coffee",
+            "quantity": 3,
+            "item": {
+              "id": "cappuccino",
+              "name": "Cappuccino",
+              "price_clp": 3200,
+              "available": true,
+              "meta": "180 ml"
+            }
+          },
+          {
+            "id": "daily-pastry",
+            "quantity": 3,
+            "display_label": "Daily pastry selection"
+          }
+        ]
+      },
+      {
+        "id": "x3-latte",
+        "label": "3× Latte",
+        "price_clp": 17900,
+        "components": [
+          {
+            "id": "coffee",
+            "quantity": 3,
+            "item": {
+              "id": "latte",
+              "name": "Latte",
+              "price_clp": 3400,
+              "available": true,
+              "meta": "240 ml"
+            }
+          },
+          {
+            "id": "daily-pastry",
+            "quantity": 3,
+            "display_label": "Daily pastry selection"
+          }
+        ]
+      },
+      {
+        "id": "x4-americano",
+        "label": "4× Americano",
+        "price_clp": 20900,
+        "components": [
+          {
+            "id": "coffee",
+            "quantity": 4,
+            "item": {
+              "id": "americano",
+              "name": "Americano",
+              "price_clp": 2400,
+              "available": true,
+              "meta": "240 ml"
+            }
+          },
+          {
+            "id": "daily-pastry",
+            "quantity": 4,
+            "display_label": "Daily pastry selection"
+          }
+        ]
+      },
+      {
+        "id": "x4-cappuccino",
+        "label": "4× Cappuccino",
+        "price_clp": 23800,
+        "components": [
+          {
+            "id": "coffee",
+            "quantity": 4,
+            "item": {
+              "id": "cappuccino",
+              "name": "Cappuccino",
+              "price_clp": 3200,
+              "available": true,
+              "meta": "180 ml"
+            }
+          },
+          {
+            "id": "daily-pastry",
+            "quantity": 4,
+            "display_label": "Daily pastry selection"
+          }
+        ]
+      },
+      {
+        "id": "x4-latte",
+        "label": "4× Latte",
+        "price_clp": 23800,
+        "components": [
+          {
+            "id": "coffee",
+            "quantity": 4,
+            "item": {
+              "id": "latte",
+              "name": "Latte",
+              "price_clp": 3400,
+              "available": true,
+              "meta": "240 ml"
+            }
+          },
+          {
+            "id": "daily-pastry",
+            "quantity": 4,
+            "display_label": "Daily pastry selection"
+          }
+        ]
+      }
+    ],
+    "service_windows": [
+      {
+        "id": "weekday-morning",
+        "weekdays": [
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday"
+        ],
+        "start_time": "08:00",
+        "end_time": "12:00"
+      }
+    ]
+  },
+  {
+    "id": "once-en-compania",
+    "title": "Afternoon Tea Together",
+    "description": "Two coffees, one Classic Croissant, and one Lemon Pie to share.",
+    "variants": [
+      {
+        "id": "americano",
+        "label": "Americano",
+        "price_clp": 14500,
+        "components": [
+          {
+            "id": "coffee",
+            "quantity": 2,
+            "item": {
+              "id": "americano",
+              "name": "Americano",
+              "price_clp": 2400,
+              "available": true,
+              "meta": "240 ml"
+            }
+          },
+          {
+            "id": "classic-croissant",
+            "quantity": 1,
+            "item": {
+              "id": "clasico",
+              "name": "Classic",
+              "price_clp": 7200,
+              "available": true,
+              "meta": "Vegetarian · opt."
+            }
+          },
+          {
+            "id": "lemon-pie",
+            "quantity": 1,
+            "item": {
+              "id": "pie-limon",
+              "name": "Lemon Pie",
+              "price_clp": 3200,
+              "available": true,
+              "meta": "Fixed price"
+            }
+          }
+        ]
+      },
+      {
+        "id": "cappuccino",
+        "label": "Cappuccino",
+        "price_clp": 15900,
+        "components": [
+          {
+            "id": "coffee",
+            "quantity": 2,
+            "item": {
+              "id": "cappuccino",
+              "name": "Cappuccino",
+              "price_clp": 3200,
+              "available": true,
+              "meta": "180 ml"
+            }
+          },
+          {
+            "id": "classic-croissant",
+            "quantity": 1,
+            "item": {
+              "id": "clasico",
+              "name": "Classic",
+              "price_clp": 7200,
+              "available": true,
+              "meta": "Vegetarian · opt."
+            }
+          },
+          {
+            "id": "lemon-pie",
+            "quantity": 1,
+            "item": {
+              "id": "pie-limon",
+              "name": "Lemon Pie",
+              "price_clp": 3200,
+              "available": true,
+              "meta": "Fixed price"
+            }
+          }
+        ]
+      },
+      {
+        "id": "latte",
+        "label": "Latte",
+        "price_clp": 16200,
+        "components": [
+          {
+            "id": "coffee",
+            "quantity": 2,
+            "item": {
+              "id": "latte",
+              "name": "Latte",
+              "price_clp": 3400,
+              "available": true,
+              "meta": "240 ml"
+            }
+          },
+          {
+            "id": "classic-croissant",
+            "quantity": 1,
+            "item": {
+              "id": "clasico",
+              "name": "Classic",
+              "price_clp": 7200,
+              "available": true,
+              "meta": "Vegetarian · opt."
+            }
+          },
+          {
+            "id": "lemon-pie",
+            "quantity": 1,
+            "item": {
+              "id": "pie-limon",
+              "name": "Lemon Pie",
+              "price_clp": 3200,
+              "available": true,
+              "meta": "Fixed price"
+            }
+          }
+        ]
+      }
+    ],
+    "service_windows": [
+      {
+        "id": "weekday-evening",
+        "weekdays": [
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday"
+        ],
+        "start_time": "17:30",
+        "end_time": "19:30"
+      }
+    ]
+  },
+  {
+    "id": "ruta-de-origen-para-dos",
+    "title": "Origin Route for Two",
+    "description": "Two Coffee Flights and one Lemon Pie to share.",
+    "variants": [
+      {
+        "id": "para-dos",
+        "label": "For two",
+        "price_clp": 15200,
+        "components": [
+          {
+            "id": "coffee-flight",
+            "quantity": 2,
+            "item": {
+              "id": "coffee-flight",
+              "name": "Coffee Flight",
+              "price_clp": 6590,
+              "available": true,
+              "meta": "3 × 90 ml"
+            }
+          },
+          {
+            "id": "lemon-pie",
+            "quantity": 1,
+            "item": {
+              "id": "pie-limon",
+              "name": "Lemon Pie",
+              "price_clp": 3200,
+              "available": true,
+              "meta": "Fixed price"
+            }
+          }
+        ]
+      }
+    ],
+    "service_windows": [
+      {
+        "id": "monday-thursday-evening",
+        "weekdays": [
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday"
+        ],
+        "start_time": "18:30"
+      },
+      {
+        "id": "friday-saturday-evening",
+        "weekdays": [
+          "friday",
+          "saturday"
+        ],
+        "start_time": "18:00"
+      }
+    ]
+  }
+]

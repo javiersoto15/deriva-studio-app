@@ -1534,3 +1534,283 @@
   height: 22px;
   margin-top: 6px;
 }
+
+/* ── Offers plate (collapsible section-level disclosure) ───────────────── */
+/* The whole offers block is one disclosure so a section leads with its own
+   items rather than its discounts. Collapsed it shows an index naming every
+   offer; expanded it reveals the offers with their variant tariffs inline. */
+.plateHeadBlock {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 16px 0;
+  background: var(--panel-2);
+}
+.plateMast {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 0 2px;
+}
+.plateRuleThin {
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--hairline-strong);
+}
+.plateCount {
+  flex: 0 0 auto;
+  font-family: var(--f-mono);
+  font-size: 9.5px;
+  line-height: 1.5;
+  color: var(--accent);
+  border: 1px solid var(--hairline-strong);
+  padding: 0 5px;
+}
+.plateTitle {
+  font-family: var(--f-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 27px;
+  line-height: 1.1;
+  color: var(--ink);
+  padding-top: 11px;
+}
+.plateLede {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  line-height: 1.6;
+  color: var(--ink-muted);
+  padding-top: 8px;
+}
+
+/* Index — the collapsed state's substance: every offer named. */
+.index {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  border-top: 1px solid var(--hairline-strong);
+}
+.indexRow {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+.indexRow:last-child {
+  border-bottom: 0;
+}
+.indexNum {
+  flex: 0 0 auto;
+  width: 16px;
+  font-family: var(--f-mono);
+  font-size: 9.5px;
+  color: var(--ink-faint);
+}
+.indexBody {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.indexName {
+  font-family: var(--f-display);
+  font-style: italic;
+  font-size: 17px;
+  line-height: 1.25;
+  color: var(--ink);
+}
+.indexMeta {
+  font-family: var(--f-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+/* Full-width cue: the only control in the whole offers block. */
+.plateCue {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 16px;
+  border: 0;
+  border-top: 1px solid var(--hairline-strong);
+  background: var(--panel-2);
+  cursor: pointer;
+  font-family: var(--f-tracked);
+  font-weight: 600;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  transition: background-color 0.15s ease;
+}
+.plateCue:hover,
+.plateCue:focus-visible {
+  background: var(--panel);
+}
+.plateCue:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+.plateCueMark {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0;
+}
+
+/* ── Variant tariff ───────────────────────────────────────────────────── */
+.tariffWrap {
+  display: flex;
+  flex-direction: column;
+  padding-top: 4px;
+}
+.tariffHead {
+  font-family: var(--f-tracked);
+  font-weight: 600;
+  font-size: 8.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  padding: 14px 0 6px;
+}
+.incList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.incLine {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+}
+.incQty {
+  flex: 0 0 auto;
+  width: 24px;
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: var(--accent);
+}
+.incName {
+  font-family: var(--f-display);
+  font-size: 16px;
+  line-height: 1.3;
+  color: var(--ink);
+  min-width: 0;
+}
+/* A controlled selection (backend display_label) — Deriva picks it that day.
+   Italic + the dagger separate it from a fixed item set in roman. */
+.incSel {
+  font-style: italic;
+  color: var(--ink-muted);
+}
+.incFlag {
+  font-family: var(--f-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.dagger {
+  color: var(--accent);
+}
+
+.tariff {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.vrow {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 7px 0;
+}
+.vlabel {
+  font-family: var(--f-display);
+  font-size: 17px;
+  line-height: 1.25;
+  color: var(--ink);
+  min-width: 0;
+}
+.vlead {
+  flex: 1 1 auto;
+  min-width: 10px;
+  height: 1px;
+  border-bottom: 1px dotted var(--hairline-strong);
+  transform: translateY(-4px);
+}
+.vprice {
+  flex: 0 0 auto;
+  width: 78px;
+  text-align: right;
+  font-family: var(--f-mono);
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.tariffFoot {
+  display: flex;
+  gap: 6px;
+  margin: 12px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--hairline);
+  font-family: var(--f-mono);
+  font-size: 9.5px;
+  line-height: 1.6;
+  color: var(--ink-faint);
+}
+
+/* Service-window pills — informational only; an offer is never hidden by the
+   browser clock. */
+.winRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 6px;
+}
+.win {
+  font-family: var(--f-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  border: 1px solid var(--hairline-strong);
+  padding: 3px 8px;
+}
+
+.tariffColShared,
+.tariffColRates {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Desktop: the shared inclusions and the tariff sit side by side. The footnote
+   keeps its own full-width line under both. */
+@media (min-width: 720px) {
+  .tariffWrap {
+    flex-direction: row;
+    flex-wrap: wrap;
+    column-gap: 44px;
+    align-items: flex-start;
+  }
+  .tariffColShared {
+    flex: 0 0 250px;
+  }
+  .tariffColRates {
+    flex: 1 1 auto;
+  }
+  .tariffFoot {
+    width: 100%;
+  }
+}

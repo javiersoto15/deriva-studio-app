@@ -26,12 +26,25 @@ import {
   type MenuItemX,
   type MenuSectionX
 } from "./menu-fields";
+import { offerCopy } from "./offer-copy";
+import {
+  clp as formatClp,
+  commonComponents,
+  formatWindow,
+  hasControlledSelection,
+  offerShape,
+  offersCollapsible,
+  summarizeVariantCount,
+  summarizeWindows
+} from "../../../../src/api/offer-variants";
 
 const LANG_LABELS: Record<Locale, string> = { es: "ES", en: "EN", "pt-BR": "PT" };
 
+// Item/offer prices share the one tested Chilean formatter; this wrapper only
+// adds the "no price at all" case that menu items can have.
 function clp(n?: number): string {
   if (typeof n !== "number") return "";
-  return `$${n.toLocaleString("es-CL")}`;
+  return formatClp(n);
 }
 
 function priceText(item: MenuItemX): string {
@@ -349,15 +362,111 @@ function OfferDialog({
   );
 }
 
-// One offer inside a section's offers block. Simple offers (no `detail`) render
-// exactly as before — a static title/description. Offers WITH a `detail` become
-// a clickable card that opens OfferDialog; `detail` presence is the openability
-// signal (there is no backend `modal` flag).
-function OfferRow({ offer, showPrices }: { offer: PublicMenuOffer; showPrices: boolean }) {
+// ── Variant offers ──────────────────────────────────────────────────────
+// An offer carrying priced `variants` renders as a tariff: the components every
+// variant shares are declared once, then one row per variant with its
+// backend-authored label and its own `price_clp`.
+//
+// Nothing here is a control. Deriva takes no order on this page, so a variant is
+// a printed price, never a radio — the whole section's disclosure toggle is the
+// only interactive element.
+function VariantTariff({ offer, locale }: { offer: PublicMenuOffer; locale: Locale }) {
+  const copy = offerCopy(locale);
+  const variants = offer.variants ?? [];
+  const shared = commonComponents(variants);
+  const footnote = hasControlledSelection(variants);
+  // The dagger is only printed when a "†" actually appears above it to anchor
+  // to. Oficina Deriva's selection varies per variant, so it has no shared line
+  // to mark — the note still explains the offer, just without a dangling mark.
+  const anchored = shared.some((component) => component.kind === "selection");
+
+  return (
+    <div className={styles.tariffWrap}>
+      {shared.length ? (
+        <div className={styles.tariffColShared}>
+          <span className={styles.tariffHead}>{copy.includes}</span>
+          <ul className={styles.incList}>
+            {shared.map((component) => (
+              <li key={component.id} className={styles.incLine}>
+                <span className={styles.incQty}>×{component.quantity}</span>
+                {component.kind === "item" ? (
+                  <span className={styles.incName}>
+                    {component.name}
+                    {!component.available ? (
+                      <span className={styles.incFlag}> · {copy.soldOut}</span>
+                    ) : null}
+                  </span>
+                ) : (
+                  <span className={`${styles.incName} ${styles.incSel}`}>
+                    {component.label} <span className={styles.dagger}>†</span>
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      <div className={styles.tariffColRates}>
+        <span className={styles.tariffHead}>{copy.rates}</span>
+        <ul className={styles.tariff}>
+          {variants.map((variant) => (
+            <li key={variant.id} className={styles.vrow}>
+              <span className={styles.vlabel}>{variant.label}</span>
+              <span className={styles.vlead} aria-hidden="true" />
+              <span className={styles.vprice}>{formatClp(variant.price_clp)}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {footnote ? (
+        <p className={styles.tariffFoot}>
+          {anchored ? <span className={styles.dagger}>†</span> : null} {copy.footnote}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+// One offer inside a section's offers block. Three shapes, in precedence order:
+// `variants` → tariff (rendered inline, no second toggle); `detail` → the
+// long-standing clickable card that opens OfferDialog; neither → a static
+// title/description row. Legacy behaviour below is unchanged.
+function OfferRow({
+  offer,
+  showPrices,
+  locale
+}: {
+  offer: PublicMenuOffer;
+  showPrices: boolean;
+  locale: Locale;
+}) {
   const [open, setOpen] = useState(false);
   const btnRef = useRef<HTMLButtonElement>(null);
+  const shape = offerShape(offer);
 
-  if (!offer.detail) {
+  if (shape === "variants") {
+    const windows = offer.service_windows ?? [];
+    return (
+      <div className={styles.offer}>
+        <span className={styles.offerTitle}>{offer.title}</span>
+        <span className={styles.offerDesc}>{offer.description}</span>
+        {windows.length ? (
+          <div className={styles.winRow}>
+            {windows.map((window) => (
+              <span key={window.id} className={styles.win}>
+                {formatWindow(window, locale)}
+              </span>
+            ))}
+          </div>
+        ) : null}
+        <VariantTariff offer={offer} locale={locale} />
+      </div>
+    );
+  }
+
+  if (shape === "plain") {
     return (
       <div className={styles.offer}>
         <span className={styles.offerTitle}>{offer.title}</span>
@@ -404,8 +513,121 @@ function OfferRow({ offer, showPrices }: { offer: PublicMenuOffer; showPrices: b
   );
 }
 
+// ── Offers plate ────────────────────────────────────────────────────────
+// The whole offers block is one disclosure. Collapsed (the default past the
+// threshold) it is a plate: masthead, count, a display line, a lede and an index
+// naming every offer — so a reader learns what is on offer without tapping, and
+// the section leads with its own items instead of its discounts.
+//
+// Expanded, the offers render in full, variant tariffs included. There is
+// deliberately no second per-offer toggle: two taps to reach a price is one too
+// many on a menu.
+//
+// Below OFFERS_COLLAPSE_AT (see offer-variants.ts) the plate would cost more
+// room than it saves, so the offers render open with no toggle and no plate
+// chrome — byte-for-byte the treatment they have had since 2026-07.
+function OffersPlate({
+  sectionId,
+  offers,
+  showPrices,
+  locale
+}: {
+  sectionId: string;
+  offers: PublicMenuOffer[];
+  showPrices: boolean;
+  locale: Locale;
+}) {
+  const collapsible = offersCollapsible(offers.length);
+  const [open, setOpen] = useState(!collapsible);
+  const copy = offerCopy(locale);
+  const bodyId = `offers-${sectionId}`;
+
+  const masthead = (
+    <div className={styles.plateMast}>
+      <span className={styles.offersLabel}>{copy.label}</span>
+      <span className={styles.plateRuleThin} aria-hidden="true" />
+      <span className={styles.plateCount}>{offers.length}</span>
+    </div>
+  );
+
+  // Short section: the label alone, no plate chrome — identical to the live
+  // carta today, so raising the threshold really does leave production still.
+  if (!collapsible) {
+    return (
+      <div className={styles.offers}>
+        <span className={styles.offersLabel}>{copy.label}</span>
+        {offers.map((offer) => (
+          <OfferRow key={offer.id} offer={offer} showPrices={showPrices} locale={locale} />
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.offers}>
+      <div className={styles.plateHeadBlock}>
+        {masthead}
+        <span className={styles.plateTitle}>{copy.title}</span>
+        <span className={styles.plateLede}>{copy.lede}</span>
+
+        {/* The index is the point of the collapsed state: names, not a teaser. */}
+        {!open ? (
+          <ol className={styles.index} aria-label={copy.optionsLabel}>
+            {offers.map((offer, i) => {
+              const meta = [
+                summarizeWindows(offer.service_windows, locale),
+                summarizeVariantCount(offer.variants, locale)
+              ]
+                .filter(Boolean)
+                .join(" · ");
+              return (
+                <li key={offer.id} className={styles.indexRow}>
+                  <span className={styles.indexNum} aria-hidden="true">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className={styles.indexBody}>
+                    <span className={styles.indexName}>{offer.title}</span>
+                    {meta ? <span className={styles.indexMeta}>{meta}</span> : null}
+                  </span>
+                </li>
+              );
+            })}
+          </ol>
+        ) : null}
+      </div>
+
+      <button
+        type="button"
+        className={styles.plateCue}
+        onClick={() => setOpen((wasOpen) => !wasOpen)}
+        aria-expanded={open}
+        aria-controls={bodyId}
+      >
+        {open ? copy.collapse : copy.expand(offers.length)}
+        <span className={styles.plateCueMark} aria-hidden="true">
+          {open ? "▴" : "▾"}
+        </span>
+      </button>
+
+      <div id={bodyId} hidden={!open}>
+        {offers.map((offer) => (
+          <OfferRow key={offer.id} offer={offer} showPrices={showPrices} locale={locale} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // A full section (chapter). Hero chapters with a banner get a photo opener.
-function Section({ section, showPrices }: { section: MenuSectionX; showPrices: boolean }) {
+function Section({
+  section,
+  showPrices,
+  locale
+}: {
+  section: MenuSectionX;
+  showPrices: boolean;
+  locale: Locale;
+}) {
   const banner = sectionBanner(section);
   const directItems = (section.items ?? []) as MenuItemX[];
 
@@ -433,12 +655,12 @@ function Section({ section, showPrices }: { section: MenuSectionX; showPrices: b
       )}
 
       {section.offers?.length ? (
-        <div className={styles.offers}>
-          <span className={styles.offersLabel}>Combos & ofertas</span>
-          {section.offers.map((o) => (
-            <OfferRow key={o.id} offer={o as PublicMenuOffer} showPrices={showPrices} />
-          ))}
-        </div>
+        <OffersPlate
+          sectionId={section.id}
+          offers={section.offers as PublicMenuOffer[]}
+          showPrices={showPrices}
+          locale={locale}
+        />
       ) : null}
 
       {directItems.length ? (
@@ -706,7 +928,7 @@ export function CartaBody({
       <AutorSpotlight items={autorItems} showPrices={showPrices} />
 
       {renderedSections.map((section) => (
-        <Section key={section.id} section={section} showPrices={showPrices} />
+        <Section key={section.id} section={section} showPrices={showPrices} locale={locale} />
       ))}
 
       <footer className={styles.footer}>
