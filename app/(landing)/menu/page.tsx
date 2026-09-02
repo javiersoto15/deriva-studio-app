@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { getPublicMenuView } from "../../../src/api/server";
 import { getActiveLocale, getActiveBackendLocale } from "../../../src/i18n/server";
 import { SiteNav } from "../../../src/components/landing/SiteNav";
-import { MENU_URL } from "../../../src/seo/local-business";
+import { MENU_URL, SITE_NAME } from "../../../src/seo/local-business";
 import { buildMenuGraph } from "../../../src/seo/menu-schema";
 import { CartaBody } from "./_components/CartaBody";
 import { CartaSkeleton } from "./_components/CartaSkeleton";
@@ -60,7 +60,7 @@ async function CartaContent() {
 export default function MenuPage() {
   return (
     <>
-      <SiteNav active="carta" variant="solid" />
+      <SiteNav active="carta" variant="solid" brand={SITE_NAME} />
       <main className="menu-page menu-page--with-nav">
         {/* A real fallback, not null: the carta's own ground is nocturno
             (#1a1410) while the empty .menu-page shell is cream, so an absent

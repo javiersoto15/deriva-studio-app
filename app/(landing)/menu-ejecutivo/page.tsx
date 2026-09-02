@@ -60,7 +60,7 @@ function ExecutiveMenuFallback() {
 export default function ExecutiveMenuPage() {
   return (
     <>
-      <SiteNav active="carta" variant="solid" />
+      <SiteNav active="carta" variant="solid" brand={SITE_NAME} />
       <main>
         <Suspense fallback={<ExecutiveMenuFallback />}>
           <ExecutiveMenuContent />

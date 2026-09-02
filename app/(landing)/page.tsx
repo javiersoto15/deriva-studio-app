@@ -319,7 +319,7 @@ export default function HomePage() {
           __html: JSON.stringify(buildLocalBusinessGraph())
         }}
       />
-      <SiteNav active="inicio" />
+      <SiteNav active="inicio" brand={SITE_NAME} />
       <main className="landing">
         <Hero />
         <BarPanel />

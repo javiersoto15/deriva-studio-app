@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { todayHoursLabel } from "../../lib/open-now";
-import { SITE_NAME } from "../../seo/local-business";
+import { BRAND_NAME } from "../../seo/local-business";
 
 // "match-up" intentionally matches no rendered tab — standalone campaign
 // pages (reached via QR / Instagram) keep the nav for orientation but
@@ -12,10 +12,15 @@ type Tab = "inicio" | "carta" | "resenas" | "visita" | "match-up";
 
 export function SiteNav({
   active = "inicio",
-  variant = "translucent"
+  variant = "translucent",
+  // Defaults to the brand. Only the paid Google Ads landing destinations pass
+  // SITE_NAME, so the umbrella name never leaks onto surfaces that don't need
+  // it for Name Prominence.
+  brand = BRAND_NAME
 }: {
   active?: Tab;
   variant?: "translucent" | "solid";
+  brand?: string;
 }) {
   const [scrolled, setScrolled] = useState(false);
   // Weekday hours by default for the prerender/SSR pass; the real day is
@@ -44,7 +49,7 @@ export function SiteNav({
     >
       <Link href="/" className="landing-nav__brand">
         <span className="landing-nav__diamond" aria-hidden="true" />
-        <span>{SITE_NAME}</span>
+        <span>{brand}</span>
       </Link>
       <div className="landing-nav__tabs">
         <Link

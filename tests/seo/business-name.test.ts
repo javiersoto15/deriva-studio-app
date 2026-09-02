@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import {
+  BRAND_NAME,
   BUSINESS_DESCRIPTOR,
   SITE_ALTERNATE_NAMES,
   SITE_NAME,
@@ -20,8 +21,13 @@ const PAID_LANDING_SURFACES = {
     "app/(landing)/menu-ejecutivo/_components/ExecutiveMenuBody.tsx"
 } as const;
 
-test("the umbrella business name is Deriva Studio", () => {
+test("the umbrella business name is Deriva Studio and the brand is unchanged", () => {
   assert.equal(SITE_NAME, "Deriva Studio");
+  // Deriva is NOT rebranding. The brand the business trades under is unchanged;
+  // SITE_NAME exists only to satisfy Google Ads Name Prominence on the paid
+  // landing destinations.
+  assert.equal(BRAND_NAME, "Deriva Coffee Studio");
+  assert.notEqual(BRAND_NAME, SITE_NAME);
   // The coffee-specific name is retained as an alternate, never as the primary
   // identity — the business is coffee AND kitchen AND mate.
   assert.deepEqual([...SITE_ALTERNATE_NAMES], ["Deriva Coffee Studio", "Deriva"]);
@@ -45,10 +51,48 @@ test("every paid landing destination renders the business name as visible text",
   }
 });
 
-test("the persistent nav carries the business name on every landing surface", () => {
+test("the nav defaults to the brand and only paid pages opt into the umbrella name", () => {
   const nav = read("src/components/landing/SiteNav.tsx");
-  assert.match(nav, /<span>{SITE_NAME}<\/span>/);
-  assert.doesNotMatch(nav, /Deriva Coffee Studio/);
+
+  // The nav renders whatever `brand` it is given, defaulting to BRAND_NAME.
+  assert.match(nav, /brand = BRAND_NAME/);
+  assert.match(nav, /<span>{brand}<\/span>/);
+  // No hardcoded name in the component itself.
+  assert.doesNotMatch(nav, /"Deriva Coffee Studio"|"Deriva Studio"/);
+
+  // Exactly the three paid landing destinations pass the umbrella name.
+  for (const path of [
+    "app/(landing)/page.tsx",
+    "app/(landing)/menu/page.tsx",
+    "app/(landing)/menu-ejecutivo/page.tsx"
+  ]) {
+    assert.match(read(path), /<SiteNav[^>]*brand={SITE_NAME}/, path);
+  }
+
+  // Non-paid surfaces must NOT — the umbrella name is not a rebrand.
+  for (const path of [
+    "app/(landing)/resenas/page.tsx",
+    "app/(landing)/companion/page.tsx",
+    "app/(landing)/deriva-match-up/page.tsx",
+    "app/(landing)/deriva-match-up/bases/page.tsx"
+  ]) {
+    assert.doesNotMatch(read(path), /brand={SITE_NAME}/, path);
+  }
+});
+
+test("non-paid page titles do not double the business name", () => {
+  // These set their own brand-bearing title, so they must opt out of the root
+  // template with `absolute` — otherwise the title renders the brand AND the
+  // umbrella name back to back ("Sala · Deriva Coffee Studio · Deriva Studio").
+  for (const path of [
+    "app/(landing)/sala/page.tsx",
+    "app/(landing)/abierto/page.tsx",
+    "app/(landing)/privacidad/page.tsx"
+  ]) {
+    const source = read(path);
+    assert.match(source, /title:\s*{\s*absolute:/, path);
+    assert.doesNotMatch(source, /title:\s*"[^"]*Deriva/, path);
+  }
 });
 
 test("offerings are described separately from the umbrella name", () => {

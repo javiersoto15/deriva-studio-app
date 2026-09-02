@@ -17,7 +17,7 @@ import { CrossfadeRotator } from "../../../src/components/landing/CrossfadeRotat
 import "./abierto.css";
 
 export const metadata: Metadata = {
-  title: "Abierto · Deriva Coffee Studio",
+  title: { absolute: "Abierto · Deriva Coffee Studio" },
   description: "Pantalla vertical de barra — abierto hoy.",
   robots: { index: false, follow: false }
 };

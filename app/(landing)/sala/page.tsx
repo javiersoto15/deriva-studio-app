@@ -18,7 +18,9 @@ import {
 import "./sala.css";
 
 export const metadata: Metadata = {
-  title: "Sala · Deriva Coffee Studio",
+  // `absolute` stops the root template appending SITE_NAME — this is not a
+  // paid landing destination, so it carries the brand and nothing else.
+  title: { absolute: "Sala · Deriva Coffee Studio" },
   description: "Pantalla horizontal de sala — la edición viva de Deriva.",
   robots: { index: false, follow: false }
 };

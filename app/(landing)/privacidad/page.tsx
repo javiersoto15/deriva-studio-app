@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Política de Privacidad — Deriva Coffee Studio",
+  title: { absolute: "Política de Privacidad — Deriva Coffee Studio" },
   description:
     "Cómo Deriva Coffee Studio recopila, usa y protege los datos personales de quienes se suscriben a la lista de apertura.",
 };

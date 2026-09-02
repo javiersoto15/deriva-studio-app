@@ -1,12 +1,16 @@
 import { PHOTO_BASE_URL } from "../data/photos";
 
 export const SITE_URL = "https://derivastudio.cl";
-// Umbrella business identity. This is the name Google Ads carries and the name
-// that must be visibly rendered on every paid landing destination (/, /menu,
-// /menu-ejecutivo) — a Business Information asset fails Name Prominence review
-// when the advertised name is not human-readable on the page. "Deriva Coffee
-// Studio" stays an alternate name: the business is coffee AND kitchen AND mate,
-// so the umbrella must not be narrowed to the coffee line.
+// The customer-facing brand. Deriva is NOT rebranding — this is the name the
+// business trades under and the default for every surface.
+export const BRAND_NAME = "Deriva Coffee Studio";
+
+// The umbrella name carried by the Google Ads business-name asset. It is
+// rendered visibly ONLY on the paid landing destinations (/, /menu,
+// /menu-ejecutivo), where Google reviews Business Information / Name
+// Prominence — an asset fails that check when the advertised name is not
+// human-readable on the page it points at. Everywhere else BRAND_NAME stands.
+// Do not treat this as a rebrand or spread it to new surfaces.
 export const SITE_NAME = "Deriva Studio";
 export const SITE_ALTERNATE_NAMES = ["Deriva Coffee Studio", "Deriva"] as const;
 // Offerings described separately from the name, so the identity stays broad.
