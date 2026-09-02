@@ -74,15 +74,41 @@ This file is the durable, non-sensitive audit trail for Deriva Coffee Studio Goo
 **Detailed design:** `docs/plans/2026-09-01-google-ads-foot-traffic-design.md`  
 **Execution plan:** `docs/plans/2026-09-01-google-ads-foot-traffic-implementation.md`
 
+## 2026-09-01 - Foot-traffic conversion goals
+
+**Mutation:**
+
+- Before: campaign-specific `Phone call leads`.
+- After: campaign-specific `Get directions, Store visits`.
+- Bid strategy retained: Maximize conversions.
+- Budget retained: CLP 4,100/day.
+
+**Read-after-write evidence:** The campaign settings optimization summary displayed `Get directions, Store visits`; the Conversion goals field displayed `Campaign-specific: Get directions, Store visits`; Phone call leads was absent from both saved summaries.
+
+**Platform notice:** Google Ads warned that performance may fluctuate for one to two weeks while the bid strategy adjusts to the changed campaign-specific goals.
+
+**Rollback:** Re-select Phone call leads only if the business explicitly restores phone acquisition as a campaign objective. Do not combine it with the approved physical-outcome goals by default.
+
+## 2026-09-01 - Presence-only geographic targeting
+
+**Mutation:**
+
+- Radius preserved: 5 km around Magnere 1570, Providencia.
+- Before: `Presence or interest`.
+- After: `Presence: People in or regularly in your included locations`.
+
+**Read-after-write evidence:** The saved Locations panel showed one included location, the same 5 km radius, and the Presence-only radio selected. Campaign settings continued to show CLP 4,100/day and `Get directions, Store visits`.
+
+**Rollback:** Restore Presence or interest only after a documented decision to pay for customers outside the physical service area who merely show interest in Providencia.
+
 ## Pending live mutations
 
-- [ ] Campaign goals changed to Store visits and Get directions.
-- [ ] Phone call leads removed from campaign optimization.
-- [ ] Geographic inclusion changed to Presence-only with the 5 km radius preserved.
+- [x] Campaign goals changed to Store visits and Get directions.
+- [x] Phone call leads removed from campaign optimization.
+- [x] Geographic inclusion changed to Presence-only with the 5 km radius preserved.
 - [ ] Café/desayuno/brunch asset group completed and verified.
 - [ ] Menú Ejecutivo/almuerzo asset group created and verified.
 - [ ] Canonical local search themes applied.
 - [ ] Audience signals added where compatible.
 - [ ] Paid landing destinations constrained to the approved page set.
 - [ ] Final campaign eligibility and serving state verified.
-
