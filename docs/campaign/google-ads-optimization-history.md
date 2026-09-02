@@ -153,6 +153,23 @@ This file is the durable, non-sensitive audit trail for Deriva Coffee Studio Goo
 
 **Measurement checkpoints:** Use 2026-09-16 as the first 14-day comparison and 2026-10-02 as the 30-day comparison. Compare spend, impressions, targeted local reach, direction requests, modeled store visits and cost per physical action against the 2026-08-02 through 2026-08-31 baseline. Avoid structural changes before the first checkpoint unless ads stop serving or a policy issue blocks the campaign.
 
+## 2026-09-02 - Coverage complaint and CLP 300,000 budget request
+
+**Reported symptom:** Manual Google searches for `menu ejecutivo providencia` and `cafe en providencia` did not display Deriva ads. This was treated as a coverage warning, not as definitive auction evidence, because normal search results vary by location, auction, device, history and personalization.
+
+**Budget request:** Increase the monthly campaign ceiling to CLP 300,000. The safe average-daily equivalent selected was CLP 9,800/day, which maps to CLP 297,920 using Google's 30.4-day monthly calculation.
+
+**Mutation state:** The CLP 9,800/day value was entered, but Google required a passkey or device confirmation for a budget increase beyond its security threshold. The live campaign readback remained CLP 4,100/day; therefore the increase is not recorded as applied. Complete the Google reauthentication, save again, and require a CLP 9,800/day read-after-write before marking this item complete.
+
+**Coverage diagnosis:**
+
+- The campaign remained Enabled and Eligible with campaign-specific `Get directions, Store visits` goals.
+- Both refreshed asset groups still displayed `Pending - Asset group under review`; the Menú Ejecutivo group also displayed `Incomplete` ad strength and zero post-creation metrics.
+- Google Ads' Ad Preview and Diagnosis tool, configured for Providencia, Spanish and mobile, returned `Your ad isn't showing` for both reported queries. Its detailed reason was `No diagnoses results were found because no keywords in your account matched your query`. This account currently uses Performance Max search themes rather than Search-campaign keywords, so that diagnostic does not prove the search themes are ineligible; it confirms there is no keyword-based Search campaign matching those queries.
+- Policy Manager showed the campaign-level business-name asset `Deriva Studio` as `Not eligible - Disapproved (Business Information - Name Prominence)`. The website prominently uses `Deriva Coffee Studio`, so the legacy shortened asset should be replaced or corrected after the budget authentication is completed.
+
+**Interpretation:** The lower budget materially reduced auction capacity, while asset review and the disapproved business-name asset add serving uncertainty. Raising the budget is appropriate, but a Performance Max campaign cannot guarantee impression coverage for particular search queries. If consistent coverage for these exact high-intent searches is required, plan a tightly bounded Search campaign using exact/phrase keywords after the current assets clear review.
+
 ## Pending live mutations
 
 - [x] Campaign goals changed to Store visits and Get directions.
@@ -168,3 +185,6 @@ This file is the durable, non-sensitive audit trail for Deriva Coffee Studio Goo
 - [ ] Google review completed for both refreshed asset groups.
 - [ ] Menú Ejecutivo asset-group ad strength rechecked after policy review.
 - [ ] Store-visit goal `Needs attention` status rechecked at the first measurement checkpoint.
+- [ ] CLP 9,800/day budget saved after Google passkey confirmation and verified live.
+- [ ] Disapproved `Deriva Studio` business-name asset corrected to the prominent website name and resubmitted.
+- [ ] Decide whether exact-query coverage warrants a separate Search campaign after asset review.
