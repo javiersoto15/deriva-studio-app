@@ -415,3 +415,59 @@ Ranked by what the evidence actually supports:
 - [ ] Google review of the business-name appeal completed — pending; status stays `Not eligible` during review.
 - [ ] Ad Strength raised from `Incomplete` on both asset groups.
 - [ ] Decide whether exact-query coverage warrants a separate Search campaign after asset review.
+
+## 2026-09-02 17:19 CLT - Search campaigns published; 20% café weighting applied
+
+The founder approved publication and then requested that the Café Search campaign be 20% larger than the Menú Search campaign. The final whole-peso allocation preserves the existing account ceiling:
+
+| Campaign | Type | Live daily budget | Live status |
+| --- | --- | ---: | --- |
+| `Deriva Coffee Studio` | Performance Max | CLP 3,000 | Enabled / Eligible |
+| `Search | Menú Ejecutivo | Providencia` | Search | CLP 3,091 | Enabled / Eligible (Learning) |
+| `Search | Café, Filtrados y Desayuno | Providencia` | Search | CLP 3,709 | Enabled / Eligible (Learning) |
+| **Account total** |  | **CLP 9,800/day** | **CLP 297,920 per 30.4-day month** |
+
+CLP 3,709 / CLP 3,091 = 1.19994, the nearest whole-peso allocation to exactly 20% while keeping Performance Max at CLP 3,000 and the account total at CLP 9,800/day.
+
+### Menú Ejecutivo Search campaign
+
+- Campaign ID: `24204239910`.
+- Published 2026-09-02 and read back in the live campaign table as Enabled / Eligible (Learning).
+- Maximize Clicks with a CLP 900 maximum CPC.
+- 13 exact/phrase keywords covering Menú Ejecutivo, almuerzo, menú del día and local lunch intent.
+- Final URL: `https://derivastudio.cl/menu-ejecutivo`.
+- Schedule: Monday-Friday, 10:30-16:00, Chile account time.
+- Network: Google Search only; Search Partners and Display expansion disabled.
+- Location: 5 km around Magnere 1570, Presence-only.
+- Language: Spanish.
+- Campaign goals: Get directions and Store visits. Phone-call goals were removed and Phone calls was not selected as a result type.
+- AI Max broad search-term expansion was left off; review stated `Using only your keywords and match types`.
+
+### Café, Filtrados y Desayuno Search campaign
+
+- Campaign ID: `24204249834`.
+- Published 2026-09-02 and read back in the live campaign table as Enabled / Eligible (Learning).
+- Maximize Clicks with a CLP 900 maximum CPC.
+- 50 exact/phrase keywords covering café de especialidad, cafetería Providencia, V60, Chemex, pour over, coffee flight, café de autor, espresso tonic, descafeinado, café en grano, breakfast/brunch/pastry, brand, mate and cowork-café intent.
+- User-requested mate coverage includes `mate providencia`, `mate en providencia`, `servicio de mate`, `servicio de mate providencia`, `cafetería con mate`, and `café y mate providencia`.
+- User-requested cowork coverage includes `cowork café`, `cowork café providencia`, `café cowork providencia`, `cafetería para trabajar providencia`, and `café para trabajar`.
+- Final URL: `https://derivastudio.cl/menu`.
+- Schedule: Monday-Friday 08:00-21:00 and Saturday 10:00-21:00, matching the published Deriva hours; Sunday excluded.
+- Network: Google Search only; Search Partners and Display expansion disabled.
+- Location: 5 km around Magnere 1570, Presence-only.
+- Language: Spanish.
+- Campaign goals: Get directions and Store visits. Phone-call goals were removed and Phone calls was not selected as a result type.
+- Review stated `Using only your keywords and match types`. The launch uses one consolidated ad group so low-volume exact/phrase terms can gather data before evidence-based theme splitting.
+- The responsive Search Ad mentions café de especialidad, filtrados, desayuno, mate, V60, Chemex, brunch and café para trabajar. It does not claim Wi-Fi, desks, outlets, terrace access or unlimited stays.
+
+### Live verification
+
+The final Campaigns table contained all three enabled campaigns with budgets CLP 3,000, CLP 3,091 and CLP 3,709, and the account-total row read **CLP 9,800/day**. Both Search campaigns read **Eligible (Learning)** and showed `Maximize clicks`; Performance Max read **Eligible**. Publication is confirmed, but zero initial impressions/clicks on the new campaigns are expected immediately after launch and are not yet serving proof for individual queries.
+
+### Post-launch checks still pending
+
+- [ ] Confirm first impressions and qualified search terms after Google's initial review/learning period.
+- [ ] Run Ad Preview and Diagnosis for the six priority Search queries once the campaigns have had time to enter auctions.
+- [ ] Add Search-campaign negative keywords only after impact preview and early search-term review.
+- [ ] Add and verify `Carta`, `Menú Ejecutivo`, `Cómo llegar` and `Reseñas` sitelinks.
+- [ ] Inspect the Search asset view and explicitly confirm that no call asset is attached.

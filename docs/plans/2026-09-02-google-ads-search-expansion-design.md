@@ -1,7 +1,7 @@
 # Google Ads Search Expansion Design
 
 **Date:** 2026-09-02  
-**Status:** Approved for live staging  
+**Status:** Published; initial learning in progress
 **Account:** 934-597-8419  
 **Monthly cap:** CLP 300,000
 
@@ -17,11 +17,13 @@ Keep the existing Performance Max campaign as a discovery layer and add two Sear
 
 | Campaign | Daily budget | Landing page | Schedule |
 | --- | ---: | --- | --- |
-| `Search | Menú Ejecutivo | Providencia` | CLP 3,400 | `/menu-ejecutivo` | Mon-Fri, 10:30-16:00 |
-| `Search | Café, Filtrados y Desayuno | Providencia` | CLP 3,400 | `/menu` (brand/cowork may use `/`) | During opening hours |
+| `Search | Menú Ejecutivo | Providencia` | CLP 3,091 | `/menu-ejecutivo` | Mon-Fri, 10:30-16:00 |
+| `Search | Café, Filtrados y Desayuno | Providencia` | CLP 3,709 | `/menu` | Mon-Fri 08:00-21:00; Sat 10:00-21:00 |
 | Existing `Deriva Coffee Studio` Performance Max | CLP 3,000 | Existing URL rules | Existing schedule |
 
 Total: **CLP 9,800/day**, or **CLP 297,920 per 30.4-day Google billing month**. This preserves the current total and stays under the CLP 300,000 cap.
+
+The founder's final allocation makes the Café campaign effectively 20% larger than Menú: CLP 3,709 / CLP 3,091 = 1.19994. Whole-peso budgets prevent an exact 1.20000 ratio while also summing to CLP 9,800 with the CLP 3,000 Performance Max allocation.
 
 Both Search campaigns use campaign-specific `Get directions` and `Store visits` conversion goals. Phone-call goals and call assets remain excluded. Location stays a 5 km radius around Magnere 1570 with Presence-only targeting; language is Spanish.
 
@@ -65,7 +67,7 @@ The advertised business name remains the legacy-approved `Deriva Studio`; the do
 
 ## Ad groups and assets
 
-The Menú campaign has one tightly themed ad group. The Café campaign uses four ad groups: `Café de especialidad`, `Filtrados y orígenes`, `Desayuno y brunch`, and `Mate y cowork`.
+The Menú campaign has one tightly themed ad group. The Café campaign launched with one consolidated ad group covering café, filtrados, desayuno, mate and cowork-café intent. This avoids fragmenting limited exact/phrase traffic during initial learning; split it into theme-specific ad groups only when search-term and volume evidence supports the change.
 
 Responsive Search Ads must use only claims visible in the live menu/site. Core messages include:
 
@@ -74,15 +76,15 @@ Responsive Search Ads must use only claims visible in the live menu/site. Core m
 - Breakfast, brunch, pastries and the published menu.
 - Mate service and a café-to-work search intent, without unsupported amenity promises.
 
-Account/campaign sitelinks: `Carta`, `Menú Ejecutivo`, `Cómo llegar`, `Reseñas`. No call asset.
+Planned account/campaign sitelinks: `Carta`, `Menú Ejecutivo`, `Cómo llegar`, `Reseñas`. No call asset. Sitelinks were not part of the initial publication and remain a follow-up optimization.
 
 ## Negative keywords
 
-Apply phrase negatives to both Search campaigns, subject to Google impact preview:
+Apply phrase negatives to both Search campaigns after launch, subject to Google impact preview:
 
 `café con piernas`, `qué es`, `qué significa`, `cómo hacer`, `receta`, `curso`, `trabajo`, `empleo`, `máquina de café`, `cafetera`, `filtro para café`, `filtros de café`, `papel filtro`, `equipamiento`, `mayorista`, `corporativo`, `casino`, `delivery`, `sin gluten`.
 
-The existing Performance Max exclusions remain. Add only missing safe exclusions so duplicates do not obscure the change history.
+The existing Performance Max exclusions remain. Search-campaign negatives were not part of the initial publication and remain pending; add only safe exclusions confirmed by impact preview and subsequent search-term evidence.
 
 ## Verification and change history
 

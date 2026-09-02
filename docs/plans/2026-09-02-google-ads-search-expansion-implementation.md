@@ -4,7 +4,7 @@
 
 **Goal:** Add exact/phrase Search coverage for Deriva's high-intent local menu, specialty-coffee, filtrados, breakfast, mate and cowork café searches without exceeding CLP 300,000/month.
 
-**Architecture:** Two intent-specific Search campaigns receive CLP 3,400/day each while the existing Performance Max campaign is reduced to CLP 3,000/day. Search uses tightly themed ad groups, relevant landing pages, Presence-only local targeting, campaign-specific directions/store-visit goals, and phrase negatives.
+**Architecture:** The Menú Search campaign receives CLP 3,091/day, the Café Search campaign receives CLP 3,709/day (effectively 20% more), and the existing Performance Max campaign is reduced to CLP 3,000/day. Search uses relevant landing pages, Presence-only local targeting, campaign-specific directions/store-visit goals, and exact/phrase keywords.
 
 **Tech Stack:** Google Ads web console, Google Ads Keyword Planner, Deriva production website, Markdown change history.
 
@@ -25,7 +25,7 @@
 **Live surface:** Google Ads account 934-597-8419
 
 1. Create `Search | Menú Ejecutivo | Providencia` as a Search campaign.
-2. Set CLP 3,400/day, Maximize Clicks, and a CLP 900 max CPC.
+2. Set CLP 3,091/day, Maximize Clicks, and a CLP 900 max CPC.
 3. Set Spanish, the existing 5 km Magnere 1570 radius, and Presence-only targeting.
 4. Use campaign-specific `Get directions` and `Store visits`; exclude phone-call goals.
 5. Set Monday-Friday 10:30-16:00.
@@ -38,13 +38,13 @@
 
 **Live surface:** Google Ads account 934-597-8419
 
-1. Create `Search | Café, Filtrados y Desayuno | Providencia` at CLP 3,400/day with Maximize Clicks and CLP 900 max CPC.
+1. Create `Search | Café, Filtrados y Desayuno | Providencia` at CLP 3,709/day with Maximize Clicks and CLP 900 max CPC.
 2. Reuse Spanish, the 5 km Presence-only location, and campaign-specific directions/store-visit goals.
-3. Create four ad groups: `Café de especialidad`, `Filtrados y orígenes`, `Desayuno y brunch`, and `Mate y cowork`.
+3. Launch one consolidated ad group spanning café, filtrados, desayuno, mate and cowork-café intent so low-volume exact/phrase terms can learn together; split by theme later only if live volume supports it.
 4. Add the approved exact/phrase keywords, including the narrow mate and cowork café additions.
 5. Point product/menu intent to `/menu`; use `/` only where it improves brand/cowork relevance.
 6. Create Responsive Search Ads using menu-verified claims. Do not claim Wi-Fi, desks, outlets, terrace or unlimited stays.
-7. Add the shared sitelinks and phrase negatives. Do not add a call asset.
+7. Do not add a call asset. Add shared sitelinks and phrase negatives as a documented post-launch optimization after checking Google's impact preview and initial search terms.
 8. Stop before the final action that publishes spend unless action-time confirmation has been obtained.
 
 ### Task 4: Rebalance Performance Max and publish
@@ -53,7 +53,7 @@
 
 1. Obtain action-time confirmation covering both Search campaign publications and the Performance Max budget reduction.
 2. Reduce `Deriva Coffee Studio` from CLP 9,800/day to CLP 3,000/day.
-3. Publish both Search campaigns at CLP 3,400/day each.
+3. Publish Menú at CLP 3,091/day and Café at CLP 3,709/day.
 4. Confirm the account's combined daily budget is CLP 9,800/day.
 5. Add only the safe missing Performance Max exclusions after reviewing Google's impact warning.
 
@@ -63,8 +63,8 @@
 - Modify: `docs/campaign/google-ads-optimization-history.md`
 
 1. Read back all three campaign statuses and daily budgets.
-2. Verify directions/store-visit goals, no phone-call optimization, no call assets, Presence-only location, Spanish, schedules, keyword match types and negatives.
-3. Re-run Ad Preview and Diagnosis for `menú ejecutivo providencia`, `almuerzo providencia`, `café de especialidad providencia`, `café filtrado`, `mate providencia`, and `cowork café providencia`.
+2. Verify directions/store-visit goals, no phone-call optimization, Presence-only location, Spanish, schedules and keyword match types. Record negatives, sitelinks and call-asset inspection separately when those follow-up checks are completed.
+3. After Google finishes initial review/learning, run Ad Preview and Diagnosis for `menú ejecutivo providencia`, `almuerzo providencia`, `café de especialidad providencia`, `café filtrado`, `mate providencia`, and `cowork café providencia`.
 4. Record whether each campaign is draft, pending review, eligible or serving; do not equate publication with serving.
 5. Append the exact timestamp, settings and readback evidence to the campaign history.
 6. Commit the history update separately from the pre-mutation plan.
