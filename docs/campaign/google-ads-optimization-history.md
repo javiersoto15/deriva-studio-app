@@ -173,6 +173,144 @@ This file is the durable, non-sensitive audit trail for Deriva Coffee Studio Goo
 
 **Business-name decision:** Keep the legacy `Deriva Studio` business-name asset because it matches the umbrella brand and `derivastudio.cl` domain. Do not rename it to `Deriva Coffee Studio`. Google's rule requires the submitted name to be clearly present on the ad landing page; the live pages currently emphasize `Deriva Coffee Studio`. Resolve the policy issue, if pursued, by making `Deriva Studio` visibly prominent on the paid landing pages or by appealing with domain/brand evidence, without changing the asset name.
 
+## 2026-09-02 - Landing-page repair for Name Prominence and Menu Ejecutivo coverage
+
+**Requested outcome:** Remove both blockers identified in the coverage diagnosis above — the `/menu-ejecutivo` redirect and the disapproved `Deriva Studio` business-name asset — then verify production and reopen the campaign.
+
+### Route behaviour changed
+
+**Previous:** `https://derivastudio.cl/menu-ejecutivo` returned `HTTP/2 302` with `location: /`. The page component existed at `app/(landing)/menu-ejecutivo/page.tsx` and was never reached.
+
+**Root cause:** `LANDING_PREFIXES` in `src/middleware/host.ts` listed `/menu` but not `/menu-ejecutivo`. The prefix matcher accepts only an exact match or a following slash, so `/menu` never covered the sibling route and the apex-host fallback redirected it to `/`. Fail-closed allowlist: a missing entry produces a silent 302, not a 404.
+
+**New:** `/menu-ejecutivo` is registered explicitly. Production returns `HTTP/2 200` with no `Location` header.
+
+### Files changed
+
+| File | Change |
+| --- | --- |
+| `src/middleware/host.ts` | `/menu-ejecutivo` added to `LANDING_PREFIXES` |
+| `src/seo/executive-service.ts` *(new)* | `America/Santiago` service-window state machine |
+| `src/seo/executive-menu.ts` | Fallback copy, rotation examples, edition-aware status, JSON-LD offer guard |
+| `app/(landing)/menu-ejecutivo/page.tsx` | Metadata uses `SITE_NAME`; canonical unchanged |
+| `app/(landing)/menu-ejecutivo/_components/ExecutiveMenuBody.tsx` | Status line, course notes, rotation section, fallback state, visible business name |
+| `app/(landing)/menu-ejecutivo/menu-ejecutivo.module.css` | Styles for the above; 320px and 390px fixes |
+| `src/seo/local-business.ts` | `SITE_NAME` -> `Deriva Studio`; `alternateName` -> `["Deriva Coffee Studio", "Deriva"]` |
+| `src/components/landing/SiteNav.tsx` | Nav brand renders `SITE_NAME` |
+| `app/(landing)/page.tsx` | Footer renders the business name and descriptor |
+| `app/(landing)/menu/_components/CartaBody.tsx` + `carta.module.css` | Carta colophon renders the business name and descriptor |
+
+### Menu Ejecutivo rendering
+
+Source is the backend only: `GET /public/menu-ejecutivo?locale=es-CL`, fetched `no-store`. `src/data/menu-ejecutivo.ts` is not used by this route.
+
+Service status resolves in `America/Santiago` through `Intl.DateTimeFormat` rather than a fixed UTC offset, because Chile's DST flip (first Sunday of September) would make a hardcoded offset wrong for roughly half the year. States: weekday before 13:00 -> service starts at 13:00; weekday 13:00-16:00 -> available now; weekday after 16:00 -> service finished; Saturday/Sunday -> returns next business day.
+
+Availability is treated as a claim about the offer, not the clock. With no published edition the badge reads `Sin edicion publicada` even inside the service window, so the page never claims something is being served when nothing is published.
+
+The no-edition fallback stays on `/menu-ejecutivo` at HTTP 200. It prints no price, no course and no `Offer` node in the JSON-LD, and carries `Ver la carta completa` -> `/menu` plus a `Como llegar` directions CTA.
+
+A `Como funciona` section explains the four-part rotation using clearly labelled illustrative examples. Those examples live in `EXECUTIVE_MENU_SHAPE` and are excluded from structured data; a test asserts they contain no price or availability language.
+
+### Business-name prominence correction
+
+The asset name is unchanged: `Deriva Studio`. It was not renamed to `Deriva Coffee Studio`.
+
+`Deriva Studio` is now the umbrella business name and is rendered as **visible page text** — not metadata, `aria-label` or JSON-LD alone — on all three paid landing destinations. Live readback of the rendered text, scripts and styles stripped:
+
+- `/` — 3 visible occurrences, 0 occurrences of the legacy name.
+- `/menu` — 4 visible occurrences, 0 occurrences of the legacy name.
+- `/menu-ejecutivo` — 4 visible occurrences, 0 occurrences of the legacy name.
+
+Placement: the persistent nav lockup on every landing surface, the masthead of `/menu-ejecutivo`, and the footer/colophon of all three. A one-line descriptor, `Cafe de especialidad, cocina y mate en Providencia`, sits beside the name so the identity is not narrowed to the coffee line. No keyword stuffing: a test caps repetitions per surface at three source references.
+
+Structured data on `/`, live readback:
+
+- `Organization` and `CafeOrCoffeeShop` — `name: Deriva Studio`, `alternateName: ["Deriva Coffee Studio", "Deriva"]`, `url: https://derivastudio.cl`.
+- Exactly one `CafeOrCoffeeShop` node, linked to one `Organization` via `parentOrganization`. No rival LocalBusiness identity.
+
+### SEO
+
+- Canonical, live: `<link rel="canonical" href="https://derivastudio.cl/menu-ejecutivo"/>`.
+- Title, live: `Menu Ejecutivo en Providencia - Deriva Studio`.
+- Location present in the meta description and in the rendered footer: `Magnere 1570, Local 105, Providencia`.
+- Content is server-rendered; the dish names appear in the initial HTML response.
+- Active structured data carries the API-supplied price and courses. Fallback structured data omits the `Offer` and `MenuItem` nodes entirely.
+
+### Budget
+
+Monthly cap: CLP 300,000. Google bills on an average daily budget over an approximate 30.4-day month, so the ceiling is CLP 300,000 / 30.4 = **CLP 9,868/day**. CLP 9,868 x 30.4 = CLP 299,987, inside the cap. CLP 9,900/day would bill CLP 300,960 and breach it.
+
+The 2026-09-02 entry above records the campaign already saved at **CLP 9,800/day** (CLP 297,920/month), which is at or below the 9,868 ceiling and therefore compliant. Raising it to 9,868 would recover about CLP 2,067/month of unused headroom; this was **not** changed, because the live account could not be reached this session (see below).
+
+### Target searches
+
+Unchanged from the entry above, and now matched by a real landing page: `menu ejecutivo providencia`, `menu ejecutivo providencia` (accented), `almuerzo providencia`, `almuerzo cerca`, `cafe en providencia`, `cafe providencia`.
+
+### Conversion objectives
+
+Unchanged and not re-verified live this session: campaign-specific `Get directions, Store visits`; `Phone call leads` remains removed. No calls objective was added.
+
+### Tests and build
+
+- `npm run typecheck` — clean.
+- `npm run build` — clean; `/menu-ejecutivo` builds as a Partial Prerender route.
+- `npm run test:seo` — 59 passed, 0 failed.
+- `npm run test:menu` — 51 passed, 0 failed.
+- `npm run test:routing` — 12 passed, 0 failed (new suite, `tests/routing/host.test.ts`).
+
+New coverage: `tests/routing/host.test.ts` (apex, app-subdomain, preview/local and shared-infra routing, including `/menu` unchanged), `tests/seo/executive-service.test.ts` (all four schedule states, both sides of the DST boundary, a half-hourly sweep across a full week, and the no-edition availability guard), `tests/seo/business-name.test.ts` (visible name on each paid surface, no attribute-only satisfaction, structured-data consistency).
+
+The routing suite was confirmed to actually catch the defect: removing the `/menu-ejecutivo` entry makes 2 of 12 tests fail; restoring it returns 12/12.
+
+### Responsive inspection
+
+Inspected in a real browser at 390 px, 320 px and desktop. No horizontal overflow at any width. Three defects were found and fixed during the pass: the rotation heading had silently fallen back to IBM Plex Mono instead of Cormorant Garamond; the new section missed the page gutter at 390 px because `carta.module.css` puts gutters on each block rather than on the page wrapper; and the edition strip clipped mid-word at 320 px.
+
+### Paper review
+
+Ported to the `Web` page of the `Deriva Studio` Paper file before deploy, per the repository's paper-first requirement: `/menu-ejecutivo - Edicion publicada - Mobile` (390), `/menu-ejecutivo - Sin edicion (fallback) - Mobile` (390), `/menu-ejecutivo - Edicion publicada - Desktop` (1440). Approved by the founder before deployment.
+
+### Production verification evidence
+
+Deployment: production target, aliased to `derivastudio.cl`, `www`, `app` and `admin`.
+
+```
+$ curl -sI https://derivastudio.cl/menu-ejecutivo
+HTTP/2 200
+(no Location header)
+```
+
+Other landing routes after the change: `/` 200, `/menu` 200, `/sala` 200, `/abierto` 200, `/resenas` 200. `https://app.derivastudio.cl/menu-ejecutivo` still returns 302 to `/inicio`, so the app-host gate is intact.
+
+Rendered content confirmed live on `/menu-ejecutivo`: the published edition (`HOY - MIE 2 SEPT`, `Carne braseada con pure`, the `o Ensalada proteica` alternative, `CLP $10.990`), the `Disponible ahora` status matching the Santiago clock at the time of check (14:47, inside the 13:00-16:00 window), both CTAs, the illustrative-examples label, and `Deriva Studio`.
+
+Directions CTA target resolves: `https://www.google.com/maps/search/?api=1&query=Magnere+1570+Providencia+Santiago` returns 200.
+
+The no-edition fallback and the off-hours states were verified against the same shipped build by pointing the server at an unreachable backend and by injecting fixed instants into the unit tests; they could not be forced on production, where a live edition is published and the clock was inside the service window.
+
+### Google Ads review/submission status
+
+**Not performed this session — blocked.** `ads.google.com` returned a `Verify it's you` interstitial for `javier.soto@guardyou.cl`, stating the account must sign in again to continue to Google Ads. Completing that step requires authenticating, which the agent does not do. The pre-existing signed-in Ads tabs in the browser render from an older session and would hit the same wall on any navigation or mutation.
+
+Consequently the following were **not** done and remain open:
+
+- Business-name asset not resubmitted or appealed.
+- Budget not re-read live and not raised from CLP 9,800 to CLP 9,868/day.
+- Conversion goals not re-verified live.
+- Campaign enabled/eligible/serving state not re-read.
+- Ad Preview and Diagnosis not re-run for the target queries.
+
+### Remaining reason the campaign is not yet serving these queries
+
+Both root causes named in the coverage diagnosis are now fixed **on the website side**, but neither fix takes effect in the auction until Google re-evaluates:
+
+1. **Business-name asset still disapproved.** The Name Prominence failure was caused by the landing pages emphasising `Deriva Coffee Studio` while the asset said `Deriva Studio`. That mismatch no longer exists. The asset stays disapproved until it is resubmitted or appealed and Google re-reviews the live pages.
+2. **Asset groups still pending review** as of the previous entry, including the Menu Ejecutivo group whose URL rule pointed at the previously-redirecting `/menu-ejecutivo`. That URL now resolves, but the group must clear review.
+3. **Performance Max does not guarantee query-level coverage.** The earlier Ad Preview result (`no keywords in your account matched your query`) reflects the absence of a keyword-based Search campaign, not proof that the search themes are ineligible. If guaranteed coverage of these exact high-intent searches is required, a tightly bounded Search campaign with exact/phrase keywords remains the option, after the current assets clear review.
+
+**Do not treat the campaign as active.** The landing pages are fixed and verified in production; the business-name asset is not yet resubmitted, and serving has not been observed.
+
 ## Pending live mutations
 
 - [x] Campaign goals changed to Store visits and Get directions.
@@ -189,5 +327,10 @@ This file is the durable, non-sensitive audit trail for Deriva Coffee Studio Goo
 - [ ] Menú Ejecutivo asset-group ad strength rechecked after policy review.
 - [ ] Store-visit goal `Needs attention` status rechecked at the first measurement checkpoint.
 - [x] CLP 9,800/day budget saved and verified in both campaign and account-total rows.
-- [ ] Legacy `Deriva Studio` business-name prominence resolved without renaming the asset.
+- [x] Landing-page prominence for `Deriva Studio` implemented and verified live on `/`, `/menu` and `/menu-ejecutivo`, with the asset name unchanged (2026-09-02).
+- [x] `/menu-ejecutivo` serves HTTP 200 in production instead of redirecting to `/` (2026-09-02).
+- [ ] Business-name asset resubmitted or appealed — BLOCKED on Google account re-authentication.
+- [ ] Budget re-read live; optional raise from CLP 9,800 to CLP 9,868/day — BLOCKED on re-authentication.
+- [ ] Conversion goals and enabled/eligible/serving state re-verified live — BLOCKED on re-authentication.
+- [ ] Ad Preview and Diagnosis re-run for the six target queries — BLOCKED on re-authentication.
 - [ ] Decide whether exact-query coverage warrants a separate Search campaign after asset review.
