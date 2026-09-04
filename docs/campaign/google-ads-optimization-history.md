@@ -674,3 +674,35 @@ Policy Manager now shows the fresh September 4 appeal for the `Deriva Studio` bu
 ### Decision checkpoint
 
 Do not make another same-day change from this single transition-day result. The data proves materially higher Search reach and much lower CPC, but also shows that the CLP 3,800/day Search allocation leaves most eligible impressions uncovered. Any next optimization should explicitly choose between preserving CLP 6,000/day for Performance Max Maps coverage and reallocating part of it to Search, or raising the CLP 300,000 monthly ceiling. Continue measuring the stable two-campaign configuration before changing bids, budgets or match types.
+
+## 2026-09-04 - Human-review escalation and seven-day decision plan
+
+The founder approved a seven-day stabilization period through the September 11, 2026 review. No bidding, budget, keyword, ad, asset, goal or Business Profile mutation should be made during this period unless a material failure requires fresh approval.
+
+### Human-review escalation draft
+
+The failed backend appeal must not be resubmitted as another automated appeal. The next request asks Google Ads support to open a human policy case and manually review the asset:
+
+> Please escalate this case to a human Google Ads policy specialist. Account 934-597-8419, campaign 24204249834, business-name asset 363658264059 (`Deriva Studio`). Backend appeal 59103255, submitted September 4, shows `Dispute decision / Not reviewed / Failed`, so it was not manually reviewed. The original September 2 appeal remains `In progress / Error: try again`. The landing page https://derivastudio.cl/menu visibly shows `DERIVA STUDIO` in the primary navigation, `Deriva Studio` in the page title, and the same identity as the derivastudio.cl domain and linked Google Business Profile. Google Ads Help Center previously assessed this as a possible automated misclassification. Please open a human support case, manually review the Name Prominence disapproval, and provide the case/reference number and the exact evidence required if you still consider the asset non-compliant. Do not file another automated backend appeal.
+
+This message is prepared but must be sent only after action-time confirmation.
+
+### September 11 primary KPIs
+
+1. **Search visibility:** Search impression share and Search top impression share for the consolidated Search campaign. Baseline: 16.13% overall share and 11.29% top share. The decision threshold is sustained impression share below 20% with more than 70% lost to budget.
+2. **Local reach:** daily live Maps result for `cafetería en providencia`, recorded separately as Sponsored and organic/unknown. The guardrail is preserving Sponsored Maps placement in at least five of seven sampled days before reallocating Performance Max budget.
+3. **Foot-traffic outcomes:** Get directions plus modeled Store visits, reported separately and together. Treat zero or delayed modeled visits cautiously; the seven-day trend is a decision input, not definitive incrementality proof.
+
+### Driver and efficiency guardrails
+
+- Diagnose `cafetería en providencia`, `café de especialidad en providencia`, `cafetería de especialidad en providencia`, `mejor café de providencia` and `menú ejecutivo providencia` daily from Providencia on mobile.
+- Track impressions, clicks, CTR and average CPC. Guardrails: CTR at or above 3.0% and average CPC at or below CLP 100 while reach expands.
+- Track the Good-strength RSA's share of impressions and clicks. It needs enough delivery to compare with the original Poor-strength RSA; do not judge it from the initial 34-impression sample.
+- Keep the active budget ceiling at CLP 9,800/day and phone-call goals excluded.
+
+### September 11 decision ladder
+
+- **Hold the 6,000 / 3,800 allocation** if paid Maps remains present, Search impression share reaches at least 20%, top share improves and direction/store-visit signals begin accumulating.
+- **Propose a bounded reallocation within the same CLP 9,800/day ceiling** if Maps is stable in at least five of seven samples while Search share remains below 20% and budget loss remains above 70%. The first candidate is Performance Max CLP 5,300/day and Search CLP 4,500/day; it requires fresh founder approval before implementation.
+- **Do not solve weak visibility by broadening indiscriminately.** If CTR falls below 3%, CPC rises above CLP 100 or irrelevant search terms grow, clean query quality before adding budget.
+- **Escalate measurement separately** if Directions remains zero and Store visits remains `Needs attention`; campaign allocation should not be optimized against a broken or materially delayed outcome signal.
