@@ -522,7 +522,7 @@ Immediate readback showed the principal category terms (`cafetería en providenc
 
 A second responsive Search Ad was prepared with all 15 headline slots and all four description slots. Its live editor score improved from **Poor** to **Good** before submission. The copy uses truthful local signals including `Cafetería en Providencia`, `Café de Especialidad`, `Filtrados en Providencia`, `Café Cerca de Mí`, `Café Providencia`, `Café Para Trabajar`, `V60`, `Chemex`, `Magnere 1570`, directions and `Deriva Studio`. It deliberately does not claim to be the best café; `mejor café` is used only as search intent.
 
-Submission is awaiting Google's mandatory account-passkey confirmation. Until that confirmation and the following Google review complete, the existing eligible RSA remains the serving ad and the new Good-strength RSA must be treated as a saved-in-browser draft, not a live ad.
+Google account verification was completed from the founder's iPhone on 2026-09-03. The ad was then submitted successfully. Google's save confirmation stated that it found no policy issues. Read-after-write in the live Ads table showed the second RSA as **Enabled / Eligible**, with all 15 headlines and four descriptions present. Its ad-strength column was still `Pending` immediately after submission while Google processed the new version; the original Poor-strength RSA remains eligible during that review.
 
 ### Preserved controls and next checks
 
@@ -532,3 +532,20 @@ Submission is awaiting Google's mandatory account-passkey confirmation. Until th
 - Re-run Ad Preview and Diagnosis after the new keywords and RSA finish review.
 - Compare paid Maps presence plus Search impression share after at least one full business day; judge direction/store-visit trends after 7 days.
 - Review actual search terms before adding negatives or widening match types.
+
+### Immediate post-submission visibility diagnosis
+
+Ad Preview and Diagnosis was run as a mobile user in Providencia, Spanish, immediately after the stronger RSA was published. This is an auction sample, not a guarantee that the same result occurs on every search.
+
+| Search | Immediate result | Google diagnosis |
+| --- | --- | --- |
+| `cafetería en providencia` | Not shown in this sample | Exact keyword matched; Google says the ad is probably shown at times but was not shown for this diagnosis. |
+| `café de especialidad en providencia` | Not shown in this sample | Four keywords matched. Some candidate ads lost to other ads from the same ad group with equal or higher Ad Rank; one candidate was probably shown at other times; another had no specific explanation. |
+| `filtrados providencia` | Not shown | Google found no currently eligible matching keyword, consistent with the newly added exact/phrase variants still processing or carrying low-search-volume status. |
+| `mejor café de providencia` | Not shown in this sample | Two keywords matched. One candidate was probably shown at times; another lost to an ad with equal or higher Ad Rank. |
+
+This verifies that the founder's visibility complaint is real even though the campaign is enabled and spending. The immediate problem is not a missing campaign or exhausted account budget: it is a combination of auction rank, intermittent serving, and keyword eligibility/review. The newly submitted stronger RSA is intended to improve relevance and Ad Rank but must be re-tested after processing. Do not claim first position or sponsored Maps coverage until Ad Preview, impression-share/top-impression metrics and a live Maps test provide evidence.
+
+### Monitoring instruction
+
+A daily thread monitor named `Deriva Ads visibility and visits` was created for 10:30 Chile time. It must remain read-only unless the founder explicitly authorizes another mutation. It checks the two-campaign budgets and statuses, runs the four priority query diagnoses, compares impressions/clicks/cost plus Search top-impression metrics when available, and compares Get directions and Store visits against the saved baseline and prior run. It only reports meaningful changes, review completion, configuration drift, actionable blockers or enough data for the seven-day decision.
