@@ -471,3 +471,64 @@ The final Campaigns table contained all three enabled campaigns with budgets CLP
 - [ ] Add Search-campaign negative keywords only after impact preview and early search-term review.
 - [ ] Add and verify `Carta`, `Menú Ejecutivo`, `Cómo llegar` and `Reseñas` sitelinks.
 - [ ] Inspect the Search asset view and explicitly confirm that no call asset is attached.
+
+## 2026-09-03 - Maps visibility regression diagnosis
+
+**Reported symptom:** Deriva stopped appearing for `cafetería en Providencia` after the 2026-09-02 campaign changes, while immediately adjacent competitors such as Caos and Creta remained visible. The founder requested consolidation to one or two campaigns.
+
+**Reproduction:** A Maps search centered on Deriva's exact coordinates did not include Deriva in the initial result list. `Caos dinning and coffee`, approximately 20 metres away, appeared with primary category `Espresso bar`, rating 4.8 and 145 reviews. `Creta Café`, also approximately 20 metres away, has primary category `Espresso bar`, rating 4.5 and 52 reviews. Deriva's listing is active and managed, with primary category `Coffee shop`, secondary categories Restaurant, Brunch restaurant and Breakfast restaurant, rating 4.6 and 30 reviews.
+
+**Business Profile health:** No suspension, verification or core-information error was visible. The profile strength is complete; address, hours, website, menu, dining options and categories are populated. Google Ads Data Manager shows the Business Profile linked, and the enabled account-level location asset reported 6,865 impressions and 150 clicks in the same-day view.
+
+**Confirmed paid-distribution change:** Before the split, Performance Max held CLP 9,800/day and had the historical Maps evidence recorded above: 1,159 hosted direction requests and 99.50 modelled store visits in the August baseline. On 2026-09-02, Performance Max was reduced to CLP 3,000/day and CLP 6,800/day was allocated to two new Search campaigns using Maximize Clicks. This is a 69.4% reduction in the campaign designed around Get directions and Store visits and is the change most directly capable of reducing paid Maps placement.
+
+**Organic versus paid distinction:** Google Ads changes cannot directly demote the organic Maps listing. They can remove or reduce a sponsored Maps placement that visually resembles a normal local result. The current organic comparison also shows a prominence disadvantage: Deriva has 30 reviews versus Creta's 52 and Caos's 145 at essentially the same distance.
+
+**Entity consistency observation:** The live website now visibly uses `Deriva Studio`, but Google's indexed organic result and the Business Profile description still contain `Deriva Coffee Studio`. The Ads business-name asset remains disapproved for Name Prominence while its appeal is pending. This is a real cross-surface inconsistency during re-crawl, but there is not enough evidence to attribute the Maps regression to it rather than to the confirmed PMax budget reduction.
+
+**Recommended consolidation:** Keep two campaigns, not one: (1) Performance Max for Maps, directions and store visits; (2) one Search campaign for controlled high-intent queries, with separate tightly themed ad groups for Café and Menú Ejecutivo. Consolidating to only Performance Max would lose exact-query control; consolidating to only Search would weaken Maps/local inventory.
+
+## 2026-09-03 - Two-campaign recovery and local-search expansion
+
+The founder approved consolidating to two active campaigns while preserving the CLP 9,800/day account ceiling and prioritizing paid Maps reach. The live allocation was changed to:
+
+| Campaign | Type | Live daily budget | Live status after change |
+| --- | --- | ---: | --- |
+| `Deriva Coffee Studio` | Performance Max | CLP 6,000 | Enabled / Eligible |
+| `Search | Café, Filtrados y Desayuno | Providencia` | Search | CLP 3,800 | Enabled / Eligible (Limited) |
+| `Search | Menú Ejecutivo | Providencia` | Search | CLP 3,091 | Paused |
+| **Active account total** |  | **CLP 9,800/day** | **CLP 297,920 per 30.4-day month** |
+
+Performance Max therefore receives 61.2% of the active budget and consolidated Search receives 38.8%; CLP 6,000 is 57.9% larger than CLP 3,800. This is no longer a direct Café-versus-Menú weighting because Performance Max contains both Café and Menú/Almuerzo asset groups. Those groups continue to cover Maps, directions, store visits and lunch intent. The separate Menú Search campaign was paused, not deleted, so its configuration and history remain recoverable.
+
+### Café Search keyword expansion
+
+Twenty exact/phrase local-intent keywords were added to the existing café ad group, increasing the live keyword count from 50 to 70:
+
+- `[cafetería en providencia]`, `"cafetería en providencia"`
+- `[café de especialidad en providencia]`, `"café de especialidad en providencia"`
+- `[filtrados providencia]`, `"filtrados providencia"`
+- `[mejor café de providencia]`, `"mejor café de providencia"`
+- `[mejor cafetería en providencia]`, `"mejor cafetería en providencia"`
+- `[cafeterías en providencia]`, `"cafeterías en providencia"`
+- `[cafés en providencia]`, `"cafés en providencia"`
+- `[café especialidad providencia]`, `"café especialidad providencia"`
+- `"café de especialidad cerca de mí"`, `"café filtrado cerca de mí"`
+- `"mejor café providencia"`, `"mejores cafeterías providencia"`
+
+Immediate readback showed the principal category terms (`cafetería en providencia`, `cafeterías en providencia`, `cafés en providencia`, `café de especialidad cerca de mí`, and `mejores cafeterías providencia`) pending review. Several longer variants immediately showed `Low search volume`; they remain useful exact-intent coverage but should not be expected to generate steady traffic alone. No broad-match keywords or AI Max expansion were enabled.
+
+### Responsive Search Ad improvement
+
+A second responsive Search Ad was prepared with all 15 headline slots and all four description slots. Its live editor score improved from **Poor** to **Good** before submission. The copy uses truthful local signals including `Cafetería en Providencia`, `Café de Especialidad`, `Filtrados en Providencia`, `Café Cerca de Mí`, `Café Providencia`, `Café Para Trabajar`, `V60`, `Chemex`, `Magnere 1570`, directions and `Deriva Studio`. It deliberately does not claim to be the best café; `mejor café` is used only as search intent.
+
+Submission is awaiting Google's mandatory account-passkey confirmation. Until that confirmation and the following Google review complete, the existing eligible RSA remains the serving ad and the new Good-strength RSA must be treated as a saved-in-browser draft, not a live ad.
+
+### Preserved controls and next checks
+
+- Active daily budget remains CLP 9,800, approximately CLP 297,920 per 30.4-day month.
+- Search remains 5 km around Magnere 1570, Presence-only, Spanish and Google Search only.
+- Optimization remains Get directions and Store visits; phone-call leads remain excluded.
+- Re-run Ad Preview and Diagnosis after the new keywords and RSA finish review.
+- Compare paid Maps presence plus Search impression share after at least one full business day; judge direction/store-visit trends after 7 days.
+- Review actual search terms before adding negatives or widening match types.
