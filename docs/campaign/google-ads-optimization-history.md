@@ -618,3 +618,59 @@ The appeal submission is confirmed, but approval is not. Continue tracking the a
 3. Compare impressions, clicks, CTR, cost, Search impression share, top-impression rate, directions and store visits with the September 3 baseline.
 4. Check the review state of the stronger responsive Search Ad and Appeal ID `59103255`.
 5. Verify budgets, targeting and conversion-goal exclusions have not drifted. Do not mutate the account during analysis without fresh approval.
+
+## 2026-09-04 - First full next-day visibility and performance readback
+
+This was a read-only review of the live Google Ads account. Google reporting was complete through September 3; September 4 intraday reporting was not yet available in the date selector.
+
+### Live configuration
+
+| Campaign | Current status | Current budget | September 3 impressions | Clicks | CTR | Cost |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| `Deriva Coffee Studio` | Enabled / Eligible | CLP 6,000/day | 6,356 | 108 | 1.70% | CLP 5,057 |
+| `Search | Café, Filtrados y Desayuno | Providencia` | Enabled / Eligible (Limited) | CLP 3,800/day | 2,335 | 80 | 3.43% | CLP 3,906 |
+| `Search | Menú Ejecutivo | Providencia` | Paused | CLP 3,091/day while paused | 242 | 12 | 4.96% | CLP 6,106 |
+| **Account total** | Two campaigns active | **CLP 9,800/day active ceiling** | **8,933** | **200** | **2.24%** | **CLP 15,069** |
+
+The September 3 cost includes delivery before the Menú Search pause and budget redistribution completed during that transition day, so it must not be interpreted as the steady-state daily cost of the final two-campaign configuration.
+
+The active Search campaign still uses Maximize clicks, a 5 km radius around Magnere 1570, Google Search only, and campaign-specific Get directions and Store visits goals. Search partners, Display Network, AI Max, automatically created assets and campaign-level broad match are off. Phone call lead remains assigned to 0 of 3 campaigns.
+
+### Search performance versus the September 2 baseline
+
+- Search impressions increased from 520 to 2,335: **+1,815 / +349.04%**.
+- Search clicks increased from 23 to 80: **+57 / +247.83%**.
+- Average CPC fell from approximately CLP 206 to **CLP 49**, a **76.31% reduction**.
+- Search cost fell from CLP 4,741 to **CLP 3,906**, down **17.61%**.
+- CTR declined from 4.42% to **3.43%**, down 0.99 percentage points, as reach expanded.
+- Search impression share was **16.13%**; Search top impression share was **11.29%**; absolute-top impression share was **below 10%**.
+- Search lost impression share from rank was **0.00%**. Search lost impression share from budget was **83.87%**. The campaign-level constraint is therefore budget coverage, not Ad Rank, for this reporting day.
+
+The original Poor-strength RSA delivered 2,301 impressions, 80 clicks, 3.48% CTR and CLP 3,906 cost. The new Good-strength RSA was Enabled / Eligible but received only 34 impressions and no clicks on its first reporting day. Google therefore still labels the campaign's ad-strength diagnostic as Poor even though the new Good ad is approved and beginning to serve.
+
+### Official mobile diagnosis from Providencia in Spanish
+
+| Query | September 4 sampled result | Google's diagnosis |
+| --- | --- | --- |
+| `cafetería en providencia` | Not shown | Exact keyword matched; probably shown at times, but not in this sampled auction. |
+| `café de especialidad en providencia` | Not shown | Four keywords matched. Two variants lost to equal-or-higher-ranked ads from the same ad group; Google gave no specific reason for the two specialty-coffee variants. |
+| `cafetería de especialidad en providencia` | Not shown | Three keywords matched. One was probably shown at times; two lost to equal-or-higher-ranked ads from the same ad group. |
+| `mejor café de providencia` | Not shown | Three keywords matched. One was probably shown at times; two lost to equal-or-higher-ranked ads from the same ad group. |
+| `menú ejecutivo providencia` | Not shown | No active Search keyword matched. The dedicated Menú Search campaign is paused; Performance Max is not represented by keyword matching in this diagnostic. |
+
+The five-query snapshot is weaker than the prior same-tool specialty-coffee sample that returned `Your ad is showing`. It does not mean the Search campaign stopped delivering: the previous day recorded 2,335 Search impressions and the live search-term list contains `cafeteria en providencia`, `cafetería en providencia`, `café de especialidad cerca de mi`, `cafetería de especialidad cerca de mi` and related local queries. It does confirm that paid Search presence is not reliable in every priority auction under the current budget share.
+
+### Maps, outcomes and landing-page coverage
+
+- A live Google Maps search for `cafetería en providencia` again returned **Deriva Studio as the first visible result**, labeled **Sponsored**, with category Coffee shop and Magnere 1570. Paid Maps visibility is therefore active in this sample.
+- This sponsored result does not establish Deriva's organic Maps rank. Google suppresses a duplicate organic listing in the same result set, so organic order could not be isolated from this ad-bearing view.
+- September 3 reported **0.00 Store visits** and **0.00 Directions**. Directions remains Active; Store visits is marked `Needs attention`. Cost per direction or visit is therefore not defined for the day. These modeled/local-action metrics can lag and need a longer window before a performance decision.
+- The live landing page continues to show `Deriva Studio`, `Café de especialidad`, `Espresso, filtrados y bebidas con café`, V60, Chemex, pour over, Coffee Flight and mate. Filtered coffee remains strongly represented without using narrow `filtrados providencia` as the primary acquisition target.
+
+### Business-name appeal result
+
+Policy Manager now shows the fresh September 4 appeal for the `Deriva Studio` business-name asset as **Dispute decision / Not reviewed / Failed**. Appeal ID `59103255` therefore did not produce a manual approval. The original September 2 appeal still shows **In progress / Error: try again**, and the asset remains disapproved for Name Prominence. This branding-asset failure is separate from the enabled location asset and the confirmed Sponsored Maps delivery.
+
+### Decision checkpoint
+
+Do not make another same-day change from this single transition-day result. The data proves materially higher Search reach and much lower CPC, but also shows that the CLP 3,800/day Search allocation leaves most eligible impressions uncovered. Any next optimization should explicitly choose between preserving CLP 6,000/day for Performance Max Maps coverage and reallocating part of it to Search, or raising the CLP 300,000 monthly ceiling. Continue measuring the stable two-campaign configuration before changing bids, budgets or match types.
