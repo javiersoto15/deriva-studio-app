@@ -685,7 +685,15 @@ The failed backend appeal must not be resubmitted as another automated appeal. T
 
 > Please escalate this case to a human Google Ads policy specialist. Account 934-597-8419, campaign 24204249834, business-name asset 363658264059 (`Deriva Studio`). Backend appeal 59103255, submitted September 4, shows `Dispute decision / Not reviewed / Failed`, so it was not manually reviewed. The original September 2 appeal remains `In progress / Error: try again`. The landing page https://derivastudio.cl/menu visibly shows `DERIVA STUDIO` in the primary navigation, `Deriva Studio` in the page title, and the same identity as the derivastudio.cl domain and linked Google Business Profile. Google Ads Help Center previously assessed this as a possible automated misclassification. Please open a human support case, manually review the Name Prominence disapproval, and provide the case/reference number and the exact evidence required if you still consider the asset non-compliant. Do not file another automated backend appeal.
 
-This message is prepared but must be sent only after action-time confirmation.
+After action-time confirmation, this message was sent through Google Ads Help. The assistant exposed the official Email contact option, and the same request was submitted through the Google Ads support form with:
+
+- affected campaign: `Search | Café, Filtrados y Desayuno | Providencia` (`24204249834`);
+- request type: `Self Service Appeal failed incorrectly so I would like to appeal again`;
+- review surface: `Assets`;
+- response channel: email only, to `javier.soto@derivastudio.cl`;
+- no phone-call request and no additional automated backend appeal.
+
+The final confirmation page stated **`Your email has been sent`** and **`We'll make sure your message reaches the right team.`** It did not display a case/reference number. Record this as a human-support escalation submitted, not as a completed manual review. Add Google's email reference and final policy decision when received.
 
 ### September 11 primary KPIs
 
