@@ -549,3 +549,24 @@ This verifies that the founder's visibility complaint is real even though the ca
 ### Monitoring instruction
 
 A daily thread monitor named `Deriva Ads visibility and visits` was created for 10:30 Chile time. It must remain read-only unless the founder explicitly authorizes another mutation. It checks the two-campaign budgets and statuses, runs the four priority query diagnoses, compares impressions/clicks/cost plus Search top-impression metrics when available, and compares Get directions and Store visits against the saved baseline and prior run. It only reports meaningful changes, review completion, configuration drift, actionable blockers or enough data for the seven-day decision.
+
+## 2026-09-03 - Narrow filtered-coffee cleanup and serving proof
+
+The founder asked to stop spending keyword attention on narrow `filtrados` searches while continuing to communicate that Deriva offers filtered coffee. The following three zero-impression, low-search-volume targets were permanently removed from the consolidated Search campaign:
+
+- `[filtrados providencia]`
+- `"filtrados providencia"`
+- `"café filtrado cerca de mí"`
+
+The live Enabled/Paused keyword count decreased from 70 to 67. Filtered coffee remains represented by the broader `[café filtrado]` and `"café filtrado"` keywords, V60, Chemex, pour-over terms, and the responsive Search Ad copy that mentions filtrados, V60 and Chemex. No budget, schedule, location, goal or network setting changed.
+
+### Fresh delivery and query diagnostics
+
+- Search campaign readback: Enabled / Eligible (Limited), CLP 3,800/day, with Google describing the limitation as `Missing enough relevant keywords` while the expanded set continues processing.
+- Yesterday's Search keyword report: 520 impressions, 23 clicks, 4.42% CTR and CLP 4,741 cost.
+- `cafetería en providencia`: the official mobile/Spanish/Providencia diagnosis matched `[cafetería en providencia]`; Google reported that the ad is probably shown at times but was not shown for that individual auction sample.
+- `mejor cafetería en providencia`: the diagnosis matched three keywords. One candidate explicitly reported `Your ad is showing`; the other candidates lost to equal-or-higher-ranked ads from the same ad group. This confirms campaign eligibility and intermittent serving, not guaranteed placement on every personalized search.
+- The enabled Business Profile location asset is linked at account level to all locations. Its live row for `Deriva Studio`, Magnere 1570, Loc 105, Providencia reported 513 impressions, 23 clicks, 4.48% CTR and CLP 4,741 cost yesterday.
+- The separate `Deriva Studio` business-name asset remains disapproved for `Business Information - Name Prominence`. This asset-level branding review does not disable the enabled location asset or the serving Search ads.
+
+The active account ceiling remains CLP 9,800/day: CLP 6,000/day Performance Max plus CLP 3,800/day consolidated Search, approximately CLP 297,920 per 30.4-day month. Organic Maps order is separate from paid eligibility and cannot be guaranteed by an Ads mutation.
