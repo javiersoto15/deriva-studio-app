@@ -597,3 +597,24 @@ With the founder's explicit approval, Google support submitted a fresh backend a
 - No campaign budget, keywords, targeting, bidding, schedule, goals or other assets were changed during this support action.
 
 The appeal submission is confirmed, but approval is not. Continue tracking the asset in Policy Manager until Google records a final result.
+
+## 2026-09-04 review brief prepared
+
+### Changes to carry into the next-day analysis
+
+- Account ceiling: CLP 9,800/day, approximately CLP 297,920 per 30.4-day month.
+- Active distribution: Performance Max CLP 6,000/day and consolidated Café Search CLP 3,800/day; Menú Search remains paused.
+- Search intent focuses on cafeteria, specialty coffee, best-café and local Providencia discovery. Narrow `filtrados providencia` variants were removed, while filtered coffee remains represented through `café filtrado`, V60, Chemex and truthful ad copy.
+- The stronger responsive Search Ad was submitted and read back as Enabled / Eligible.
+- Phone-call goals remain excluded. Direction requests, store visits and foot traffic remain the business outcomes.
+- Targeting remains 5 km around Magnere 1570, Presence-only, Spanish and Google Search.
+- The latest live Maps evidence showed Deriva Studio first and Sponsored for `cafetería en providencia`; this was paid placement, not proof of first-place organic ranking.
+- Business-name asset appeal `59103255` was successfully submitted through Google support and is awaiting a final Policy Manager decision.
+
+### Next-day comparison checklist
+
+1. Diagnose `cafetería en providencia`, `café de especialidad en providencia`, `cafetería de especialidad en providencia`, `mejor café de providencia` and `menú ejecutivo providencia` from Providencia on mobile.
+2. Run a live Maps search for `cafetería en providencia` and report Sponsored and organic placement separately.
+3. Compare impressions, clicks, CTR, cost, Search impression share, top-impression rate, directions and store visits with the September 3 baseline.
+4. Check the review state of the stronger responsive Search Ad and Appeal ID `59103255`.
+5. Verify budgets, targeting and conversion-goal exclusions have not drifted. Do not mutate the account during analysis without fresh approval.
