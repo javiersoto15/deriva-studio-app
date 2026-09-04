@@ -570,3 +570,17 @@ The live Enabled/Paused keyword count decreased from 70 to 67. Filtered coffee r
 - The separate `Deriva Studio` business-name asset remains disapproved for `Business Information - Name Prominence`. This asset-level branding review does not disable the enabled location asset or the serving Search ads.
 
 The active account ceiling remains CLP 9,800/day: CLP 6,000/day Performance Max plus CLP 3,800/day consolidated Search, approximately CLP 297,920 per 30.4-day month. Organic Maps order is separate from paid eligibility and cannot be guaranteed by an Ads mutation.
+
+## 2026-09-03 - Specialty-coffee and live Maps confirmation
+
+A fresh official Ad Preview and Diagnosis test used mobile, Spanish and Providencia for `café de especialidad en providencia`. Four keywords matched. The exact `[café de especialidad providencia]` candidate explicitly returned **Your ad is showing**; two broader candidates lost to equal-or-higher-ranked ads from the same ad group and one candidate returned no specific reason. This proves eligible specialty-coffee serving in the tested auction without implying that every auction or personalized search will show the ad.
+
+A separate live Google Maps search for `cafetería en providencia` returned **Deriva Studio as the first visible result**, labeled **Sponsored**, with category `Coffee shop`, the Magnere 1570 address and the current opening-hours summary. This is direct evidence of recovered paid Maps placement in that test. It does not establish first-place organic ranking because the observed result was sponsored.
+
+### Business-name asset diagnosis
+
+- The campaign-level `Deriva Studio` business-name asset remains Not eligible / Disapproved for `Business Information - Name Prominence`; its last-updated timestamp is Sep 2, 2026 at 5:18 PM.
+- Google's policy defines Name Prominence as the advertiser's business name not being clearly present on the ad landing page.
+- Current live readback of `https://derivastudio.cl/menu` shows `DERIVA STUDIO` in the primary navigation and `Deriva Studio` in the page title. The business name also matches the `derivastudio.cl` domain identity. The current page therefore contains the requested legacy name prominently; the disapproval reflects an earlier review or crawler state.
+- Policy Manager shows one Sep 2 appeal with reason `Made changes to comply with policy`. Its status is **In progress**, while the Results column reads **Error: try again**.
+- No duplicate appeal was submitted. Wait for the existing appeal to resolve or become retryable; meanwhile, the separate Business Profile location asset remains Enabled and the live Maps test confirms it can serve.
