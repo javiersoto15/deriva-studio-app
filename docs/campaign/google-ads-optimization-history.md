@@ -584,3 +584,16 @@ A separate live Google Maps search for `cafetería en providencia` returned **De
 - Current live readback of `https://derivastudio.cl/menu` shows `DERIVA STUDIO` in the primary navigation and `Deriva Studio` in the page title. The business name also matches the `derivastudio.cl` domain identity. The current page therefore contains the requested legacy name prominently; the disapproval reflects an earlier review or crawler state.
 - Policy Manager shows one Sep 2 appeal with reason `Made changes to comply with policy`. Its status is **In progress**, while the Results column reads **Error: try again**.
 - No duplicate appeal was submitted. Wait for the existing appeal to resolve or become retryable; meanwhile, the separate Business Profile location asset remains Enabled and the live Maps test confirms it can serve.
+
+## 2026-09-03 - Fresh backend appeal submitted for business-name asset
+
+After the Sep 2 Policy Manager appeal remained stuck with **Status: In progress** and **Results: Error: try again**, Google Ads Help Center support reviewed the `Deriva Studio` business-name asset and the current landing-page text. Its assessment found `Deriva Studio` clearly present on `https://derivastudio.cl/menu` and described the disapproval as a possible automated misclassification, while noting that its visual page analysis had timed out and that the assessment could be imperfect.
+
+With the founder's explicit approval, Google support submitted a fresh backend appeal for business-name asset `363658264059` in campaign `24204249834` (`Search | Café, Filtrados y Desayuno | Providencia`).
+
+- Appeal ID: `59103255`
+- Submission result shown by Google: successfully submitted
+- Expected result channel: Google Ads **Policy Manager / Appeal History**, not email
+- No campaign budget, keywords, targeting, bidding, schedule, goals or other assets were changed during this support action.
+
+The appeal submission is confirmed, but approval is not. Continue tracking the asset in Policy Manager until Google records a final result.
