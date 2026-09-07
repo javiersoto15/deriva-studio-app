@@ -1,7 +1,7 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
-import Image from "next/image";
+import { FestiveStackedLogo } from "../../../src/ui/FestiveStackedLogo";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState, type FormEvent } from "react";
 import { apiClient, type MemberSelfProfile } from "../../../src/api/hooks";
@@ -112,13 +112,7 @@ export default function IngresarPage() {
         <CampaignTokenCapture />
       </Suspense>
 
-      <Image
-        src="/brand/logo-con-isotipo.svg"
-        alt="Deriva Coffee Studio"
-        width={148}
-        height={50}
-        priority
-      />
+      <FestiveStackedLogo height={50} />
 
       <div
         style={{

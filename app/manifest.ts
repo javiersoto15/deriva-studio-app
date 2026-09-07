@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { headers } from "next/headers";
 import { derivaColors } from "../src/brand";
 import { colors } from "../src/design/tokens";
+import { isFiestasPatriasWindow } from "../src/lib/fiestas-patrias";
 
 // Host-aware manifest (Phase 2A.4). Branches off the Host header:
 //   - derivastudio.cl                  → landing manifest (marketing site)
@@ -16,6 +17,10 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
   const host = (hdrs.get("host") ?? "").toLowerCase();
   const isApp = host.startsWith("app.");
   const isStaffOrAdmin = host.startsWith("staff.") || host.startsWith("admin.");
+  // app/icon.tsx already follows the Fiestas Patrias window; the landing
+  // manifest still lists the plain PNG ladder, so swap its SVG entry to the
+  // dynamic icon during the window (PNG entries stay as install fallbacks).
+  const festive = isFiestasPatriasWindow(new Date());
 
   if (isApp) {
     return {
@@ -36,7 +41,7 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
       lang: "es-CL",
       categories: ["food", "lifestyle"],
       icons: [
-        { src: "/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any" },
+        { src: "/icon", sizes: "any", type: "image/svg+xml", purpose: "any" },
         { src: "/apple-icon.png", sizes: "180x180", type: "image/png", purpose: "any" }
       ]
     };
@@ -53,7 +58,7 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
       theme_color: colors.brown700,
       lang: "es-CL",
       icons: [
-        { src: "/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any" }
+        { src: "/icon", sizes: "any", type: "image/svg+xml", purpose: "any" }
       ]
     };
   }
@@ -71,7 +76,7 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
     lang: "es-CL",
     icons: [
       {
-        src: "/brand/isotipo-verde.svg",
+        src: festive ? "/icon" : "/brand/isotipo-verde.svg",
         sizes: "any",
         type: "image/svg+xml",
         purpose: "any"

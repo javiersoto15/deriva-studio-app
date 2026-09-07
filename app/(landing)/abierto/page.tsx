@@ -3,6 +3,7 @@ import { connection } from "next/server";
 import { Fragment, Suspense } from "react";
 import { DerivaImage } from "../../../src/components/landing/DerivaImage";
 import { LogoLockup } from "../../../src/ui/LogoLockup";
+import { isFiestasPatriasWindow } from "../../../src/lib/fiestas-patrias";
 import { menuSections, type MenuAddons } from "../../../src/data/menu";
 import { HOURS_LINES, isOpenNow } from "../../../src/lib/open-now";
 import { getEditionMarkUppercase } from "../../../src/lib/edition";
@@ -220,6 +221,8 @@ function AbiertoEjecutivo({ executive }: { executive: ExecutiveMenu }) {
             subSize={10}
             gap={14}
             isotipoColor="#F4EDE6"
+            festive={isFiestasPatriasWindow(now)}
+            festiveGround="dark"
             wordmarkColor="#F4EDE6"
           />
           <span className="ab-mast__edition">{editionMark}</span>
@@ -291,6 +294,7 @@ async function AbiertoPromo() {
             subSize={10}
             gap={14}
             isotipoColor="#241B14"
+            festive={isFiestasPatriasWindow(now)}
             wordmarkColor="#241B14"
           />
           <span className="ab-mast__edition">{editionMark}</span>
@@ -369,6 +373,7 @@ async function AbiertoDisplay() {
             subSize={10}
             gap={14}
             isotipoColor="#241B14"
+            festive={isFiestasPatriasWindow(now)}
             wordmarkColor="#241B14"
           />
           <span className="ab-mast__edition">{editionMark}</span>

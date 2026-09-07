@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { colors } from "../../../src/design/tokens";
 import { Button } from "../../../src/ui/Button";
-import { LogoLockup } from "../../../src/ui/LogoLockup";
+import { FestiveLogoLockup } from "../../../src/ui/FestiveLogoLockup";
 import { RedirectIfAuthed } from "./_components/RedirectIfAuthed";
 
 // Splash — matches Paper artboard "INICIO Redesign · Variant C".
@@ -25,7 +25,7 @@ export default function SplashPage() {
     >
       <RedirectIfAuthed />
 
-      <LogoLockup />
+      <FestiveLogoLockup />
 
       <div
         style={{

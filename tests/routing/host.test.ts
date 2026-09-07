@@ -108,3 +108,13 @@ test("preview /app prefix fallback is unchanged", () => {
   assert.equal(res.status, 200);
   assert.ok(res.rewrite?.endsWith("/cartera"), res.rewrite ?? "no rewrite");
 });
+
+// app/icon.tsx serves the (Fiestas-Patrias-aware) favicon at /icon on every
+// host. It replaced the static /icon.svg — the allowlist must follow.
+test("/icon is shared infra on the apex and the companion host", () => {
+  for (const host of ["derivastudio.cl", "app.derivastudio.cl"]) {
+    const r = call(host, "/icon");
+    assert.equal(r.status, 200, `${host} should serve /icon`);
+    assert.equal(r.location, null);
+  }
+});

@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { DerivaImage } from "../../../src/components/landing/DerivaImage";
 import type { PhotoSlug } from "../../../src/data/photos";
 import { LogoLockup } from "../../../src/ui/LogoLockup";
+import { isFiestasPatriasWindow } from "../../../src/lib/fiestas-patrias";
 import { CrossfadeRotator } from "../../../src/components/landing/CrossfadeRotator";
 import { SalaKiosk } from "./SalaKiosk";
 import { getEditionMarkUppercase, getEditionParts } from "../../../src/lib/edition";
@@ -219,7 +220,13 @@ function Dots({ active, dark }: { active: number; dark?: boolean }) {
 }
 
 // ---- Plate 01 · Portada (split cover) --------------------------------------
-function SalaPortada({ edition }: { edition: { season: string; week: string } }) {
+function SalaPortada({
+  edition,
+  festive
+}: {
+  edition: { season: string; week: string };
+  festive: boolean;
+}) {
   return (
     <main className="sala-plate sala-portada" aria-label="Portada — la edición de hoy">
       <div className="sala-portada__col">
@@ -236,6 +243,7 @@ function SalaPortada({ edition }: { edition: { season: string; week: string } })
             subSize={12}
             gap={16}
             isotipoColor="#1A1410"
+            festive={festive}
             wordmarkColor="#1A1410"
           />
         </div>
@@ -279,7 +287,7 @@ function SalaPortada({ edition }: { edition: { season: string; week: string } })
 }
 
 // ---- Plate 02 · Oficio (full-bleed craft) ----------------------------------
-function SalaOficio({ editionMark }: { editionMark: string }) {
+function SalaOficio({ editionMark, festive }: { editionMark: string; festive: boolean }) {
   return (
     <main className="sala-plate sala-oficio" aria-label="El oficio — método manual">
       <div className="sala-oficio__img" aria-hidden="true">
@@ -296,6 +304,8 @@ function SalaOficio({ editionMark }: { editionMark: string }) {
           subSize={9}
           gap={12}
           isotipoColor="#FAF5EC"
+          festive={festive}
+          festiveGround="dark"
           wordmarkColor="#FAF5EC"
         />
         <span className="sala-mast-over__ed">{editionMark}</span>
@@ -317,7 +327,15 @@ function SalaOficio({ editionMark }: { editionMark: string }) {
 }
 
 // ---- Plate 03 · Destacado (split, editor's pick) ---------------------------
-function SalaDestacado({ editionMark, price }: { editionMark: string; price: string }) {
+function SalaDestacado({
+  editionMark,
+  price,
+  festive
+}: {
+  editionMark: string;
+  price: string;
+  festive: boolean;
+}) {
   return (
     <main className="sala-plate sala-destacado" aria-label="El destacado de la carta">
       <div className="sala-destacado__photo">
@@ -343,6 +361,7 @@ function SalaDestacado({ editionMark, price }: { editionMark: string; price: str
             subSize={8}
             gap={10}
             isotipoColor="#1A1410"
+            festive={festive}
             wordmarkColor="#1A1410"
           />
           <span className="sala-panelhead__ed">{editionMark}</span>
@@ -487,6 +506,7 @@ async function SalaRotator({
 }) {
   await connection();
   const now = new Date();
+  const festive = isFiestasPatriasWindow(now);
   const editionMark = getEditionMarkUppercase(now);
   const parts = getEditionParts(now);
   const edition = {
@@ -525,9 +545,11 @@ async function SalaRotator({
   ];
 
   const plates = {
-    portada: <SalaPortada edition={edition} />,
-    oficio: <SalaOficio editionMark={editionMark} />,
-    destacado: <SalaDestacado editionMark={editionMark} price={bagelPrice} />,
+    portada: <SalaPortada edition={edition} festive={festive} />,
+    oficio: <SalaOficio editionMark={editionMark} festive={festive} />,
+    destacado: (
+      <SalaDestacado editionMark={editionMark} price={bagelPrice} festive={festive} />
+    ),
     barra: (
       <SalaBarra
         columns={columns}

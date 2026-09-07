@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { FestiveStackedLogo } from "../../../../src/ui/FestiveStackedLogo";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useState } from "react";
 import { readDraft, writeDraft } from "../../../../src/lib/onboardingDraft";
@@ -57,13 +57,7 @@ export default function IngresarEmailPage() {
         marginInline: "auto"
       }}
     >
-      <Image
-        src="/brand/logo-con-isotipo.svg"
-        alt="Deriva Coffee Studio"
-        width={148}
-        height={50}
-        priority
-      />
+      <FestiveStackedLogo height={50} />
 
       <div
         style={{

@@ -20,6 +20,7 @@ import {
 import { getMenuEjecutivoDateLabel } from "../../../src/data/menu-ejecutivo";
 import { getPublicExecutiveMenu, type ExecutiveMenu } from "../../../src/api/server";
 import { LogoLockup } from "../../../src/ui/LogoLockup";
+import { isFiestasPatriasWindow } from "../../../src/lib/fiestas-patrias";
 import { getEditionMark } from "../../../src/lib/edition";
 import "./menu-display.css";
 
@@ -305,7 +306,8 @@ function MenuDisplayShell({
   dateLabel,
   closedToday,
   editionMark,
-  backendExecutive
+  backendExecutive,
+  festive = false
 }: {
   showPrices: boolean;
   current: Schedule;
@@ -314,6 +316,7 @@ function MenuDisplayShell({
   closedToday: boolean;
   editionMark: string;
   backendExecutive: ExecutiveMenu | null;
+  festive?: boolean;
 }) {
   const visible = menuSections.filter((s) => matchesSchedule(current, s.schedule));
   const { left, right } = splitByColumn(visible);
@@ -355,6 +358,7 @@ function MenuDisplayShell({
             subSize={12}
             gap={22}
             isotipoColor="#1A1A1A"
+            festive={festive}
             wordmarkColor="#1A1A1A"
           />
           <span className="md-mast__claim">la carta del día.</span>
@@ -424,6 +428,7 @@ export async function LiveMenuDisplay() {
       closedToday={closedToday}
       editionMark={editionMark}
       backendExecutive={backendExecutive}
+      festive={isFiestasPatriasWindow(now)}
     />
   );
 }

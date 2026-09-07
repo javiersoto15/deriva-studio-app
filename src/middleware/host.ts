@@ -26,7 +26,7 @@ const SHARED_INFRA_PREFIXES = [
   "/robots.txt",
   "/llms.txt",
   "/favicon.ico",
-  "/icon.svg",
+  "/icon", // app/icon.tsx (dynamic favicon; was static /icon.svg)
   "/apple-icon.png",
   "/opengraph-image",
   // Static assets served from public/ that both surfaces reference (logos,

@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { FestiveStackedLogo } from "../../../src/ui/FestiveStackedLogo";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
@@ -117,13 +117,7 @@ function Surface({ stage, onContinue }: { stage: Stage; onContinue: () => void }
         marginInline: "auto"
       }}
     >
-      <Image
-        src="/brand/logo-con-isotipo.svg"
-        alt="Deriva Coffee Studio"
-        width={148}
-        height={50}
-        priority
-      />
+      <FestiveStackedLogo height={50} />
 
       <div
         style={{

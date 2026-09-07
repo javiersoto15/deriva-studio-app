@@ -102,6 +102,10 @@ Avoid:
 - Recreating the logo in live text.
 - Moving app dependencies back to the repo root.
 
+### Seasonal mark — Fiestas Patrias (Sept 7–19, 2026)
+
+During the window in `src/lib/fiestas-patrias.ts` every isotipo wears the black chupalla with the tricolour huincha, in code and in every design or visual produced (IG, email, print, signage, OG). Code: `LogoLockup`/`StackedLogo` `festive` prop (server: `isFiestasPatriasWindow(now)` behind `connection()`; client: `FestiveLogoLockup`/`FestiveStackedLogo`); favicon `app/icon.tsx` and the manifest follow. Vector source of truth is `src/brand/isotipo.ts` + `src/brand/wordmark.ts` — never re-copy paths. Design files: `09_marketing/brand/fiestas-patrias-2026/` (`-verde` is the main-logo colour, `-oscuro` on dark grounds). Extend or close the window by editing only `FIESTAS_PATRIAS_WINDOW` and its test in `tests/brand/`.
+
 ## Theme Tokens
 
 Current app tokens live in `src/brand/index.ts` and are mirrored as CSS custom properties in `app/globals.css`.
