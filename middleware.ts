@@ -39,9 +39,46 @@ function backendOrigin(): string | null {
   }
 }
 
-function buildCsp(nonce: string): string {
+function isAllowedDevEmulatorHost(hostname: string): boolean {
+  const host = hostname.toLowerCase().replace(/^\[|\]$/g, "");
+  if (host === "localhost" || host === "127.0.0.1" || host === "::1") return true;
+
+  // The webapp's documented LAN dev origins are 10/8, 172.16/12, and
+  // 192.168/16. Keep arbitrary public hostnames out of this development-only
+  // allowlist so a typo cannot silently widen the enforced CSP.
+  const octets = host.split(".").map((part) => Number(part));
+  if (octets.length !== 4 || octets.some((part) => !Number.isInteger(part) || part < 0 || part > 255)) {
+    return false;
+  }
+  const [first, second] = octets;
+  return first === 10 || (first === 172 && second >= 16 && second <= 31) || (first === 192 && second === 168);
+}
+
+export function firebaseAuthEmulatorOrigin(): string | null {
+  if (
+    process.env.NODE_ENV === "production" ||
+    process.env.NEXT_PUBLIC_FIREBASE_USE_EMULATOR !== "true"
+  ) {
+    return null;
+  }
+  const raw = process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST;
+  if (!raw) return null;
+  try {
+    const url = new URL(raw);
+    if (url.protocol !== "http:" && url.protocol !== "https:") return null;
+    if (url.username || url.password || url.pathname !== "/" || url.search || url.hash) return null;
+    if (!isAllowedDevEmulatorHost(url.hostname)) return null;
+    return url.origin;
+  } catch {
+    return null;
+  }
+}
+
+export function buildCsp(nonce: string): string {
   const isDev = process.env.NODE_ENV !== "production";
   const backend = backendOrigin();
+  const emulatorOrigin = firebaseAuthEmulatorOrigin();
+  const emulatorWebSocketOrigin = emulatorOrigin?.replace(/^http/, "ws");
   const connectSrc = [
     "'self'",
     "https://*.googleapis.com",
@@ -59,8 +96,12 @@ function buildCsp(nonce: string): string {
     // chats with appleid.apple.com — keep it on the allowlist so the SSO flow
     // doesn't break under enforced CSP.
     "https://appleid.apple.com",
-    // Dev-only: Firebase Auth emulator + local Go backend. Stripped in prod.
-    isDev ? "http://localhost:9099 ws://localhost:9099 http://localhost:8080" : ""
+    // Dev-only: Firebase Auth emulator + local Go backend. The configured
+    // emulator origin is accepted only in emulator mode and only for a
+    // loopback/documented-LAN host. Stripped in production.
+    isDev ? "http://localhost:9099 ws://localhost:9099 http://localhost:8080" : "",
+    isDev && emulatorOrigin ? emulatorOrigin : "",
+    isDev && emulatorWebSocketOrigin ? emulatorWebSocketOrigin : ""
   ]
     .filter(Boolean)
     .join(" ");

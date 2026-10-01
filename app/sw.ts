@@ -10,6 +10,7 @@
 //   - HTML navigations → NetworkFirst with /offline fallback.
 //   - Google Fonts → CacheFirst.
 //   - Member-private endpoints (/me/*, /api/me/*, /api/staff/*, /api/admin/*) → NetworkOnly.
+//   - Barra stock page/API (/stock, /admin/stock, /api/barra-stock*) → NetworkOnly.
 //     These are NEVER cached: they contain user-private data (visits, rewards, profile,
 //     staff/admin payloads). Caching offline would (a) leak data across sessions on
 //     shared devices and (b) display stale balances which is a trust-breaking UX bug.
@@ -23,6 +24,7 @@ import {
   Serwist,
   StaleWhileRevalidate
 } from "serwist";
+import { isStockNetworkOnlyRequest } from "../src/sw/routing";
 
 declare global {
   interface WorkerGlobalScope extends SerwistGlobalConfig {
@@ -41,6 +43,13 @@ const runtimeCaching: RuntimeCaching[] = [
         url.pathname.startsWith("/api/me/") ||
         url.pathname.startsWith("/api/staff/") ||
         url.pathname.startsWith("/api/admin/")),
+    handler: new NetworkOnly()
+  },
+  // Barra stock is authenticated and mutation-sensitive. Never let an
+  // installed PWA service worker replay old counts or a stale admin shell.
+  {
+    matcher: ({ url, sameOrigin, request }) =>
+      sameOrigin && isStockNetworkOnlyRequest(url.pathname, request.method, request.destination),
     handler: new NetworkOnly()
   },
   // Next.js static chunks — safe forever (content-hashed filenames).

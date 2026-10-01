@@ -66,20 +66,23 @@ const nextConfig: NextConfig = {
       }
     ];
   },
-  // Dev-only API proxy: forward /api/* to the Go backend so the browser sees
-  // every request as same-origin. Eliminates CORS preflight failures and lets
-  // the phone hit the Mac without knowing the Mac's LAN IP for the backend.
+  // Dev-only API proxy: forward unmatched /api/* requests to the Go backend
+  // so the browser sees every request as same-origin. The fallback phase is
+  // deliberate: filesystem API handlers (including the dynamic stock routes)
+  // must resolve before this catch-all can send them to Go.
   // The backend URL is configurable via DERIVA_BACKEND_PROXY_URL (defaults to
   // http://localhost:8080 — where `make api-up-firebase-emulator` listens).
   async rewrites() {
     if (process.env.NODE_ENV === "production") return [];
     const target = process.env.DERIVA_BACKEND_PROXY_URL ?? "http://localhost:8080";
-    return [
-      {
-        source: "/api/:path*",
-        destination: `${target}/:path*`
-      }
-    ];
+    return {
+      fallback: [
+        {
+          source: "/api/:path*",
+          destination: `${target}/:path*`
+        }
+      ]
+    };
   },
   compiler: {
     runAfterProductionCompile: async ({ projectDir }: { projectDir: string; distDir: string }) => {

@@ -2849,6 +2849,210 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/stock": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List canonical pastry and raw stock
+         * @description Staff, manager, and owner endpoint. Pastry rows are discovered from the canonical menu taxonomy plus IDs explicitly placed in the public Pastelería section; missing quantities are returned as null. The actor is derived from the bearer token. Responses are no-store.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    locale?: "es-CL" | "en" | "pt-BR";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Current stock rows and capability flags. */
+                200: {
+                    headers: {
+                        /** @example no-store */
+                        "Cache-Control"?: string;
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["StockListResponse"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                500: components["responses"]["InternalServerError"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/stock/raw-items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create a raw stock supply
+         * @description Manager and owner endpoint. Raw supplies are separate from the canonical menu catalog. The request ID makes creation idempotent for the same actor and payload. The actor is derived from the bearer token.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["StockRawItemRequest"];
+                };
+            };
+            responses: {
+                /** @description Raw stock item created or idempotently replayed. */
+                201: {
+                    headers: {
+                        /** @example no-store */
+                        "Cache-Control"?: string;
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["StockItem"];
+                    };
+                };
+                400: components["responses"]["BadRequest"];
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                409: components["responses"]["Conflict"];
+                500: components["responses"]["InternalServerError"];
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/stock/items/{stock_id}/adjustments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Set or adjust a stock quantity
+         * @description Staff, manager, and owner endpoint. `set` writes an absolute nonnegative count; `delta` adds a signed whole-number change and requires a known quantity. Both modes require the current revision and a request ID for optimistic concurrency and idempotent retry. Audit history is written in the same transaction as the quantity change. The actor is derived from the bearer token.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    stock_id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["StockAdjustmentRequest"];
+                };
+            };
+            responses: {
+                /** @description Updated stock row and movement entry. */
+                200: {
+                    headers: {
+                        /** @example no-store */
+                        "Cache-Control"?: string;
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["StockAdjustmentResponse"];
+                    };
+                };
+                400: components["responses"]["BadRequest"];
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                404: components["responses"]["NotFound"];
+                /** @description Revision or request ID conflict. Revision conflicts include the current row when available. */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["StockConflictResponse"];
+                    };
+                };
+                500: components["responses"]["InternalServerError"];
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/stock/items/{stock_id}/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read stock movement history
+         * @description Staff, manager, and owner endpoint. Entries include the authenticated actor, before/after values, mode, signed quantity, revision, reason, request ID, and timestamp. Responses are no-store.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    stock_id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Chronological stock movements. */
+                200: {
+                    headers: {
+                        /** @example no-store */
+                        "Cache-Control"?: string;
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["StockHistoryResponse"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                404: components["responses"]["NotFound"];
+                500: components["responses"]["InternalServerError"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/admin/menu/items": {
         parameters: {
             query?: never;
@@ -4604,6 +4808,75 @@ export interface components {
             items: components["schemas"]["MenuItem"][];
             categories: components["schemas"]["MenuTaxonomyCategory"][];
             sections: components["schemas"]["MenuTaxonomySection"][];
+        };
+        StockListResponse: {
+            items: components["schemas"]["StockItem"][];
+            /** @description Whether public menu and item reads apply zero-stock filtering. */
+            stock_visibility_enabled: boolean;
+            /** @description True for manager and owner actors resolved from the bearer token. */
+            can_manage_raw_items: boolean;
+        };
+        StockItem: {
+            /** @description Stable menu:<canonical_menu_id> or raw:<durable_id> stock identity. */
+            id: string;
+            /** @enum {string} */
+            kind: "menu_item" | "raw_item";
+            menu_item_id?: string;
+            name: string;
+            /** @enum {string} */
+            unit: "unit" | "g" | "kg" | "ml" | "l" | "portion" | "pack" | "box";
+            /** @description Whole-number quantity; null means no count has been recorded yet. */
+            quantity: number | null;
+            /** Format: int64 */
+            revision: number;
+            menu_available?: boolean;
+            /** Format: date-time */
+            updated_at?: string;
+        };
+        StockRawItemRequest: {
+            name: string;
+            /** @enum {string} */
+            unit: "unit" | "g" | "kg" | "ml" | "l" | "portion" | "pack" | "box";
+            request_id: string;
+        };
+        StockAdjustmentRequest: {
+            /** @enum {string} */
+            mode: "set" | "delta";
+            /** @description Whole-number absolute count for set or signed change for delta. */
+            quantity: number;
+            /** Format: int64 */
+            expected_revision: number;
+            request_id: string;
+            reason?: string;
+        };
+        StockAdjustmentResponse: {
+            item: components["schemas"]["StockItem"];
+            adjustment: components["schemas"]["StockHistoryEntry"];
+        };
+        StockHistoryResponse: {
+            entries: components["schemas"]["StockHistoryEntry"][];
+        };
+        StockHistoryEntry: {
+            id: string;
+            stock_id: string;
+            actor_id: string;
+            before_quantity: number | null;
+            after_quantity: number;
+            reason?: string;
+            /** Format: date-time */
+            created_at: string;
+            /** @enum {string} */
+            mode: "set" | "delta";
+            quantity: number;
+            /** Format: int64 */
+            revision: number;
+            request_id?: string;
+        };
+        StockConflictResponse: {
+            /** @enum {string} */
+            code: "revision_conflict" | "request_conflict";
+            error: string;
+            current?: components["schemas"]["StockItem"];
         };
         MenuTaxonomyCategory: {
             id: string;
