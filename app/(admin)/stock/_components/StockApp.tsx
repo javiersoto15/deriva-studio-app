@@ -18,6 +18,7 @@ import {
   adjustStockItem,
   createRawItem,
   getStockHistory,
+  getStockHistoryPage,
   getStockSnapshot,
   StockRequestError
 } from "../../../../src/stock/client";
@@ -26,6 +27,7 @@ import {
   defaultEditMode,
   filterStockItems,
   formatCount,
+  isMenuLinked,
   nextUncounted,
   parseAmount,
   payloadQuantity,
@@ -34,12 +36,14 @@ import {
   type EditMode,
   type KindFilter
 } from "../../../../src/stock/editor";
+import { findSameDayDepletionIds } from "../../../../src/stock/share";
 import type {
   CreateRawItemPayload,
   StockAdjustmentPayload,
   StockItem,
   StockSnapshot
 } from "../../../../src/stock/types";
+import { StockShare, type StockShareState } from "./StockShare";
 import { formatClock, formatHeaderDate, formatUpdated } from "./format";
 import {
   AdjustEditor,
@@ -70,6 +74,7 @@ const KIND_FILTERS: Array<{ value: KindFilter; label: string }> = [
 const MODE_VERB: Record<EditMode, string> = { set: "fijar total", add: "sumar", subtract: "restar" };
 const SESSION_EXPIRED = "Tu sesión expiró. Vuelve a entrar para continuar.";
 const DESKTOP_QUERY = "(min-width: 1024px)";
+const STOCK_SHARE_TRIGGER_ID = "stock-share-trigger";
 
 function describeLoginError(error: unknown): string {
   const code = typeof error === "object" && error && "code" in error
@@ -124,6 +129,7 @@ export function StockApp() {
   const authRef = useRef<Auth | null>(null);
   const sessionGenerationRef = useRef(0);
   const sessionUidRef = useRef<string | null>(null);
+  const shareRequestGenerationRef = useRef(0);
   const searchRef = useRef<HTMLInputElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const returnFocusRef = useRef<string | null>(null);
@@ -146,6 +152,7 @@ export function StockApp() {
   const [uncountedOnly, setUncountedOnly] = useState(false);
 
   const [panel, setPanel] = useState<Panel | null>(null);
+  const [shareState, setShareState] = useState<StockShareState>({ status: "loading" });
   const [pending, setPending] = useState<PendingMutation | null>(null);
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState("");
@@ -168,12 +175,14 @@ export function StockApp() {
   );
 
   const clearWorkspace = useCallback(() => {
+    shareRequestGenerationRef.current += 1;
     setSnapshot(null);
     setLoadState("idle");
     setLoadError("");
     setLoadedAt(null);
     setStaleSnapshot(false);
     setPanel(null);
+    setShareState({ status: "loading" });
     setPending(null);
     setBusy(false);
     setToast("");
@@ -301,11 +310,105 @@ export function StockApp() {
 
   const closePanel = useCallback(() => {
     if (busy) return;
+    if (panelStateRef.current?.type === "share") {
+      shareRequestGenerationRef.current += 1;
+      setShareState({ status: "loading" });
+    }
     setPanel(null);
     const target = returnFocusRef.current;
     returnFocusRef.current = null;
     if (target) window.requestAnimationFrame(() => document.getElementById(target)?.focus());
   }, [busy]);
+
+  const refreshShareSnapshot = useCallback(async () => {
+    const uid = sessionUidRef.current;
+    if (!uid) return;
+
+    const requestGeneration = ++shareRequestGenerationRef.current;
+    const sessionGeneration = sessionGenerationRef.current;
+    setShareState({ status: "loading" });
+    try {
+      const next = await getStockSnapshot();
+      const readAt = new Date();
+      if (
+        !isCurrentSession(sessionGeneration, uid) ||
+        requestGeneration !== shareRequestGenerationRef.current ||
+        panelStateRef.current?.type !== "share"
+      ) return;
+
+      const depletedIds = await findSameDayDepletionIds(next.items, readAt, getStockHistoryPage);
+      if (
+        !isCurrentSession(sessionGeneration, uid) ||
+        requestGeneration !== shareRequestGenerationRef.current ||
+        panelStateRef.current?.type !== "share"
+      ) return;
+
+      setSnapshot(next);
+      setLoadState("ready");
+      setLoadError("");
+      setLoadedAt(readAt);
+      setStaleSnapshot(false);
+      setShareState({ status: "ready", snapshot: next, readAt, depletedIds, copied: false, copyError: "" });
+    } catch (error) {
+      if (
+        !isCurrentSession(sessionGeneration, uid) ||
+        requestGeneration !== shareRequestGenerationRef.current ||
+        panelStateRef.current?.type !== "share"
+      ) return;
+      if (error instanceof StockRequestError && error.status === 401) {
+        await signOutAndClear(SESSION_EXPIRED);
+        return;
+      }
+      if (error instanceof StockRequestError && error.status === 403) {
+        shareRequestGenerationRef.current += 1;
+        setSnapshot(null);
+        setLoadState("forbidden");
+        setPanel(null);
+        setShareState({ status: "error", message: "Tu cuenta no tiene permiso para gestionar el stock." });
+        return;
+      }
+      const message = describeRequestError(error);
+      setLoadError(message);
+      if (snapshotRef.current) setStaleSnapshot(true);
+      else setLoadState("error");
+      setShareState({ status: "error", message });
+    }
+  }, [isCurrentSession, signOutAndClear]);
+
+  const openShare = useCallback(() => {
+    if (busy || pending !== null || panelStateRef.current !== null || !snapshot) return;
+    returnFocusRef.current = STOCK_SHARE_TRIGGER_ID;
+    setPanel({ type: "share" });
+    setShareState({ status: "loading" });
+    focusPanelTitle();
+    void refreshShareSnapshot();
+  }, [busy, focusPanelTitle, pending, refreshShareSnapshot, snapshot]);
+
+  const copyShareMessage = useCallback(async (message: string) => {
+    const state = shareState;
+    const uid = sessionUidRef.current;
+    if (state.status !== "ready" || !message || !uid) return;
+    const requestGeneration = shareRequestGenerationRef.current;
+    const sessionGeneration = sessionGenerationRef.current;
+    try {
+      await navigator.clipboard.writeText(message);
+      if (
+        !isCurrentSession(sessionGeneration, uid) ||
+        requestGeneration !== shareRequestGenerationRef.current ||
+        panelStateRef.current?.type !== "share"
+      ) return;
+      setShareState((current) => current.status === "ready" ? { ...current, copied: true, copyError: "" } : current);
+    } catch {
+      if (
+        !isCurrentSession(sessionGeneration, uid) ||
+        requestGeneration !== shareRequestGenerationRef.current ||
+        panelStateRef.current?.type !== "share"
+      ) return;
+      setShareState((current) => current.status === "ready"
+        ? { ...current, copied: false, copyError: "No pudimos copiar el mensaje. Puedes seleccionarlo y copiarlo manualmente." }
+        : current);
+    }
+  }, [isCurrentSession, shareState]);
 
   const openAdjust = useCallback(
     (item: StockItem, draft?: Partial<AdjustPanel>) => {
@@ -397,7 +500,7 @@ export function StockApp() {
         } else {
           const count = `${formatCount(item.quantity ?? 0)} ${unitShort(item.unit)}`;
           const menuNote =
-            item.kind === "menu_item" && !visibilityEnabled ? " La carta no cambia." : "";
+            isMenuLinked(item) && !visibilityEnabled ? " La carta no cambia." : "";
           // Abbreviated units ("unid.") already end the sentence.
           const stop = count.endsWith(".") ? "" : ".";
           setToast(`${item.name}: ${item.quantity === 1 ? "queda" : "quedan"} ${count}${stop}${menuNote}`);
@@ -577,7 +680,7 @@ export function StockApp() {
   const trapFocus = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (isDesktop || event.key !== "Tab" || !panelRef.current) return;
     const focusable = Array.from(
-      panelRef.current.querySelectorAll<HTMLElement>("button:not(:disabled), input:not(:disabled), [tabindex='-1'], a[href]")
+      panelRef.current.querySelectorAll<HTMLElement>("button:not(:disabled), input:not(:disabled), [tabindex='-1'], [tabindex='0'], a[href]")
     ).filter((element) => element.offsetParent !== null);
     if (focusable.length === 0) return;
     const first = focusable[0];
@@ -698,6 +801,16 @@ export function StockApp() {
         onClose={closePanel}
       />
     );
+  } else if (panel?.type === "share") {
+    editor = (
+      <StockShare
+        state={shareState}
+        titleId="stock-editor-title"
+        onClose={closePanel}
+        onRefresh={() => void refreshShareSnapshot()}
+        onCopy={(message) => void copyShareMessage(message)}
+      />
+    );
   }
 
   return (
@@ -714,21 +827,32 @@ export function StockApp() {
                 {snapshot && summary.uncounted > 0 && ` · ${summary.uncounted} sin contar`}
               </p>
             </div>
-            {snapshot?.can_manage_raw_items && (
+            <div className="stock-heading__actions">
               <button
+                id={STOCK_SHARE_TRIGGER_ID}
                 type="button"
-                className="stock-button stock-button--outline stock-heading__add"
-                disabled={readOnly || pending !== null}
-                onClick={() => {
-                  returnFocusRef.current = null;
-                  setPanel({ type: "create", name: "", unit: "unit", error: "" });
-                  focusPanelTitle();
-                }}
+                className="stock-button stock-button--outline stock-heading__share"
+                disabled={!snapshot || busy || pending !== null || panel !== null}
+                onClick={openShare}
               >
-                <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1v10M1 6h10" stroke="currentColor" strokeWidth="1.6" /></svg>
-                Añadir insumo
+                Compartir stock
               </button>
-            )}
+              {snapshot?.can_manage_raw_items && (
+                <button
+                  type="button"
+                  className="stock-button stock-button--outline stock-heading__add"
+                  disabled={readOnly || pending !== null || panel?.type === "share"}
+                  onClick={() => {
+                    returnFocusRef.current = null;
+                    setPanel({ type: "create", name: "", unit: "unit", error: "" });
+                    focusPanelTitle();
+                  }}
+                >
+                  <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1v10M1 6h10" stroke="currentColor" strokeWidth="1.6" /></svg>
+                  Añadir insumo
+                </button>
+              )}
+            </div>
           </div>
 
           {snapshot && (
@@ -736,7 +860,7 @@ export function StockApp() {
               <span className="stock-visibility__tag">Carta</span>
               <span>
                 {visibilityEnabled
-                  ? "Visibilidad por stock: activa. Un producto de carta en 0 se oculta de la carta pública; al reponer, vuelve si no está pausado."
+                  ? "Visibilidad por stock: activa. Un producto sin conteo o con stock total en 0 se oculta de la carta pública; al reponer, vuelve si no está pausado."
                   : "Los conteos no ocultan productos. Visibilidad por stock: desactivada."}
               </span>
             </div>
@@ -846,7 +970,7 @@ export function StockApp() {
                         now={now}
                         selected={panel?.type === "adjust" && panel.itemId === item.id}
                         savedText={lastSaved?.id === item.id ? lastSaved.text : null}
-                        disabled={readOnly || (pending !== null && !(pending.type === "adjust" && pending.itemId === item.id))}
+                        disabled={readOnly || panel?.type === "share" || (pending !== null && !(pending.type === "adjust" && pending.itemId === item.id))}
                         onOpen={() => openAdjust(item)}
                       />
                     ))}
@@ -916,11 +1040,12 @@ function StockRow(props: {
   onOpen: () => void;
 }) {
   const { item } = props;
-  const kind = item.kind === "menu_item" ? "Carta" : "Insumo";
+  const menuLinked = isMenuLinked(item);
+  const kind = menuLinked ? "Carta" : "Insumo";
   const updated = props.now ? formatUpdated(item.updated_at, props.now) : null;
-  const paused = item.kind === "menu_item" && item.menu_available === false;
+  const paused = menuLinked && item.menu_available === false;
   const menuState =
-    item.kind === "raw_item" ? "No aplica" : paused ? "Pausado (manual)" : item.menu_available ? "Disponible" : "Vinculado";
+    !menuLinked ? "No aplica" : paused ? "Pausado (manual)" : item.menu_available ? "Disponible" : "Vinculado";
   const unknown = item.quantity === null;
   const unit = unitShort(item.unit);
 

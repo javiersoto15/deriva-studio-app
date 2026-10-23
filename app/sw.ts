@@ -6,7 +6,7 @@
 //
 // Cache strategy (Phase 2A.1):
 //   - Static Next.js assets (_next/static/*) → CacheFirst (filenames are content-hashed).
-//   - Menu data (/menu, /carta, /api/menu*) → StaleWhileRevalidate, 5 min TTL.
+//   - Menu data (/menu, /carta, /api/menu*) → NetworkOnly for availability freshness.
 //   - HTML navigations → NetworkFirst with /offline fallback.
 //   - Google Fonts → CacheFirst.
 //   - Member-private endpoints (/me/*, /api/me/*, /api/staff/*, /api/admin/*) → NetworkOnly.
@@ -24,7 +24,7 @@ import {
   Serwist,
   StaleWhileRevalidate
 } from "serwist";
-import { isStockNetworkOnlyRequest } from "../src/sw/routing";
+import { isFreshMenuRequest, isStockNetworkOnlyRequest } from "../src/sw/routing";
 
 declare global {
   interface WorkerGlobalScope extends SerwistGlobalConfig {
@@ -62,22 +62,12 @@ const runtimeCaching: RuntimeCaching[] = [
       ]
     })
   },
-  // Menu data — short stale-while-revalidate window.
+  // Menu reads stay fresh after stock mutations; offline fallback is owned by
+  // the document navigation strategy below.
   {
     matcher: ({ url, sameOrigin, request }) =>
-      sameOrigin &&
-      (url.pathname === "/menu" ||
-        url.pathname === "/carta" ||
-        url.pathname.startsWith("/menu/") ||
-        url.pathname.startsWith("/carta/") ||
-        url.pathname.startsWith("/api/menu")) &&
-      request.method === "GET",
-    handler: new StaleWhileRevalidate({
-      cacheName: "menu-data",
-      plugins: [
-        new ExpirationPlugin({ maxEntries: 60, maxAgeSeconds: 5 * 60 })
-      ]
-    })
+      sameOrigin && isFreshMenuRequest(url.pathname, request.method),
+    handler: new NetworkOnly()
   },
   // Google Fonts CSS + binaries.
   {

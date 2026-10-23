@@ -5,6 +5,7 @@ import { NextRequest } from "next/server";
 
 import { GET } from "../../app/api/barra-stock/route";
 import { POST as postAdjustment } from "../../app/api/barra-stock/items/[stockId]/adjustments/route";
+import { GET as getHistory } from "../../app/api/barra-stock/items/[stockId]/history/route";
 
 test("stock proxy requires the caller bearer and does not call the backend without it", async () => {
   const originalFetch = globalThis.fetch;
@@ -101,6 +102,46 @@ test("adjustment proxy encodes the confirmed stock id and rejects path input", a
     );
     assert.equal(invalid.status, 400);
     assert.equal(requestedUrl, "http://backend.test/admin/stock/items/menu%3Aespresso/adjustments");
+  } finally {
+    globalThis.fetch = originalFetch;
+    if (originalBase === undefined) delete process.env.DERIVA_BACKEND_PROXY_URL;
+    else process.env.DERIVA_BACKEND_PROXY_URL = originalBase;
+  }
+});
+
+test("history proxy forwards only validated pagination parameters", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalBase = process.env.DERIVA_BACKEND_PROXY_URL;
+  process.env.DERIVA_BACKEND_PROXY_URL = "http://backend.test";
+  let requestedUrl = "";
+  let called = false;
+  globalThis.fetch = async (input) => {
+    called = true;
+    requestedUrl = String(input);
+    return new Response(JSON.stringify({ entries: [], has_more: false, next_before_revision: null }), {
+      status: 200,
+      headers: { "content-type": "application/json" }
+    });
+  };
+  try {
+    const response = await getHistory(
+      new NextRequest("http://localhost/api/barra-stock/items/raw%3Acoffee/history?limit=100&before_revision=12&ignored=secret", {
+        headers: { authorization: "Bearer firebase-token" }
+      }),
+      { params: Promise.resolve({ stockId: "raw:coffee" }) }
+    );
+    assert.equal(response.status, 200);
+    assert.equal(requestedUrl, "http://backend.test/admin/stock/items/raw%3Acoffee/history?limit=100&before_revision=12");
+
+    called = false;
+    const invalid = await getHistory(
+      new NextRequest("http://localhost/api/barra-stock/items/raw%3Acoffee/history?limit=101", {
+        headers: { authorization: "Bearer firebase-token" }
+      }),
+      { params: Promise.resolve({ stockId: "raw:coffee" }) }
+    );
+    assert.equal(invalid.status, 400);
+    assert.equal(called, false);
   } finally {
     globalThis.fetch = originalFetch;
     if (originalBase === undefined) delete process.env.DERIVA_BACKEND_PROXY_URL;

@@ -3,6 +3,8 @@
 import { FormEvent, useId } from "react";
 import {
   formatCount,
+  isMenuLinked,
+  menuZeroWarning,
   parseAmount,
   previewAdjustment,
   RAW_UNIT_GROUPS,
@@ -36,7 +38,9 @@ export type CreatePanel = {
   error: string;
 };
 
-export type Panel = AdjustPanel | CreatePanel;
+export type SharePanel = { type: "share" };
+
+export type Panel = AdjustPanel | CreatePanel | SharePanel;
 
 export type HistoryState =
   | { status: "loading" }
@@ -106,7 +110,8 @@ export function AdjustEditor(props: {
     );
   }
 
-  const kindLabel = item.kind === "menu_item" ? "Producto de carta" : "Insumo";
+  const menuLinked = isMenuLinked(item);
+  const kindLabel = menuLinked ? "Producto de carta" : "Insumo";
   const locked = busy || pending !== null;
   const preview = previewAdjustment(item.quantity, panel.mode, panel.amount);
   const amount = parseAmount(panel.amount);
@@ -121,8 +126,7 @@ export function AdjustEditor(props: {
   } else if (!preview.ok && preview.reason === "zero_delta") {
     validation = "Escribe una cantidad mayor que 0.";
   }
-  const hidesFromMenu =
-    preview.ok && preview.after === 0 && item.kind === "menu_item" && props.visibilityEnabled;
+  const zeroWarning = preview.ok ? menuZeroWarning(item, preview.after, props.visibilityEnabled) : null;
 
   let saveLabel = "Escribe una cantidad";
   if (!preview.ok && preview.reason === "below_zero") saveLabel = "No puede quedar bajo 0";
@@ -157,7 +161,7 @@ export function AdjustEditor(props: {
           <h2 id={props.titleId} tabIndex={-1}>{item.name}</h2>
           <p className={`stock-editor__current${firstCount ? " is-unknown" : ""}`}>
             {firstCount ? "Sin contar · primer conteo" : <>Hay <span className="stock-mono">{countText(item.quantity, item.unit)}</span></>}
-            {item.kind === "menu_item" && item.menu_available === false && " · pausado en carta"}
+            {menuLinked && item.menu_available === false && " · pausado en carta"}
           </p>
         </div>
         <CloseButton onClose={props.onClose} disabled={busy} />
@@ -251,7 +255,7 @@ export function AdjustEditor(props: {
 
           <div id={messageId} aria-live="polite" className="stock-editor__messages">
             {validation && <p className="stock-inline-error">{validation}</p>}
-            {hidesFromMenu && <p className="stock-inline-error">Al guardar 0, {item.name} se ocultará de la carta.</p>}
+            {zeroWarning && <p className="stock-inline-error">{zeroWarning}</p>}
           </div>
 
           <div className="stock-editor__result">

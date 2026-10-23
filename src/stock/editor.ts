@@ -55,6 +55,24 @@ export function formatCount(quantity: number): string {
   return new Intl.NumberFormat("es-CL").format(quantity);
 }
 
+/** A menu item can be represented by its canonical row or linked raw counters. */
+export function isMenuLinked(item: Pick<StockItem, "kind" | "menu_item_id">): boolean {
+  return item.kind === "menu_item" || (typeof item.menu_item_id === "string" && item.menu_item_id.trim().length > 0);
+}
+
+/** Explain the visibility effect of setting a menu-linked count to zero. */
+export function menuZeroWarning(
+  item: Pick<StockItem, "kind" | "menu_item_id" | "name">,
+  nextQuantity: number,
+  visibilityEnabled: boolean
+): string | null {
+  if (!visibilityEnabled || nextQuantity !== 0 || !isMenuLinked(item)) return null;
+  if (item.kind === "raw_item") {
+    return "Este conteo quedará en 0. La carta depende del stock total de las variantes vinculadas.";
+  }
+  return `Al guardar 0, ${item.name} se ocultará de la carta.`;
+}
+
 /** Digits only; anything else (sign, decimal, blank) is not a valid amount. */
 export function parseAmount(text: string): number | null {
   const trimmed = text.trim();
@@ -91,7 +109,7 @@ export function filterStockItems(
 ): StockItem[] {
   const needle = options.search.trim().toLocaleLowerCase("es-CL");
   return items.filter((item) => {
-    if (options.kind !== "all" && item.kind !== options.kind) return false;
+    if (options.kind !== "all" && isMenuLinked(item) !== (options.kind === "menu_item")) return false;
     if (options.uncountedOnly && item.quantity !== null) return false;
     return !needle || item.name.toLocaleLowerCase("es-CL").includes(needle);
   });
@@ -102,7 +120,7 @@ export function countSummary(items: readonly StockItem[]) {
   let raw = 0;
   let uncounted = 0;
   for (const item of items) {
-    if (item.kind === "menu_item") menu += 1;
+    if (isMenuLinked(item)) menu += 1;
     else raw += 1;
     if (item.quantity === null) uncounted += 1;
   }

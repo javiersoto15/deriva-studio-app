@@ -6,12 +6,14 @@ import {
   extractStockItem,
   isAmbiguousStockStatus,
   normalizeHistory,
+  normalizeHistoryPage,
   normalizeStockSnapshot
 } from "./contract";
 import type {
   CreateRawItemPayload,
   StockAdjustmentPayload,
   StockHistoryEntry,
+  StockHistoryPage,
   StockItem,
   StockSnapshot
 } from "./types";
@@ -163,5 +165,26 @@ export function getStockHistory(stockId: string): Promise<StockHistoryEntry[]> {
     `/items/${encodeURIComponent(stockId)}/history`,
     { method: "GET" },
     normalizeHistory
+  );
+}
+
+export function getStockHistoryPage(
+  stockId: string,
+  request: { limit: number; beforeRevision: number }
+): Promise<StockHistoryPage> {
+  if (!Number.isInteger(request.limit) || request.limit < 1 || request.limit > 100) {
+    throw new RangeError("Stock history limit must be between 1 and 100");
+  }
+  if (!Number.isSafeInteger(request.beforeRevision) || request.beforeRevision < 1) {
+    throw new RangeError("Stock history cursor must be a positive safe integer");
+  }
+  const query = new URLSearchParams({
+    limit: String(request.limit),
+    before_revision: String(request.beforeRevision)
+  });
+  return stockFetch(
+    `/items/${encodeURIComponent(stockId)}/history?${query.toString()}`,
+    { method: "GET" },
+    normalizeHistoryPage
   );
 }

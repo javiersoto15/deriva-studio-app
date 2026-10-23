@@ -16,5 +16,32 @@ export async function GET(
       headers: { "Cache-Control": "no-store", "Content-Type": "application/json; charset=utf-8" }
     });
   }
-  return forwardStockRequest(request, `/admin/stock/items/${segment}/history`);
+  const forwarded = new URLSearchParams();
+  for (const [name, min, max] of [["limit", 1, 100], ["before_revision", 1, Number.MAX_SAFE_INTEGER]] as const) {
+    const values = request.nextUrl.searchParams.getAll(name);
+    if (values.length > 1) {
+      return new Response(JSON.stringify({ error: "invalid_history_query", message: "La consulta del historial no es válida." }), {
+        status: 400,
+        headers: { "Cache-Control": "no-store", "Content-Type": "application/json; charset=utf-8" }
+      });
+    }
+    const value = values[0];
+    if (value === undefined) continue;
+    if (!/^\d+$/.test(value)) {
+      return new Response(JSON.stringify({ error: "invalid_history_query", message: "La consulta del historial no es válida." }), {
+        status: 400,
+        headers: { "Cache-Control": "no-store", "Content-Type": "application/json; charset=utf-8" }
+      });
+    }
+    const parsed = Number(value);
+    if (!Number.isSafeInteger(parsed) || parsed < min || parsed > max) {
+      return new Response(JSON.stringify({ error: "invalid_history_query", message: "La consulta del historial no es válida." }), {
+        status: 400,
+        headers: { "Cache-Control": "no-store", "Content-Type": "application/json; charset=utf-8" }
+      });
+    }
+    forwarded.set(name, String(parsed));
+  }
+  const query = forwarded.toString();
+  return forwardStockRequest(request, `/admin/stock/items/${segment}/history${query ? `?${query}` : ""}`);
 }

@@ -4,6 +4,7 @@ import type {
   StockAdjustmentPayload,
   StockApiErrorBody,
   StockHistoryEntry,
+  StockHistoryPage,
   StockItem,
   StockItemKind,
   StockSnapshot
@@ -142,6 +143,26 @@ export function normalizeHistory(value: unknown): StockHistoryEntry[] {
       revision: safeInteger(record.revision, "history revision")
     };
   });
+}
+
+export function normalizeHistoryPage(value: unknown): StockHistoryPage {
+  const record = asRecord(value);
+  if (!record) throw new Error("Stock history page response is not an object");
+  if (typeof record.has_more !== "boolean") throw new Error("Stock history page is missing has_more");
+  const nextBeforeRevision = record.next_before_revision === null
+    ? null
+    : safeInteger(record.next_before_revision, "next_before_revision");
+  if (nextBeforeRevision !== null && nextBeforeRevision < 1) {
+    throw new Error("Stock history page has an invalid next_before_revision");
+  }
+  if (record.has_more !== (nextBeforeRevision !== null)) {
+    throw new Error("Stock history page has inconsistent pagination");
+  }
+  return {
+    entries: normalizeHistory(value),
+    has_more: record.has_more,
+    next_before_revision: nextBeforeRevision
+  };
 }
 
 export function makeRequestId(): string {

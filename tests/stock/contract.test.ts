@@ -6,6 +6,7 @@ import {
   extractStockItem,
   isAmbiguousStockStatus,
   normalizeHistory,
+  normalizeHistoryPage,
   normalizeStockSnapshot,
   validateAdjustmentPayload
 } from "../../src/stock/contract";
@@ -61,6 +62,27 @@ test("extracts the item from the confirmed adjustment envelope", () => {
 test("malformed history cannot become an empty successful panel", () => {
   assert.throws(() => normalizeHistory({ history: [] }), /missing entries/);
   assert.deepEqual(normalizeHistory({ entries: [] }), []);
+});
+
+test("normalizes paged history cursors and rejects inconsistent pagination", () => {
+  const entry = {
+    id: "history-1",
+    stock_id: "raw:coffee",
+    actor_id: "staff",
+    before_quantity: 1,
+    after_quantity: 0,
+    created_at: "2026-10-02T18:00:00.000Z",
+    mode: "set",
+    quantity: 0,
+    revision: 3
+  };
+  assert.deepEqual(normalizeHistoryPage({ entries: [entry], has_more: true, next_before_revision: 3 }), {
+    entries: [{ ...entry, reason: undefined }],
+    has_more: true,
+    next_before_revision: 3
+  });
+  assert.throws(() => normalizeHistoryPage({ entries: [], has_more: true, next_before_revision: null }), /pagination/);
+  assert.throws(() => normalizeHistoryPage({ entries: [], has_more: false, next_before_revision: 1 }), /pagination/);
 });
 
 test("adjustment payload keeps an explicit request id for safe retries", () => {

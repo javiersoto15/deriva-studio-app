@@ -198,6 +198,24 @@
   flex: 0 0 auto;
 }
 
+.stock-heading__actions {
+  display: flex;
+  flex: 0 1 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  max-width: 100%;
+}
+
+.stock-heading__actions .stock-button {
+  min-height: 44px;
+  max-width: 100%;
+  padding-right: 14px;
+  padding-left: 14px;
+  font-size: 13px;
+}
+
 /* ---------- Status strips ---------- */
 
 .stock-visibility {
@@ -1326,4 +1344,67 @@ main.stock-screen-message {
   background: var(--stock-espresso);
   color: var(--color-beige-50, #faf5ec);
   font: 400 13px/1.4 var(--font-tracked), sans-serif;
+}
+
+.stock-share {
+  min-width: 0;
+}
+
+.stock-share__meta {
+  margin: 0;
+  color: var(--stock-muted);
+  font: 400 12px/1.4 var(--font-mono), monospace;
+}
+
+.stock-share__preview {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  max-height: min(56svh, 520px);
+  overflow: auto;
+  margin: 0;
+  padding: 14px;
+  border: 1px solid var(--stock-line);
+  background: var(--stock-field);
+  color: var(--stock-ink);
+  font: 400 13px/1.65 var(--font-tracked), "Poppins", sans-serif;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  user-select: text;
+}
+
+.stock-share__state,
+.stock-share__empty {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 14px;
+  border-left: 2px solid var(--stock-brown);
+  background: var(--stock-inset);
+  color: var(--stock-ink);
+  font: 400 14px/1.45 var(--font-tracked), sans-serif;
+}
+
+.stock-share__state--error {
+  color: var(--stock-brown);
+}
+
+.stock-share__copy-error {
+  margin: 0;
+  padding: 10px 12px;
+  border-left: 2px solid var(--stock-brown);
+  background: var(--stock-inset);
+  color: var(--stock-brown);
+  font: 400 13px/1.45 var(--font-tracked), sans-serif;
+}
+
+.stock-share__copied {
+  margin: 0;
+  color: var(--stock-espresso);
+  font: 500 13px/1.4 var(--font-tracked), sans-serif;
+}
+
+.stock-share__whatsapp {
+  text-decoration: none;
 }

@@ -4,6 +4,11 @@ export type StockItem = components["schemas"]["StockItem"];
 export type StockItemKind = StockItem["kind"];
 export type StockSnapshot = components["schemas"]["StockListResponse"];
 export type StockHistoryEntry = components["schemas"]["StockHistoryEntry"];
+export type StockHistoryPage = {
+  entries: StockHistoryEntry[];
+  has_more: boolean;
+  next_before_revision: number | null;
+};
 export type StockAdjustmentPayload = components["schemas"]["StockAdjustmentRequest"];
 export type StockAdjustmentMode = StockAdjustmentPayload["mode"];
 export type CreateRawItemPayload = components["schemas"]["StockRawItemRequest"];

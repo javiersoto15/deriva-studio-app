@@ -7,6 +7,8 @@ import {
   defaultEditMode,
   filterStockItems,
   formatCount,
+  isMenuLinked,
+  menuZeroWarning,
   nextUncounted,
   parseAmount,
   payloadQuantity,
@@ -58,6 +60,47 @@ test("filters combine kind, uncounted and accent-insensitive-case search", () =>
   assert.deepEqual(filterStockItems(items, { kind: "raw_item", search: "", uncountedOnly: false }).map((i) => i.id), ["raw:leche"]);
   assert.deepEqual(filterStockItems(items, { kind: "all", search: "LIMÓN", uncountedOnly: false }).map((i) => i.id), ["menu:pie"]);
   assert.deepEqual(countSummary(items), { total: 3, menu: 2, raw: 1, uncounted: 2 });
+});
+
+test("Carta filters and counts include explicitly linked raw counters only", () => {
+  const canonical = item("menu:pie", 2, "menu_item", "Pie");
+  const linkedFrambuesa = {
+    ...item("raw:palmera-frambuesa", 6, "raw_item", "Palmera frambuesa"),
+    menu_item_id: "menu:palmera",
+    menu_available: true
+  } satisfies StockItem;
+  const linkedLucuma = {
+    ...item("raw:palmera-lucuma", 3, "raw_item", "Palmera lúcuma"),
+    menu_item_id: "menu:palmera",
+    menu_available: true
+  } satisfies StockItem;
+  const unlinked = item("raw:leche", null, "raw_item", "Leche");
+  const items = [canonical, linkedFrambuesa, linkedLucuma, unlinked];
+
+  assert.deepEqual(filterStockItems(items, { kind: "menu_item", search: "", uncountedOnly: false }).map((entry) => entry.id), [
+    "menu:pie",
+    "raw:palmera-frambuesa",
+    "raw:palmera-lucuma"
+  ]);
+  assert.deepEqual(filterStockItems(items, { kind: "raw_item", search: "", uncountedOnly: false }).map((entry) => entry.id), ["raw:leche"]);
+  assert.deepEqual(countSummary(items), { total: 4, menu: 3, raw: 1, uncounted: 1 });
+  assert.equal(isMenuLinked(canonical), true);
+  assert.equal(isMenuLinked(linkedFrambuesa), true);
+  assert.equal(isMenuLinked(unlinked), false);
+});
+
+test("zero warnings distinguish one linked variant from a canonical menu counter", () => {
+  const canonical = item("menu:palmera", 5, "menu_item", "Palmera");
+  const linkedVariant = {
+    ...item("raw:palmera-frambuesa", 1, "raw_item", "Palmera frambuesa"),
+    menu_item_id: "menu:palmera"
+  } satisfies StockItem;
+  const unlinked = item("raw:leche", 1, "raw_item", "Leche");
+
+  assert.equal(menuZeroWarning(linkedVariant, 0, true), "Este conteo quedará en 0. La carta depende del stock total de las variantes vinculadas.");
+  assert.equal(menuZeroWarning(canonical, 0, true), "Al guardar 0, Palmera se ocultará de la carta.");
+  assert.equal(menuZeroWarning(unlinked, 0, true), null);
+  assert.equal(menuZeroWarning(linkedVariant, 0, false), null);
 });
 
 test("next uncounted follows the visible order and wraps", () => {
