@@ -714,3 +714,67 @@ The final confirmation page stated **`Your email has been sent`** and **`We'll m
 - **Propose a bounded reallocation within the same CLP 9,800/day ceiling** if Maps is stable in at least five of seven samples while Search share remains below 20% and budget loss remains above 70%. The first candidate is Performance Max CLP 5,300/day and Search CLP 4,500/day; it requires fresh founder approval before implementation.
 - **Do not solve weak visibility by broadening indiscriminately.** If CTR falls below 3%, CPC rises above CLP 100 or irrelevant search terms grow, clean query quality before adding budget.
 - **Escalate measurement separately** if Directions remains zero and Store visits remains `Needs attention`; campaign allocation should not be optimized against a broken or materially delayed outcome signal.
+
+## 2026-09-05 - September 4 performance readout
+
+Follow-up diagnostic clarification: Opening the Store visits `Needs attention` tooltip revealed a recommendation to replace the default conversion value of 1 with a realistic store-visit value. Google says Store visits recorded conversions within the last seven days, most recently September 1 at 8:00 AM. This warning is not evidence of broken tracking. Local actions - Directions is Active and reports its most recent conversion on September 3 at 8:00 AM. Business profile - Directions is also Active. September 4 zeros remain as reported; do not interpret them or the value recommendation as proof of a Directions failure.
+
+Read live Google Ads with Yesterday = September 4, 2026, account time zone GMT-04 Chile Time. No campaign settings changed; reporting columns were expanded for impression share.
+
+| Campaign | Impressions | Clicks | CTR | Cost CLP | Average CPC CLP |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Performance Max | 3,964 | 144 | 3.63% | 7,242 | 50.29 |
+| Consolidated Search | 2,629 | 102 | 3.88% | 4,597 | 45.07 |
+| Menu Search (paused) | 0 | 0 | — | 0 | — |
+| Account total | 6,593 | 246 | 3.73% | 11,839 | 48.13 |
+
+Versus the September 3 recorded baseline, consolidated Search impressions rose 12.59%, clicks 27.50%, cost 17.69%, and CTR 0.45 percentage points. CPC calculated from cost/clicks fell 7.70%. However, Search impression share fell from 16.13% to 15.38%; top IS fell from 11.29% to below 10%; absolute-top IS remained below 10%. Lost IS was 0.00% rank and 84.62% budget. Higher absolute delivery therefore did not improve the proportion of eligible searches covered.
+
+Account impressions fell 26.20%, clicks rose 23.00%, and cost fell 21.44%. September 3 included the Menu campaign before its pause, so this is not a stable like-for-like configuration comparison. Current budgets remain PMax 6,000/day and Search 3,800/day; Menu is paused. The 9,800/day sum is an average daily budget, not a hard daily spend cap: September 4 actual cost was 11,839. Monthly compliance requires month-to-date spend and budget-history reconciliation; the payment threshold shown in Billing is not a spending cap.
+
+All conversions table shows Local actions - Directions 0.00 (Active), Store visits 0.00 (Needs attention). Goals summary shows phone-call goal assigned to 0 of 3 campaigns. Zero reported outcomes do not prove zero actual cafe visits. Conversion reporting may update later.
+
+The overview keyword card attributes 11 clicks, 13.10% CTR and CLP443 to phrase keyword `cafetería en providencia`; phrase-match reporting does not prove all eleven clicks came from that exact query. Account search terms include local cafe and specialty-coffee intent, but also competitor names and `cafe con pierna providencia` / `cafe con piernas cerca cerca de mi`. Quantify their spend before proposing exclusions.
+
+Google Ads Quick help now lists the submitted human-review case as **In progress**, last updated September 4 at 2:34 PM. No case reference or approval decision was visible in that list. Google also warns that two-step verification is required starting September 7; an administrator must address this before it blocks monitoring access.
+
+Maintain the September 11 decision checkpoint; prioritize outcome-measurement diagnosis and query-spend quality review. Do not infer improved first-place visibility from higher click volume. This readout covers historical September 4 performance; a fresh Maps placement sample or five-query preview was not collected in this run.
+
+## 2026-09-09 - Five-day performance and matched-weekday comparison
+
+Access restored after the founder enabled two-step verification. Read-only live reporting compares September 4–8 against August 28–September 1 (Friday–Tuesday in each period). Impressions measure ad displays, not unique people. Historical goals changed, so use the same Local actions - Directions action from All conversions for the outcome comparison, rather than comparing campaign Conversions columns across configurations.
+
+| Metric | Aug 28–Sep 1 | Sep 4–8 | Change |
+| --- | ---: | ---: | ---: |
+| Impressions | 45,569 | 38,154 | -16.27% |
+| Clicks | 1,524 | 989 | -35.10% |
+| CTR | 3.34% | 2.59% | -0.75 percentage points |
+| Cost CLP | 78,861 | 50,018 | -36.57% |
+| Local actions - Directions | 359 | 294 | -18.11% |
+| Cost per direction CLP | 219.67 | 170.13 | -22.55% |
+| Store visits | 17 | 0 | Latest window may still backfill |
+| Business profile - Directions (separate action) | 6 | 1 | Not deduplicated with local actions |
+
+September 4–8 PMax: 29,481 impressions, 616 clicks, 2.09% CTR, CLP31,682, 219 primary conversions, all Local actions - Directions, CLP144.67 per direction. Search: 8,673 impressions, 373 clicks, 4.30% CTR, CLP18,336, 75 primary conversions, all Local actions - Directions, CLP244.48 per direction. Search IS/top IS/absolute-top IS each below 10%, rank loss 0%, budget loss above 90%. PMax Search IS below 10%, rank loss 57.46%, budget loss 35.98%; these apply to Search inventory only. Current budgets remain PMax 6,000/day, Search 3,800/day, Menu paused.
+
+All conversion actions for Sep 4–8 also report 1,156 Other engagements, 23 Website visits, 41 Menu views and 6 Clicks to call. These are action counts, not unique visitors, confirmed store arrivals or additive unique customers. Earlier zero-conversion snapshots have backfilled; do not treat them as final performance.
+
+September 8 alone: PMax 11,952 impressions, 77 clicks, CLP5,983; Search 2,571 impressions, 100 clicks, 3.89% CTR, CLP4,449, Search IS14.29%, top IS11.11%, budget loss85.71%, rank loss0%. The large PMax display count does not establish increased Maps or Search ranking.
+
+Store visits now shows Misconfigured. Its tooltip says conversions have not been recorded in the last seven days, last recorded Sep 1 at 8:00 AM; it still surfaces the default-value recommendation. This is a material change from Sep 5's Needs attention status and warrants checking Store Visits eligibility/diagnostics with Google; the tooltip alone does not establish the root cause. Local actions - Directions remains Active and records 294 actions in the latest window.
+
+A fresh Sep 9 Maps search for `cafetería en providencia` returned Deriva Studio as the first visible result, explicitly Sponsored (4.6 stars, 32 reviews, Magnere 1570). This desktop signed-in sample establishes paid presence at that moment, not universal or organic first place.
+
+Recommendation: preserve PMax while it supplies approximately 74.5% of the direction actions at lower cost per action than Search. Prioritize Search term spend/conversion audit before exclusions, narrower allocation or bid-strategy testing. Do not implement the previously proposed PMax-to-Search shift solely to improve IS. Evaluate the September 11 checkpoint with mature outcomes; separately investigate Store Visits. No campaign or profile settings changed. Policy appeal status and month-to-date spend were not refreshed in this run.
+
+## 2026-09-09 - Authorized paced recovery and SEO indexing submission
+
+Owner requested implementation with backup and approved lowering September's total to preserve the CLP300,000 media ceiling. A native September1–9 campaign CSV was saved before changes; account cost CLP96,480, followed by later pre-save live cost CLP96,498 as serving continued. Backup and detailed rollback are in workspace `09_marketing/google_ads_recovery_2026-09-09/` (a sibling of `10_webapp`). This is a campaign-level export and historical settings log, not a full restorable account backup.
+
+Saved and read back around 13:56–13:57 Chile: consolidated Search reduced 3,800→2,100/day first; PMax increased 6,000→6,900/day second; active total9,000/day; Menu stays paused with its stored3,091 budget unchanged. No bids, keywords, assets, schedules, radius, presence setting or conversion goals changed. September pacing arithmetic: 96,498 +9,000×22 days including edit day =294,498 before corrections. Reconcile subsequent platform costs; this is not a tax-inclusive cash charge cap.
+
+September9 is transitional; initial full-day test September10–23, allowing reporting lag and holiday/closure confounding. This is not a constant-total experiment: total fell8.2%, PMax rose15%. Wider daily baseline and full query export remain pending. Do not claim increased reach, visits or sales yet. Old September11 PMax-to-Search proposals are superseded. Existing daily monitor remains PAUSED pending owner approval to update/resume.
+
+Store visits Diagnostics separately says Good/setup active with visit-value recommendation, despite the action summary Misconfigured/no recent conversions. No confirmed tag or eligibility fault was exposed; directions continue recording. Do not change conversion value simply to clear the label.
+
+Search Console verified Aug31–Sep6 versus Aug24–30 organic Web clicks28vs26, impressions390vs247, CTR7.2%vs10.5%, position5.3vs4.1. Broad query `deriva` explains97of143 additional impressions. This does not establish a site-wide organic-volume decline, nor measure Maps traffic. Direct `/menu-ejecutivo` inspection found Discovered-currentlynotindexed, lastcrawlN/A. Google live test Sep9 14:04 Chile: available/canbeindexed. Requested indexing and verified confirmation that URL entered priority crawl queue. Indexing itself remains pending. Live pageHTTP200, index/follow, selfcanonical, today's edition present; no website code or deployment was changed.
