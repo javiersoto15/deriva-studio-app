@@ -1102,6 +1102,20 @@
   flex-direction: column;
   gap: 5px;
   padding: 14px 2px 0;
+  min-width: 0;
+}
+.autorCardAuthor {
+  display: block;
+  max-width: 100%;
+  min-width: 0;
+  color: var(--ink-muted);
+  font-family: var(--f-tracked);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 .autorCardMeta {
   font-family: var(--f-mono);
@@ -1827,4 +1841,251 @@
   font-size: 12px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
+}
+
+/* ── Recomendados de la barra (first-visitor photo grid, Paper alt B) ───
+   Every card is a photo card. Mobile 2×2 → larger 2×2 at 600px → 4-up at 820px.
+   The exception status always sits above the price, so prices line up across a
+   row whether or not a card has a status. */
+.itemAnchor {
+  scroll-margin-top: var(--section-offset, 120px);
+}
+.startHere {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 32px 20px 0;
+}
+.startHead {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.startHeadMain {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.startKicker {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.startTitle {
+  font-family: var(--f-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 1.05;
+  margin: 0;
+  color: var(--ink);
+}
+.startLede {
+  font-family: var(--f-display);
+  font-style: italic;
+  font-size: 17px;
+  line-height: 1.3;
+  color: var(--ink-muted);
+  margin: 0;
+}
+.startList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px 14px;
+}
+.startItem {
+  min-width: 0;
+}
+.startRoute {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 100%;
+  min-height: 44px;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 2px;
+}
+.startRoute:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+.startPhoto {
+  display: block;
+  width: 100%;
+  aspect-ratio: 21 / 20;
+  margin-bottom: 6px;
+  background: var(--panel) center / cover no-repeat;
+}
+.startIntent {
+  font-family: var(--f-tracked);
+  font-weight: 600;
+  font-size: 10px;
+  line-height: 1.4;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  overflow-wrap: anywhere;
+}
+.startName {
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: 21px;
+  line-height: 1.1;
+  color: var(--ink);
+}
+.startReason {
+  font-family: var(--f-display);
+  font-style: italic;
+  font-size: 15px;
+  line-height: 1.27;
+  color: var(--ink-muted);
+  flex-grow: 1;
+}
+.startMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 4px;
+}
+.startStatus {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--ink-muted);
+}
+.startPrice {
+  font-family: var(--f-mono);
+  font-size: 13px;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.startRoute:hover .startName {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+.startRouteOff .startPhoto {
+  opacity: 0.4;
+}
+.startRouteOff .startName,
+.startRouteOff .startReason,
+.startRouteOff .startPrice {
+  color: var(--ink-faint);
+}
+.startRouteOff .startStatus {
+  color: var(--ink);
+}
+.startFoot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 0 20px;
+}
+.startLive {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--ink-muted);
+}
+.startToMenu {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-family: var(--f-tracked);
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.startToMenu:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 420px) {
+  .startLive {
+    display: none;
+  }
+  .startFoot {
+    justify-content: flex-end;
+  }
+}
+
+/* larger 2×2 — tablet */
+@media (min-width: 600px) {
+  .startHere {
+    gap: 24px;
+    padding: 44px 24px 0;
+  }
+  .startHead {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    border-bottom: 1px solid var(--hairline);
+    padding-bottom: 24px;
+  }
+  .startTitle {
+    font-size: 48px;
+  }
+  .startLede {
+    text-align: right;
+    padding-bottom: 6px;
+  }
+  .startList {
+    gap: 36px 24px;
+  }
+  .startPhoto {
+    aspect-ratio: 5 / 4;
+  }
+  .startName {
+    font-size: 26px;
+  }
+  .startReason {
+    font-size: 17px;
+  }
+  .startMeta {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4px 12px;
+    padding-top: 8px;
+    border-top: 1px solid var(--hairline);
+  }
+  .startStatus {
+    white-space: nowrap;
+  }
+  .startPrice {
+    margin-left: auto;
+  }
+}
+
+/* 4-up — desktop */
+@media (min-width: 820px) {
+  .startHere {
+    padding: 48px 48px 0;
+  }
+  .startTitle {
+    font-size: 56px;
+  }
+  .startLede {
+    font-size: 20px;
+  }
+  .startList {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .startPhoto {
+    aspect-ratio: 4 / 5;
+  }
 }

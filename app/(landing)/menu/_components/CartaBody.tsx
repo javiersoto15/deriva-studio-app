@@ -31,6 +31,13 @@ import {
   type MenuSectionX
 } from "./menu-fields";
 import { offerCopy } from "./offer-copy";
+import { AuthorByline } from "./author-byline";
+import {
+  itemAnchorId,
+  resolveStartHere,
+  START_HERE_COPY,
+  type ResolvedStartHereRoute
+} from "./start-here";
 import {
   clp as formatClp,
   commonComponents,
@@ -103,7 +110,7 @@ function ItemRow({ item, showPrices }: { item: MenuItemX; showPrices: boolean })
   const hasOrigins = showPrices && pricesPerOrigin(item.origin_options);
 
   return (
-    <div className={hasOrigins ? styles.rowBlock : ""}>
+    <div id={itemAnchorId(item.id)} className={`${styles.itemAnchor} ${hasOrigins ? styles.rowBlock : ""}`}>
       <div
         className={`${styles.row} ${item.available === false ? styles.rowUnavailable : ""} ${
           hasOrigins ? styles.rowNoRule : ""
@@ -133,7 +140,7 @@ function ItemRow({ item, showPrices }: { item: MenuItemX; showPrices: boolean })
 function HighlightCard({ item, showPrices }: { item: MenuItemX; showPrices: boolean }) {
   const photo = itemPhoto(item);
   return (
-    <div className={styles.highlight}>
+    <div id={itemAnchorId(item.id)} className={`${styles.itemAnchor} ${styles.highlight}`}>
       <div className={styles.highlightPhoto} style={photo ? { backgroundImage: `url(${photo})` } : undefined} />
       <div className={styles.highlightBody}>
         <div className={styles.rowMain}>
@@ -687,7 +694,15 @@ function Section({
 }
 
 // ── Carta de autor spotlight ────────────────────────────────────────────
-function AutorSpotlight({ items, showPrices }: { items: MenuItemX[]; showPrices: boolean }) {
+function AutorSpotlight({
+  items,
+  showPrices,
+  locale
+}: {
+  items: MenuItemX[];
+  showPrices: boolean;
+  locale: Locale;
+}) {
   const railRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef(0);
   const [active, setActive] = useState(0);
@@ -720,7 +735,7 @@ function AutorSpotlight({ items, showPrices }: { items: MenuItemX[]; showPrices:
         {items.map((item) => {
           const photo = itemPhoto(item);
           return (
-            <article key={item.id} className={styles.autorCard}>
+            <article key={item.id} id={itemAnchorId(item.id)} className={`${styles.itemAnchor} ${styles.autorCard}`}>
               <div
                 className={styles.autorCardPhoto}
                 style={photo ? { backgroundImage: `url(${photo})` } : undefined}
@@ -731,6 +746,11 @@ function AutorSpotlight({ items, showPrices }: { items: MenuItemX[]; showPrices:
                 </div>
               </div>
               <div className={styles.autorCardBody}>
+                <AuthorByline
+                  author={item.author}
+                  locale={locale}
+                  className={styles.autorCardAuthor}
+                />
                 {item.meta ? <span className={styles.autorCardMeta}>{item.meta}</span> : null}
                 {item.description ? <span className={styles.autorCardDesc}>{item.description}</span> : null}
               </div>
@@ -752,6 +772,86 @@ function AutorSpotlight({ items, showPrices }: { items: MenuItemX[]; showPrices:
         </span>
       </div>
     </div>
+  );
+}
+
+// ── Recomendados de la barra ────────────────────────────────────────────
+// First-visitor photo grid (Paper alt B). Every card is a plain link to the
+// item's anchor in the carta below — no cart, no modal. Every card has a photo
+// (start-here.ts drops routes without one), and a status line appears only for
+// exceptions. Renders nothing until the backend sends `start_here`.
+function StartHere({
+  routes,
+  locale,
+  showPrices,
+  menuHref
+}: {
+  routes: ResolvedStartHereRoute[];
+  locale: Locale;
+  showPrices: boolean;
+  menuHref: string;
+}) {
+  if (!routes.length) return null;
+  const copy = START_HERE_COPY[locale];
+
+  return (
+    <section className={styles.startHere} aria-labelledby="start-here-title">
+      <div className={styles.startHead}>
+        <div className={styles.startHeadMain}>
+          <span className={styles.startKicker}>{copy.kicker}</span>
+          <h2 id="start-here-title" className={styles.startTitle}>
+            {copy.title}
+          </h2>
+        </div>
+        <p className={styles.startLede}>{copy.lede}</p>
+      </div>
+      <ul className={styles.startList}>
+        {routes.map((route) => {
+          const unavailable = route.status === "unavailable";
+          const label = unavailable ? route.statusLabel ?? copy.unavailable : route.statusLabel;
+          return (
+            <li key={route.id} className={styles.startItem}>
+              <a
+                href={route.href}
+                className={`${styles.startRoute} ${unavailable ? styles.startRouteOff : ""}`}
+              >
+                <span
+                  className={styles.startPhoto}
+                  style={{ backgroundImage: `url(${route.photo})` }}
+                  aria-hidden="true"
+                />
+                <span className={styles.startIntent}>{route.intentLabel}</span>
+                <span className={styles.startName}>{route.item.name}</span>
+                <span className={styles.startReason}>{route.reason}</span>
+                <span className={styles.startMeta}>
+                  {label ? (
+                    <span className={styles.startStatus}>
+                      {route.status === "later" ? <span aria-hidden="true">○ </span> : null}
+                      {label}
+                    </span>
+                  ) : null}
+                  {showPrices ? (
+                    <span className={styles.startPrice}>
+                      {priceText(route.item)} <span aria-hidden="true">→</span>
+                    </span>
+                  ) : (
+                    <span className={styles.startPrice} aria-hidden="true">
+                      →
+                    </span>
+                  )}
+                </span>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+      <div className={styles.startFoot}>
+        <span className={styles.startLive}>{copy.live}</span>
+        <a href={menuHref} className={styles.startToMenu}>
+          {copy.toMenu} <span aria-hidden="true">↓</span>
+        </a>
+      </div>
+    </section>
   );
 }
 
@@ -841,6 +941,8 @@ export function CartaBody({
       : s
   );
 
+  const startRoutes = resolveStartHere(menu);
+
   const heroItem = autorItems[0];
   const heroPhoto = heroItem ? itemPhoto(heroItem) : undefined;
 
@@ -859,7 +961,7 @@ export function CartaBody({
       <div className={styles.masthead}>
         <div className={styles.editionRow}>
           <span className={styles.edition}>
-            {menu.name === "Carta Deriva Coffee Studio" ? "№ 29 · Otoño" : menu.season}
+            {menu.season}
           </span>
           <div className={styles.controls}>
             <div className={styles.langGroup} role="group" aria-label="Idioma">
@@ -914,6 +1016,13 @@ export function CartaBody({
         </div>
       </div>
 
+      <StartHere
+        routes={startRoutes}
+        locale={locale}
+        showPrices={showPrices}
+        menuHref={`#sec-${sections[0]?.id ?? ""}`}
+      />
+
       <nav className={styles.chipNav} aria-label="Secciones" ref={chipNavRef}>
         {sections.map((s) => (
           <a
@@ -929,7 +1038,7 @@ export function CartaBody({
         ))}
       </nav>
 
-      <AutorSpotlight items={autorItems} showPrices={showPrices} />
+      <AutorSpotlight items={autorItems} showPrices={showPrices} locale={locale} />
 
       {renderedSections.map((section) => (
         <Section key={section.id} section={section} showPrices={showPrices} locale={locale} />

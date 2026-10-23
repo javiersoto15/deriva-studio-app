@@ -1,0 +1,194 @@
+{
+  "locale": "es-CL",
+  "name": "Carta Deriva Coffee Studio",
+  "season": "Invierno 2026",
+  "current_schedule": "weekend",
+  "closed_today": false,
+  "sections": [
+    {
+      "id": "cafeteria",
+      "numeral": "01",
+      "title": "Cafetería",
+      "emphasis": "hero",
+      "lede": "Espresso, filtrados y bebidas con café. Grano de especialidad, tostado para mesa.",
+      "subgroups": [
+        {
+          "id": "espresso",
+          "label": "Barra de espresso",
+          "addons": {
+            "label": "+ Syrups",
+            "hint": "Se agregan a cortado, flat white, cappuccino, latte o mocha.",
+            "chips": [
+              "Avellana",
+              "Avellana sin azúcar",
+              "Caramelo",
+              "Caramelo sin azúcar",
+              "Chocolate",
+              "Chocolate blanco",
+              "Lavanda",
+              "Mantequilla de maní",
+              "Mora",
+              "Tiramisú",
+              "Vainilla",
+              "Vainilla sin azúcar"
+            ]
+          },
+          "items": [
+            {
+              "id": "espresso",
+              "name": "Espresso",
+              "description": "Espresso de la casa, calibrado a diario para una taza corta con dulzor de caramelo, cacao y final limpio. Disponible simple o doble; el doble tiene recargo.",
+              "meta": "Simple · doble con recargo",
+              "price_clp": 2000,
+              "tasting_note": "Notas: panela, almendra tostada y final corto de cacao. Origen rotativo, pregunta al barista.",
+              "available": true,
+              "tags": [
+                "Simple · doble con recargo"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "cafes-autor",
+          "label": "Café de autor",
+          "items": [
+            {
+              "id": "decaf-filter",
+              "name": "Espresso Tropical",
+              "description": "Syrup casero de maracuyá con semillas, tónica fría y doble espresso Etiopía. Fresco, cítrico y cafetero.",
+              "image_url": "https://media.derivastudio.cl/menu/autor-espresso-tropical.jpg",
+              "meta": "Café de autor",
+              "price_clp": 5190,
+              "available": true,
+              "tags": [
+                "Café de autor"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "desayunos-weekday",
+      "numeral": "02",
+      "title": "Desayunos.",
+      "emphasis": "primary",
+      "lede": "Los desayunos incluyen café simple y jugo natural. Cafés con leche u otras preparaciones de la barra tienen cargo adicional. El Brunch reúne la línea completa en porciones para compartir.",
+      "items": [
+        {
+          "id": "brunch",
+          "name": "Brunch Deriva Studio",
+          "description": "Brunch abundante para una persona que reúne las tres líneas de desayuno: huevos a elección con tocino crocante, tostadas de masa madre, yogurt con granola y fruta de estación, y french toast. Incluye café simple y jugo natural; cafés con leche u otras preparaciones de la barra tienen cargo adicional.",
+          "meta": "Full size · 1 pax",
+          "price_clp": 17300,
+          "signature": true,
+          "available": true,
+          "tags": [
+            "Full size · 1 pax",
+            "signature"
+          ],
+          "allergens": [
+            "gluten",
+            "lacteos",
+            "huevo"
+          ],
+          "image_url": "https://media.derivastudio.cl/menu/item-brunch.jpg"
+        }
+      ]
+    },
+    {
+      "id": "onces",
+      "numeral": "07",
+      "title": "Onces.",
+      "emphasis": "primary",
+      "lede": "Tres formatos pensados para la tarde, con café simple incluido y sin jugo. Cafés con leche u otras preparaciones de la barra tienen cargo adicional. Once Deriva combina focaccia y dulce; Como en Casa, dos tostadas con agregados libres; Pochado Sunset lleva la base de huevos pochados de la casa.",
+      "items": [
+        {
+          "id": "once-deriva",
+          "name": "Once Deriva",
+          "description": "Café simple del día, focaccia a elección de la carta y un dulce del mostrador. Cafés con leche u otras preparaciones de la barra tienen cargo adicional.",
+          "price_clp": 12990,
+          "signature": true,
+          "available": true,
+          "tags": [
+            "signature"
+          ],
+          "allergens": [
+            "gluten",
+            "lacteos"
+          ],
+          "image_url": "https://media.derivastudio.cl/menu/item-once-deriva.jpg"
+        }
+      ]
+    },
+    {
+      "id": "pasteleria",
+      "numeral": "08",
+      "title": "Pastelería y dulces",
+      "emphasis": "utility",
+      "lede": "Selección de pastelería artesanal de proveedor. Consulta con el equipo qué dulces hay disponibles hoy: la vitrina rota a diario y no siempre están todos.",
+      "subgroups": [
+        {
+          "id": "pies-tortas",
+          "label": "Pies, tortas y kuchen",
+          "items": [
+            {
+              "id": "pie-frambuesa",
+              "name": "Pie de Frambuesa",
+              "description": "Frambuesas de temporada sobre masa quebrada, con dulzor preciso y final ácido.",
+              "image_url": "https://media.derivastudio.cl/menu/item-pie-limon.jpg",
+              "highlighted": true,
+              "meta": "Precio fijo",
+              "price_clp": 3200,
+              "available": true,
+              "tags": [
+                "Precio fijo"
+              ],
+              "allergens": [
+                "gluten",
+                "lacteos",
+                "huevo"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "start_here": [
+    {
+      "id": "primer-cafe",
+      "intent_label": "Tu primer café de autor",
+      "reason": "Frío y frutal: la puerta más amable a la barra.",
+      "item_id": "decaf-filter",
+      "section_id": "cafeteria",
+      "status": "available"
+    },
+    {
+      "id": "quedarte",
+      "intent_label": "Para quedarte la mañana",
+      "reason": "Para una mesa larga y una mañana sin reloj.",
+      "item_id": "brunch",
+      "section_id": "desayunos-weekday",
+      "status": "available",
+      "status_label": "Hasta las 12:00"
+    },
+    {
+      "id": "dulce",
+      "intent_label": "Algo dulce para la mesa",
+      "reason": "El dulce que acompaña cualquier taza de la carta.",
+      "item_id": "pie-frambuesa",
+      "section_id": "pasteleria",
+      "status": "available"
+    },
+    {
+      "id": "tarde",
+      "intent_label": "Al caer la tarde",
+      "reason": "La once chilena, a nuestra manera.",
+      "item_id": "once-deriva",
+      "section_id": "onces",
+      "status": "later",
+      "status_label": "Desde las 17:00"
+    }
+  ]
+}

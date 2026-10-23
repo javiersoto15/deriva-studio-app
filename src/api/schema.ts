@@ -5140,6 +5140,8 @@ export interface components {
         };
         PublicMenuItem: {
             id: string;
+            /** @description Optional recipe author or signature drink creator name, returned the same way for every locale. */
+            author?: string;
             name: string;
             description: string;
             /** Format: uri */
@@ -5175,6 +5177,8 @@ export interface components {
             section_label?: string;
             /** @description Legacy/display section value kept for backward compatibility. */
             section: string;
+            /** @description Optional locale-independent recipe author or signature drink creator name. */
+            author?: string;
             name: string;
             description?: string;
             price_clp: number;
@@ -5244,6 +5248,8 @@ export interface components {
             section_label?: string;
             /** @description Legacy/display section value kept for backward compatibility. */
             section: string;
+            /** @description Optional recipe author or signature drink creator name, returned the same way for every locale. */
+            author?: string;
             name: string;
             price_clp: number;
             available: boolean;
@@ -5269,6 +5275,8 @@ export interface components {
             section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "cervezas-cocteles" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "onces" | "cakes-pies" | "bakes";
             section?: string;
             name?: string;
+            /** @description Set or replace the locale-independent author name. On PATCH, null leaves the current value unchanged; an empty or whitespace-only string clears it. */
+            author?: string | null;
             description?: string;
             price_clp?: number;
             tags?: string[];
@@ -5286,6 +5294,8 @@ export interface components {
             section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "cervezas-cocteles" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "onces" | "cakes-pies" | "bakes";
             section?: string;
             name: string;
+            /** @description Optional locale-independent recipe author or signature drink creator name. Omit or pass null for an empty value; empty and whitespace-only strings are stored as empty. */
+            author?: string | null;
             description?: string;
             price_clp: number;
             tags?: string[];
