@@ -6,6 +6,7 @@ import type { components } from "./schema";
 import { groupMenuItems, type MenuView } from "./menu-grouping";
 import type { ItemDetail, OriginCardView } from "./hooks";
 import { DEFAULT_BACKEND_LOCALE, type BackendLocale } from "../i18n/locale";
+import { getSeasonLabel } from "../lib/edition";
 
 // Phase 2B.2 — Node-side fetcher for the customer carta routes.
 //
@@ -146,7 +147,10 @@ export async function getPublicMenuView(opts?: {
   const params = new URLSearchParams();
   params.set("locale", opts?.locale ?? "es-CL");
   if (opts?.schedule) params.set("schedule", opts.schedule);
-  return tryGetJson<PublicMenuView>(`/public/menu?${params.toString()}`);
+  const view = await tryGetJson<PublicMenuView>(`/public/menu?${params.toString()}`);
+  // The backend's `season` is a hand-set string that goes stale; the label is
+  // derived from the calendar instead (cached "hours", so it flips same day).
+  return view ? { ...view, season: getSeasonLabel(new Date(), opts?.locale ?? "es-CL") } : null;
 }
 
 // Operational displays need today's published edition even when the customer

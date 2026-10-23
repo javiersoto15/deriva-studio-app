@@ -510,7 +510,7 @@ async function SalaRotator({
   const editionMark = getEditionMarkUppercase(now);
   const parts = getEditionParts(now);
   const edition = {
-    season: parts.seasonAndCampaign.split(" ")[0], // "Otoño"
+    season: parts.season,
     week: String(parts.isoWeek).padStart(2, "0")
   };
 

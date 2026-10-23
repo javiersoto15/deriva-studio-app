@@ -443,7 +443,7 @@ export default function MenuDisplayPage() {
           unavailable={new Set()}
           dateLabel="HOY"
           closedToday={false}
-          editionMark="Vol. 001 · Otoño"
+          editionMark="Vol. 001"
           backendExecutive={null}
         />
       }

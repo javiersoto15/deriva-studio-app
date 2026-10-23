@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
+import { Suspense } from "react";
 import { SiteNav } from "../../../src/components/landing/SiteNav";
 import { ReviewForm } from "../../../src/components/landing/ReviewForm";
 import { DerivaImage } from "../../../src/components/landing/DerivaImage";
+import { getEditionParts } from "../../../src/lib/edition";
 
 const siteUrl = "https://derivastudio.cl";
 const pageUrl = `${siteUrl}/resenas`;
@@ -20,6 +23,13 @@ export const metadata: Metadata = {
     type: "website"
   }
 };
+
+// Week № + season follow the Santiago calendar, so they render per request.
+async function RailEdition() {
+  await connection();
+  const parts = getEditionParts(new Date());
+  return <>№ {String(parts.isoWeek).padStart(2, "0")} · {parts.seasonAndYear}</>;
+}
 
 export default function ResenasPage() {
   return (
@@ -40,7 +50,11 @@ export default function ResenasPage() {
             <div className="resenas-rail__mast">
               <span>Vol. 001</span>
               <span className="resenas-rail__tick" />
-              <span className="resenas-rail__ed">№ 23 · Otoño MMXXVI</span>
+              <span className="resenas-rail__ed">
+                <Suspense fallback={null}>
+                  <RailEdition />
+                </Suspense>
+              </span>
             </div>
             <div className="resenas-rail__foot">
               <p className="resenas-rail__quote">
