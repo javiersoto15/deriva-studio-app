@@ -1,19 +1,18 @@
 "use client";
 
-import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 import { useCompanionMenu } from "../../../../src/api/hooks";
 import { useActiveBackendLocale } from "../../../../src/i18n/use-active-locale";
+import type { Locale } from "../../../../src/i18n/locale";
 import { colors } from "../../../../src/design/tokens";
 import { MenuSections } from "./MenuSections";
 
-const DEFAULT_ORIGIN = { id: "orig_house_blend_dach", label: "House Blend · DACH" };
-
 export function CartaMenu() {
   const t = useTranslations("menu");
-  const locale = useActiveBackendLocale();
-  const { data: menu, error, isLoading } = useCompanionMenu(locale);
+  const locale = useLocale() as Locale;
+  const backendLocale = useActiveBackendLocale();
+  const { data: menu, error, isLoading } = useCompanionMenu(backendLocale);
   // Surface the real failure mode instead of an infinite "Cargando carta"
   // when the menu request errors. The QueryProvider's global error ramp
   // handles 401/403; this is for the everything-else case.
@@ -53,29 +52,19 @@ export function CartaMenu() {
   }
 
   return (
-    <>
-      <p
-        style={{
-          margin: 0,
-          fontFamily: "var(--font-mono), monospace",
-          fontSize: 12,
-          color: colors.inkMuted
-        }}
-      >
-        {t("today_on_bar")} ·{" "}
-        {DEFAULT_ORIGIN.id ? (
-          <Link
-            href={`/carta/origen/${DEFAULT_ORIGIN.id}`}
-            style={{ color: colors.brown700, textDecoration: "none" }}
-          >
-            {DEFAULT_ORIGIN.label}
-          </Link>
-        ) : (
-          "—"
-        )}
-      </p>
-
-      <MenuSections menu={menu ?? null} />
-    </>
+    <MenuSections
+      menu={menu ?? null}
+      locale={locale}
+      offerLabels={{
+        offer: t("offer"),
+        includes: t("offer_includes"),
+        rates: t("offer_rates"),
+        soldOut: t("offer_sold_out"),
+        included: t("offer_included"),
+        fixedPrice: t("offer_fixed_price"),
+        supplement: t("offer_supplement"),
+        controlledSelection: t("offer_controlled_selection")
+      }}
+    />
   );
 }

@@ -736,7 +736,7 @@ export default function EstudioPage() {
           <HairlineRow label="Idioma" value={profile?.language ?? "Español"} href="/estudio" />
           <HairlineRow label="Notificaciones" value={profile?.notifications ?? "Solo transaccionales"} href="/estudio" />
           <HairlineRow label="Recibos digitales" value={profile?.digital_receipts ? "Activados" : "Desactivados"} href="/estudio" />
-          <HairlineRow label="Datos y privacidad" value="Ver y descargar" href="/privacidad" />
+          <HairlineRow label="Datos y privacidad" value="Ver política" href="https://derivastudio.cl/privacidad" />
           {/* ID de soporte — the Deriva-owned us_xxx user id from user_profiles.id.
               Distinct from member_id (loyalty PK) and from Firebase UID (never shown).
               Surfaced only for support flows; not a primary identifier in UX. */}

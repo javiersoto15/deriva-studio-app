@@ -8,6 +8,7 @@ import { formatShortCode } from "../../../../src/lib/shortCode";
 import { colors } from "../../../../src/design/tokens";
 import { Eyebrow } from "../../../../src/ui/Eyebrow";
 import { RewardQrCard } from "../../../../src/ui/RewardQrCard";
+import { useActiveBackendLocale } from "../../../../src/i18n/use-active-locale";
 
 // Canjear / Reward Redemption — matches Paper artboard 1CO-0. Fullscreen
 // espresso ground, no TabBar. Staff scans QR or types short code; latch
@@ -16,7 +17,8 @@ export default function CanjearPage() {
   const router = useRouter();
   const params = useParams<{ rewardId: string }>();
   const rewardId = params?.rewardId ?? "";
-  const { data: rewards } = useMyRewards();
+  const locale = useActiveBackendLocale();
+  const { data: rewards } = useMyRewards(locale);
   const reward = rewards?.rewards.find((r) => r.id === rewardId);
 
   const tokenQuery = useRedemptionToken(rewardId, Boolean(reward?.available));

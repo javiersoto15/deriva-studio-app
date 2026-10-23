@@ -14,7 +14,7 @@
     "test:stock": "tsx --test tests/stock/*.test.ts",
     "test:routing": "tsx --test tests/routing/*.test.ts",
     "test:brand": "tsx --test tests/brand/*.test.ts",
-    "test": "npm run test:seo && npm run test:menu && npm run test:stock && npm run test:routing && npm run test:brand",
+    "test": "npm run test:seo && npm run test:menu && npm run test:stock && npm run test:routing && npm run test:brand && npm run test:companion",
     "email:build": "tsx scripts/build-emails.ts",
     "email:test-send": "tsx scripts/send-test-apertura.ts",
     "send:apertura": "tsx scripts/send-apertura-codes.ts",
@@ -28,7 +28,9 @@
     "photos:upload": "tsx scripts/upload-photos.ts",
     "api:types": "openapi-typescript ../13_companion_backend/docs/openapi.yaml -o src/api/schema.ts",
     "msw:init": "msw init public/ --save",
-    "firebase:emulator": "firebase emulators:start --only auth --project deriva-studio-production"
+    "firebase:emulator": "firebase emulators:start --only auth --project deriva-studio-production",
+    "test:companion": "tsx --tsconfig tsconfig.test.json --test tests/companion/*.test.ts tests/companion/*.test.tsx",
+    "render:companion-fixtures": "tsx --tsconfig tsconfig.test.json tests/companion/render-fixtures.tsx"
   },
   "dependencies": {
     "@capacitor-firebase/authentication": "^8.2.0",

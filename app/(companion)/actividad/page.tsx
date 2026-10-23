@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useActivity, type ActivityLedgerEntry } from "../../../src/api/hooks";
 import { colors } from "../../../src/design/tokens";
 import { Eyebrow } from "../../../src/ui/Eyebrow";
@@ -21,6 +22,7 @@ function timeOf(iso: string) {
 }
 
 export default function ActividadPage() {
+  const t = useTranslations("activity");
   const { data } = useActivity();
   const entries: ActivityLedgerEntry[] = data?.entries ?? [];
 
@@ -50,7 +52,7 @@ export default function ActividadPage() {
           <Eyebrow>← Cartera</Eyebrow>
         </Link>
         <Link
-          href="/sumar-visita"
+          href="/feedback"
           className="tap-target"
           style={{
             margin: "-10px -8px",
@@ -63,7 +65,7 @@ export default function ActividadPage() {
             textDecoration: "none"
           }}
         >
-          + Sumar visita
+          {t("share_review")}
         </Link>
       </div>
 

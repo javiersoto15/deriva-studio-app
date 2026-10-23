@@ -2,10 +2,16 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { useState } from "react";
 
-import { Button } from "../../../../../src/ui/Button";
 import { Eyebrow } from "../../../../../src/ui/Eyebrow";
 import { colors } from "../../../../../src/design/tokens";
+import {
+  useAddFavorite,
+  useCurrentMember,
+  useFavorites,
+  useRemoveFavorite
+} from "../../../../../src/api/hooks";
 
 // Localized back-link to the carta. A client component (rather than translating
 // in the page's static header via getTranslations, which would read the cookie
@@ -30,40 +36,65 @@ export function ItemBackLink() {
   );
 }
 
-// Phase 2B.5 — Client island for the item detail page.
-// Renders the "♡ Guardar" header button and the "Es mi usual" CTA. Wiring to
-// the favorites mutation lands in Phase 2C; for now these are visual only,
-// matching the original client-page behavior. The `itemId` prop will be the
-// cache key for the mutation once it's wired. Labels localize via next-intl
-// (the companion provider supplies the active UI locale).
-export function ItemSaveButton({ itemId: _itemId }: { itemId: string }) {
+// The authenticated member id comes from /me; the existing favorites endpoint
+// validates the actor before the saved list is refreshed.
+export function ItemSaveButton({ itemId }: { itemId: string }) {
   const t = useTranslations("menu");
+  const member = useCurrentMember();
+  const favorites = useFavorites();
+  const add = useAddFavorite();
+  const remove = useRemoveFavorite();
+  const [failed, setFailed] = useState(false);
+  const saved = favorites.data?.saved.some((favorite) => favorite.id === itemId) ?? false;
+  const pending = add.isPending || remove.isPending;
+  const ready = Boolean(member.data?.id && favorites.data && !pending);
+
+  async function toggleFavorite() {
+    const memberId = member.data?.id;
+    if (!memberId || !favorites.data || pending) return;
+    setFailed(false);
+    try {
+      if (saved) await remove.mutateAsync(itemId);
+      else await add.mutateAsync({ memberId, itemId });
+    } catch {
+      setFailed(true);
+    }
+  }
+
   return (
-    <button
-      type="button"
-      style={{
-        background: "transparent",
-        border: "none",
-        cursor: "pointer",
-        color: "var(--color-brown-700, #5a3a1e)",
-        fontFamily: "var(--font-display), serif",
-        fontStyle: "italic",
-        fontWeight: 300,
-        fontSize: 16
-      }}
-    >
-      ♡ {t("save")}
-    </button>
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 2 }}>
+      <button
+        type="button"
+        className="tap-target"
+        disabled={!ready}
+        aria-pressed={saved}
+        aria-busy={pending}
+        onClick={() => void toggleFavorite()}
+        style={{
+          border: "none",
+          background: "transparent",
+          cursor: ready ? "pointer" : "default",
+          color: colors.brown700,
+          fontFamily: "var(--font-display), serif",
+          fontStyle: "italic",
+          fontWeight: 300,
+          fontSize: 16,
+          opacity: ready ? 1 : 0.65
+        }}
+      >
+        {saved ? `♥ ${t("saved")}` : `♡ ${t("save")}`}
+      </button>
+      {failed ? (
+        <span role="alert" style={{ fontFamily: "var(--font-mono), monospace", fontSize: 10, color: colors.brown700 }}>
+          {t("save_error")}
+        </span>
+      ) : null}
+    </div>
   );
 }
 
-export function ItemUsualCta({ itemId: _itemId }: { itemId: string }) {
-  const t = useTranslations("menu");
-  return (
-    <Button variant="primary" style={{ width: "100%" }}>
-      {t("my_usual")}
-    </Button>
-  );
+export function ItemUsualCta(_props: { itemId: string }) {
+  return null;
 }
 
 // Client loading fallback for the item detail body — a Suspense fallback must

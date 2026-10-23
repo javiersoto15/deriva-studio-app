@@ -343,11 +343,11 @@ export default function IngresarPage() {
           }}
         >
           Al continuar aceptas nuestros{" "}
-          <a href="/privacidad" style={{ color: colors.brown700, textUnderlineOffset: 2 }}>
+          <a href="https://derivastudio.cl/privacidad" style={{ color: colors.brown700, textUnderlineOffset: 2 }}>
             términos
           </a>{" "}
           y la{" "}
-          <a href="/privacidad" style={{ color: colors.brown700, textUnderlineOffset: 2 }}>
+          <a href="https://derivastudio.cl/privacidad" style={{ color: colors.brown700, textUnderlineOffset: 2 }}>
             privacidad
           </a>
           .

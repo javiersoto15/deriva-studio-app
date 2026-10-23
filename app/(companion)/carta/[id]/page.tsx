@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 import { getTranslations } from "next-intl/server";
@@ -25,14 +26,6 @@ import { ItemPriceRow, OriginPriceList } from "./_components/OriginPriceList";
 // note) comes from the backend via ?locale. getActiveBackendLocale() reads the
 // NEXT_LOCALE cookie, so the body fetch lives inside a <Suspense> boundary
 // (cacheComponents requires cookie reads to be wrapped).
-
-const FALLBACK_SPEC = [
-  { label: "TUESTE", value: "Medio · house blend" },
-  { label: "ORIGEN", value: "House Blend · DACH" },
-  { label: "LECHE", value: "Entera Colún" },
-  { label: "EXTRACCIÓN", value: "18g · 30s · 36g" },
-  { label: "VOLUMEN", value: "170 ml" }
-];
 
 export async function generateMetadata({
   params
@@ -92,14 +85,15 @@ async function ItemBody({ id }: { id: string }) {
     getMenuItem(id, locale),
     getTranslations("menu")
   ]);
+  if (!data) notFound();
 
-  const spec = data?.spec ?? FALLBACK_SPEC;
-  const allergens = data?.allergens ?? [];
-  const originOptions = data?.origin_options ?? [];
+  const spec = data.spec ?? [];
+  const allergens = data.allergens;
+  const originOptions = data.origin_options ?? [];
 
   return (
     <>
-      <Eyebrow>{data?.section_eyebrow ?? "Espresso · Con leche"}</Eyebrow>
+      {data.section_eyebrow ? <Eyebrow>{data.section_eyebrow}</Eyebrow> : null}
 
       <div>
         <h1
@@ -114,24 +108,26 @@ async function ItemBody({ id }: { id: string }) {
             color: colors.ink900
           }}
         >
-          {data?.name ?? "Flat White"}
+          {data.name}
         </h1>
-        <span
-          style={{
-            fontFamily: "var(--font-mono), monospace",
-            fontSize: 11,
-            color: colors.inkMuted,
-            letterSpacing: "0.1em"
-          }}
-        >
-          {data?.size_note ?? "6 OZ · MICROESPUMA SEDOSA"}
-        </span>
+        {data.size_note ? (
+          <span
+            style={{
+              fontFamily: "var(--font-mono), monospace",
+              fontSize: 11,
+              color: colors.inkMuted,
+              letterSpacing: "0.1em"
+            }}
+          >
+            {data.size_note}
+          </span>
+        ) : null}
       </div>
 
       {/* Price row — always the backend price_clp. Prefixed with the localized
           "Desde" only when the available origins carry more than one price. */}
       <ItemPriceRow
-        priceClp={data?.price_clp}
+        priceClp={data.price_clp}
         origins={originOptions}
         label={t("price")}
         fromPrefix={t("price_from")}
@@ -144,72 +140,78 @@ async function ItemBody({ id }: { id: string }) {
       />
 
       {/* Spec sheet */}
-      <section style={{ display: "flex", flexDirection: "column" }}>
-        {spec.map((row) => (
-          <div
-            key={row.label}
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              padding: "14px 0",
-              borderTop: `1px solid ${colors.hairline}`
-            }}
-          >
-            <span style={labelStyle}>{row.label}</span>
-            <span
+      {spec.length > 0 ? (
+        <section style={{ display: "flex", flexDirection: "column" }}>
+          {spec.map((row) => (
+            <div
+              key={row.label}
               style={{
-                fontFamily: "var(--font-mono), monospace",
-                fontSize: 13,
-                color: colors.ink900,
-                textAlign: "right"
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: "14px 0",
+                borderTop: `1px solid ${colors.hairline}`
               }}
             >
-              {row.value}
-            </span>
-          </div>
-        ))}
-      </section>
+              <span style={labelStyle}>{row.label}</span>
+              <span
+                style={{
+                  fontFamily: "var(--font-mono), monospace",
+                  fontSize: 13,
+                  color: colors.ink900,
+                  textAlign: "right"
+                }}
+              >
+                {row.value}
+              </span>
+            </div>
+          ))}
+        </section>
+      ) : null}
 
       {/* Allergens */}
-      <section style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <span style={labelStyle}>{t("contains")}</span>
-        {allergens.length > 0 ? (
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            {allergens.map((a) => (
-              <Chip key={a} selected={false}>
-                {a}
-              </Chip>
-            ))}
-          </div>
-        ) : (
-          <span
-            style={{
-              fontFamily: "var(--font-display), serif",
-              fontStyle: "italic",
-              fontWeight: 300,
-              fontSize: 15,
-              color: colors.inkMuted
-            }}
-          >
-            {t("no_allergens")}
-          </span>
-        )}
-      </section>
+      {allergens ? (
+        <section style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <span style={labelStyle}>{t("contains")}</span>
+          {allergens.length > 0 ? (
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              {allergens.map((a) => (
+                <Chip key={a} selected={false}>
+                  {a}
+                </Chip>
+              ))}
+            </div>
+          ) : (
+            <span
+              style={{
+                fontFamily: "var(--font-display), serif",
+                fontStyle: "italic",
+                fontWeight: 300,
+                fontSize: 15,
+                color: colors.inkMuted
+              }}
+            >
+              {t("no_allergens")}
+            </span>
+          )}
+        </section>
+      ) : null}
 
-      <p
-        style={{
-          margin: 0,
-          fontFamily: "var(--font-display), serif",
-          fontStyle: "italic",
-          fontWeight: 300,
-          fontSize: 15,
-          lineHeight: "23px",
-          color: colors.ink900
-        }}
-      >
-        {data?.barista_note ?? "Pídelo más caliente si vienes de la calle — la microespuma aguanta."}
-      </p>
+      {data.barista_note ? (
+        <p
+          style={{
+            margin: 0,
+            fontFamily: "var(--font-display), serif",
+            fontStyle: "italic",
+            fontWeight: 300,
+            fontSize: 15,
+            lineHeight: "23px",
+            color: colors.ink900
+          }}
+        >
+          {data.barista_note}
+        </p>
+      ) : null}
 
       <ItemUsualCta itemId={id} />
     </>

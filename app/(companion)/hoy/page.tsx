@@ -25,12 +25,23 @@ export default async function HoyPage() {
         backgroundColor: colors.beige100
       }}
     >
-      <SlimMast
-        volumeAndWeek={edition.volumeAndWeek}
-        seasonAndCampaign={edition.seasonAndCampaign}
-      />
-      <Greeting shortDate={edition.shortDate} />
-      <HoyEdition edition={edition} />
+      <div
+        style={{
+          width: "100%",
+          maxWidth: 760,
+          marginInline: "auto",
+          flex: 1,
+          display: "flex",
+          flexDirection: "column"
+        }}
+      >
+        <SlimMast
+          volumeAndWeek={edition.volumeAndWeek}
+          seasonAndCampaign={edition.seasonAndCampaign}
+        />
+        <Greeting shortDate={edition.shortDate} />
+        <HoyEdition edition={edition} />
+      </div>
     </main>
   );
 }

@@ -157,6 +157,10 @@ export function routeByHost(request: NextRequest): NextResponse {
         request: { headers: withSurfaceHeader(request, "companion") }
       });
     }
+    if (pathname === "/privacidad") {
+      const privacyUrl = new URL(`${pathname}${url.search}`, "https://derivastudio.cl");
+      return NextResponse.redirect(privacyUrl, 302);
+    }
     if (pathname === "/" || pathname === "") {
       url.pathname = "/inicio";
       return NextResponse.rewrite(url, {

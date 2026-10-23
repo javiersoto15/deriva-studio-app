@@ -1,160 +1,137 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 
-import {
-  type TodayResponse,
-  useToday
-} from "../../../../src/api/hooks";
-import { getBarista } from "../../../../src/data/today/barra";
-import { getCafeDelDia } from "../../../../src/data/today/cafe-del-dia";
-import { getNota } from "../../../../src/data/today/nota";
-import { getRotacion } from "../../../../src/data/today/rotacion";
-import type {
-  Barista,
-  DestacadoOrigin,
-  Origin
-} from "../../../../src/data/today/types";
-import type { EditionParts } from "../../../../src/lib/edition";
-import { isOpenNow } from "../../../../src/lib/open-now";
+import { useCompanionMenu } from "../../../../src/api/hooks";
 import { useActiveBackendLocale } from "../../../../src/i18n/use-active-locale";
-import { useAuth } from "../../../../src/auth/use-auth";
-import { BarraTile } from "./BarraTile";
-import { HeroCafeDelDia } from "./HeroCafeDelDia";
-import { MetricStrip } from "./MetricStrip";
-import { NotaTile } from "./NotaTile";
-import { RotacionTile } from "./RotacionTile";
-import { ShiftRoster, type ShiftRosterData } from "./ShiftRoster";
-
-type HoyViewModel = {
-  cafeDelDia: DestacadoOrigin;
-  rotacion: ReadonlyArray<Origin>;
-  barista: Barista | null;
-  openLabel: string;
-  closesAt: string;
-  isOpen: boolean;
-  lastOrder: { name: string; when: string } | null;
-  shifts: ShiftRosterData;
-};
+import type { Locale } from "../../../../src/i18n/locale";
+import { collectAvailableAuthorCoffees, collectMenuPromotions, dailySelectionIndex } from "../../../../src/companion/menu-discovery";
+import type { EditionParts } from "../../../../src/lib/edition";
+import { colors } from "../../../../src/design/tokens";
+import { TodayMenuPanels } from "./TodayMenuPanels";
 
 export function HoyEdition({ edition }: { edition: EditionParts }) {
-  const { status } = useAuth();
-  const locale = useActiveBackendLocale();
-  const query = useToday(edition.weekday, locale, status === "authenticated", edition.date);
-  const view = useMemo(
-    () => buildHoyView(query.data, edition),
-    [query.data, edition]
+  const backendLocale = useActiveBackendLocale();
+  const locale = useLocale() as Locale;
+  const menuQuery = useCompanionMenu(backendLocale);
+  const today = useTranslations("today");
+  const menuCopy = useTranslations("menu");
+  const [manualPromotionIndex, setManualPromotionIndex] = useState<number | null>(null);
+  const [manualAuthorIndex, setManualAuthorIndex] = useState<number | null>(null);
+
+  const promotions = useMemo(
+    () => (menuQuery.data ? collectMenuPromotions(menuQuery.data) : []),
+    [menuQuery.data]
   );
-  const nota = getNota(edition.isoWeek);
+  const authorCoffees = useMemo(
+    () => (menuQuery.data ? collectAvailableAuthorCoffees(menuQuery.data) : []),
+    [menuQuery.data]
+  );
+  const initialPromotionIndex = dailySelectionIndex(promotions.length, edition.date, "promotion");
+  const initialAuthorIndex = dailySelectionIndex(authorCoffees.length, edition.date, "author");
+  useEffect(() => {
+    setManualPromotionIndex(null);
+    setManualAuthorIndex(null);
+  }, [edition.date, promotions.length, authorCoffees.length]);
+  const promotionIndex = resolveIndex(manualPromotionIndex, initialPromotionIndex, promotions.length);
+  const authorIndex = resolveIndex(manualAuthorIndex, initialAuthorIndex, authorCoffees.length);
+
+  if (!menuQuery.data && menuQuery.error && !menuQuery.isLoading) {
+    return (
+      <section role="alert" style={stateStyle}>
+        <span style={eyebrowStyle}>{today("unavailable")}</span>
+        <p style={stateTextStyle}>{today("unavailable_body")}</p>
+        <button type="button" onClick={() => void menuQuery.refetch()} style={retryStyle}>
+          {today("retry")}
+        </button>
+      </section>
+    );
+  }
+
+  if (!menuQuery.data) {
+    return (
+      <section aria-live="polite" style={stateStyle}>
+        <span style={eyebrowStyle}>{today("loading")}</span>
+      </section>
+    );
+  }
 
   return (
-    <>
-      <HeroCafeDelDia origin={view.cafeDelDia} />
-
-      <div style={{ display: "flex", gap: 8, padding: "10px 14px 0" }}>
-        <RotacionTile origins={view.rotacion} />
-        {view.barista ? <BarraTile barista={view.barista} /> : null}
-      </div>
-
-      <NotaTile nota={nota} />
-
-      <ShiftRoster shifts={view.shifts} />
-
-      <MetricStrip
-        openLabel={view.openLabel}
-        closesAt={view.closesAt}
-        isOpen={view.isOpen}
-        lastOrder={view.lastOrder}
-      />
-    </>
+    <TodayMenuPanels
+      menu={menuQuery.data}
+      locale={locale}
+      promotionIndex={promotionIndex}
+      authorIndex={authorIndex}
+      onPromotionIndexChange={setManualPromotionIndex}
+      onAuthorIndexChange={setManualAuthorIndex}
+      labels={{
+        promotions: today("promotions"),
+        promotionsEmpty: today("promotions_empty"),
+        authorCoffee: today("author_coffee"),
+        authorCoffeeItem: today("author_coffee_item"),
+        authorEmpty: today("author_empty"),
+        previousPromotion: today("previous_promotion"),
+        nextPromotion: today("next_promotion"),
+        previousCoffee: today("previous_coffee"),
+        nextCoffee: today("next_coffee"),
+        viewMenu: today("view_menu"),
+        position: today("position"),
+        authorBy: today("author_by")
+      }}
+      offerLabels={{
+        offer: menuCopy("offer"),
+        includes: menuCopy("offer_includes"),
+        rates: menuCopy("offer_rates"),
+        soldOut: menuCopy("offer_sold_out"),
+        included: menuCopy("offer_included"),
+        fixedPrice: menuCopy("offer_fixed_price"),
+        supplement: menuCopy("offer_supplement"),
+        controlledSelection: menuCopy("offer_controlled_selection")
+      }}
+    />
   );
 }
 
-function buildHoyView(data: TodayResponse | undefined, edition: EditionParts): HoyViewModel {
-  if (!data) return degradedFallback(edition);
-  const now = new Date();
-  const hours = deriveHours(data, now);
-  return {
-    cafeDelDia: {
-      ...data.destacado,
-      brew: data.destacado.brew ?? ""
-    },
-    rotacion: data.rotacion,
-    barista: data.barra
-      ? {
-          name: data.barra.name,
-          turnoUntil: formatUntil(data.barra.turno_until_utc),
-          note: data.barra.note
-        }
-      : null,
-    openLabel: hours.openLabel,
-    closesAt: hours.displayTime,
-    isOpen: hours.isOpen,
-    lastOrder: data.last_order
-      ? {
-          name: data.last_order.name,
-          when: formatLastOrder(data.last_order.placed_at_utc)
-        }
-      : null,
-    shifts: data.shifts
-  };
+function resolveIndex(manual: number | null, initial: number | null, count: number): number | null {
+  if (count === 0) return null;
+  const index = manual ?? initial ?? 0;
+  return ((index % count) + count) % count;
 }
 
-// The backend is the source of truth for /hoy. These static modules are kept
-// only as a degraded shell while Firebase auth initializes or the network is
-// unavailable, so the page does not blank out.
-function degradedFallback(edition: EditionParts): HoyViewModel {
-  const isOpen = isOpenNow(new Date());
-  return {
-    cafeDelDia: getCafeDelDia(edition.weekday),
-    rotacion: getRotacion(edition.weekday),
-    barista: getBarista(edition.weekday),
-    openLabel: isOpen ? "Abierto" : "Cerrado",
-    closesAt: isOpen ? "21:00" : "08:00",
-    isOpen,
-    lastOrder: null,
-    shifts: {
-      date: edition.date,
-      baristas: [],
-      cocina: [],
-      garzones: []
-    }
-  };
-}
-
-function deriveHours(data: TodayResponse, now: Date) {
-  const opensAt = data.hours.opens_at_utc ? new Date(data.hours.opens_at_utc) : null;
-  const closesAt = data.hours.closes_at_utc ? new Date(data.hours.closes_at_utc) : null;
-  const isOpen = Boolean(opensAt && closesAt && now >= opensAt && now < closesAt);
-  const target = isOpen ? closesAt : opensAt;
-  return {
-    isOpen,
-    openLabel: isOpen ? "Abierto" : "Cerrado",
-    displayTime: target ? formatSantiagoTime(target) : "Cerrado"
-  };
-}
-
-function formatUntil(value: string | null | undefined): string {
-  if (!value) return "cerrado";
-  return `hasta las ${formatSantiagoTime(new Date(value))}`;
-}
-
-function formatLastOrder(value: string): string {
-  const date = new Date(value);
-  const weekday = new Intl.DateTimeFormat("es-CL", {
-    timeZone: "America/Santiago",
-    weekday: "short"
-  })
-    .format(date)
-    .replace(/\.$/, "");
-  return `${weekday} · ${formatSantiagoTime(date)}`;
-}
-
-function formatSantiagoTime(date: Date): string {
-  return new Intl.DateTimeFormat("es-CL", {
-    timeZone: "America/Santiago",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false
-  }).format(date);
-}
+const stateStyle: React.CSSProperties = {
+  margin: "10px 14px 0",
+  padding: "18px",
+  backgroundColor: colors.beige50,
+  display: "flex",
+  flexDirection: "column",
+  gap: 8
+};
+const eyebrowStyle: React.CSSProperties = {
+  fontFamily: "var(--font-mono), monospace",
+  fontSize: 10,
+  fontWeight: 500,
+  letterSpacing: "0.14em",
+  textTransform: "uppercase",
+  color: colors.inkMuted
+};
+const stateTextStyle: React.CSSProperties = {
+  margin: 0,
+  fontFamily: "var(--font-display), serif",
+  fontStyle: "italic",
+  fontSize: 16,
+  color: colors.ink900
+};
+const retryStyle: React.CSSProperties = {
+  alignSelf: "flex-start",
+  minHeight: 44,
+  padding: 0,
+  border: 0,
+  background: "transparent",
+  color: colors.brown700,
+  cursor: "pointer",
+  fontFamily: "var(--font-mono), monospace",
+  fontSize: 11,
+  letterSpacing: "0.08em",
+  textTransform: "uppercase"
+};

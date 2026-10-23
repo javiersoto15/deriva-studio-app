@@ -3,6 +3,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import type { Member } from "../../../../src/api/hooks";
 import { RedeemCampaignTokenError, useAddEmail, useRedeemCampaignToken } from "../../../../src/api/hooks";
@@ -11,6 +12,7 @@ import { useAuth } from "../../../../src/auth/use-auth";
 import { colors } from "../../../../src/design/tokens";
 import type { MemberWithFirstName } from "../../../../src/lib/member";
 import { clearDraft, readDraft } from "../../../../src/lib/onboardingDraft";
+import { submitMemberAccount } from "../../../../src/lib/member-submission";
 import { Button } from "../../../../src/ui/Button";
 import { Eyebrow } from "../../../../src/ui/Eyebrow";
 import { StepProgress } from "../../../../src/ui/StepProgress";
@@ -37,6 +39,7 @@ function clearToken(): void {
 // Consent — matches Paper artboard 25P-0.
 export default function ConsentPage() {
   const router = useRouter();
+  const t = useTranslations("signup");
   const queryClient = useQueryClient();
   const { getIdToken } = useAuth();
   const redeemCampaignToken = useRedeemCampaignToken();
@@ -44,6 +47,7 @@ export default function ConsentPage() {
   const [marketing, setMarketing] = useState(false);
   const [analytics, setAnalytics] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function attemptRedeem(token: string, attempt = 0): Promise<void> {
     try {
@@ -83,7 +87,8 @@ export default function ConsentPage() {
 
   async function createAccount() {
     setSubmitting(true);
-    try {
+    setError(null);
+    const outcome = await submitMemberAccount(async () => {
       const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080";
       const idToken = await getIdToken();
       if (!idToken) {
@@ -131,8 +136,6 @@ export default function ConsentPage() {
       // Capture the email before clearing the draft so we can kick off the
       // verification action link after the member row exists.
       const capturedEmail = draft.email?.trim();
-      // Member row exists now — draft has served its purpose.
-      clearDraft();
       // Prime the /me cache from the response so /carta renders the new
       // identity without waiting for a refetch.
       try {
@@ -164,11 +167,13 @@ export default function ConsentPage() {
           console.warn("[Deriva] email verification queue failed", err);
         }
       }
-    } catch (error) {
-      console.error("[Deriva] consentimiento submit", error);
-    } finally {
-      router.push("/carta");
+    }, clearDraft, () => router.push("/carta"));
+
+    if (!outcome.ok) {
+      console.error("[Deriva] consentimiento submit", outcome.error);
+      setError(t("member_create_failed"));
     }
+    setSubmitting(false);
   }
 
   return (
@@ -207,8 +212,24 @@ export default function ConsentPage() {
         />
       </div>
 
+      {error && (
+        <p
+          role="alert"
+          style={{
+            margin: 0,
+            fontFamily: "var(--font-display), serif",
+            fontStyle: "italic",
+            fontSize: 14,
+            lineHeight: "20px",
+            color: colors.brown700
+          }}
+        >
+          {error}
+        </p>
+      )}
+
       <Link
-        href="/privacidad"
+        href="https://derivastudio.cl/privacidad"
         style={{
           fontFamily: "var(--font-tracked), 'Poppins', sans-serif",
           fontWeight: 600,

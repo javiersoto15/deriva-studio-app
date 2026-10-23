@@ -84,6 +84,18 @@ test("app subdomain bounces /menu-ejecutivo to the companion root", () => {
   assert.equal(res.location, "https://app.derivastudio.cl/inicio");
 });
 
+test("app subdomain sends the privacy page to the canonical landing host", () => {
+  const res = call("app.derivastudio.cl", "/privacidad?locale=en");
+  assert.equal(res.status, 302);
+  assert.equal(res.location, "https://derivastudio.cl/privacidad?locale=en");
+});
+
+test("app subdomain does not allow nested landing paths", () => {
+  const res = call("app.derivastudio.cl", "/privacidad/detalle");
+  assert.equal(res.status, 302);
+  assert.equal(res.location, "https://app.derivastudio.cl/inicio");
+});
+
 test("app subdomain companion routes are unchanged", () => {
   const res = call("app.derivastudio.cl", "/cartera");
   assert.equal(res.status, 200);

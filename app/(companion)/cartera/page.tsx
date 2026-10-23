@@ -6,11 +6,15 @@ import { colors } from "../../../src/design/tokens";
 import { Eyebrow } from "../../../src/ui/Eyebrow";
 import { Shimmer } from "../../../src/ui/Shimmer";
 import { TopHeader } from "../../../src/ui/TopHeader";
+import { useActiveBackendLocale } from "../../../src/i18n/use-active-locale";
+import { useTranslations } from "next-intl";
 
 // Cartera — matches Paper artboard X3-0.
 export default function CarteraPage() {
+  const receiptCopy = useTranslations("receiptClaim");
   const { data: balance } = usePointsBalance();
-  const { data: rewards } = useMyRewards();
+  const locale = useActiveBackendLocale();
+  const { data: rewards } = useMyRewards(locale);
   const { data: activity } = useActivityPreview();
 
   const balancePoints = balance?.balance ?? 0;
@@ -113,31 +117,7 @@ export default function CarteraPage() {
             </div>
           </div>
 
-          <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
-            <Link
-              href="/sumar-visita"
-              style={{
-                flex: 1,
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                textAlign: "center",
-                minHeight: 42,
-                padding: "10px 16px",
-                borderRadius: 999,
-                backgroundColor: colors.beige100,
-                color: colors.brown900,
-                fontFamily: "var(--font-tracked), 'Poppins', sans-serif",
-                fontWeight: 600,
-                fontSize: 11,
-                lineHeight: 1.2,
-                letterSpacing: "0.2em",
-                textTransform: "uppercase",
-                textDecoration: "none"
-              }}
-            >
-              Sumar visita
-            </Link>
+          <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
             <Link
               href="/actividad"
               style={{
@@ -147,13 +127,13 @@ export default function CarteraPage() {
                 justifyContent: "center",
                 textAlign: "center",
                 minHeight: 42,
-                padding: "10px 16px",
+                padding: "10px 8px",
                 borderRadius: 999,
                 border: `1px solid ${colors.beige100}`,
                 color: colors.beige100,
                 fontFamily: "var(--font-tracked), 'Poppins', sans-serif",
                 fontWeight: 600,
-                fontSize: 11,
+                fontSize: 10,
                 lineHeight: 1.2,
                 letterSpacing: "0.2em",
                 textTransform: "uppercase",
@@ -161,6 +141,30 @@ export default function CarteraPage() {
               }}
             >
               Movimientos
+            </Link>
+            <Link
+              href="/sumar-visita"
+              style={{
+                flex: 1,
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                textAlign: "center",
+                minHeight: 42,
+                padding: "10px 8px",
+                borderRadius: 999,
+                backgroundColor: colors.beige100,
+                color: colors.brown900,
+                fontFamily: "var(--font-tracked), 'Poppins', sans-serif",
+                fontWeight: 600,
+                fontSize: 10,
+                lineHeight: 1.2,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                textDecoration: "none"
+              }}
+            >
+              {receiptCopy("add_visit")}
             </Link>
           </div>
         </section>

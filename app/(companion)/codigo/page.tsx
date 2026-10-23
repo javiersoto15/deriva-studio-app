@@ -12,6 +12,7 @@ import { useAuth } from "../../../src/auth/use-auth";
 import { colors } from "../../../src/design/tokens";
 import { QrMockCard } from "../../../src/ui/QrMockCard";
 import { Shimmer } from "../../../src/ui/Shimmer";
+import { useActiveBackendLocale } from "../../../src/i18n/use-active-locale";
 
 // Codigo — matches Paper artboard SJ-0. Fullscreen espresso surface. No TabBar.
 export default function CodigoPage() {
@@ -19,11 +20,12 @@ export default function CodigoPage() {
   const { status: authStatus } = useAuth();
   const { data: member } = useCurrentMember();
   const { data: balance } = usePointsBalance();
+  const locale = useActiveBackendLocale();
   // /me/balance.next_reward.name is NOT locale-aware (backend gap — see
   // followup). Derive next reward from /me/rewards instead, which IS
   // localized via ?locale. Pick the cheapest unredeemed reward — same
   // selection the backend uses for next_reward, but with localized copy.
-  const { data: rewardsResponse } = useMyRewards();
+  const { data: rewardsResponse } = useMyRewards(locale);
   const derivedNext = rewardsResponse?.rewards
     .filter((r) => !r.available)
     .sort((a, b) => a.points_cost - b.points_cost)[0];

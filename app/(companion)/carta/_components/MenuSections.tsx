@@ -9,11 +9,21 @@ import type {
   PublicMenuSection,
   PublicMenuView
 } from "../../../../src/api/hooks";
+import type { Locale } from "../../../../src/i18n/locale";
 import { Chip } from "../../../../src/ui/Chip";
 import { MenuRow } from "../../../../src/ui/MenuRow";
 import { colors } from "../../../../src/design/tokens";
+import { MenuOfferCard, type MenuOfferCardLabels } from "./MenuOfferCard";
 
-export function MenuSections({ menu }: { menu: PublicMenuView | null }) {
+export function MenuSections({
+  menu,
+  locale,
+  offerLabels
+}: {
+  menu: PublicMenuView | null;
+  locale: Locale;
+  offerLabels: MenuOfferCardLabels;
+}) {
   const sections = menu?.sections ?? [];
   const [sectionId, setSectionId] = useState<string>(sections[0]?.id ?? "");
   const effectiveSectionId = sections.some((s) => s.id === sectionId)
@@ -95,13 +105,21 @@ export function MenuSections({ menu }: { menu: PublicMenuView | null }) {
           paddingBottom: "calc(env(safe-area-inset-bottom) + 96px)"
         }}
       >
-        {activeSection ? <SectionBody section={activeSection} /> : null}
+        {activeSection ? <SectionBody section={activeSection} locale={locale} offerLabels={offerLabels} /> : null}
       </div>
     </div>
   );
 }
 
-function SectionBody({ section }: { section: PublicMenuSection }) {
+function SectionBody({
+  section,
+  locale,
+  offerLabels
+}: {
+  section: PublicMenuSection;
+  locale: Locale;
+  offerLabels: MenuOfferCardLabels;
+}) {
   const directItems = section.items ?? [];
   const subgroups = section.subgroups ?? [];
   const addons = section.addons ?? [];
@@ -109,6 +127,9 @@ function SectionBody({ section }: { section: PublicMenuSection }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <SectionHeader section={section} />
+      {(section.offers ?? []).map((offer) => (
+        <MenuOfferCard key={offer.id} offer={offer} locale={locale} labels={offerLabels} />
+      ))}
       {section.executive_menu ? <ExecutiveMenuBlock menu={section.executive_menu} /> : null}
       {directItems.length > 0 ? <ItemList items={directItems} /> : null}
       {subgroups.map((subgroup) => (

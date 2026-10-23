@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "./client";
+import { isPersistedPendingReview } from "../companion/review-submission";
 import type { components } from "./schema";
 import { getFirebaseAuth } from "../auth/firebase";
 
@@ -34,6 +35,7 @@ export type MissingPointsClaim = components["schemas"]["MissingPointsClaim"];
 export type CreateReceiptClaimRequest = components["schemas"]["CreateReceiptClaimRequest"];
 export type ReceiptClaimResponse = components["schemas"]["ReceiptClaimResponse"];
 export type FeedbackRequest = components["schemas"]["FeedbackRequest"];
+export type ReviewSubmissionRequest = components["schemas"]["ReviewSubmissionRequest"];
 export type LedgerEntry = components["schemas"]["LedgerEntry"];
 export type IdentitySummary = components["schemas"]["IdentitySummary"];
 export type LinkedProvider = components["schemas"]["LinkedProvider"];
@@ -322,6 +324,26 @@ export function useRemoveFavorite() {
   });
 }
 
+// Backend: wired. The member id is supplied by the caller from useCurrentMember
+// (/me); this hook never invents or guesses an identity.
+export function useAddFavorite() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    meta: { silent: true },
+    mutationFn: async ({ memberId, itemId }: { memberId: string; itemId: string }) => {
+      const { data, error } = await apiClient.POST("/members/{member_id}/favorites", {
+        params: { path: { member_id: memberId } },
+        body: { item_id: itemId }
+      });
+      if (error || !data) throw error ?? new Error("Favorite could not be saved");
+      return data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["me", "favorites"] });
+    }
+  });
+}
+
 // ---- Localized content fetch helpers ----
 //
 // Backend owns localized copy for menu and rewards (item names, descriptions,
@@ -513,20 +535,18 @@ export function useSubmitReceiptClaim() {
   });
 }
 
-// Backend: stubbed (returns 501). MSW serves in dev.
-export function useSubmitFeedback(orderId: string) {
-  const queryClient = useQueryClient();
+// Backend: wired. Reviews describe a visit experience and are not tied to an
+// order id. The backend derives the authenticated member from Firebase auth.
+export function useSubmitReview() {
   return useMutation({
-    mutationFn: async (body: FeedbackRequest) => {
-      const { data, error } = await apiClient.POST(
-        "/me/orders/{order_id}/feedback",
-        { params: { path: { order_id: orderId } }, body }
-      );
+    meta: { silent: true },
+    mutationFn: async (body: ReviewSubmissionRequest) => {
+      const { data, error } = await apiClient.POST("/me/reviews", { body });
       if (error) throw error;
+      if (!isPersistedPendingReview(data)) {
+        throw new Error("POST /me/reviews did not return a persisted pending review");
+      }
       return data;
-    },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["me", "activity"] });
     }
   });
 }

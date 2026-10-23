@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 import { getOriginCard } from "../../../../../src/api/server";
 import { colors } from "../../../../../src/design/tokens";
@@ -32,19 +33,16 @@ export default async function OriginCardPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  // Returns null on backend failure; fall through to the placeholder content
-  // so the route still renders.
   const data = await getOriginCard(id);
+  if (!data) notFound();
 
-  // Fallback values mirror the current House Blend rotation so the route still
-  // reads correctly when the backend is unreachable at prerender time.
   const specRows = [
-    { label: "país", value: data?.country ?? "Nicaragua · Colombia · Kenia" },
-    { label: "región", value: data?.region ?? "Mezcla de origen · DACH" },
-    { label: "productor", value: data?.producer ?? "DACH" },
-    { label: "variedad", value: data?.variety ?? "Atuai, Castillo, Caturra, Batian" },
-    { label: "proceso", value: data?.process ?? "Lavado y Natural" },
-    { label: "método", value: data?.method ?? "Espresso · 18g / 36g" }
+    { label: "país", value: data.country },
+    { label: "región", value: data.region },
+    { label: "productor", value: data.producer },
+    { label: "variedad", value: data.variety },
+    { label: "proceso", value: data.process },
+    { label: "método", value: data.method }
   ];
 
   return (
@@ -106,9 +104,9 @@ export default async function OriginCardPage({
           color: colors.ink900
         }}
       >
-        {data?.name_a ?? "House Blend,"}
+        {data.name_a}
         <br />
-        {data?.name_b ?? "DACH"}
+        {data.name_b}
       </h1>
 
       <p
@@ -120,8 +118,7 @@ export default async function OriginCardPage({
           color: colors.ink900
         }}
       >
-        {data?.body ??
-          "Blend de la casa de DACH — Nicaragua, Colombia y Kenia, cosecha 2024-2025 a 1.850 msnm promedio. Chocolate, fruta tropical y caramelo sobre un cuerpo redondo y cremoso."}
+        {data.body}
       </p>
 
       {/* Spec sheet — hairline rows */}
@@ -188,8 +185,7 @@ export default async function OriginCardPage({
             color: colors.ink900
           }}
         >
-          {data?.barista_note ??
-            "\"Es nuestro caballito de batalla — equilibrado, dulce, perdona pequeños cambios de receta sin perder carácter.\""}
+          {data.barista_note}
         </p>
         <span
           style={{
@@ -201,7 +197,7 @@ export default async function OriginCardPage({
             color: colors.inkMuted
           }}
         >
-          — {data?.barista_attrib ?? "BARRA DERIVA · 14 MAY"}
+          — {data.barista_attrib}
         </span>
       </section>
 
