@@ -1,0 +1,256 @@
+--- a/app/(landing)/menu/_components/CartaBody.tsx
++++ b/app/(landing)/menu/_components/CartaBody.tsx
+@@ -31,6 +31,7 @@
+   type MenuSectionX
+ } from "./menu-fields";
+ import { offerCopy } from "./offer-copy";
++import { AuthorByline } from "./author-byline";
+ import {
+   clp as formatClp,
+   commonComponents,
+@@ -687,7 +688,15 @@
+ }
+ 
+ // ── Carta de autor spotlight ────────────────────────────────────────────
+-function AutorSpotlight({ items, showPrices }: { items: MenuItemX[]; showPrices: boolean }) {
++function AutorSpotlight({
++  items,
++  showPrices,
++  locale
++}: {
++  items: MenuItemX[];
++  showPrices: boolean;
++  locale: Locale;
++}) {
+   const railRef = useRef<HTMLDivElement>(null);
+   const rafRef = useRef(0);
+   const [active, setActive] = useState(0);
+@@ -731,6 +740,11 @@
+                 </div>
+               </div>
+               <div className={styles.autorCardBody}>
++                <AuthorByline
++                  author={item.author}
++                  locale={locale}
++                  className={styles.autorCardAuthor}
++                />
+                 {item.meta ? <span className={styles.autorCardMeta}>{item.meta}</span> : null}
+                 {item.description ? <span className={styles.autorCardDesc}>{item.description}</span> : null}
+               </div>
+@@ -929,7 +943,7 @@
+         ))}
+       </nav>
+ 
+-      <AutorSpotlight items={autorItems} showPrices={showPrices} />
++      <AutorSpotlight items={autorItems} showPrices={showPrices} locale={locale} />
+ 
+       {renderedSections.map((section) => (
+         <Section key={section.id} section={section} showPrices={showPrices} locale={locale} />
+--- a/app/(landing)/menu/carta.module.css
++++ b/app/(landing)/menu/carta.module.css
+@@ -1102,6 +1102,20 @@
+   flex-direction: column;
+   gap: 5px;
+   padding: 14px 2px 0;
++  min-width: 0;
++}
++.autorCardAuthor {
++  display: block;
++  max-width: 100%;
++  min-width: 0;
++  color: var(--ink-muted);
++  font-family: var(--f-tracked);
++  font-size: 13px;
++  font-weight: 400;
++  letter-spacing: 0;
++  line-height: 1.4;
++  overflow-wrap: anywhere;
++  white-space: normal;
+ }
+ .autorCardMeta {
+   font-family: var(--f-mono);
+--- a/src/api/schema.ts
++++ b/src/api/schema.ts
+@@ -5140,6 +5140,8 @@
+         };
+         PublicMenuItem: {
+             id: string;
++            /** @description Optional recipe author or signature drink creator name, returned the same way for every locale. */
++            author?: string;
+             name: string;
+             description: string;
+             /** Format: uri */
+@@ -5175,6 +5177,8 @@
+             section_label?: string;
+             /** @description Legacy/display section value kept for backward compatibility. */
+             section: string;
++            /** @description Optional locale-independent recipe author or signature drink creator name. */
++            author?: string;
+             name: string;
+             description?: string;
+             price_clp: number;
+@@ -5244,6 +5248,8 @@
+             section_label?: string;
+             /** @description Legacy/display section value kept for backward compatibility. */
+             section: string;
++            /** @description Optional recipe author or signature drink creator name, returned the same way for every locale. */
++            author?: string;
+             name: string;
+             price_clp: number;
+             available: boolean;
+@@ -5269,6 +5275,8 @@
+             section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "cervezas-cocteles" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "onces" | "cakes-pies" | "bakes";
+             section?: string;
+             name?: string;
++            /** @description Set or replace the locale-independent author name. On PATCH, null leaves the current value unchanged; an empty or whitespace-only string clears it. */
++            author?: string | null;
+             description?: string;
+             price_clp?: number;
+             tags?: string[];
+@@ -5286,6 +5294,8 @@
+             section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "cervezas-cocteles" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "onces" | "cakes-pies" | "bakes";
+             section?: string;
+             name: string;
++            /** @description Optional locale-independent recipe author or signature drink creator name. Omit or pass null for an empty value; empty and whitespace-only strings are stored as empty. */
++            author?: string | null;
+             description?: string;
+             price_clp: number;
+             tags?: string[];
+--- /dev/null
++++ b/app/(landing)/menu/_components/author-byline.tsx
+@@ -0,0 +1,22 @@
++import React from "react";
++
++import type { Locale } from "../../../../src/i18n/locale";
++
++export function AuthorByline({
++  author,
++  locale,
++  className
++}: {
++  author?: string | null;
++  locale: Locale;
++  className?: string;
++}) {
++  const name = author?.trim();
++  if (!name) return null;
++
++  return (
++    <span className={className}>
++      {locale === "en" ? "By" : "Por"} {name}
++    </span>
++  );
++}
+--- /dev/null
++++ b/tests/menu/author-byline.test.tsx
+@@ -0,0 +1,40 @@
++import assert from "node:assert/strict";
++import test from "node:test";
++import { createElement } from "react";
++import { renderToStaticMarkup } from "react-dom/server";
++
++import { AuthorByline } from "../../app/(landing)/menu/_components/author-byline";
++
++function render(author: string | null | undefined, locale: "es" | "en" | "pt-BR") {
++  return renderToStaticMarkup(
++    createElement(AuthorByline, { author, locale, className: "byline" })
++  );
++}
++
++test("omits the byline for missing, null, empty, and whitespace-only authors", () => {
++  assert.equal(render(undefined, "es"), "");
++  assert.equal(render(null, "es"), "");
++  assert.equal(render("", "es"), "");
++  assert.equal(render(" \t\n ", "es"), "");
++});
++
++test("trims a valid author and uses the Spanish prefix", () => {
++  assert.equal(render("  Camila Rojas  ", "es"), '<span class="byline">Por Camila Rojas</span>');
++});
++
++test("uses the English prefix and the requested Portuguese wording", () => {
++  assert.equal(render("Maya Silva", "en"), '<span class="byline">By Maya Silva</span>');
++  assert.equal(render("Maya Silva", "pt-BR"), '<span class="byline">Por Maya Silva</span>');
++});
++
++test("renders names as escaped text and keeps long names intact in the markup", () => {
++  const longName = "A very long coffee recipe creator name that should wrap inside the card";
++  assert.equal(
++    render('Ana <script>alert("x")</script> & José', "es"),
++    '<span class="byline">Por Ana &lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt; &amp; José</span>'
++  );
++  assert.equal(
++    render(longName, "en"),
++    `<span class="byline">By ${longName}</span>`
++  );
++});
+--- /dev/null
++++ b/tests/menu/carta-author-render.test.tsx
+@@ -0,0 +1,67 @@
++import assert from "node:assert/strict";
++import { createRequire } from "node:module";
++import test from "node:test";
++import React from "react";
++import { renderToStaticMarkup } from "react-dom/server";
++
++import type { PublicMenuView } from "../../src/api/server";
++
++const require = createRequire(__filename);
++(globalThis as typeof globalThis & { React: typeof React }).React = React;
++require.extensions[".css"] = (module) => {
++  module.exports = {
++    __esModule: true,
++    default: new Proxy({}, { get: (_target, name) => String(name) })
++  };
++};
++
++const { CartaBody } = require("../../app/(landing)/menu/_components/CartaBody.tsx") as {
++  CartaBody: typeof import("../../app/(landing)/menu/_components/CartaBody").CartaBody;
++};
++
++const menu = {
++  name: "Carta Deriva Coffee Studio",
++  season: "Temporada",
++  current_schedule: "weekday",
++  closed_today: false,
++  sections: [
++    {
++      id: "cafeteria",
++      numeral: "01",
++      title: "Cafetería",
++      emphasis: "hero",
++      lede: "Café",
++      subgroups: [
++        {
++          id: "cafes-autor",
++          label: "Café de autor",
++          items: [
++            { id: "decaf-filter", name: "Decaf Filter", author: "Maria", description: "", available: true },
++            { id: "bosque-valdiviano", name: "Bosque Valdiviano", author: "Maria", description: "", available: true },
++            { id: "latte-citrus-bloom", name: "Latte Citrus Bloom", author: "Maria", description: "", available: true },
++            { id: "capuccino-mediterraneo", name: "Capuccino Mediterráneo", author: "Benja", description: "", available: true },
++            { id: "new-coffee-1", name: "Nuevo café 1", description: "", available: true },
++            { id: "new-coffee-2", name: "Nuevo café 2", author: null, description: "", available: true },
++            { id: "new-coffee-3", name: "Nuevo café 3", author: "  ", description: "", available: true },
++            { id: "new-coffee-4", name: "Nuevo café 4", description: "", available: true }
++          ]
++        }
++      ]
++    }
++  ]
++} as unknown as PublicMenuView;
++
++test("CartaBody renders known author credits and omits blank new authors", () => {
++  const html = renderToStaticMarkup(
++    React.createElement(CartaBody, { menu, locale: "es", showPrices: true })
++  );
++  const cards = [...html.matchAll(/<article\b[\s\S]*?<\/article>/g)].map(([card]) => card);
++
++  assert.equal(cards.length, 8);
++  for (const cardIndex of [0, 1, 2]) assert.match(cards[cardIndex], />Por Maria<\/span>/);
++  assert.match(cards[3], />Por Benja<\/span>/);
++  for (const card of cards.slice(4)) {
++    assert.doesNotMatch(card, />Por (?:Maria|Benja)<\/span>/);
++    assert.doesNotMatch(card, /autorCardAuthor/);
++  }
++});

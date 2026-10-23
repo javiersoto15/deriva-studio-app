@@ -1,0 +1,43 @@
+{
+  "deployment_id": "dpl_CAVCit6C8astHC2ksF9GzjDpVv5M",
+  "source_tree_file_count": 361,
+  "safe_source_files_hash_verified": 358,
+  "excluded_by_filename_or_generated": 3,
+  "unchanged_files_matching_deployment": 355,
+  "approved_modified_deployed_files": [
+    {
+      "path": "app/(landing)/menu/_components/CartaBody.tsx",
+      "deployed_sha1": "54daf40a6669488e39ddc486e54cf543b9e7c08a",
+      "release_sha1": "008fe1eb7ece7379ecf31f2415a0db5cffc2c835",
+      "status": "approved author restoration"
+    },
+    {
+      "path": "app/(landing)/menu/carta.module.css",
+      "deployed_sha1": "2bfe262b1ee1c2a54d9ce061a5ba0c8f18df51ea",
+      "release_sha1": "abbf46b40226521a57c938de1af8071c43a17cb6",
+      "status": "approved author restoration"
+    },
+    {
+      "path": "src/api/schema.ts",
+      "deployed_sha1": "830bacaa06dd6ca05309bf53d364336d057d84b2",
+      "release_sha1": "b2a3b84fa524ca45b6383144371507d31d80594a",
+      "status": "approved author restoration"
+    }
+  ],
+  "new_author_restore_files": [
+    {
+      "path": "app/(landing)/menu/_components/author-byline.tsx",
+      "release_sha1": "790712dd302d3ff9e7a6287c56b178b91ecbce0c"
+    },
+    {
+      "path": "tests/menu/author-byline.test.tsx",
+      "release_sha1": "4f5145c39963637df0cee8840601bb3a51646402"
+    },
+    {
+      "path": "tests/menu/carta-author-render.test.tsx",
+      "release_sha1": "b6a1fc234650fd21ba742cd38ae5df045721ba31"
+    }
+  ],
+  "unexpected_mismatches": [],
+  "unexpected_non_generated_extras": []
+}
