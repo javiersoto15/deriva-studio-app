@@ -1237,7 +1237,8 @@ main.stock-screen-message {
     display: none;
   }
 
-  .stock-row.is-saved .stock-row__meta {
+  .stock-row.is-saved .stock-row__meta,
+  .stock-row.has-shelf .stock-row__meta {
     display: block;
     font-size: 12px;
   }
@@ -1407,4 +1408,261 @@ main.stock-screen-message {
 
 .stock-share__whatsapp {
   text-decoration: none;
+}
+
+/* ---------- Vida útil (pastry lots behind the count) ----------
+   Brown stays the only alert colour: retire = solid brown, everything
+   else is weight and wording. Dashed remains reserved for "Sin contar". */
+
+.stock-vida {
+  flex-wrap: wrap;
+  align-items: center;
+  row-gap: 2px;
+}
+
+.stock-vida__text {
+  flex: 1 1 180px;
+  min-width: 0;
+}
+
+.stock-vida.is-alert {
+  border: 1px solid var(--stock-brown);
+  border-left-width: 3px;
+  color: var(--stock-brown);
+  font-weight: 600;
+}
+
+.stock-vida .stock-text-button {
+  min-height: 32px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.stock-shelf.is-discard {
+  color: var(--stock-brown);
+  font-weight: 600;
+}
+
+.stock-shelf.is-sell_first {
+  color: var(--stock-brown);
+  font-weight: 500;
+}
+
+.stock-shelf.is-unknown {
+  color: var(--stock-muted);
+  font-style: italic;
+}
+
+.stock-count.is-expired {
+  border: 2px solid var(--stock-brown);
+}
+
+.stock-editor__expired {
+  color: var(--stock-brown);
+  font-weight: 600;
+}
+
+.stock-callout--action {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 12px;
+}
+
+.stock-callout--action > span {
+  flex: 1 1 200px;
+  min-width: 0;
+}
+
+.stock-callout--action .stock-button {
+  flex: 0 0 auto;
+  min-height: 40px;
+  padding-right: 14px;
+  padding-left: 14px;
+  font-size: 13px;
+}
+
+.stock-lots {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  border-left: 2px solid var(--stock-brown);
+  background: var(--stock-inset);
+  font: 400 13.5px/1.45 var(--font-tracked), sans-serif;
+}
+
+.stock-lots p {
+  margin: 0;
+}
+
+.stock-lots__tag {
+  color: var(--stock-brown);
+  font: 500 11px/1.4 var(--font-mono), monospace;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.stock-lots__list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stock-lots__list li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2px 12px;
+}
+
+.stock-lots__list .stock-mono {
+  font-size: 12.5px;
+  white-space: nowrap;
+}
+
+.stock-lots__list li.is-expired {
+  color: var(--stock-brown);
+  font-weight: 600;
+}
+
+.stock-lots--unknown {
+  border-left-style: dotted;
+}
+
+.stock-lots__date {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stock-lots__date label {
+  color: var(--stock-ink);
+}
+
+.stock-lots__date-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.stock-lots__date-row input {
+  flex: 1 1 180px;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 10px;
+  border: 1px solid var(--stock-line-strong);
+  border-radius: 0;
+  background: var(--stock-field);
+  color: var(--stock-ink);
+  font: 400 15px/1 var(--font-mono), monospace;
+}
+
+.stock-lots__date-row .stock-button {
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding-right: 14px;
+  padding-left: 14px;
+  font-size: 13px;
+}
+
+.stock-history__lots {
+  margin: 2px 0 0;
+  color: var(--stock-brown);
+  font: 400 12.5px/1.4 var(--font-tracked), sans-serif;
+}
+
+/* Plazos de cocina */
+
+.stock-groups {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--stock-line);
+}
+
+.stock-groups li {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--stock-line);
+}
+
+.stock-groups__line {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2px 12px;
+  width: 100%;
+}
+
+.stock-groups__line strong {
+  color: var(--stock-ink);
+  font: 500 15px/1.3 var(--font-tracked), sans-serif;
+}
+
+.stock-groups__line .stock-mono {
+  color: var(--stock-brown);
+  font-size: 12.5px;
+}
+
+.stock-groups__members {
+  margin: 0;
+  color: var(--stock-muted);
+  font: 400 13px/1.45 var(--font-tracked), sans-serif;
+}
+
+.stock-groups__form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.stock-groups__days {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+}
+
+.stock-groups__picker {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-top: 1px solid var(--stock-line);
+}
+
+.stock-groups__picker legend {
+  padding: 10px 0 4px;
+  color: var(--stock-muted);
+  font: 600 12px/1.3 var(--font-tracked), sans-serif;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.stock-groups__picker .stock-check {
+  border-bottom: 1px solid var(--stock-line);
+}
+
+.stock-groups__picker .stock-check.is-taken {
+  color: var(--stock-muted);
+  cursor: not-allowed;
+}
+
+.stock-groups__picker .stock-check__count {
+  font: 400 12px/1.2 var(--font-mono), monospace;
+}
+
+.stock-vida__actions {
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 12px;
+  margin-left: auto;
 }

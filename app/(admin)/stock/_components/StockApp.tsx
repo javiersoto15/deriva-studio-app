@@ -17,6 +17,7 @@ import {
 import {
   adjustStockItem,
   createRawItem,
+  dateStockLot,
   getStockHistory,
   getStockHistoryPage,
   getStockSnapshot,
@@ -37,6 +38,7 @@ import {
   type KindFilter
 } from "../../../../src/stock/editor";
 import { findSameDayDepletionIds } from "../../../../src/stock/share";
+import { filterExpiring, shelfStatus } from "../../../../src/stock/shelf-life";
 import type {
   CreateRawItemPayload,
   StockAdjustmentPayload,
@@ -44,6 +46,7 @@ import type {
   StockSnapshot
 } from "../../../../src/stock/types";
 import { StockShare, type StockShareState } from "./StockShare";
+import { ShelfLifeGroupsPanel } from "./StockShelfLife";
 import { formatClock, formatHeaderDate, formatUpdated } from "./format";
 import {
   AdjustEditor,
@@ -75,6 +78,7 @@ const MODE_VERB: Record<EditMode, string> = { set: "fijar total", add: "sumar", 
 const SESSION_EXPIRED = "Tu sesión expiró. Vuelve a entrar para continuar.";
 const DESKTOP_QUERY = "(min-width: 1024px)";
 const STOCK_SHARE_TRIGGER_ID = "stock-share-trigger";
+const STOCK_PLAZOS_TRIGGER_ID = "stock-plazos-trigger";
 
 function describeLoginError(error: unknown): string {
   const code = typeof error === "object" && error && "code" in error
@@ -150,6 +154,7 @@ export function StockApp() {
   const [kindFilter, setKindFilter] = useState<KindFilter>("all");
   const [search, setSearch] = useState("");
   const [uncountedOnly, setUncountedOnly] = useState(false);
+  const [expiringOnly, setExpiringOnly] = useState(false);
 
   const [panel, setPanel] = useState<Panel | null>(null);
   const [shareState, setShareState] = useState<StockShareState>({ status: "loading" });
@@ -288,9 +293,15 @@ export function StockApp() {
 
   const items = useMemo(() => snapshot?.items ?? [], [snapshot]);
   const summary = useMemo(() => countSummary(items), [items]);
-  const visibleItems = useMemo(
-    () => filterStockItems(items, { kind: kindFilter, search, uncountedOnly }),
-    [items, kindFilter, search, uncountedOnly]
+  const visibleItems = useMemo(() => {
+    const filtered = filterStockItems(items, { kind: kindFilter, search, uncountedOnly });
+    return expiringOnly ? filterExpiring(filtered) : filtered;
+  }, [items, kindFilter, search, uncountedOnly, expiringOnly]);
+  const trackedCount = useMemo(() => items.filter((item) => item.shelf_life).length, [items]);
+  const expiringCount = useMemo(() => filterExpiring(items).length, [items]);
+  const unknownLotUnits = useMemo(
+    () => items.reduce((total, item) => total + (item.shelf_life?.counts.unknown ?? 0), 0),
+    [items]
   );
   const visibilityEnabled = snapshot?.stock_visibility_enabled ?? false;
   const readOnly = staleSnapshot;
@@ -582,6 +593,39 @@ export function StockApp() {
     [isCurrentSession, items, loadSnapshot, openAdjust, signOutAndClear, updateItem, visibilityEnabled, visibleItems]
   );
 
+  /** Returns an error message for the lot row, or null once the date is saved. */
+  const dateLot = async (lotId: string, enteredAt: string, requestId: string): Promise<string | null> => {
+    const generation = sessionGenerationRef.current;
+    const uid = sessionUidRef.current;
+    try {
+      await dateStockLot(lotId, { entered_at: enteredAt, request_id: requestId });
+      if (!isCurrentSession(generation, uid)) return null;
+      setToast("Fecha de entrada guardada. El lote ya tiene sus plazos.");
+      void loadSnapshot({ background: true });
+      return null;
+    } catch (error) {
+      if (!isCurrentSession(generation, uid)) return null;
+      if (error instanceof StockRequestError && error.status === 401) {
+        await signOutAndClear(SESSION_EXPIRED);
+        return null;
+      }
+      if (error instanceof StockRequestError && error.ambiguous) {
+        return "No sabemos si se guardó. Vuelve a guardar: no se duplicará.";
+      }
+      void loadSnapshot({ background: true });
+      if (error instanceof StockRequestError && error.code === "lot_already_dated") {
+        return "Alguien ya registró la fecha de este lote. Actualizamos la lista.";
+      }
+      if (error instanceof StockRequestError && error.code === "shelf_life_group_required") {
+        return "Este producto ya no tiene plazo de cocina asignado.";
+      }
+      if (error instanceof StockRequestError && error.status === 400) {
+        return "La fecha no es válida. No puede ser futura.";
+      }
+      return describeRequestError(error);
+    }
+  };
+
   const saveAdjustment = (chain: boolean) => {
     if (panel?.type !== "adjust" || !panelItem || busy || pending) return;
     const preview = previewAdjustment(panelItem.quantity, panel.mode, panel.amount);
@@ -769,6 +813,8 @@ export function StockApp() {
         hasNextUncounted={nextUncounted(visibleItems, panelItem.id) !== null}
         savedNote={toast || null}
         history={historyById[panelItem.id]}
+        now={now}
+        onDateLot={dateLot}
         onChange={(patch) => setPanel((current) => (current?.type === "adjust" ? { ...current, ...patch } : current))}
         onSave={saveAdjustment}
         onRetry={retryPending}
@@ -799,6 +845,15 @@ export function StockApp() {
         onSubmit={submitRawItem}
         onRetry={retryPending}
         onClose={closePanel}
+      />
+    );
+  } else if (panel?.type === "plazos") {
+    editor = (
+      <ShelfLifeGroupsPanel
+        titleId="stock-editor-title"
+        onClose={closePanel}
+        onSessionExpired={() => void signOutAndClear(SESSION_EXPIRED)}
+        onSaved={() => void loadSnapshot({ background: true })}
       />
     );
   } else if (panel?.type === "share") {
@@ -864,6 +919,23 @@ export function StockApp() {
                   : "Los conteos no ocultan productos. Visibilidad por stock: desactivada."}
               </span>
             </div>
+          )}
+
+          {snapshot && (
+            <VidaUtilNote
+              tracked={trackedCount > 0}
+              plazosDisabled={busy || pending !== null || panel !== null}
+              onPlazos={() => {
+                returnFocusRef.current = STOCK_PLAZOS_TRIGGER_ID;
+                setPanel({ type: "plazos" });
+                focusPanelTitle();
+              }}
+              discardItems={snapshot.shelf_life_summary.discard_items}
+              sellFirstItems={snapshot.shelf_life_summary.sell_first_items}
+              unknownUnits={unknownLotUnits}
+              filtering={expiringOnly}
+              onShow={() => { setExpiringOnly(true); setUncountedOnly(false); }}
+            />
           )}
 
           {readOnly && (
@@ -940,6 +1012,13 @@ export function StockApp() {
                   <span>Solo sin contar</span>
                   <span className="stock-mono stock-check__count">{summary.uncounted}</span>
                 </label>
+                {trackedCount > 0 && (
+                  <label className="stock-check">
+                    <input type="checkbox" checked={expiringOnly} onChange={(event) => setExpiringOnly(event.target.checked)} />
+                    <span>Solo por vencer</span>
+                    <span className="stock-mono stock-check__count">{expiringCount}</span>
+                  </label>
+                )}
               </section>
 
               {loadState === "loading" && !snapshot && <LoadingRows />}
@@ -949,8 +1028,9 @@ export function StockApp() {
                   search={search}
                   kindFilter={kindFilter}
                   uncountedOnly={uncountedOnly}
+                  expiringOnly={expiringOnly}
                   canManageRaw={snapshot.can_manage_raw_items}
-                  onShowAll={() => { setKindFilter("all"); setUncountedOnly(false); }}
+                  onShowAll={() => { setKindFilter("all"); setUncountedOnly(false); setExpiringOnly(false); }}
                 />
               )}
               {snapshot && visibleItems.length > 0 && (
@@ -1049,15 +1129,19 @@ function StockRow(props: {
   const unknown = item.quantity === null;
   const unit = unitShort(item.unit);
 
+  const status = item.shelf_life && !unknown ? shelfStatus(item.shelf_life) : null;
+  const expired = (item.shelf_life?.counts.discard ?? 0) > 0;
+
   let meta: React.ReactNode;
   if (props.savedText) meta = <span className="is-saved">{props.savedText}</span>;
+  else if (status) meta = <span className={`stock-shelf is-${status.tone}`}>{status.text}</span>;
   else if (paused) meta = <span className="is-paused">Pausado en carta{updated ? ` · ${updated}` : ""}</span>;
   else meta = <>{kind} · {unknown ? "aún sin conteo" : updated ? `actualizado ${updated}` : "contado"}</>;
 
-  const label = `${item.name}, ${unknown ? "sin contar" : `${formatCount(item.quantity ?? 0)} ${unit}`}, ${unknown ? "fijar primer conteo" : "editar conteo"}`;
+  const label = `${item.name}, ${unknown ? "sin contar" : `${formatCount(item.quantity ?? 0)} ${unit}`}${status ? `, ${status.text}` : ""}, ${unknown ? "fijar primer conteo" : "editar conteo"}`;
 
   return (
-    <li className={`stock-row${props.selected ? " is-selected" : ""}${props.savedText ? " is-saved" : ""}`}>
+    <li className={`stock-row${props.selected ? " is-selected" : ""}${props.savedText ? " is-saved" : ""}${status ? " has-shelf" : ""}`}>
       <div className="stock-row__name">
         <span className="stock-row__title">{item.name}</span>
         <span className="stock-row__meta">{meta}</span>
@@ -1068,7 +1152,7 @@ function StockRow(props: {
       <button
         id={countButtonId(item.id)}
         type="button"
-        className={`stock-count${unknown ? " is-unknown" : ""}`}
+        className={`stock-count${unknown ? " is-unknown" : ""}${expired ? " is-expired" : ""}`}
         onClick={props.onOpen}
         disabled={props.disabled}
         aria-label={label}
@@ -1087,14 +1171,64 @@ function StockRow(props: {
   );
 }
 
+function VidaUtilNote(props: {
+  tracked: boolean;
+  plazosDisabled: boolean;
+  onPlazos: () => void;
+  discardItems: number;
+  sellFirstItems: number;
+  unknownUnits: number;
+  filtering: boolean;
+  onShow: () => void;
+}) {
+  const parts: string[] = [];
+  if (props.discardItems > 0) parts.push(`${props.discardItems} por retirar`);
+  if (props.sellFirstItems > 0) parts.push(`${props.sellFirstItems} para vender primero`);
+  if (props.unknownUnits > 0) parts.push(`${props.unknownUnits} unid. sin fecha de entrada`);
+  const alert = props.discardItems > 0;
+  const text = !props.tracked
+    ? "Sin plazos de cocina todavía. Los conteos funcionan como siempre."
+    : parts.length > 0 ? parts.join(" · ") : "Todo dentro de plazo.";
+  return (
+    <div className={`stock-visibility stock-vida${alert ? " is-alert" : ""}`} role={alert ? "alert" : "note"}>
+      <span className="stock-visibility__tag">Vida útil</span>
+      <span className="stock-vida__text">{text}</span>
+      <span className="stock-vida__actions">
+        {alert && !props.filtering && (
+          <button type="button" className="stock-text-button" onClick={props.onShow}>Ver</button>
+        )}
+        <button
+          id={STOCK_PLAZOS_TRIGGER_ID}
+          type="button"
+          className="stock-text-button"
+          onClick={props.onPlazos}
+          disabled={props.plazosDisabled}
+        >
+          Plazos
+        </button>
+      </span>
+    </div>
+  );
+}
+
 function EmptyState(props: {
   hasItems: boolean;
   search: string;
   kindFilter: KindFilter;
   uncountedOnly: boolean;
+  expiringOnly: boolean;
   canManageRaw: boolean;
   onShowAll: () => void;
 }) {
+  if (props.expiringOnly && !props.search) {
+    return (
+      <div className="stock-empty">
+        <strong>Nada por vencer.</strong>
+        <span>Ningún producto con plazo tiene unidades para retirar.</span>
+        <button type="button" className="stock-button stock-button--outline" onClick={props.onShowAll}>Ver todo</button>
+      </div>
+    );
+  }
   if (!props.hasItems) {
     return (
       <div className="stock-empty">
@@ -1124,7 +1258,7 @@ function EmptyState(props: {
     <div className="stock-empty">
       <strong>Nada con “{props.search.trim()}”{scope}.</strong>
       <span>La pastelería llega sola desde la carta. Si falta un producto, se agrega en la gestión de carta, no aquí.</span>
-      {(props.kindFilter !== "all" || props.uncountedOnly) && (
+      {(props.kindFilter !== "all" || props.uncountedOnly || props.expiringOnly) && (
         <button type="button" className="stock-button stock-button--outline" onClick={props.onShowAll}>Buscar en Todos</button>
       )}
     </div>

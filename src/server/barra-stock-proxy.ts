@@ -53,7 +53,7 @@ async function fetchWithTimeout(
 export async function forwardStockRequest(
   request: NextRequest,
   backendPath: string,
-  options: { method: "GET" | "POST"; body?: string } = { method: "GET" }
+  options: { method: "GET" | "POST" | "PUT" | "PATCH"; body?: string } = { method: "GET" }
 ): Promise<NextResponse> {
   const authorization = request.headers.get("authorization");
   if (!isBearer(authorization)) {
@@ -105,4 +105,21 @@ export function stockIdSegment(stockId: string): string | null {
   // backend route and never turns user input into a backend path.
   if (!/^(?:menu|raw):[^/\\?#]+$/.test(stockId) || stockId.includes("..")) return null;
   return encodeURIComponent(stockId);
+}
+
+/** `group_<uuid>` only, so a group write always selects one fixed backend route. */
+export function shelfLifeGroupSegment(groupId: string): string | null {
+  return /^group_[0-9a-fA-F-]{36}$/.test(groupId) ? groupId : null;
+}
+
+/** `lot_<uuid>` only, for the same reason. */
+export function stockLotSegment(lotId: string): string | null {
+  return /^lot_[0-9a-fA-F-]{36}$/.test(lotId) ? lotId : null;
+}
+
+export function invalidProxyRequest(code: string, message: string): Response {
+  return new Response(JSON.stringify({ error: code, message }), {
+    status: 400,
+    headers: { "Cache-Control": "no-store", "Content-Type": "application/json; charset=utf-8" }
+  });
 }

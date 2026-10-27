@@ -148,3 +148,41 @@ test("history proxy forwards only validated pagination parameters", async () => 
     else process.env.DERIVA_BACKEND_PROXY_URL = originalBase;
   }
 });
+
+test("shelf-life proxies forward only well-formed group and lot ids", async () => {
+  const { PUT: putGroup } = await import("../../app/api/barra-stock/shelf-life/groups/[groupId]/route");
+  const { PATCH: patchLot } = await import("../../app/api/barra-stock/lots/[lotId]/route");
+  const originalFetch = globalThis.fetch;
+  const originalBase = process.env.DERIVA_BACKEND_PROXY_URL;
+  process.env.DERIVA_BACKEND_PROXY_URL = "http://backend.test";
+  const calls: Array<{ url: string; method?: string }> = [];
+  globalThis.fetch = async (input, init) => {
+    calls.push({ url: String(input), method: init?.method });
+    return new Response("{}", { status: 200, headers: { "content-type": "application/json" } });
+  };
+  const uuid = "0b9c6f2e-4f0a-4d5e-9a51-2c7d8e9f0a1b";
+  const request = (method: string) =>
+    new NextRequest("http://localhost/api/barra-stock/x", {
+      method,
+      headers: { authorization: "Bearer firebase-token" },
+      body: JSON.stringify({ request_id: "r" })
+    });
+  try {
+    const badGroup = await putGroup(request("PUT"), { params: Promise.resolve({ groupId: "../stock" }) });
+    const badLot = await patchLot(request("PATCH"), { params: Promise.resolve({ lotId: "lot_1/../../x" }) });
+    assert.equal(badGroup.status, 400);
+    assert.equal(badLot.status, 400);
+    assert.equal(calls.length, 0);
+
+    await putGroup(request("PUT"), { params: Promise.resolve({ groupId: `group_${uuid}` }) });
+    await patchLot(request("PATCH"), { params: Promise.resolve({ lotId: `lot_${uuid}` }) });
+    assert.deepEqual(calls, [
+      { url: `http://backend.test/admin/stock/shelf-life/groups/group_${uuid}`, method: "PUT" },
+      { url: `http://backend.test/admin/stock/lots/lot_${uuid}`, method: "PATCH" }
+    ]);
+  } finally {
+    globalThis.fetch = originalFetch;
+    if (originalBase === undefined) delete process.env.DERIVA_BACKEND_PROXY_URL;
+    else process.env.DERIVA_BACKEND_PROXY_URL = originalBase;
+  }
+});

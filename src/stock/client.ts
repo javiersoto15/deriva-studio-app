@@ -7,6 +7,9 @@ import {
   isAmbiguousStockStatus,
   normalizeHistory,
   normalizeHistoryPage,
+  normalizeLotDateResult,
+  normalizeShelfLifeConfiguration,
+  normalizeShelfLifeGroup,
   normalizeStockSnapshot
 } from "./contract";
 import type {
@@ -15,6 +18,12 @@ import type {
   StockHistoryEntry,
   StockHistoryPage,
   StockItem,
+  StockLotDatePayload,
+  StockLotDateResult,
+  StockShelfLifeConfiguration,
+  StockShelfLifeGroup,
+  StockShelfLifeGroupCreatePayload,
+  StockShelfLifeGroupUpdatePayload,
   StockSnapshot
 } from "./types";
 
@@ -186,5 +195,36 @@ export function getStockHistoryPage(
     `/items/${encodeURIComponent(stockId)}/history?${query.toString()}`,
     { method: "GET" },
     normalizeHistoryPage
+  );
+}
+
+export function getShelfLifeConfiguration(): Promise<StockShelfLifeConfiguration> {
+  return stockFetch("/shelf-life", { method: "GET" }, normalizeShelfLifeConfiguration);
+}
+
+export function createShelfLifeGroup(payload: StockShelfLifeGroupCreatePayload): Promise<StockShelfLifeGroup> {
+  return stockFetch(
+    "/shelf-life/groups",
+    { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) },
+    normalizeShelfLifeGroup
+  );
+}
+
+export function updateShelfLifeGroup(
+  groupId: string,
+  payload: StockShelfLifeGroupUpdatePayload
+): Promise<StockShelfLifeGroup> {
+  return stockFetch(
+    `/shelf-life/groups/${encodeURIComponent(groupId)}`,
+    { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) },
+    normalizeShelfLifeGroup
+  );
+}
+
+export function dateStockLot(lotId: string, payload: StockLotDatePayload): Promise<StockLotDateResult> {
+  return stockFetch(
+    `/lots/${encodeURIComponent(lotId)}`,
+    { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) },
+    normalizeLotDateResult
   );
 }

@@ -77,7 +77,7 @@ test("normalizes paged history cursors and rejects inconsistent pagination", () 
     revision: 3
   };
   assert.deepEqual(normalizeHistoryPage({ entries: [entry], has_more: true, next_before_revision: 3 }), {
-    entries: [{ ...entry, reason: undefined }],
+    entries: [{ ...entry, reason: "", request_id: "" }],
     has_more: true,
     next_before_revision: 3
   });

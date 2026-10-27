@@ -13,8 +13,16 @@ import {
   unitShort,
   type EditMode
 } from "../../../../src/stock/editor";
+import {
+  EXPIRED_REASON,
+  formatLotDay,
+  formatLotMoment,
+  previewLots,
+  retireExpiredDraft
+} from "../../../../src/stock/shelf-life";
 import type { StockHistoryEntry, StockItem } from "../../../../src/stock/types";
 import { formatHistoryTime, shortActor } from "./format";
+import { LotPreview, UnknownLots } from "./StockShelfLife";
 
 export type EditorNotice =
   | { kind: "conflict"; before: number | null }
@@ -40,7 +48,9 @@ export type CreatePanel = {
 
 export type SharePanel = { type: "share" };
 
-export type Panel = AdjustPanel | CreatePanel | SharePanel;
+export type PlazosPanel = { type: "plazos" };
+
+export type Panel = AdjustPanel | CreatePanel | SharePanel | PlazosPanel;
 
 export type HistoryState =
   | { status: "loading" }
@@ -86,6 +96,9 @@ export function AdjustEditor(props: {
   visibilityEnabled: boolean;
   hasNextUncounted: boolean;
   history?: HistoryState;
+  /** Client clock for the lot preview; null until mounted. */
+  now: Date | null;
+  onDateLot: (lotId: string, enteredAt: string, requestId: string) => Promise<string | null>;
   onChange: (patch: Partial<AdjustPanel>) => void;
   onSave: (chain: boolean) => void;
   onRetry: () => void;
@@ -119,6 +132,15 @@ export function AdjustEditor(props: {
   const conflict = panel.notice?.kind === "conflict" ? panel.notice : null;
   const firstCount = item.quantity === null;
   const chain = firstCount && props.hasNextUncounted && pending === null;
+  const shelf = item.shelf_life;
+  const expired = shelf?.counts.discard ?? 0;
+  const retireDraft = shelf ? retireExpiredDraft(shelf) : null;
+  const retiring =
+    expired > 0 && panel.mode === "subtract" && panel.reason === EXPIRED_REASON && amount === expired;
+  const lots = shelf && preview.ok && props.now ? previewLots(shelf, item.quantity, preview.after, props.now) : null;
+  const reasons = shelf && panel.mode === "subtract"
+    ? [EXPIRED_REASON, ...REASON_SUGGESTIONS.subtract]
+    : REASON_SUGGESTIONS[panel.mode];
 
   let validation = "";
   if (!preview.ok && preview.reason === "below_zero" && amount !== null) {
@@ -134,6 +156,8 @@ export function AdjustEditor(props: {
     const after = formatCount(preview.after);
     if (conflict) {
       saveLabel = panel.mode === "set" ? `Fijar ${after} sobre el nuevo conteo` : `${MODE_LABEL[panel.mode]} ${formatCount(amount ?? 0)} sobre el nuevo conteo`;
+    } else if (retiring) {
+      saveLabel = `Retirar ${formatCount(expired)} ${expired === 1 ? "vencida" : "vencidas"}`;
     } else if (chain) {
       saveLabel = `Guardar ${after} · siguiente sin contar`;
     } else if (panel.mode === "set") {
@@ -161,6 +185,7 @@ export function AdjustEditor(props: {
           <h2 id={props.titleId} tabIndex={-1}>{item.name}</h2>
           <p className={`stock-editor__current${firstCount ? " is-unknown" : ""}`}>
             {firstCount ? "Sin contar · primer conteo" : <>Hay <span className="stock-mono">{countText(item.quantity, item.unit)}</span></>}
+            {expired > 0 && <> · <span className="stock-editor__expired">{formatCount(expired)} {expired === 1 ? "vencida" : "vencidas"}</span></>}
             {menuLinked && item.menu_available === false && " · pausado en carta"}
           </p>
         </div>
@@ -206,6 +231,21 @@ export function AdjustEditor(props: {
         </div>
       ) : (
         <>
+          {retireDraft && !retiring && (
+            <div className="stock-callout stock-callout--action">
+              <span>
+                <strong>{formatCount(expired)} {expired === 1 ? "vencida" : "vencidas"}.</strong> Pasaron su día de retiro: sácalas de la vitrina y descuéntalas como merma.
+              </span>
+              <button
+                type="button"
+                className="stock-button stock-button--outline"
+                disabled={locked}
+                onClick={() => props.onChange({ ...retireDraft, notice: null })}
+              >
+                Preparar retiro
+              </button>
+            </div>
+          )}
           <fieldset className="stock-editor__modes" disabled={locked}>
             <legend className="stock-visually-hidden">Tipo de ajuste</legend>
             <div className="stock-segmented">
@@ -270,10 +310,12 @@ export function AdjustEditor(props: {
             </strong>
           </div>
 
+          {lots && <LotPreview preview={lots} unit={item.unit} />}
+
           <div className="stock-reason">
             <label htmlFor={reasonId}>Motivo <span>(opcional)</span></label>
             <div className="stock-chips">
-              {REASON_SUGGESTIONS[panel.mode].map((suggestion) => (
+              {reasons.map((suggestion) => (
                 <button
                   key={suggestion}
                   type="button"
@@ -296,6 +338,8 @@ export function AdjustEditor(props: {
               disabled={locked}
             />
           </div>
+
+          {shelf && <UnknownLots lots={shelf.lots} unit={item.unit} disabled={locked} onDate={props.onDateLot} />}
         </>
       )}
 
@@ -335,6 +379,19 @@ export function AdjustEditor(props: {
       </div>
     </form>
   );
+}
+
+/** "Lote nuevo · retirar mar 27" or "Sale de lote mié 08:40 (2 → 0)". */
+function describeLots(lots: NonNullable<StockHistoryEntry["lots_affected"]>): string {
+  return lots
+    .map((lot) => {
+      if (lot.before === 0 && lot.after > 0) {
+        return `Lote nuevo de ${formatCount(lot.after)}${lot.discard_at ? ` · retirar ${formatLotDay(lot.discard_at)}` : ""}`;
+      }
+      const label = lot.entered_at ? `lote ${formatLotMoment(lot.entered_at)}` : "lote sin fecha";
+      return `Sale de ${label} (${formatCount(lot.before)} → ${formatCount(lot.after)})`;
+    })
+    .join(" · ");
 }
 
 function HistoryView(props: {
@@ -382,6 +439,9 @@ function HistoryView(props: {
                     {entry.before_quantity === null ? "Sin contar" : formatCount(entry.before_quantity)} → {formatCount(entry.after_quantity)}
                   </span>
                 </div>
+                {entry.lots_affected && entry.lots_affected.length > 0 && (
+                  <p className="stock-history__lots">{describeLots(entry.lots_affected)}</p>
+                )}
                 <div className="stock-history__meta stock-mono">
                   <time dateTime={entry.created_at}>{formatHistoryTime(entry.created_at, now)}</time>
                   <span> · </span>

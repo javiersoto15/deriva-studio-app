@@ -20,3 +20,15 @@ export type StockApiErrorBody = {
   detail?: string;
   [key: string]: unknown;
 };
+
+export type StockShelfLife = components["schemas"]["StockShelfLife"];
+export type StockShelfLifeSummary = components["schemas"]["StockShelfLifeSummary"];
+export type StockLot = components["schemas"]["StockLot"];
+export type StockLotState = StockLot["state"];
+export type StockLotAffected = components["schemas"]["StockLotAffected"];
+export type StockShelfLifeConfiguration = components["schemas"]["StockShelfLifeConfiguration"];
+export type StockShelfLifeGroup = components["schemas"]["StockShelfLifeGroup"];
+export type StockShelfLifeGroupCreatePayload = components["schemas"]["StockShelfLifeGroupCreateRequest"];
+export type StockShelfLifeGroupUpdatePayload = components["schemas"]["StockShelfLifeGroupUpdateRequest"];
+export type StockLotDatePayload = components["schemas"]["StockLotDateRequest"];
+export type StockLotDateResult = components["schemas"]["StockLotDateResponse"];
