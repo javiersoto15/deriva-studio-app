@@ -32,10 +32,12 @@ function history(
     actor_id: "staff",
     before_quantity: before,
     after_quantity: after,
+    reason: "",
     created_at: createdAt,
     mode: "set",
     quantity: after,
-    revision
+    revision,
+    request_id: `req-${revision}`
   };
 }
 

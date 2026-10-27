@@ -487,29 +487,9 @@ export function useStaffLookup() {
   });
 }
 
-// Backend: wired. Create missing-points claim.
-export function useSubmitClaim() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (body: CreateMissingPointsClaimRequest) => {
-      const { data, error } = await apiClient.POST("/missing-points-claims", {
-        body
-      });
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["me", "claims"] });
-      void queryClient.invalidateQueries({ queryKey: ["me", "activity"] });
-      void queryClient.invalidateQueries({ queryKey: ["me", "balance"] });
-    }
-  });
-}
-
 // Backend: wired. POST /me/receipt-claims — verifies a SumUp transaction
 // server-side and (if successful and unclaimed) awards Deriva Points
-// immediately. Distinct from useSubmitClaim, which is the legacy manual
-// missing-points path. Errors propagate with HTTP status attached so the
+// immediately. The legacy manual missing-points path is disabled server-side. Errors propagate with HTTP status attached so the
 // caller can map 400/404/502/503 to inline copy; meta.silent suppresses
 // the generic global toast for this granular UX.
 export function useSubmitReceiptClaim() {
