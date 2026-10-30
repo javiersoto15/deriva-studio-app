@@ -199,10 +199,23 @@ export function normalizeStockSnapshot(value: unknown): StockSnapshot {
     throw new Error("Stock response is missing can_manage_raw_items");
   }
 
+  const items = itemsValue.map(normalizeStockItem);
+  const hasTrackedItems = items.some((item) => item.shelf_life !== undefined);
+  let serverNow: string | null;
+  try {
+    serverNow = nullableTimestamp(record.now, "now");
+  } catch (error) {
+    if (hasTrackedItems) throw new Error("Stock response has an invalid now for tracked inventory");
+    throw error;
+  }
+  if (serverNow === null && hasTrackedItems) {
+    throw new Error("Stock response is missing now for tracked inventory");
+  }
+
   return {
-    items: itemsValue.map(normalizeStockItem),
+    items,
     // `now` is the single instant every shelf-life state was evaluated at.
-    now: nullableTimestamp(record.now, "now") ?? new Date().toISOString(),
+    now: serverNow ?? new Date().toISOString(),
     shelf_life_summary: normalizeShelfLifeSummary(record.shelf_life_summary),
     stock_visibility_enabled: record.stock_visibility_enabled,
     can_manage_raw_items: record.can_manage_raw_items

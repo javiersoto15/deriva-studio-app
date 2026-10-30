@@ -33,7 +33,7 @@ export function StockShare(props: {
   onCopy: (message: string) => void;
 }) {
   const preview = props.state.status === "ready"
-    ? formatStockShare(props.state.snapshot.items, props.state.readAt, props.state.depletedIds)
+    ? formatStockShare(props.state.snapshot.items, props.state.readAt, props.state.depletedIds, props.state.snapshot.now)
     : null;
   const shareMessage = preview?.message ?? "";
   const canShare = shareMessage.length > 0;

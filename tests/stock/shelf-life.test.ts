@@ -3,6 +3,7 @@ import test from "node:test";
 
 import { normalizeStockSnapshot, normalizeHistory } from "../../src/stock/contract";
 import {
+  expiryBreakdown,
   formatLotDay,
   fromLocalInputValue,
   previewLots,
@@ -123,6 +124,103 @@ test("row status words the worst state first", () => {
 
   assert.deepEqual(shelfStatus(shelf([lot("lot_u", "unknown", 4, null)])), { tone: "unknown", text: "4 sin fecha de entrada" });
   assert.equal(shelfStatus(shelf([])), null);
+});
+
+test("expiry breakdown groups exact instants and orders deadlines without merging sub-millisecond differences", () => {
+  const rows = expiryBreakdown(shelf([
+    lot("lot_late", "fresh", 5, WED_0840, undefined, "2026-11-01T13:00:00Z"),
+    lot("lot_same_a", "fresh", 2, WED_0840, undefined, "2026-10-31T00:00:00.123400Z"),
+    lot("lot_same_b", "sell_first", 1, WED_0840, undefined, "2026-10-30T21:00:00.1234-03:00"),
+    lot("lot_micro", "fresh", 4, WED_0840, undefined, "2026-10-31T00:00:00.123401Z"),
+    lot("lot_early", "fresh", 1, WED_0840, undefined, "2026-10-30T23:00:00Z"),
+    lot("lot_zero", "fresh", 0, WED_0840, undefined, "2026-10-30T22:30:00Z")
+  ]), "2026-10-30T22:00:00.000Z");
+
+  assert.deepEqual(rows.map(({ quantity, detail, action, tone }) => ({ quantity, detail, action, tone })), [
+    { quantity: 1, detail: "1 unid. · queda 1 h", action: "Retirar vie 30 oct, 20:00", tone: "upcoming" },
+    { quantity: 3, detail: "3 unid. · quedan 2 h", action: "Retirar vie 30 oct, 21:00", tone: "upcoming" },
+    { quantity: 4, detail: "4 unid. · quedan 2 h", action: "Retirar vie 30 oct, 21:00", tone: "upcoming" },
+    { quantity: 5, detail: "5 unid. · queda 1 d 15 h", action: "Retirar dom 1 nov, 10:00", tone: "upcoming" }
+  ]);
+});
+
+test("expiry details distinguish unknown age from a missing or invalid deadline", () => {
+  const rows = expiryBreakdown(shelf([
+    lot("lot_unknown", "unknown", 2, null),
+    lot("lot_missing", "fresh", 3, WED_0840),
+    lot("lot_invalid", "sell_first", 4, WED_0840, undefined, "no-es-fecha"),
+    lot("lot_too_precise", "fresh", 2, WED_0840, undefined, "2026-10-31T00:00:00.1234567891Z"),
+    lot("lot_zero", "fresh", 0, WED_0840)
+  ]), "2026-10-30T22:00:00.000Z");
+
+  assert.deepEqual(rows.map(({ quantity, detail, action, tone }) => ({ quantity, detail, action, tone })), [
+    { quantity: 2, detail: "2 unid. · sin fecha de entrada", action: null, tone: "unknown" },
+    { quantity: 9, detail: "9 unid. · plazo no disponible", action: null, tone: "unavailable" }
+  ]);
+});
+
+test("backend discard state never becomes a positive countdown when its recorded deadline is ahead", () => {
+  const [row] = expiryBreakdown(
+    shelf([lot("lot_discard", "discard", 2, WED_0840, undefined, "2026-10-31T00:00:00Z")]),
+    "2026-10-30T22:00:00Z"
+  );
+
+  assert.equal(row?.detail, "2 unid. · vencidas, retirar ahora");
+  assert.equal(row?.action, "Plazo registrado: vie 30 oct, 21:00");
+  assert.equal(row?.tone, "expired");
+});
+
+test("expiry bucket quantities use the stock unit abbreviation and Chilean grouping", () => {
+  const [row] = expiryBreakdown(
+    shelf([lot("lot_portions", "fresh", 1_200, WED_0840, undefined, "2026-10-31T00:00:00Z")]),
+    "2026-10-30T22:00:00Z",
+    "portion"
+  );
+
+  assert.equal(row?.detail, "1.200 porc. · quedan 2 h");
+});
+
+test("expiry detail floors remaining-time labels and marks the exact deadline expired", () => {
+  const now = new Date("2026-10-30T22:00:00.000Z");
+  const cases = [
+    [30_000, "2 unid. · queda menos de 1 min", "upcoming"],
+    [119_000, "2 unid. · queda 1 min", "upcoming"],
+    [3_599_000, "2 unid. · quedan 59 min", "upcoming"],
+    [5_459_000, "2 unid. · queda 1 h 30 min", "upcoming"],
+    [86_399_000, "2 unid. · quedan 23 h 59 min", "upcoming"],
+    [86_400_000, "2 unid. · queda 1 d", "upcoming"],
+    [93_599_000, "2 unid. · queda 1 d 1 h", "upcoming"],
+    [0, "2 unid. · vencidas, retirar ahora", "expired"],
+    [-1, "2 unid. · vencidas, retirar ahora", "expired"]
+  ] as const;
+
+  for (const [remainingMs, detail, tone] of cases) {
+    const discardAt = new Date(now.getTime() + remainingMs).toISOString();
+    const [row] = expiryBreakdown(shelf([lot("lot", "fresh", 2, WED_0840, undefined, discardAt)]), now);
+    assert.equal(row?.detail, detail, `remaining ${remainingMs}ms`);
+    assert.equal(row?.tone, tone, `remaining ${remainingMs}ms`);
+  }
+});
+
+test("expiry dates use Santiago wall time across DST and show a year when it changes", () => {
+  const dstRow = expiryBreakdown(
+    shelf([lot("lot_dst", "fresh", 1, WED_0840, undefined, "2026-09-06T04:00:00Z")]),
+    "2026-09-06T03:30:00Z"
+  )[0];
+  assert.equal(dstRow?.detail, "1 unid. · quedan 30 min");
+  assert.equal(dstRow?.action, "Retirar dom 6 sept, 01:00");
+
+  const yearRow = expiryBreakdown(
+    shelf([lot("lot_year", "fresh", 1, WED_0840, undefined, "2027-01-01T14:00:00Z")]),
+    "2026-12-31T22:00:00Z"
+  )[0];
+  assert.equal(yearRow?.action, "Retirar vie 1 ene 2027, 11:00");
+});
+
+test("missing or invalid snapshot time keeps tracked expiry unavailable", () => {
+  const tracked = shelf([lot("lot", "fresh", 2, WED_0840, undefined, "2026-10-31T00:00:00Z")]);
+  assert.equal(expiryBreakdown(tracked, null)[0]?.detail, "2 unid. · plazo no disponible");
+  assert.equal(expiryBreakdown(tracked, "no-es-fecha")[0]?.detail, "2 unid. · plazo no disponible");
 });
 
 test("an increase previews one new lot dated now with the group's days", () => {

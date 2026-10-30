@@ -422,6 +422,7 @@
 
 .stock-row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 12px;
   min-height: 68px;
@@ -518,6 +519,43 @@
   color: var(--stock-brown);
   font: 600 14px/1.1 var(--font-tracked), sans-serif;
   white-space: nowrap;
+}
+
+.stock-expiry {
+  display: flex;
+  flex: 1 0 100%;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  margin: -4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stock-expiry__entry {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+}
+
+.stock-expiry__detail {
+  color: var(--stock-ink);
+  font: 400 13px/1.35 var(--font-tracked), "Poppins", sans-serif;
+  overflow-wrap: anywhere;
+}
+
+.stock-expiry__action {
+  color: var(--stock-muted);
+  font: 400 12px/1.35 var(--font-tracked), "Poppins", sans-serif;
+  overflow-wrap: anywhere;
+}
+
+.stock-expiry__entry.is-expired .stock-expiry__detail,
+.stock-expiry__entry.is-expired .stock-expiry__action {
+  color: var(--stock-brown);
+  font-weight: 600;
 }
 
 .stock-empty,
@@ -1221,6 +1259,12 @@ main.stock-screen-message {
     min-height: 56px;
     padding-top: 8px;
     padding-bottom: 8px;
+  }
+
+  .stock-row > .stock-expiry {
+    grid-column: 1 / -1;
+    flex: none;
+    margin-top: -2px;
   }
 
   .stock-row.is-selected {

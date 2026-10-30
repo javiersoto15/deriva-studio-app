@@ -43,6 +43,36 @@ test("normalizes the exact stock snapshot while preserving unknown counts", () =
   assert.equal(snapshot.can_manage_raw_items, true);
 });
 
+test("tracked snapshots require a valid server clock while untracked legacy snapshots keep the fallback", () => {
+  const trackedItem = {
+    id: "menu:pastry",
+    kind: "menu_item",
+    name: "Brownie",
+    unit: "unit",
+    quantity: 2,
+    revision: 1,
+    shelf_life: {
+      fresh_days: 2,
+      discard_days: 3,
+      worst_state: "fresh",
+      last_sale_day: false,
+      counts: { discard: 0, sell_first: 0, fresh: 2, unknown: 0 },
+      lots: []
+    }
+  };
+  const base = {
+    items: [trackedItem],
+    stock_visibility_enabled: false,
+    can_manage_raw_items: false
+  };
+
+  assert.throws(() => normalizeStockSnapshot(base), /missing now.*tracked/i);
+  assert.throws(() => normalizeStockSnapshot({ ...base, now: "not-a-timestamp" }), /invalid now.*tracked/i);
+
+  const legacy = normalizeStockSnapshot({ ...base, items: [{ ...trackedItem, shelf_life: undefined }] });
+  assert.ok(Number.isFinite(Date.parse(legacy.now)));
+});
+
 test("extracts the item from the confirmed adjustment envelope", () => {
   const item = extractStockItem({
     item: {

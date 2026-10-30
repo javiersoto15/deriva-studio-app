@@ -1,4 +1,5 @@
 import type { StockItem, StockLot, StockShelfLife } from "./types";
+import { formatCount, unitShort } from "./editor";
 
 /**
  * Pastry shelf life lives behind the count (design: docs/plans/2026-10-24-
@@ -8,6 +9,10 @@ import type { StockItem, StockLot, StockShelfLife } from "./types";
 
 const TIME_ZONE = "America/Santiago";
 const DAY_MS = 86_400_000;
+const NANOS_PER_MILLISECOND = 1_000_000n;
+const NANOS_PER_MINUTE = 60_000_000_000n;
+const NANOS_PER_HOUR = 60n * NANOS_PER_MINUTE;
+const NANOS_PER_DAY = 24n * NANOS_PER_HOUR;
 
 export const EXPIRED_REASON = "Merma · vencido";
 
@@ -19,6 +24,17 @@ const weekdayTime = new Intl.DateTimeFormat("es-CL", {
   hourCycle: "h23"
 });
 const weekdayDay = new Intl.DateTimeFormat("es-CL", { timeZone: TIME_ZONE, weekday: "short", day: "numeric" });
+const expiryMomentFormat = new Intl.DateTimeFormat("es-CL", {
+  timeZone: TIME_ZONE,
+  weekday: "short",
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  hourCycle: "h23"
+});
+const expiryYearFormat = new Intl.DateTimeFormat("en-CA", { timeZone: TIME_ZONE, year: "numeric" });
 
 function clean(text: string): string {
   return text.replace(/\./g, "").replace(",", "");
@@ -37,6 +53,16 @@ export function formatLotDay(value: string | Date): string {
 export type ShelfTone = "discard" | "sell_first" | "unknown" | "fresh";
 
 export type ShelfStatus = { tone: ShelfTone; text: string };
+
+export type ExpiryBreakdownTone = "expired" | "upcoming" | "unknown" | "unavailable";
+
+export type ExpiryBreakdownEntry = {
+  key: string;
+  quantity: number;
+  detail: string;
+  action: string | null;
+  tone: ExpiryBreakdownTone;
+};
 
 function earliest(lots: readonly StockLot[], state: StockLot["state"], field: "entered_at" | "fresh_until" | "discard_at") {
   return lots
@@ -73,6 +99,186 @@ export function shelfStatus(shelf: StockShelfLife): ShelfStatus | null {
     return { tone: "fresh", text: `Fresca${freshUntil ? ` · vender antes ${formatLotDay(freshUntil)}` : ""}` };
   }
   return null;
+}
+
+type ExactInstant = {
+  epochMilliseconds: number;
+  subMillisecondNanoseconds: bigint;
+  date: Date;
+};
+
+function parseExactInstant(value: string | Date | null | undefined): ExactInstant | null {
+  if (value instanceof Date) {
+    const epochMilliseconds = value.getTime();
+    return Number.isFinite(epochMilliseconds)
+      ? { epochMilliseconds, subMillisecondNanoseconds: 0n, date: value }
+      : null;
+  }
+  if (typeof value !== "string") return null;
+
+  const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d+))?(Z|[+-]\d{2}:\d{2})$/i.exec(value);
+  if (!match) return null;
+  const [, year, month, day, hour, minute, second, fraction = "", offset] = match;
+  if (fraction.length > 9) return null;
+  const yearNumber = Number(year);
+  const monthNumber = Number(month);
+  const dayNumber = Number(day);
+  const hourNumber = Number(hour);
+  const minuteNumber = Number(minute);
+  const secondNumber = Number(second);
+  const offsetMatch = /^([+-])(\d{2}):(\d{2})$/.exec(offset);
+  const offsetHour = offsetMatch ? Number(offsetMatch[2]) : 0;
+  const offsetMinute = offsetMatch ? Number(offsetMatch[3]) : 0;
+  const daysInMonth = new Date(Date.UTC(yearNumber, monthNumber, 0)).getUTCDate();
+  if (
+    monthNumber < 1 || monthNumber > 12 || dayNumber < 1 || dayNumber > daysInMonth ||
+    hourNumber > 23 || minuteNumber > 59 || secondNumber > 59 ||
+    (offsetMatch !== null && (offsetHour > 23 || offsetMinute > 59))
+  ) return null;
+
+  const epochMilliseconds = Date.parse(value);
+  if (!Number.isFinite(epochMilliseconds)) return null;
+  const normalizedFraction = fraction.padEnd(9, "0");
+  const subMillisecondNanoseconds = BigInt(normalizedFraction.slice(3) || "0");
+  return {
+    epochMilliseconds,
+    subMillisecondNanoseconds,
+    date: new Date(epochMilliseconds)
+  };
+}
+
+function instantNanoseconds(instant: ExactInstant): bigint {
+  return BigInt(instant.epochMilliseconds) * NANOS_PER_MILLISECOND + instant.subMillisecondNanoseconds;
+}
+
+function formatExpiryMoment(deadline: Date, snapshotNow: Date): string {
+  const parts = Object.fromEntries(expiryMomentFormat.formatToParts(deadline).map((part) => [part.type, part.value]));
+  const snapshotYear = expiryYearFormat.format(snapshotNow);
+  const year = parts.year === snapshotYear ? "" : ` ${parts.year}`;
+  return `${clean(parts.weekday)} ${parts.day} ${clean(parts.month)}${year}, ${parts.hour}:${parts.minute}`;
+}
+
+function formatRemaining(remainingNanoseconds: bigint): { text: string; verb: "queda" | "quedan" } {
+  if (remainingNanoseconds < NANOS_PER_MINUTE) return { text: "menos de 1 min", verb: "queda" };
+  if (remainingNanoseconds < NANOS_PER_HOUR) {
+    const minutes = remainingNanoseconds / NANOS_PER_MINUTE;
+    return { text: `${minutes} min`, verb: minutes === 1n ? "queda" : "quedan" };
+  }
+  if (remainingNanoseconds < NANOS_PER_DAY) {
+    const hours = remainingNanoseconds / NANOS_PER_HOUR;
+    const minutes = (remainingNanoseconds % NANOS_PER_HOUR) / NANOS_PER_MINUTE;
+    return {
+      text: `${hours} h${minutes > 0n ? ` ${minutes} min` : ""}`,
+      verb: hours === 1n ? "queda" : "quedan"
+    };
+  }
+  const days = remainingNanoseconds / NANOS_PER_DAY;
+  const hours = (remainingNanoseconds % NANOS_PER_DAY) / NANOS_PER_HOUR;
+  return {
+    text: `${days} d${hours > 0n ? ` ${hours} h` : ""}`,
+    verb: days === 1n ? "queda" : "quedan"
+  };
+}
+
+/**
+ * Details every positive open lot by its exact discard instant. Unknown-age
+ * lots stay undated, and no client clock is substituted for a missing snapshot
+ * timestamp.
+ */
+export function expiryBreakdown(
+  shelf: StockShelfLife,
+  snapshotNow: string | Date | null | undefined,
+  unit: StockItem["unit"] = "unit"
+): ExpiryBreakdownEntry[] {
+  const parsedNow = parseExactInstant(snapshotNow);
+  const known = new Map<string, { deadline: ExactInstant; quantity: number; hasDiscardState: boolean }>();
+  let unknownQuantity = 0;
+  let unavailableQuantity = 0;
+
+  for (const lot of shelf.lots) {
+    if (lot.quantity_left <= 0) continue;
+    const enteredAt = parseExactInstant(lot.entered_at);
+    if (lot.state === "unknown" || !enteredAt) {
+      unknownQuantity += lot.quantity_left;
+      continue;
+    }
+    const deadline = parseExactInstant(lot.discard_at);
+    if (!deadline) {
+      unavailableQuantity += lot.quantity_left;
+      continue;
+    }
+    const key = `${deadline.epochMilliseconds}:${deadline.subMillisecondNanoseconds}`;
+    const previous = known.get(key);
+    if (previous) {
+      previous.quantity += lot.quantity_left;
+      previous.hasDiscardState ||= lot.state === "discard";
+    } else {
+      known.set(key, { deadline, quantity: lot.quantity_left, hasDiscardState: lot.state === "discard" });
+    }
+  }
+
+  const entries: ExpiryBreakdownEntry[] = [];
+  if (parsedNow) {
+    const nowNanoseconds = instantNanoseconds(parsedNow);
+    const ordered = [...known.entries()].sort(([, a], [, b]) => {
+      if (a.deadline.epochMilliseconds !== b.deadline.epochMilliseconds) {
+        return a.deadline.epochMilliseconds - b.deadline.epochMilliseconds;
+      }
+      if (a.deadline.subMillisecondNanoseconds < b.deadline.subMillisecondNanoseconds) return -1;
+      if (a.deadline.subMillisecondNanoseconds > b.deadline.subMillisecondNanoseconds) return 1;
+      return 0;
+    });
+
+    for (const [key, bucket] of ordered) {
+      const remainingNanoseconds = instantNanoseconds(bucket.deadline) - nowNanoseconds;
+      const deadlinePassed = remainingNanoseconds <= 0n;
+      const past = bucket.hasDiscardState || deadlinePassed;
+      const quantityText = `${formatCount(bucket.quantity)} ${unitShort(unit)} · `;
+      const remaining = past ? null : formatRemaining(remainingNanoseconds);
+      const deadlineText = formatExpiryMoment(bucket.deadline.date, parsedNow.date);
+      entries.push({
+        key: `deadline:${key}`,
+        quantity: bucket.quantity,
+        detail: past
+          ? `${quantityText}${bucket.quantity === 1 ? "vencida" : "vencidas"}, retirar ahora`
+          : `${quantityText}${remaining?.verb} ${remaining?.text}`,
+        action: bucket.hasDiscardState && !deadlinePassed
+          ? `Plazo registrado: ${deadlineText}`
+          : `${past ? "Venció" : "Retirar"} ${deadlineText}`,
+        tone: past ? "expired" : "upcoming"
+      });
+    }
+  } else {
+    for (const [key, bucket] of known) {
+      entries.push({
+        key: `deadline:${key}`,
+        quantity: bucket.quantity,
+        detail: `${formatCount(bucket.quantity)} ${unitShort(unit)} · plazo no disponible`,
+        action: null,
+        tone: "unavailable"
+      });
+    }
+  }
+
+  if (unknownQuantity > 0) {
+    entries.push({
+      key: "unknown-age",
+      quantity: unknownQuantity,
+      detail: `${formatCount(unknownQuantity)} ${unitShort(unit)} · sin fecha de entrada`,
+      action: null,
+      tone: "unknown"
+    });
+  }
+  if (unavailableQuantity > 0) {
+    entries.push({
+      key: "unavailable-deadline",
+      quantity: unavailableQuantity,
+      detail: `${formatCount(unavailableQuantity)} ${unitShort(unit)} · plazo no disponible`,
+      action: null,
+      tone: "unavailable"
+    });
+  }
+  return entries;
 }
 
 /**

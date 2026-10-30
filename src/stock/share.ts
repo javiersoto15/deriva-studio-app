@@ -1,4 +1,5 @@
 import type { StockHistoryPage, StockItem } from "./types";
+import { expiryBreakdown } from "./shelf-life";
 
 const STOCK_TIME_ZONE = "America/Santiago";
 const stockCount = new Intl.NumberFormat("es-CL");
@@ -179,17 +180,28 @@ export async function findSameDayDepletionIds(
 export function formatStockShare(
   items: readonly StockItem[],
   readAt: Date,
-  depletedIds: ReadonlySet<string> = new Set()
+  depletedIds: ReadonlySet<string> = new Set(),
+  expiryNow: string | Date = readAt
 ): StockSharePreview {
-  const positiveLines = items.flatMap((item) => {
+  const positiveItems = items.flatMap((item) => {
     if (item.quantity === null || item.quantity === 0) return [];
     const line = formatKnownItem(item);
-    return line === null ? [] : [line];
+    if (line === null) return [];
+    const details = item.shelf_life
+      ? expiryBreakdown(item.shelf_life, expiryNow, item.unit).flatMap((entry) => [
+          `  ${entry.detail}`,
+          ...(entry.action ? [`  ${entry.action}`] : [])
+        ])
+      : [];
+    return [{ line, details }];
   });
   const depletedLines = items.flatMap((item) =>
     item.quantity === 0 && depletedIds.has(item.id) ? [`Se acabó ${item.name}`] : []
   );
-  const lines = [...positiveLines, ...depletedLines];
+  const lines = [
+    ...positiveItems.flatMap(({ line, details }) => [line, ...details]),
+    ...depletedLines
+  ];
   const uncountedCount = items.filter((item) => item.quantity === null).length;
   const heading = formatHeading(readAt);
   const missingLine = missingItemsLine(uncountedCount);
@@ -202,7 +214,7 @@ export function formatStockShare(
   return {
     heading,
     lines,
-    knownCount: lines.length,
+    knownCount: positiveItems.length + depletedLines.length,
     uncountedCount,
     message
   };

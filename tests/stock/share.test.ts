@@ -7,7 +7,7 @@ import {
   formatStockShare,
   type StockHistoryPageRequest
 } from "../../src/stock/share";
-import type { StockHistoryEntry, StockItem } from "../../src/stock/types";
+import type { StockHistoryEntry, StockItem, StockLot, StockShelfLife } from "../../src/stock/types";
 
 function item(
   id: string,
@@ -17,6 +17,30 @@ function item(
   extra: Partial<StockItem> = {}
 ): StockItem {
   return { id, kind: "menu_item", name, quantity, unit, revision: 1, ...extra };
+}
+
+function lot(id: string, state: StockLot["state"], quantity: number, enteredAt: string | null, discardAt?: string): StockLot {
+  return {
+    id,
+    state,
+    quantity_left: quantity,
+    entered_at: enteredAt,
+    fresh_until: null,
+    discard_at: enteredAt ? discardAt ?? null : null
+  };
+}
+
+function shelfLife(lots: StockLot[]): StockShelfLife {
+  const counts = { discard: 0, sell_first: 0, fresh: 0, unknown: 0 };
+  for (const entry of lots) counts[entry.state] += entry.quantity_left;
+  return {
+    fresh_days: 2,
+    discard_days: 3,
+    worst_state: "fresh",
+    last_sale_day: false,
+    counts,
+    lots
+  };
 }
 
 function history(
@@ -101,6 +125,58 @@ test("does not create a share message when the snapshot has no known quantities"
   assert.equal(preview.uncountedCount, 2);
   assert.deepEqual(preview.lines, []);
   assert.equal(preview.message, "");
+});
+
+test("stock share repeats expiry quantities and deadlines without counting detail rows as items", () => {
+  const preview = formatStockShare(
+    [
+      item("menu:brownie", "Brownie Chips", 8, "unit", {
+        shelf_life: shelfLife([
+          lot("brownie-early", "fresh", 3, "2026-10-20T12:00:00Z", "2026-10-31T00:00:00Z"),
+          lot("brownie-late", "fresh", 5, "2026-10-20T12:00:00Z", "2026-11-01T13:00:00Z")
+        ])
+      }),
+      item("menu:lucuma", "Lúcuma Manjar", 4, "portion", {
+        shelf_life: shelfLife([
+          lot("lucuma-old", "discard", 2, "2026-10-20T12:00:00Z", "2026-10-30T21:00:00Z"),
+          lot("lucuma-unknown", "unknown", 2, null)
+        ])
+      })
+    ],
+    new Date("2026-10-30T22:00:00.000Z"),
+    new Set(),
+    "2026-10-30T22:00:00.000Z"
+  );
+
+  assert.deepEqual(preview.lines, [
+    "8 × Brownie Chips",
+    "  3 unid. · quedan 2 h",
+    "  Retirar vie 30 oct, 21:00",
+    "  5 unid. · queda 1 d 15 h",
+    "  Retirar dom 1 nov, 10:00",
+    "4 porciones de Lúcuma Manjar",
+    "  2 porc. · vencidas, retirar ahora",
+    "  Venció vie 30 oct, 18:00",
+    "  2 porc. · sin fecha de entrada"
+  ]);
+  assert.equal(preview.knownCount, 2);
+  assert.equal(preview.message, ["Inventario PM 30/10 · 19:00", "", ...preview.lines].join("\n"));
+});
+
+test("ordinary zero counts stay omitted and a depleted tracked item keeps its existing line only", () => {
+  const preview = formatStockShare(
+    [
+      item("menu:zero", "Brownie", 0, "unit", {
+        shelf_life: shelfLife([lot("zero-lot", "discard", 0, "2026-10-20T12:00:00Z", "2026-10-30T21:00:00Z")])
+      })
+    ],
+    new Date("2026-10-30T22:00:00.000Z"),
+    new Set(["menu:zero"]),
+    "2026-10-30T22:00:00.000Z"
+  );
+
+  assert.deepEqual(preview.lines, ["Se acabó Brownie"]);
+  assert.equal(preview.knownCount, 1);
 });
 
 test("omits ordinary zero counts and uses clear singular and plural units", () => {

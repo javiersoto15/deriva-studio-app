@@ -38,7 +38,7 @@ import {
   type KindFilter
 } from "../../../../src/stock/editor";
 import { findSameDayDepletionIds } from "../../../../src/stock/share";
-import { filterExpiring, shelfStatus } from "../../../../src/stock/shelf-life";
+import { expiryBreakdown, filterExpiring, shelfStatus } from "../../../../src/stock/shelf-life";
 import type {
   CreateRawItemPayload,
   StockAdjustmentPayload,
@@ -109,6 +109,9 @@ function describeRequestError(error: unknown): string {
     if (error.status === 401) return SESSION_EXPIRED;
     if (error.ambiguous) return "El stock no respondió. Puedes reintentar.";
     return error.message;
+  }
+  if (error instanceof Error && /Stock response (?:is missing|has an invalid) now for tracked inventory/.test(error.message)) {
+    return "El inventario no incluye una hora de lectura válida. Actualiza la lista.";
   }
   return "Ocurrió un problema. Inténtalo de nuevo.";
 }
@@ -340,7 +343,8 @@ export function StockApp() {
     setShareState({ status: "loading" });
     try {
       const next = await getStockSnapshot();
-      const readAt = new Date();
+      const readAt = new Date(next.now);
+      if (!Number.isFinite(readAt.getTime())) throw new Error("Stock response has an invalid now for tracked inventory");
       if (
         !isCurrentSession(sessionGeneration, uid) ||
         requestGeneration !== shareRequestGenerationRef.current ||
@@ -569,6 +573,7 @@ export function StockApp() {
             void loadSnapshot({ background: true });
           } else if (conflict.current) {
             updateItem(conflict.current);
+            void loadSnapshot({ background: true });
             setNotice({ kind: "conflict", before });
           } else {
             setNotice({ kind: "conflict", before });
@@ -1048,6 +1053,7 @@ export function StockApp() {
                         key={item.id}
                         item={item}
                         now={now}
+                        expiryNow={snapshot.now}
                         selected={panel?.type === "adjust" && panel.itemId === item.id}
                         savedText={lastSaved?.id === item.id ? lastSaved.text : null}
                         disabled={readOnly || panel?.type === "share" || (pending !== null && !(pending.type === "adjust" && pending.itemId === item.id))}
@@ -1114,6 +1120,7 @@ function TopBar({ onSignOut }: { onSignOut: () => void }) {
 function StockRow(props: {
   item: StockItem;
   now: Date | null;
+  expiryNow: string;
   selected: boolean;
   savedText: string | null;
   disabled: boolean;
@@ -1130,6 +1137,9 @@ function StockRow(props: {
   const unit = unitShort(item.unit);
 
   const status = item.shelf_life && !unknown ? shelfStatus(item.shelf_life) : null;
+  const expiryDetails = item.shelf_life && !unknown
+    ? expiryBreakdown(item.shelf_life, props.expiryNow, item.unit)
+    : [];
   const expired = (item.shelf_life?.counts.discard ?? 0) > 0;
 
   let meta: React.ReactNode;
@@ -1167,6 +1177,16 @@ function StockRow(props: {
           </>
         )}
       </button>
+      {expiryDetails.length > 0 && (
+        <ul className="stock-expiry" aria-label={`Desglose de vencimientos de ${item.name}`}>
+          {expiryDetails.map((entry) => (
+            <li className={`stock-expiry__entry is-${entry.tone}`} key={entry.key}>
+              <span className="stock-expiry__detail">{entry.detail}</span>
+              {entry.action && <span className="stock-expiry__action">{entry.action}</span>}
+            </li>
+          ))}
+        </ul>
+      )}
     </li>
   );
 }
