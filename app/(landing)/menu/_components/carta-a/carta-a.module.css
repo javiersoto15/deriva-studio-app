@@ -778,6 +778,26 @@
   background: var(--door-bg);
 }
 
+/* ── Footer ─────────────────────────────────────────────────────────────── */
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 28px 20px calc(36px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--line);
+  font-family: var(--mono-f);
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--soft);
+}
+
+.footerBrand {
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--ink);
+}
+
 /* ── Sheets ─────────────────────────────────────────────────────────────── */
 .scrim {
   position: fixed;
@@ -1139,6 +1159,12 @@
 
   .hubList {
     padding: 0;
+  }
+
+  .footer {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 28px 40px 40px;
   }
 
   .aside {

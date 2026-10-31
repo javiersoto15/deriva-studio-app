@@ -16,7 +16,7 @@ const read = (path: string) => readFileSync(path, "utf8");
 // The three paid Google Ads landing destinations.
 const PAID_LANDING_SURFACES = {
   "/": "app/(landing)/page.tsx",
-  "/menu": "app/(landing)/menu/_components/CartaBody.tsx",
+  "/menu": "app/(landing)/menu/_components/carta-a/CartaA.tsx",
   "/menu-ejecutivo":
     "app/(landing)/menu-ejecutivo/_components/ExecutiveMenuBody.tsx"
 } as const;

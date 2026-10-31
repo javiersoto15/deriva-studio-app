@@ -15,6 +15,7 @@ import { groupByTier, originName, pricesPerOrigin, renderableOrigins } from "../
 import { LOCALE_COOKIE, locales, type Locale } from "../../../../../src/i18n/locale";
 import { isOpenNow, todayHoursLabel } from "../../../../../src/lib/open-now";
 import { ISOTIPO_PATHS, ISOTIPO_VIEWBOX } from "../../../../../src/brand/isotipo";
+import { BUSINESS_DESCRIPTOR, SITE_NAME } from "../../../../../src/seo/local-business";
 import { CARTA_COPY } from "./copy";
 import {
   buildDoors,
@@ -765,6 +766,15 @@ export function CartaA({
           ) : null}
         </>
       )}
+
+      {/* Paid landing page: the umbrella name must be visible page content
+          (Google Ads Name Prominence — tests/seo/business-name.test.ts). */}
+      <footer className={styles.footer}>
+        <strong className={styles.footerBrand}>{SITE_NAME}</strong>
+        <span>{BUSINESS_DESCRIPTOR}</span>
+        <span>Magnere 1570 Local 105 · Providencia · Santiago</span>
+        <span>Lun–Vie 08:00–21:00 · Sáb 10:00–21:00</span>
+      </footer>
 
       {sheet?.kind === "item" ? <ItemSheet item={sheet.item} door={sheet.door} locale={locale} onClose={closeSheet} /> : null}
       {sheet?.kind === "offer" ? <OfferSheet group={sheet.group} locale={locale} onClose={closeSheet} /> : null}
