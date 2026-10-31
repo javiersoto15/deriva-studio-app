@@ -458,6 +458,48 @@ function OfferCards({
   );
 }
 
+// Group headings must never read like a dish name (founder, 2026-11-01): a
+// group is a tinted band in the door's colour with its dish count; a subgroup
+// inside a section is a small tracked label with a rule. Dish names stay the
+// plain bold rows below them.
+function GroupHeading({
+  id,
+  title,
+  count,
+  window
+}: {
+  id: string;
+  title: string;
+  count: number;
+  window?: string;
+}) {
+  return (
+    <div className={styles.groupBand}>
+      <h2 id={id} className={styles.groupTitle}>
+        {title}
+      </h2>
+      <span className={styles.groupMeta}>
+        {window ? <span className={styles.window}>{window.replace(/^Servicio\s+/i, "")}</span> : null}
+        <span className={styles.groupCount}>{count}</span>
+      </span>
+    </div>
+  );
+}
+
+function SubHeading({ title, count }: { title: string; count: number }) {
+  return (
+    <h3 className={styles.subHead}>
+      <span>{title}</span>
+      <span className={styles.subRule} aria-hidden="true" />
+      <span className={styles.groupCount}>{count}</span>
+    </h3>
+  );
+}
+
+function sectionCount(section: PublicMenuSection): number {
+  return (section.items?.length ?? 0) + (section.subgroups ?? []).reduce((n, sg) => n + sg.items.length, 0);
+}
+
 function SectionBlock({
   section,
   stopKey,
@@ -478,19 +520,19 @@ function SectionBlock({
       {showHead ? (
         <div className={styles.stopHead}>
           {section.banner_image_url ? <img src={section.banner_image_url} alt="" className={styles.banner} /> : null}
-          <div className={styles.stopTitleRow}>
-            <h2 id={`${stopKey}-title`} className={styles.stopTitle}>
-              {section.title.replace(/[.·\s]+$/, "")}
-            </h2>
-            {section.service_window ? <span className={styles.window}>{section.service_window.replace(/^Servicio\s+/i, "")}</span> : null}
-          </div>
+          <GroupHeading
+            id={`${stopKey}-title`}
+            title={section.title.replace(/[.·\s]+$/, "")}
+            count={sectionCount(section)}
+            window={section.service_window}
+          />
           {section.lede ? <p className={styles.lede}>{section.lede}</p> : null}
         </div>
       ) : null}
       {section.items?.length ? <Rows items={section.items} locale={locale} onOpen={onItem} /> : null}
       {(section.subgroups ?? []).map((sg) => (
         <div key={sg.id}>
-          <h3 className={styles.subTitle}>{sg.label}</h3>
+          <SubHeading title={sg.label} count={sg.items.length} />
           <Rows items={sg.items} locale={locale} onOpen={onItem} />
           {sg.addons ? <Addons addon={sg.addons} /> : null}
         </div>
@@ -561,12 +603,12 @@ function DoorBody({
           <section key={stop.key} id={stopAnchor(stop)} className={styles.stop} aria-labelledby={`${stop.key}-title`}>
             <div className={styles.stopHead} style={i === 0 ? undefined : { paddingTop: 28 }}>
               {isBanner && section.banner_image_url ? <img src={section.banner_image_url} alt="" className={styles.banner} /> : null}
-              <div className={styles.stopTitleRow}>
-                <h2 id={`${stop.key}-title`} className={styles.stopTitle}>
-                  {stop.label}
-                </h2>
-                {isBanner && section.service_window ? <span className={styles.window}>{section.service_window}</span> : null}
-              </div>
+              <GroupHeading
+                id={`${stop.key}-title`}
+                title={stop.label}
+                count={items.length}
+                window={isBanner ? section.service_window : undefined}
+              />
               {isBanner && section.lede ? <p className={styles.lede}>{section.lede}</p> : null}
             </div>
             {authored ? <AuthorGrid items={items} locale={locale} onOpen={onItem} /> : <Rows items={items} locale={locale} onOpen={onItem} />}

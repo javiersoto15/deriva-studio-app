@@ -438,6 +438,74 @@
   color: var(--soft);
 }
 
+/* Group heading band: tinted strip in the door's colour so a group never
+   reads like the dish rows (bold ink on the plain ground) beneath it. */
+.groupBand {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px 12px 16px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--door-tint) 70%, var(--ground));
+  border-left: 5px solid var(--door-bg);
+}
+
+.groupTitle {
+  margin: 0;
+  min-width: 0;
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 26px;
+  letter-spacing: -0.025em;
+  overflow-wrap: anywhere;
+}
+
+.groupMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.groupCount {
+  min-width: 26px;
+  padding: 3px 8px;
+  border-radius: 99px;
+  background: var(--ground);
+  font-family: var(--mono-f);
+  font-size: 12px;
+  line-height: 16px;
+  text-align: center;
+  color: var(--soft);
+}
+
+/* Subgroup inside a section (Empanadas, Picoteos…): tracked label + rule. */
+.subHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 22px 20px 4px;
+  font-family: var(--mono-f);
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--soft);
+}
+
+.subRule {
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--line);
+}
+
+.subHead .groupCount {
+  letter-spacing: 0;
+}
+
 .window {
   flex-shrink: 0;
   padding: 5px 10px;
@@ -446,6 +514,10 @@
   font-family: var(--mono-f);
   font-size: 11px;
   line-height: 13px;
+}
+
+.groupBand .window {
+  background: var(--ground);
 }
 
 .lede {
@@ -1218,7 +1290,8 @@
   .stopHead,
   .rows,
   .grid,
-  .subTitle {
+  .subTitle,
+  .subHead {
     padding-left: 0;
     padding-right: 0;
   }
