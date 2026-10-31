@@ -10,6 +10,7 @@ import type { DoorId } from "./doors";
 
 type Copy = {
   title: string;
+  fullMenu: string;
   options: (n: number) => string;
   doors: Record<DoorId, { name: string; sub: string }>;
   back: string;
@@ -40,6 +41,7 @@ type Copy = {
 export const CARTA_COPY: Record<Locale, Copy> = {
   es: {
     title: "La carta",
+    fullMenu: "Toda la carta",
     options: (n) => `${n} opciones`,
     doors: {
       cafe: { name: "Café", sub: "De autor, espresso y filtrados" },
@@ -76,6 +78,7 @@ export const CARTA_COPY: Record<Locale, Copy> = {
   },
   en: {
     title: "The menu",
+    fullMenu: "The whole menu",
     options: (n) => `${n} options`,
     doors: {
       cafe: { name: "Coffee", sub: "Signature, espresso and filter" },
@@ -112,6 +115,7 @@ export const CARTA_COPY: Record<Locale, Copy> = {
   },
   "pt-BR": {
     title: "O cardápio",
+    fullMenu: "O cardápio completo",
     options: (n) => `${n} opções`,
     doors: {
       cafe: { name: "Café", sub: "Autorais, espresso e filtrados" },

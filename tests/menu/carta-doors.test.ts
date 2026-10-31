@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import type { PublicMenuView } from "../../src/api/server";
-import { buildDoors, groupOffers, offerFloor } from "../../app/(landing)/menu/_components/carta-a/doors";
+import { buildDoors, groupOffers, offerFloor, stopItems } from "../../app/(landing)/menu/_components/carta-a/doors";
 
 const item = (id: string, extra: Record<string, unknown> = {}) => ({
   id,
@@ -125,6 +125,16 @@ test("counts items and collects offers per door", () => {
 
 test("a door without an item photo falls back to its first section banner", () => {
   assert.equal(buildDoors(menu)[1].photo, "https://x/desay.jpg");
+});
+
+test("stopItems lists every item exactly once across a door's stops", () => {
+  for (const door of buildDoors(menu)) {
+    const listed = door.stops.flatMap((stop) => stopItems(door, stop).map((i) => i.id));
+    assert.equal(listed.length, door.itemCount, `${door.id} lists each item once`);
+    assert.equal(new Set(listed).size, listed.length);
+  }
+  const [cafe] = buildDoors(menu);
+  assert.deepEqual(stopItems(cafe, cafe.stops[0]).map((i) => i.id), ["nuevo", "tropical"]);
 });
 
 test("offers sharing a title family merge into one group; others stay single", () => {

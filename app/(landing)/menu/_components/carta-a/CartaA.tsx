@@ -24,6 +24,7 @@ import {
   isAuthorSubgroup,
   parseView,
   stopAnchor,
+  stopItems,
   type CartaView,
   type Door,
   type DoorId,
@@ -764,6 +765,13 @@ export function CartaA({
               </span>
             </a>
           ) : null}
+
+          <FullIndex
+            doors={doors}
+            locale={locale}
+            onDoor={(id) => go({ kind: "door", id })}
+            onItem={(item, doorId) => setSheet({ kind: "item", item, door: doorId })}
+          />
         </>
       )}
 
@@ -811,6 +819,68 @@ export function CartaA({
         </Sheet>
       ) : null}
     </div>
+  );
+}
+
+// ── Toda la carta ───────────────────────────────────────────────────────
+// The whole menu as a compact, server-rendered index under the doors: every
+// section and dish with its price. The first screen stays the four doors, but
+// /menu still carries its dishes as visible text — Google Ads landing-page
+// relevance and organic search read the server HTML, not what a tap reveals.
+function FullIndex({
+  doors,
+  locale,
+  onDoor,
+  onItem
+}: {
+  doors: Door[];
+  locale: Locale;
+  onDoor: (id: DoorId) => void;
+  onItem: (item: PublicMenuItem, door: DoorId) => void;
+}) {
+  const copy = CARTA_COPY[locale];
+  return (
+    <section className={styles.index} aria-labelledby="toda-la-carta">
+      <h2 id="toda-la-carta" className={styles.indexTitle}>
+        {copy.fullMenu}
+      </h2>
+      <div className={styles.indexDoors}>
+        {doors.map((door) => (
+          <div key={door.id} className={styles.indexDoor} style={doorStyle(door.id)}>
+            <button type="button" className={styles.indexDoorName} onClick={() => onDoor(door.id)}>
+              <span className={styles.indexSwatch} aria-hidden="true" />
+              {copy.doors[door.id].name}
+              <span aria-hidden="true">→</span>
+            </button>
+            {door.stops.map((stop) => {
+              const items = stopItems(door, stop);
+              if (!items.length) return null;
+              return (
+                <div key={stop.key} className={styles.indexStop}>
+                  <h3 className={styles.indexStopLabel}>{stop.label}</h3>
+                  <ul className={styles.indexList}>
+                    {items.map((item) => (
+                      <li key={item.id}>
+                        <button
+                          type="button"
+                          className={`${styles.indexItem} ${item.available === false ? styles.rowOff : ""}`}
+                          onClick={() => onItem(item, door.id)}
+                        >
+                          <span className={styles.indexName}>{item.name}</span>
+                          {!pricesPerOrigin(item.origin_options) ? (
+                            <span className={styles.indexPrice}>{priceText(item)}</span>
+                          ) : null}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 

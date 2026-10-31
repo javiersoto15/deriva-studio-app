@@ -1,4 +1,4 @@
-import type { PublicMenuOffer, PublicMenuSection, PublicMenuView } from "../../../../../src/api/server";
+import type { PublicMenuItem, PublicMenuOffer, PublicMenuSection, PublicMenuView } from "../../../../../src/api/server";
 
 // The carta opens on four "doors" (Café · Comida · Dulce · Bar); each door
 // holds one or more backend sections. Everything inside a door — sections,
@@ -81,6 +81,18 @@ function stopsFor(sections: PublicMenuSection[]): Stop[] {
     return stops;
   }
   return sections.map((section) => ({ key: section.id, label: sectionLabel(section), sectionId: section.id }));
+}
+
+// Every item a stop holds, in backend order: a subgroup stop is that subgroup;
+// a section stop is the section's own items then each of its subgroups'.
+export function stopItems(door: Door, stop: Stop): PublicMenuItem[] {
+  const section = door.sections.find((s) => s.id === stop.sectionId);
+  if (!section) return [];
+  if (stop.subgroupId) return section.subgroups?.find((sg) => sg.id === stop.subgroupId)?.items ?? [];
+  const own = section.items ?? [];
+  // A section stop that sits beside its own subgroup stops holds only its own items.
+  if (door.stops.some((s) => s.sectionId === section.id && s.subgroupId)) return own;
+  return [...own, ...(section.subgroups ?? []).flatMap((sg) => sg.items)];
 }
 
 function countItems(sections: PublicMenuSection[]): number {
