@@ -632,6 +632,23 @@
   color: var(--soft);
 }
 
+/* Offer cards are <button>s, which shrink-to-fit inside a block container —
+   a short description made a narrower card. Flex columns stretch them all to
+   the same full width. */
+.mainOffers,
+.hubList {
+  display: flex;
+  flex-direction: column;
+}
+
+.hubList {
+  padding: 0 20px;
+}
+
+.hubList > .hubRow:first-child {
+  border-top: 0;
+}
+
 /* Combo card (espresso + caramel) — the single discount treatment. */
 .offerCard {
   display: flex;
@@ -852,6 +869,30 @@
   text-transform: uppercase;
   color: var(--soft);
   padding-top: 4px;
+}
+
+/* Cervezas | Tragos switch inside a grouped offer sheet. */
+.segment {
+  display: flex;
+  padding: 4px;
+  border-radius: 14px;
+  background: #2417100f;
+}
+
+.segmentBtn {
+  flex: 1 1 0;
+  display: flex;
+  justify-content: center;
+  padding: 10px 0;
+  border-radius: 11px;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.segmentOn {
+  background: var(--ground);
+  box-shadow: 0 1px 3px #24171026;
+  font-weight: 700;
 }
 
 .pairRow {
@@ -1094,6 +1135,10 @@
 
   .mainOffers {
     display: none;
+  }
+
+  .hubList {
+    padding: 0;
   }
 
   .aside {

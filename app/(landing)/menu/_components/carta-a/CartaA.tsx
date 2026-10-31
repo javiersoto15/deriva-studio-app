@@ -18,13 +18,15 @@ import { ISOTIPO_PATHS, ISOTIPO_VIEWBOX } from "../../../../../src/brand/isotipo
 import { CARTA_COPY } from "./copy";
 import {
   buildDoors,
+  groupFloor,
+  groupOffers,
   isAuthorSubgroup,
-  offerFloor,
   parseView,
   stopAnchor,
   type CartaView,
   type Door,
   type DoorId,
+  type OfferGroup,
   type Stop
 } from "./doors";
 import styles from "./carta-a.module.css";
@@ -57,7 +59,7 @@ function priceText(item: PublicMenuItem): string {
 
 type SheetState =
   | { kind: "item"; item: PublicMenuItem; door: DoorId }
-  | { kind: "offer"; offer: PublicMenuOffer }
+  | { kind: "offer"; group: OfferGroup }
   | { kind: "switch" }
   | null;
 
@@ -179,21 +181,53 @@ function pricingLabel(pricing: PublicMenuOfferItemPricing | undefined): string |
   return pricing.kind === "supplement" ? `+ ${clp(pricing.amount_clp)}` : clp(pricing.amount_clp);
 }
 
-function OfferSheet({ offer, locale, onClose }: { offer: PublicMenuOffer; locale: Locale; onClose: () => void }) {
+function OfferSheet({ group, locale, onClose }: { group: OfferGroup; locale: Locale; onClose: () => void }) {
+  const copy = CARTA_COPY[locale];
+  const [tab, setTab] = useState(0);
+  const offer = group.offers[tab] ?? group.offers[0];
+  const image = group.offers.find((o) => o.image_url)?.image_url;
+  return (
+    <Sheet label={group.title} onClose={onClose}>
+      <div className={styles.sheetBody}>
+        <div className={styles.sheetTop}>
+          <span className={styles.comboPill}>{copy.combo}</span>
+          <CloseButton onClose={onClose} label={copy.close} />
+        </div>
+        {image ? <img src={image} alt="" className={styles.banner} /> : null}
+        <h2 className={styles.sheetTitle}>{group.title}</h2>
+        {group.offers.length > 1 ? (
+          <div className={styles.segment} role="tablist" aria-label={group.title}>
+            {group.labels.map((label, i) => (
+              <button
+                key={group.offers[i].id}
+                type="button"
+                role="tab"
+                aria-selected={i === tab}
+                className={`${styles.segmentBtn} ${i === tab ? styles.segmentOn : ""}`}
+                onClick={() => setTab(i)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        ) : null}
+        <OfferContent key={offer.id} offer={offer} locale={locale} />
+      </div>
+    </Sheet>
+  );
+}
+
+// One offer's body inside the sheet: description, then its pairs (detail) or
+// its priced options (variants). Keyed by offer id so the option pick resets
+// when the guest switches tabs.
+function OfferContent({ offer, locale }: { offer: PublicMenuOffer; locale: Locale }) {
   const copy = CARTA_COPY[locale];
   const shape = offerShape(offer);
   const variants = offer.variants ?? [];
   const [picked, setPicked] = useState(0);
   const variant = variants[picked];
   return (
-    <Sheet label={offer.title} onClose={onClose}>
-      <div className={styles.sheetBody}>
-        <div className={styles.sheetTop}>
-          <span className={styles.comboPill}>{copy.combo}</span>
-          <CloseButton onClose={onClose} label={copy.close} />
-        </div>
-        {offer.image_url ? <img src={offer.image_url} alt="" className={styles.banner} /> : null}
-        <h2 className={styles.sheetTitle}>{offer.title}</h2>
+    <>
         {offer.description ? <p className={styles.lede}>{offer.description}</p> : null}
 
         {shape === "detail" && offer.detail?.items?.length ? (
@@ -259,8 +293,7 @@ function OfferSheet({ offer, locale, onClose }: { offer: PublicMenuOffer; locale
             </div>
           </>
         ) : null}
-      </div>
-    </Sheet>
+    </>
   );
 }
 
@@ -357,27 +390,69 @@ function Addons({ addon }: { addon: PublicMenuAddon }) {
   );
 }
 
-function OfferCard({ offer, locale, onOpen }: { offer: PublicMenuOffer; locale: Locale; onOpen: () => void }) {
+// How many priced choices a group spans — more than one earns the "desde" cue.
+function priceChoices(group: OfferGroup): number {
+  return group.offers.reduce((n, o) => n + (o.variants?.length ?? 0) + (o.detail?.items?.length ?? 0), 0);
+}
+
+function FloorPrice({ group, locale }: { group: OfferGroup; locale: Locale }) {
   const copy = CARTA_COPY[locale];
-  const floor = offerFloor(offer);
-  const isPairs = offerShape(offer) === "detail" && offer.detail?.items?.every((r) => r.quantity === 2);
+  const floor = groupFloor(group);
+  if (floor === undefined) return null;
+  // "el par" only when the guest chooses WHICH pair (Happy Hour); a fixed
+  // two-of-one combo (2 Desayunos Campesinos) is just its price.
+  const pairs = group.offers.every((o) => {
+    const rows = o.detail?.items ?? [];
+    return offerShape(o) === "detail" && rows.length > 1 && rows.every((r) => r.quantity === 2);
+  });
+  return (
+    <>
+      {priceChoices(group) > 1 ? `${copy.from} ` : ""}
+      {clp(floor)}
+      {pairs ? ` ${copy.pair}` : ""}
+    </>
+  );
+}
+
+function groupBlurb(group: OfferGroup): string | undefined {
+  return group.offers.length > 1 ? group.labels.join(" · ") : group.offers[0].description;
+}
+
+function OfferCard({ group, locale, onOpen }: { group: OfferGroup; locale: Locale; onOpen: () => void }) {
+  const copy = CARTA_COPY[locale];
+  const image = group.offers.find((o) => o.image_url)?.image_url;
+  const blurb = groupBlurb(group);
   return (
     <button type="button" className={styles.offerCard} onClick={onOpen}>
-      {offer.image_url ? <img src={offer.image_url} alt="" loading="lazy" className={styles.offerImg} /> : null}
+      {image ? <img src={image} alt="" loading="lazy" className={styles.offerImg} /> : null}
       <span className={styles.offerTop}>
         <span className={styles.comboPill}>{copy.combo}</span>
-        {floor !== undefined ? (
-          <span className={styles.offerPrice}>
-            {(offer.variants?.length ?? 0) > 1 || (offer.detail?.items?.length ?? 0) > 1 ? `${copy.from} ` : ""}
-            {clp(floor)}
-            {isPairs ? ` ${copy.pair}` : ""}
-          </span>
-        ) : null}
+        <span className={styles.offerPrice}>
+          <FloorPrice group={group} locale={locale} />
+        </span>
       </span>
-      <span className={styles.offerTitle}>{offer.title}</span>
-      {offer.description ? <span className={styles.offerDesc}>{offer.description}</span> : null}
+      <span className={styles.offerTitle}>{group.title}</span>
+      {blurb ? <span className={styles.offerDesc}>{blurb}</span> : null}
       <span className={styles.offerCue}>{copy.seeCombo} →</span>
     </button>
+  );
+}
+
+function OfferCards({
+  offers,
+  locale,
+  onOffer
+}: {
+  offers: PublicMenuOffer[];
+  locale: Locale;
+  onOffer: (group: OfferGroup) => void;
+}) {
+  return (
+    <>
+      {groupOffers(offers).map((g) => (
+        <OfferCard key={g.key} group={g} locale={locale} onOpen={() => onOffer(g)} />
+      ))}
+    </>
   );
 }
 
@@ -394,7 +469,7 @@ function SectionBlock({
   showHead: boolean;
   locale: Locale;
   onItem: (item: PublicMenuItem) => void;
-  onOffer: (offer: PublicMenuOffer) => void;
+  onOffer: (group: OfferGroup) => void;
 }) {
   return (
     <section id={stopAnchor({ key: stopKey })} className={styles.stop} aria-labelledby={`${stopKey}-title`}>
@@ -438,9 +513,7 @@ function SectionBlock({
         </div>
       ) : null}
       <div className={styles.mainOffers}>
-        {(section.offers ?? []).map((o) => (
-          <OfferCard key={o.id} offer={o} locale={locale} onOpen={() => onOffer(o)} />
-        ))}
+        <OfferCards offers={section.offers ?? []} locale={locale} onOffer={onOffer} />
       </div>
     </section>
   );
@@ -455,7 +528,7 @@ function DoorBody({
   door: Door;
   locale: Locale;
   onItem: (item: PublicMenuItem) => void;
-  onOffer: (offer: PublicMenuOffer) => void;
+  onOffer: (group: OfferGroup) => void;
 }) {
   const subgroupStops = door.stops.some((s) => s.subgroupId);
   if (!subgroupStops) {
@@ -502,9 +575,7 @@ function DoorBody({
                   <Addons key={k} addon={a} />
                 ))}
                 <div className={styles.mainOffers}>
-                  {(section.offers ?? []).map((o) => (
-                    <OfferCard key={o.id} offer={o} locale={locale} onOpen={() => onOffer(o)} />
-                  ))}
+                  <OfferCards offers={section.offers ?? []} locale={locale} onOffer={onOffer} />
                 </div>
               </>
             ) : null}
@@ -527,7 +598,8 @@ export function CartaA({
 }) {
   const copy = CARTA_COPY[locale];
   const doors = useMemo(() => buildDoors(menu), [menu]);
-  const allOffers = useMemo(() => doors.flatMap((d) => d.offers.map((offer) => ({ offer, door: d.id }))), [doors]);
+  // Counted as the guest sees them: a Happy Hour family is one combo, not two.
+  const comboCount = useMemo(() => doors.reduce((n, d) => n + groupOffers(d.offers).length, 0), [doors]);
   const totalItems = doors.reduce((n, d) => n + d.itemCount, 0);
 
   const [view, setView] = useState<CartaView>(initialView);
@@ -577,15 +649,15 @@ export function CartaA({
           onBack={() => go({ kind: "entrance" })}
           onSwitch={() => setSheet({ kind: "switch" })}
           onItem={(item) => setSheet({ kind: "item", item, door: door.id })}
-          onOffer={(offer) => setSheet({ kind: "offer", offer })}
+          onOffer={(group) => setSheet({ kind: "offer", group })}
         />
       ) : view.kind === "combos" ? (
         <CombosView
           doors={doors}
-          entries={allOffers}
+          count={comboCount}
           locale={locale}
           onBack={() => go({ kind: "entrance" })}
-          onOffer={(offer) => setSheet({ kind: "offer", offer })}
+          onOffer={(group) => setSheet({ kind: "offer", group })}
         />
       ) : (
         <>
@@ -667,7 +739,7 @@ export function CartaA({
             ))}
           </nav>
 
-          {allOffers.length ? (
+          {comboCount ? (
             <a
               href="?puerta=combos"
               className={styles.combosRow}
@@ -683,7 +755,7 @@ export function CartaA({
                 </span>
                 <span className={styles.combosText}>
                   <span className={styles.combosName}>{copy.combos}</span>
-                  <span className={styles.combosMeta}>{copy.combosCount(allOffers.length)}</span>
+                  <span className={styles.combosMeta}>{copy.combosCount(comboCount)}</span>
                 </span>
               </span>
               <span aria-hidden="true" style={{ fontWeight: 700, fontSize: 18 }}>
@@ -695,7 +767,7 @@ export function CartaA({
       )}
 
       {sheet?.kind === "item" ? <ItemSheet item={sheet.item} door={sheet.door} locale={locale} onClose={closeSheet} /> : null}
-      {sheet?.kind === "offer" ? <OfferSheet offer={sheet.offer} locale={locale} onClose={closeSheet} /> : null}
+      {sheet?.kind === "offer" ? <OfferSheet group={sheet.group} locale={locale} onClose={closeSheet} /> : null}
       {sheet?.kind === "switch" ? (
         <Sheet label={copy.switchTo} onClose={closeSheet}>
           <div className={styles.sheetBody} style={{ gap: 10 }}>
@@ -717,7 +789,7 @@ export function CartaA({
                 <span aria-hidden="true">{view.kind === "door" && view.id === d.id ? "✓" : "→"}</span>
               </button>
             ))}
-            {allOffers.length ? (
+            {comboCount ? (
               <button type="button" className={styles.switchRow} style={{ background: "transparent", border: "1px solid var(--line)" }} onClick={() => go({ kind: "combos" })}>
                 <span className={styles.pct} aria-hidden="true">
                   %
@@ -746,7 +818,7 @@ function DoorView({
   onBack: () => void;
   onSwitch: () => void;
   onItem: (item: PublicMenuItem) => void;
-  onOffer: (offer: PublicMenuOffer) => void;
+  onOffer: (group: OfferGroup) => void;
 }) {
   const copy = CARTA_COPY[locale];
   const headRef = useRef<HTMLDivElement>(null);
@@ -846,9 +918,7 @@ function DoorView({
         {door.offers.length ? (
           <aside className={styles.aside} aria-label={copy.combos}>
             <span className={styles.sheetLabel}>{copy.combos}</span>
-            {door.offers.map((o) => (
-              <OfferCard key={o.id} offer={o} locale={locale} onOpen={() => onOffer(o)} />
-            ))}
+            <OfferCards offers={door.offers} locale={locale} onOffer={onOffer} />
           </aside>
         ) : null}
       </div>
@@ -859,16 +929,16 @@ function DoorView({
 // ── Combos hub ──────────────────────────────────────────────────────────
 function CombosView({
   doors,
-  entries,
+  count,
   locale,
   onBack,
   onOffer
 }: {
   doors: Door[];
-  entries: Array<{ offer: PublicMenuOffer; door: DoorId }>;
+  count: number;
   locale: Locale;
   onBack: () => void;
-  onOffer: (offer: PublicMenuOffer) => void;
+  onOffer: (group: OfferGroup) => void;
 }) {
   const copy = CARTA_COPY[locale];
   const [filter, setFilter] = useState<DoorId | "all">("all");
@@ -882,7 +952,7 @@ function CombosView({
             ← {copy.back}
           </button>
           <span className={styles.kicker} style={{ opacity: 0.7 }}>
-            {copy.combosCount(entries.length)}
+            {copy.combosCount(count)}
           </span>
         </div>
         <h1 className={styles.hubTitle}>{copy.combosTitle}</h1>
@@ -902,38 +972,38 @@ function CombosView({
         </div>
       </div>
       <div className={styles.hubBody}>
-        {shown.map((d) => (
-          <div key={d.id} className={styles.hubGroup} style={doorStyle(d.id)}>
-            <h2 className={styles.subTitle} style={{ display: "flex", justifyContent: "space-between" }}>
-              <span>{copy.doors[d.id].name}</span>
-              <span className={styles.mono}>{d.offers.length}</span>
-            </h2>
-            <div className={styles.rows}>
-              {d.offers.map((offer) => {
-                const floor = offerFloor(offer);
-                return (
-                  <button key={offer.id} type="button" className={styles.hubRow} onClick={() => onOffer(offer)}>
-                    <span className={styles.hubSwatch} aria-hidden="true" />
-                    <span className={styles.rowMain}>
-                      <span className={styles.rowTop}>
-                        <span className={styles.name} style={{ fontSize: 17 }}>
-                          {offer.title}
-                        </span>
-                        {floor !== undefined ? (
-                          <span className={styles.price} style={{ fontSize: 14 }}>
-                            {(offer.variants?.length ?? 0) > 1 || (offer.detail?.items?.length ?? 0) > 1 ? `${copy.from} ` : ""}
-                            {clp(floor)}
+        {shown.map((d) => {
+          const groups = groupOffers(d.offers);
+          return (
+            <div key={d.id} className={styles.hubGroup} style={doorStyle(d.id)}>
+              <h2 className={styles.subTitle} style={{ display: "flex", justifyContent: "space-between" }}>
+                <span>{copy.doors[d.id].name}</span>
+                <span className={styles.mono}>{groups.length}</span>
+              </h2>
+              <div className={styles.hubList}>
+                {groups.map((group) => {
+                  const blurb = groupBlurb(group);
+                  return (
+                    <button key={group.key} type="button" className={styles.hubRow} onClick={() => onOffer(group)}>
+                      <span className={styles.hubSwatch} aria-hidden="true" />
+                      <span className={styles.rowMain}>
+                        <span className={styles.rowTop}>
+                          <span className={styles.name} style={{ fontSize: 17 }}>
+                            {group.title}
                           </span>
-                        ) : null}
+                          <span className={styles.price} style={{ fontSize: 14 }}>
+                            <FloorPrice group={group} locale={locale} />
+                          </span>
+                        </span>
+                        {blurb ? <span className={styles.desc} style={{ fontSize: 14 }}>{blurb}</span> : null}
                       </span>
-                      {offer.description ? <span className={styles.desc} style={{ fontSize: 14 }}>{offer.description}</span> : null}
-                    </span>
-                  </button>
-                );
-              })}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

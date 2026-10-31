@@ -134,6 +134,53 @@ export function parseView(puerta: string | undefined | null): CartaView {
   return { kind: "entrance" };
 }
 
+// Offers that are one promotion split into parts ("Happy Hour · Cervezas" +
+// "Happy Hour · Tragos") present as ONE card and ONE sheet with a switch.
+// The payload has no grouping field yet, so the family is the title text
+// before " · ", within one door's offer list. A family of one keeps its full
+// title. Remove when the backend sends `offer.group` (requested 2026-10-31).
+export type OfferGroup = {
+  key: string;
+  title: string;
+  offers: PublicMenuOffer[];
+  /** Switch label per offer: the part after " · ", or the whole title. */
+  labels: string[];
+};
+
+const FAMILY_SEP = " · ";
+
+function family(title: string): { head: string; tail: string } | null {
+  const at = title.indexOf(FAMILY_SEP);
+  if (at <= 0) return null;
+  return { head: title.slice(0, at).trim(), tail: title.slice(at + FAMILY_SEP.length).trim() };
+}
+
+export function groupOffers(offers: PublicMenuOffer[]): OfferGroup[] {
+  const groups: OfferGroup[] = [];
+  const byHead = new Map<string, OfferGroup>();
+  for (const offer of offers) {
+    const fam = family(offer.title);
+    const existing = fam ? byHead.get(fam.head) : undefined;
+    if (existing && fam) {
+      existing.offers.push(offer);
+      existing.labels.push(fam.tail);
+      existing.title = fam.head;
+      continue;
+    }
+    const group: OfferGroup = { key: offer.id, title: offer.title, offers: [offer], labels: [fam?.tail ?? offer.title] };
+    if (fam) byHead.set(fam.head, group);
+    groups.push(group);
+  }
+  // A single-member family shows its full title in the switch-less sheet.
+  for (const g of groups) if (g.offers.length === 1) g.labels = [g.offers[0].title];
+  return groups;
+}
+
+export function groupFloor(group: OfferGroup): number | undefined {
+  const floors = group.offers.map(offerFloor).filter((n): n is number => typeof n === "number");
+  return floors.length ? Math.min(...floors) : undefined;
+}
+
 // Lowest backend price an offer can be had for, for the "desde" cue on a card.
 // Never computed: it is one of the backend's own numbers (a variant price or a
 // fixed pair price). Offers whose price lives only in prose return undefined.

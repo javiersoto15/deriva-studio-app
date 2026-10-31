@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import type { PublicMenuView } from "../../src/api/server";
-import { buildDoors, offerFloor } from "../../app/(landing)/menu/_components/carta-a/doors";
+import { buildDoors, groupOffers, offerFloor } from "../../app/(landing)/menu/_components/carta-a/doors";
 
 const item = (id: string, extra: Record<string, unknown> = {}) => ({
   id,
@@ -125,6 +125,27 @@ test("counts items and collects offers per door", () => {
 
 test("a door without an item photo falls back to its first section banner", () => {
   assert.equal(buildDoors(menu)[1].photo, "https://x/desay.jpg");
+});
+
+test("offers sharing a title family merge into one group; others stay single", () => {
+  const offers = [
+    { id: "hh-c", title: "Happy Hour · Cervezas", description: "a" },
+    { id: "combo", title: "Café simple + pie del día", description: "b" },
+    { id: "hh-t", title: "Happy Hour · Tragos", description: "c" }
+  ] as never[];
+  const groups = groupOffers(offers);
+  assert.deepEqual(
+    groups.map((g) => [g.title, g.offers.map((o) => o.id), g.labels]),
+    [
+      ["Happy Hour", ["hh-c", "hh-t"], ["Cervezas", "Tragos"]],
+      ["Café simple + pie del día", ["combo"], ["Café simple + pie del día"]]
+    ]
+  );
+});
+
+test("a lone 'X · Y' offer keeps its full title", () => {
+  const [group] = groupOffers([{ id: "a", title: "Happy Hour · Cervezas", description: "" }] as never[]);
+  assert.equal(group.title, "Happy Hour · Cervezas");
 });
 
 test("offerFloor picks the lowest backend price and never sums", () => {
