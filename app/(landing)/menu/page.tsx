@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Bricolage_Grotesque } from "next/font/google";
 import { Suspense } from "react";
 
 import { getPublicMenuView } from "../../../src/api/server";
@@ -6,8 +7,19 @@ import { getActiveLocale, getActiveBackendLocale } from "../../../src/i18n/serve
 import { SiteNav } from "../../../src/components/landing/SiteNav";
 import { MENU_URL, SITE_NAME } from "../../../src/seo/local-business";
 import { buildMenuGraph } from "../../../src/seo/menu-schema";
-import { CartaBody } from "./_components/CartaBody";
-import { CartaSkeleton } from "./_components/CartaSkeleton";
+import { CartaA } from "./_components/carta-a/CartaA";
+import { parseView } from "./_components/carta-a/doors";
+import { CartaASkeleton } from "./_components/carta-a/CartaASkeleton";
+
+// Carta A's display + body face. Scoped to /menu so the rest of the site keeps
+// its own type system and doesn't pay for this font.
+const bricolage = Bricolage_Grotesque({
+  subsets: ["latin"],
+  variable: "--font-bricolage",
+  display: "swap"
+});
+
+type SearchParams = Promise<{ puerta?: string | string[] }>;
 
 export const metadata: Metadata = {
   title: "Carta de café de especialidad en Providencia",
@@ -26,11 +38,13 @@ export const metadata: Metadata = {
 // El Mercado carta — the live public /menu. The locale-cookie read + menu fetch
 // are dynamic, so they live in a Suspense boundary (Cache Components / PPR)
 // rather than a force-dynamic export.
-async function CartaContent() {
-  const [uiLocale, backendLocale] = await Promise.all([
+async function CartaContent({ searchParams }: { searchParams: SearchParams }) {
+  const [uiLocale, backendLocale, params] = await Promise.all([
     getActiveLocale(),
-    getActiveBackendLocale()
+    getActiveBackendLocale(),
+    searchParams
   ]);
+  const puerta = Array.isArray(params.puerta) ? params.puerta[0] : params.puerta;
   const menu = await getPublicMenuView({ locale: backendLocale });
   // The pricing embargo lifted on 2026-05-17 (PRICING_OPEN_AT), so the gate is
   // permanently open. Dropping the Date.now() comparison also drops the
@@ -52,23 +66,20 @@ async function CartaContent() {
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(buildMenuGraph(menu, showPrices)) }}
       />
-      <CartaBody menu={menu} locale={uiLocale} showPrices={showPrices} />
+      <CartaA menu={menu} locale={uiLocale} initialView={parseView(puerta)} />
     </>
   );
 }
 
-export default function MenuPage() {
+export default function MenuPage({ searchParams }: { searchParams: SearchParams }) {
   return (
     <>
       <SiteNav active="carta" variant="solid" brand={SITE_NAME} />
-      <main className="menu-page menu-page--with-nav">
-        {/* A real fallback, not null: the carta's own ground is nocturno
-            (#1a1410) while the empty .menu-page shell is cream, so an absent
-            fallback made every navigation flash light-then-dark. The skeleton
-            establishes the dark ground and the static masthead in the
-            prerendered shell; only backend-derived rows resolve later. */}
-        <Suspense fallback={<CartaSkeleton />}>
-          <CartaContent />
+      <main className={`menu-page menu-page--with-nav ${bricolage.variable}`}>
+        {/* The skeleton paints the cream ground and the four roast bands in the
+            prerendered shell, so the doors don't jump in when the menu lands. */}
+        <Suspense fallback={<CartaASkeleton />}>
+          <CartaContent searchParams={searchParams} />
         </Suspense>
       </main>
     </>

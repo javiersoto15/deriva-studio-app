@@ -1,0 +1,1122 @@
+/* Carta A — door carta (Paper "Carta A · 01–17", page p-J-0).
+   Door bands use the Tostado roast scale; inside a door the header softens to
+   a tint of the same roast (the "Mercado suave" register). Flat grounds only,
+   one green moment (the open dot). */
+
+.shell {
+  --ground: #f6f0e6;
+  --ink: #241710;
+  --soft: #5c4a3d;
+  --line: #24171021;
+  --cream: #f6eadb;
+  --green: #00311f;
+  --caramel: #c4925f;
+  --espresso: #2a1b13;
+  --veil: #1b110ca6;
+  --sans: var(--font-bricolage, "Bricolage Grotesque"), system-ui, sans-serif;
+  --mono-f: var(--font-mono, "IBM Plex Mono"), ui-monospace, monospace;
+
+  --door-cafe: #2a1b13;
+  --door-cafe-fg: #f3e8d8;
+  --door-cafe-tint: #d8c4b0;
+  --door-comida: #7a3a1d;
+  --door-comida-fg: #f6eadb;
+  --door-comida-tint: #e3b08e;
+  --door-dulce: #c4925f;
+  --door-dulce-fg: #241710;
+  --door-dulce-tint: #e8cda0;
+  --door-bar: #e7d7bd;
+  --door-bar-fg: #241710;
+  --door-bar-tint: #dccbb0;
+
+  min-height: 100vh;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--sans);
+  padding-top: var(--landing-nav-h, 56px);
+}
+
+/* Zero-specificity reset so every component class below wins over it. */
+:where(.shell) :where(button) {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-align: inherit;
+}
+
+.mono {
+  font-family: var(--mono-f);
+}
+
+.kicker {
+  font-family: var(--mono-f);
+  font-size: 11px;
+  line-height: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ── Entrance ───────────────────────────────────────────────────────────── */
+.entranceHead {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 20px 20px;
+}
+
+.headRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.headRow > svg {
+  flex-shrink: 0;
+}
+
+/* Language + status wrap under themselves on 320px phones instead of
+   pushing the mark off-screen. */
+.headTools {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  min-width: 0;
+}
+
+.titleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.bigTitle {
+  margin: 0;
+  font-weight: 800;
+  font-size: clamp(40px, 12vw, 50px);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border-radius: 99px;
+  border: 1px solid var(--line);
+  font-family: var(--mono-f);
+  font-size: 12px;
+  line-height: 14px;
+  white-space: nowrap;
+}
+
+.statusDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 4px;
+  background: var(--green);
+}
+
+.statusClosed .statusDot {
+  background: #b04a2a;
+}
+
+.langs {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.lang {
+  font-family: var(--mono-f);
+  font-size: 12px;
+  padding: 6px 7px;
+  border-radius: 8px;
+  color: var(--soft);
+}
+
+.langOn {
+  color: var(--ink);
+  background: #24171012;
+}
+
+.closedNote {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0 20px 16px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: #eadfcf;
+}
+
+.closedTitle {
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.closedText {
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--soft);
+}
+
+.doors {
+  display: flex;
+  flex-direction: column;
+}
+
+.door {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 162px;
+  padding: 18px 16px 18px 20px;
+  background: var(--door-bg);
+  color: var(--door-fg);
+  text-decoration: none;
+}
+
+.doorText {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.doorCount {
+  opacity: 0.72;
+}
+
+.doorName {
+  font-weight: 800;
+  font-size: clamp(42px, 13vw, 50px);
+  line-height: 0.96;
+  letter-spacing: -0.04em;
+}
+
+.doorSub {
+  font-size: 15px;
+  line-height: 20px;
+  opacity: 0.86;
+}
+
+.doorPhotoWrap {
+  position: relative;
+  flex-shrink: 0;
+  width: clamp(96px, 29vw, 112px);
+  aspect-ratio: 112 / 126;
+}
+
+.doorPhoto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 18px;
+  display: block;
+}
+
+.arrow {
+  position: absolute;
+  right: -6px;
+  bottom: -6px;
+  width: 34px;
+  height: 34px;
+  border-radius: 17px;
+  background: var(--door-fg);
+  color: var(--door-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 17px;
+}
+
+.door:focus-visible,
+.combosRow:focus-visible {
+  outline: 3px solid var(--caramel);
+  outline-offset: -3px;
+}
+
+.combosRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 16px 20px;
+  border-top: 1px solid var(--line);
+}
+
+.combosLead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pct {
+  padding: 6px 9px;
+  border-radius: 10px;
+  background: var(--caramel);
+  font-weight: 800;
+  font-size: 15px;
+  line-height: 16px;
+  color: var(--ink);
+}
+
+.combosText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.combosName {
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.combosMeta {
+  font-family: var(--mono-f);
+  font-size: 11px;
+  line-height: 14px;
+  color: var(--soft);
+}
+
+/* ── Door (chapter) ─────────────────────────────────────────────────────── */
+.chapterHead {
+  position: sticky;
+  top: var(--landing-nav-h, 56px);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 18px 0 16px 20px;
+  background: var(--door-tint);
+  transition: gap 0.18s ease, padding 0.18s ease;
+}
+
+.chapterHeadCompact {
+  gap: 10px;
+  padding-top: 10px;
+  padding-bottom: 12px;
+}
+
+.chapterTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 20px;
+  gap: 12px;
+}
+
+.backLink {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.chapterTitleBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chapterTitle {
+  margin: 0;
+  font-weight: 800;
+  font-size: 46px;
+  line-height: 0.96;
+  letter-spacing: -0.04em;
+  transition: font-size 0.18s ease;
+}
+
+.chapterHeadCompact .chapterTitle {
+  font-size: 24px;
+}
+
+.caret {
+  font-weight: 700;
+  font-size: 20px;
+  opacity: 0.55;
+}
+
+.chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-right: 20px;
+  scrollbar-width: none;
+}
+
+.chips::-webkit-scrollbar {
+  display: none;
+}
+
+.chip {
+  flex-shrink: 0;
+  padding: 9px 15px;
+  border-radius: 99px;
+  border: 1px solid #24171033;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+.chipOn {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--cream);
+  font-weight: 600;
+}
+
+.chapterBody {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  padding-bottom: 64px;
+}
+
+.stop {
+  scroll-margin-top: var(--stop-offset, 220px);
+}
+
+.stopHead {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px 20px 6px;
+}
+
+.banner {
+  width: 100%;
+  height: 132px;
+  object-fit: cover;
+  border-radius: 18px;
+  display: block;
+}
+
+.stopTitleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.stopTitle {
+  margin: 0;
+  font-weight: 800;
+  font-size: 28px;
+  line-height: 30px;
+  letter-spacing: -0.03em;
+}
+
+.subTitle {
+  margin: 0;
+  padding: 18px 20px 2px;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--soft);
+}
+
+.window {
+  flex-shrink: 0;
+  padding: 5px 10px;
+  border-radius: 99px;
+  background: var(--door-tint);
+  font-family: var(--mono-f);
+  font-size: 11px;
+  line-height: 13px;
+}
+
+.lede {
+  margin: 0;
+  font-size: 15px;
+  line-height: 21px;
+  color: var(--soft);
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px;
+}
+
+.row {
+  display: flex;
+  gap: 14px;
+  width: 100%;
+  padding: 15px 0;
+  border-top: 1px solid var(--line);
+}
+
+.rows > .row:first-child {
+  border-top: 0;
+}
+
+.rowOff {
+  opacity: 0.48;
+}
+
+.rowMain {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.rowTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.name {
+  font-weight: 700;
+  font-size: 19px;
+  line-height: 23px;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+.price {
+  flex-shrink: 0;
+  font-family: var(--mono-f);
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.desc {
+  font-size: 15px;
+  line-height: 21px;
+  color: var(--soft);
+}
+
+.tags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  padding: 4px 9px;
+  border-radius: 99px;
+  background: var(--door-tint);
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 13px;
+}
+
+.meta {
+  font-family: var(--mono-f);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--soft);
+}
+
+.thumb {
+  width: 76px;
+  height: 76px;
+  object-fit: cover;
+  border-radius: 14px;
+  flex-shrink: 0;
+}
+
+.originLines {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.originLine {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-family: var(--mono-f);
+  font-size: 13px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px 16px;
+  padding: 8px 20px 4px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.cardPhoto {
+  width: 100%;
+  aspect-ratio: 167 / 200;
+  object-fit: cover;
+  border-radius: 16px;
+  display: block;
+  background: var(--door-tint);
+}
+
+.cardName {
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 19px;
+}
+
+.cardFoot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+
+.addons {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin: 6px 20px 8px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--door-tint) 40%, transparent);
+}
+
+.addonLabel {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.addonChips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.addonChip {
+  padding: 7px 12px;
+  border-radius: 99px;
+  background: var(--ground);
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 15px;
+}
+
+.addonHint {
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--soft);
+}
+
+/* Combo card (espresso + caramel) — the single discount treatment. */
+.offerCard {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 8px 20px;
+  padding: 16px;
+  border-radius: 18px;
+  background: var(--espresso);
+  color: var(--cream);
+  width: auto;
+}
+
+.offerImg {
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+}
+
+.offerTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.comboPill {
+  padding: 4px 9px;
+  border-radius: 99px;
+  background: var(--caramel);
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 11px;
+  line-height: 13px;
+}
+
+.offerPrice {
+  font-family: var(--mono-f);
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.offerTitle {
+  font-weight: 700;
+  font-size: 19px;
+  line-height: 23px;
+}
+
+.offerDesc {
+  font-size: 14px;
+  line-height: 20px;
+  opacity: 0.8;
+}
+
+.offerCue {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--caramel);
+}
+
+.exec {
+  margin: 12px 20px;
+  padding: 18px;
+  border-radius: 18px;
+  background: var(--door-tint);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.execHero {
+  font-weight: 800;
+  font-size: 24px;
+  line-height: 26px;
+  letter-spacing: -0.02em;
+}
+
+.course {
+  display: flex;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.aside {
+  display: none;
+}
+
+/* ── Combos hub ─────────────────────────────────────────────────────────── */
+.hubHead {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 20px 16px;
+  background: var(--caramel);
+}
+
+.hubTitle {
+  margin: 0;
+  white-space: pre-line;
+  font-weight: 800;
+  font-size: 42px;
+  line-height: 40px;
+  letter-spacing: -0.04em;
+}
+
+.hubGroup {
+  padding-top: 6px;
+}
+
+.hubRow {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  width: 100%;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+}
+
+.hubSwatch {
+  width: 8px;
+  height: 44px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  background: var(--door-bg);
+}
+
+/* ── Sheets ─────────────────────────────────────────────────────────────── */
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: var(--veil);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: fade 0.18s ease-out;
+}
+
+.sheet {
+  width: 100%;
+  max-width: 560px;
+  max-height: 88vh;
+  overflow-y: auto;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--sans);
+  border-radius: 26px 26px 0 0;
+  padding: 10px 20px calc(28px + env(safe-area-inset-bottom));
+  animation: rise 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.grabber {
+  width: 40px;
+  height: 5px;
+  border-radius: 3px;
+  background: #24171030;
+  margin: 0 auto 10px;
+}
+
+.sheetBody {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sheetTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.closeBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  background: #24171012;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.photoWrap {
+  position: relative;
+}
+
+.sheetPhoto {
+  width: 100%;
+  aspect-ratio: 350 / 250;
+  object-fit: cover;
+  border-radius: 20px;
+  display: block;
+}
+
+.photoClose {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  background: var(--ground);
+}
+
+.sheetTitle {
+  margin: 0;
+  font-weight: 800;
+  font-size: 30px;
+  line-height: 32px;
+  letter-spacing: -0.03em;
+}
+
+.sheetLabel {
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--soft);
+  padding-top: 4px;
+}
+
+.pairRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 0;
+  border-top: 1px solid var(--line);
+}
+
+.pairRow:first-child {
+  border-top: 0;
+}
+
+.pairPrice {
+  padding: 7px 11px;
+  border-radius: 12px;
+  background: var(--espresso);
+  color: var(--cream);
+  font-family: var(--mono-f);
+  font-weight: 500;
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.variant {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+}
+
+.variantOn {
+  border-color: var(--ink);
+  background: #2417100d;
+}
+
+.variantRadio {
+  width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  border: 2px solid #24171055;
+  flex-shrink: 0;
+}
+
+.variantOn .variantRadio {
+  border: 5px solid var(--ink);
+}
+
+.total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: var(--espresso);
+  color: var(--cream);
+}
+
+.switchRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: var(--door-bg);
+  color: var(--door-fg);
+}
+
+.switchThumb {
+  width: 52px;
+  height: 52px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.switchName {
+  font-weight: 800;
+  font-size: 24px;
+  line-height: 26px;
+  letter-spacing: -0.03em;
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrim,
+  .sheet {
+    animation: none;
+  }
+  .chapterHead,
+  .chapterTitle {
+    transition: none;
+  }
+}
+
+/* ── Desktop ────────────────────────────────────────────────────────────── */
+@media (min-width: 1024px) {
+  .entranceHead {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px 40px;
+  }
+
+  .entranceHead .titleRow {
+    order: -1;
+    align-items: center;
+    gap: 22px;
+  }
+
+  .entranceHead .headRow {
+    gap: 14px;
+  }
+
+  .doors {
+    flex-direction: row;
+    min-height: calc(100vh - var(--landing-nav-h, 56px) - 96px);
+  }
+
+  .door {
+    flex: 1 1 0;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 28px;
+    padding: 32px 28px;
+  }
+
+  .doorName {
+    font-size: 76px;
+    line-height: 0.95;
+  }
+
+  .doorSub {
+    font-size: 17px;
+    line-height: 24px;
+  }
+
+  .doorPhotoWrap {
+    width: 100%;
+    aspect-ratio: auto;
+    height: clamp(260px, 52vh, 470px);
+  }
+
+  .arrow {
+    right: 14px;
+    bottom: 14px;
+    width: 44px;
+    height: 44px;
+    border-radius: 22px;
+    font-size: 20px;
+  }
+
+  .combosRow {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 18px 40px;
+  }
+
+  .chapterHead {
+    padding: 22px 40px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  .chapterTop {
+    width: 100%;
+    padding-right: 0;
+  }
+
+  .chapterTitle {
+    font-size: 68px;
+  }
+
+  .chips {
+    padding-right: 0;
+  }
+
+  .chapterBody {
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 48px;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 12px 40px 80px;
+  }
+
+  .stopHead,
+  .rows,
+  .grid,
+  .subTitle {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .rows {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 40px;
+  }
+
+  .rows > .row:nth-child(2) {
+    border-top: 0;
+  }
+
+  .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .addons,
+  .offerCard,
+  .exec {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .banner {
+    height: 220px;
+  }
+
+  .mainOffers {
+    display: none;
+  }
+
+  .aside {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: sticky;
+    top: calc(var(--landing-nav-h, 56px) + 190px);
+    align-self: start;
+    padding-top: 22px;
+  }
+
+  .hubBody {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .scrim {
+    align-items: center;
+  }
+
+  .sheet {
+    border-radius: 26px;
+    max-height: 86vh;
+  }
+}
