@@ -1,27 +1,19 @@
 import type { PublicMenuItem, PublicMenuOffer, PublicMenuSection, PublicMenuView } from "../../../../../src/api/server";
 
 // The carta opens on four "doors" (Café · Comida · Dulce · Bar); each door
-// holds one or more backend sections. Everything inside a door — sections,
-// subgroups, items, offers, order — is rendered exactly as the backend sends it.
+// holds one or more backend sections. Everything inside a door — membership,
+// door name and blurb, sections, subgroups, items, offers, order — is rendered
+// exactly as the backend sends it (`section.group`, live since 2026-10-31).
 //
-// The door a section belongs to is NOT in the payload yet. Until the backend
-// ships `section.group` (requested in the menu-service-hours prompt), the
-// mapping lives in DOOR_BY_SECTION below. A section the map doesn't know joins
-// the door of the section before it, so a new backend section still renders
-// somewhere sensible instead of disappearing.
+// One guard stays: a section that arrives without a group, or with a group id
+// this carta has no door for, joins the door of the section before it, so a
+// backend mistake still renders somewhere instead of disappearing.
 
 export type DoorId = "cafe" | "comida" | "dulce" | "bar";
 export const DOOR_ORDER: DoorId[] = ["cafe", "comida", "dulce", "bar"];
 
-const DOOR_BY_SECTION: Array<[RegExp, DoorId]> = [
-  [/^cafeteria$/, "cafe"],
-  [/^(desayunos|tostadas|croissants|bagels|focaccias|cocina|onces|fondos|brunch|almuerzo|menu-ejecutivo)/, "comida"],
-  [/^pasteleria/, "dulce"],
-  [/^(cervezas|cocteles|bar)/, "bar"]
-];
-
-// The authored-coffee subgroup leads the Café door: it is the first thing a
-// guest sees after tapping Café (founder call, 2026-10-31).
+// The authored-coffee subgroup renders as the photo grid. The backend sends it
+// first in Cafetería; this id only picks the grid treatment, never the order.
 export const AUTHOR_SUBGROUP_ID = "cafes-autor";
 
 type Subgroup = NonNullable<PublicMenuSection["subgroups"]>[number];
@@ -35,6 +27,10 @@ export type Stop = {
 
 export type Door = {
   id: DoorId;
+  /** Localized door name from the backend (`section.group.label`). */
+  label: string;
+  /** Localized one-line blurb from the backend (`section.group.description`). */
+  description: string;
   sections: PublicMenuSection[];
   stops: Stop[];
   itemCount: number;
@@ -42,8 +38,8 @@ export type Door = {
   offers: PublicMenuOffer[];
 };
 
-function knownDoor(sectionId: string): DoorId | undefined {
-  return DOOR_BY_SECTION.find(([pattern]) => pattern.test(sectionId))?.[1];
+export function isDoorId(value: unknown): value is DoorId {
+  return typeof value === "string" && (DOOR_ORDER as string[]).includes(value);
 }
 
 // New autor coffees can arrive before their author is set, so the subgroup is
@@ -53,13 +49,6 @@ export function isAuthorSubgroup(subgroup: Subgroup): boolean {
     subgroup.id === AUTHOR_SUBGROUP_ID ||
     subgroup.items.some((item) => Boolean(item.author?.trim()))
   );
-}
-
-function leadWithAuthors(section: PublicMenuSection): PublicMenuSection {
-  const subgroups = section.subgroups ?? [];
-  const authored = subgroups.filter(isAuthorSubgroup);
-  if (!authored.length) return section;
-  return { ...section, subgroups: [...authored, ...subgroups.filter((sg) => !isAuthorSubgroup(sg))] };
 }
 
 export function sectionLabel(section: PublicMenuSection): string {
@@ -115,14 +104,18 @@ export function buildDoors(menu: Pick<PublicMenuView, "sections">): Door[] {
   const grouped = new Map<DoorId, PublicMenuSection[]>(DOOR_ORDER.map((id) => [id, []]));
   let previous: DoorId = "comida";
   for (const section of menu.sections) {
-    const door: DoorId = knownDoor(section.id) ?? previous;
+    const groupId = section.group?.id;
+    const door: DoorId = isDoorId(groupId) ? groupId : previous;
     previous = door;
-    grouped.get(door)!.push(door === "cafe" ? leadWithAuthors(section) : section);
+    grouped.get(door)!.push(section);
   }
   return DOOR_ORDER.map((id) => {
     const sections = grouped.get(id)!;
+    const group = sections.find((s) => s.group?.id === id)?.group;
     return {
       id,
+      label: group?.label ?? "",
+      description: group?.description ?? "",
       sections,
       stops: stopsFor(sections),
       itemCount: countItems(sections),
@@ -130,10 +123,6 @@ export function buildDoors(menu: Pick<PublicMenuView, "sections">): Door[] {
       offers: sections.flatMap((s) => s.offers ?? [])
     };
   }).filter((door) => door.sections.length > 0);
-}
-
-export function isDoorId(value: unknown): value is DoorId {
-  return typeof value === "string" && (DOOR_ORDER as string[]).includes(value);
 }
 
 // Which view `?puerta=` asks for. Shared by the server page (first render) and
@@ -146,45 +135,44 @@ export function parseView(puerta: string | undefined | null): CartaView {
   return { kind: "entrance" };
 }
 
-// Offers that are one promotion split into parts ("Happy Hour · Cervezas" +
-// "Happy Hour · Tragos") present as ONE card and ONE sheet with a switch.
-// The payload has no grouping field yet, so the family is the title text
-// before " · ", within one door's offer list. A family of one keeps its full
-// title. Remove when the backend sends `offer.group` (requested 2026-10-31).
+// Offers sharing a backend `offer.group` (Happy Hour Cervezas + Tragos) present
+// as ONE card and ONE sheet with a switch labelled by each offer's `tab_label`.
+// An offer without a group is a group of one under its own title.
 export type OfferGroup = {
   key: string;
   title: string;
   offers: PublicMenuOffer[];
-  /** Switch label per offer: the part after " · ", or the whole title. */
+  /** Switch label per offer (`tab_label`, else the offer's title). */
   labels: string[];
 };
 
-const FAMILY_SEP = " · ";
-
-function family(title: string): { head: string; tail: string } | null {
-  const at = title.indexOf(FAMILY_SEP);
-  if (at <= 0) return null;
-  return { head: title.slice(0, at).trim(), tail: title.slice(at + FAMILY_SEP.length).trim() };
-}
-
 export function groupOffers(offers: PublicMenuOffer[]): OfferGroup[] {
   const groups: OfferGroup[] = [];
-  const byHead = new Map<string, OfferGroup>();
+  const byId = new Map<string, OfferGroup>();
   for (const offer of offers) {
-    const fam = family(offer.title);
-    const existing = fam ? byHead.get(fam.head) : undefined;
-    if (existing && fam) {
+    const gid = offer.group?.id;
+    const existing = gid ? byId.get(gid) : undefined;
+    if (existing) {
       existing.offers.push(offer);
-      existing.labels.push(fam.tail);
-      existing.title = fam.head;
+      existing.labels.push(offer.tab_label ?? offer.title);
       continue;
     }
-    const group: OfferGroup = { key: offer.id, title: offer.title, offers: [offer], labels: [fam?.tail ?? offer.title] };
-    if (fam) byHead.set(fam.head, group);
+    const group: OfferGroup = {
+      key: gid ?? offer.id,
+      title: offer.group?.title ?? offer.title,
+      offers: [offer],
+      labels: [offer.tab_label ?? offer.title]
+    };
+    if (gid) byId.set(gid, group);
     groups.push(group);
   }
-  // A single-member family shows its full title in the switch-less sheet.
-  for (const g of groups) if (g.offers.length === 1) g.labels = [g.offers[0].title];
+  // A group of one has no switch, so its sheet shows the offer's own title.
+  for (const g of groups) {
+    if (g.offers.length === 1) {
+      g.title = g.offers[0].title;
+      g.labels = [g.offers[0].title];
+    }
+  }
   return groups;
 }
 
@@ -193,11 +181,12 @@ export function groupFloor(group: OfferGroup): number | undefined {
   return floors.length ? Math.min(...floors) : undefined;
 }
 
-// Lowest backend price an offer can be had for, for the "desde" cue on a card.
-// Never computed: it is one of the backend's own numbers (a variant price or a
-// fixed pair price). Offers whose price lives only in prose return undefined.
+// Lowest backend price an offer can be had for, for the price on its card.
+// Never computed: it is one of the backend's own numbers — the offer's own
+// `price_clp`, a variant price, or a fixed pair price.
 export function offerFloor(offer: PublicMenuOffer): number | undefined {
   const prices = [
+    offer.price_clp,
     ...(offer.variants ?? []).map((v) => v.price_clp),
     ...(offer.detail?.items ?? []).map((row) =>
       row.pricing?.kind === "fixed" ? row.pricing.amount_clp : undefined

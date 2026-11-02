@@ -288,7 +288,12 @@ function normalizeGroup(value: unknown): StockShelfLifeGroup {
     fresh_days: nonNegativeInteger(record.fresh_days, "group fresh_days"),
     discard_days: nonNegativeInteger(record.discard_days, "group discard_days"),
     revision: nonNegativeInteger(record.revision, "group revision"),
-    menu_item_ids: record.menu_item_ids.map((id) => requiredString(id, "group menu item id"))
+    menu_item_ids: record.menu_item_ids.map((id) => requiredString(id, "group menu item id")),
+    // Direct raw-counter members (backend 2026-10-31). Read-only here: /stock
+    // never sends them back, and an omitted field keeps them on the backend.
+    stock_item_ids: Array.isArray(record.stock_item_ids)
+      ? record.stock_item_ids.map((id) => requiredString(id, "group stock item id"))
+      : []
   };
 }
 
@@ -306,6 +311,15 @@ export function normalizeShelfLifeConfiguration(value: unknown): StockShelfLifeC
       const item = asRecord(entry);
       if (!item) throw new Error("Shelf-life menu item is not an object");
       return { id: requiredString(item.id, "menu item id"), name: requiredString(item.name, "menu item name") };
+    }),
+    stock_items: (Array.isArray(record.stock_items) ? record.stock_items : []).map((entry) => {
+      const item = asRecord(entry);
+      if (!item) throw new Error("Shelf-life stock item is not an object");
+      return {
+        id: requiredString(item.id, "stock item id"),
+        name: requiredString(item.name, "stock item name"),
+        unit: item.unit === "portion" ? ("portion" as const) : ("unit" as const)
+      };
     }),
     can_manage_rules: record.can_manage_rules === true
   };

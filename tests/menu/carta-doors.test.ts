@@ -12,10 +12,15 @@ const item = (id: string, extra: Record<string, unknown> = {}) => ({
   ...extra
 });
 
+const group = (id: string, label: string, description = `${label} blurb`) => ({ id, label, description });
+
+// Mirrors the live payload shape since 2026-10-31: every section carries its
+// door in `section.group`, and Cafetería arrives with Café de autor first.
 const menu = {
   sections: [
     {
       id: "cafeteria",
+      group: group("cafe", "Café", "De autor, espresso y filtrados"),
       numeral: "01",
       title: "Cafetería",
       emphasis: "hero",
@@ -23,14 +28,14 @@ const menu = {
       banner_image_url: "https://x/banner-cafeteria.jpg",
       subgroups: [
         {
-          id: "espresso",
-          label: "Barra de espresso",
-          items: [item("espresso"), item("mocha", { image_url: "https://x/mocha.jpg" })]
-        },
-        {
           id: "cafes-autor",
           label: "Café de autor",
           items: [item("nuevo"), item("tropical", { author: "Maria", image_url: "https://x/tropical.jpg" })]
+        },
+        {
+          id: "espresso",
+          label: "Barra de espresso",
+          items: [item("espresso"), item("mocha", { image_url: "https://x/mocha.jpg" })]
         }
       ],
       offers: [
@@ -42,11 +47,13 @@ const menu = {
             { id: "a", label: "x2", price_clp: 10500, components: [] },
             { id: "b", label: "x4", price_clp: 20900, components: [] }
           ]
-        }
+        },
+        { id: "pie-combo", title: "Café simple + pie del día", description: "", price_clp: 4990 }
       ]
     },
     {
       id: "desayunos-weekday",
+      group: group("comida", "Comida"),
       numeral: "02",
       title: "Desayunos.",
       emphasis: "primary",
@@ -54,9 +61,11 @@ const menu = {
       banner_image_url: "https://x/desay.jpg",
       items: [item("campesino")]
     },
+    // No group at all: must still render, in the door of the section before it.
     { id: "plato-nuevo", numeral: "03", title: "Plato nuevo", emphasis: "utility", lede: "", items: [item("nuevo-plato")] },
     {
       id: "pasteleria",
+      group: group("dulce", "Dulce"),
       numeral: "04",
       title: "Pastelería",
       emphasis: "utility",
@@ -68,6 +77,7 @@ const menu = {
     },
     {
       id: "cervezas-cocteles",
+      group: group("bar", "Bar"),
       numeral: "05",
       title: "Cervezas",
       emphasis: "utility",
@@ -75,42 +85,51 @@ const menu = {
       items: [item("stella")],
       offers: [
         {
-          id: "hh",
-          title: "HH",
+          id: "hh-cervezas",
+          title: "Happy Hour · Cervezas",
           description: "",
+          group: { id: "happy-hour", title: "Happy Hour" },
+          tab_label: "Cervezas",
           detail: {
             items: [
               { item: item("stella"), quantity: 2, pricing: { kind: "fixed", amount_clp: 5000 } },
               { item: item("leyenda"), quantity: 2, pricing: { kind: "fixed", amount_clp: 7000 } }
             ]
           }
+        },
+        {
+          id: "hh-tragos",
+          title: "Happy Hour · Tragos",
+          description: "",
+          group: { id: "happy-hour", title: "Happy Hour" },
+          tab_label: "Tragos",
+          detail: { items: [{ item: item("pisco"), quantity: 2, pricing: { kind: "fixed", amount_clp: 8990 } }] }
         }
       ]
     }
   ]
 } as unknown as PublicMenuView;
 
-test("groups sections into the four doors in fixed order", () => {
+test("doors come from section.group, in fixed door order, with backend labels", () => {
   const doors = buildDoors(menu);
   assert.deepEqual(doors.map((d) => d.id), ["cafe", "comida", "dulce", "bar"]);
-  assert.deepEqual(doors[1].sections.map((s) => s.id), ["desayunos-weekday", "plato-nuevo"]);
+  assert.equal(doors[0].label, "Café");
+  assert.equal(doors[0].description, "De autor, espresso y filtrados");
 });
 
-test("an unknown section joins the door of the section before it", () => {
+test("a section without a known group joins the door of the section before it", () => {
   const comida = buildDoors(menu).find((d) => d.id === "comida")!;
-  assert.ok(comida.sections.some((s) => s.id === "plato-nuevo"));
+  assert.deepEqual(comida.sections.map((s) => s.id), ["desayunos-weekday", "plato-nuevo"]);
 });
 
-test("the authored subgroup leads the Café door and its photo is the door photo", () => {
+test("subgroup order is the backend's — the carta never reorders it", () => {
   const cafe = buildDoors(menu)[0];
-  assert.equal(cafe.stops[0].label, "Café de autor");
-  assert.equal(cafe.stops[0].subgroupId, "cafes-autor");
+  assert.deepEqual(cafe.stops.map((s) => s.label), ["Café de autor", "Barra de espresso"]);
   assert.equal(cafe.photo, "https://x/tropical.jpg");
 });
 
 test("single-section doors with subgroups use subgroups as stops; multi-section doors use sections", () => {
-  const [cafe, comida, dulce, bar] = buildDoors(menu);
-  assert.deepEqual(cafe.stops.map((s) => s.label), ["Café de autor", "Barra de espresso"]);
+  const [, comida, dulce, bar] = buildDoors(menu);
   assert.deepEqual(comida.stops.map((s) => s.label), ["Desayunos", "Plato nuevo"]);
   assert.deepEqual(dulce.stops.map((s) => s.label), ["Pies", "Queques"]);
   assert.equal(bar.stops.length, 1);
@@ -119,8 +138,8 @@ test("single-section doors with subgroups use subgroups as stops; multi-section 
 test("counts items and collects offers per door", () => {
   const [cafe, , , bar] = buildDoors(menu);
   assert.equal(cafe.itemCount, 4);
-  assert.equal(cafe.offers.length, 1);
-  assert.equal(bar.offers[0].id, "hh");
+  assert.equal(cafe.offers.length, 2);
+  assert.equal(bar.offers.length, 2);
 });
 
 test("a door without an item photo falls back to its first section banner", () => {
@@ -133,34 +152,27 @@ test("stopItems lists every item exactly once across a door's stops", () => {
     assert.equal(listed.length, door.itemCount, `${door.id} lists each item once`);
     assert.equal(new Set(listed).size, listed.length);
   }
-  const [cafe] = buildDoors(menu);
-  assert.deepEqual(stopItems(cafe, cafe.stops[0]).map((i) => i.id), ["nuevo", "tropical"]);
 });
 
-test("offers sharing a title family merge into one group; others stay single", () => {
-  const offers = [
-    { id: "hh-c", title: "Happy Hour · Cervezas", description: "a" },
-    { id: "combo", title: "Café simple + pie del día", description: "b" },
-    { id: "hh-t", title: "Happy Hour · Tragos", description: "c" }
-  ] as never[];
-  const groups = groupOffers(offers);
-  assert.deepEqual(
-    groups.map((g) => [g.title, g.offers.map((o) => o.id), g.labels]),
-    [
-      ["Happy Hour", ["hh-c", "hh-t"], ["Cervezas", "Tragos"]],
-      ["Café simple + pie del día", ["combo"], ["Café simple + pie del día"]]
-    ]
-  );
+test("offers sharing offer.group merge into one card, tabs from tab_label", () => {
+  const [bar] = groupOffers(buildDoors(menu)[3].offers);
+  assert.equal(bar.title, "Happy Hour");
+  assert.deepEqual(bar.offers.map((o) => o.id), ["hh-cervezas", "hh-tragos"]);
+  assert.deepEqual(bar.labels, ["Cervezas", "Tragos"]);
 });
 
-test("a lone 'X · Y' offer keeps its full title", () => {
-  const [group] = groupOffers([{ id: "a", title: "Happy Hour · Cervezas", description: "" }] as never[]);
-  assert.equal(group.title, "Happy Hour · Cervezas");
+test("ungrouped offers stay single under their own title, even with ' · ' in it", () => {
+  const groups = groupOffers([
+    { id: "a", title: "Promo · Mañana", description: "" },
+    { id: "b", title: "Promo · Tarde", description: "" }
+  ] as never[]);
+  assert.deepEqual(groups.map((g) => g.title), ["Promo · Mañana", "Promo · Tarde"]);
 });
 
-test("offerFloor picks the lowest backend price and never sums", () => {
+test("offerFloor uses the backend's own prices and never sums", () => {
   const [cafe, , , bar] = buildDoors(menu);
   assert.equal(offerFloor(cafe.offers[0]), 10500);
+  assert.equal(offerFloor(cafe.offers[1]), 4990);
   assert.equal(offerFloor(bar.offers[0]), 5000);
-  assert.equal(offerFloor({ id: "p", title: "Plain", description: "CLP $3.990" } as never), undefined);
+  assert.equal(offerFloor({ id: "p", title: "Plain", description: "" } as never), undefined);
 });

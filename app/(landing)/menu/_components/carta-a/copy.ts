@@ -1,18 +1,14 @@
 import type { Locale } from "../../../../../src/i18n/locale";
-import type { DoorId } from "./doors";
 
 // UI chrome for the door carta. Backend copy (section titles, item names,
 // descriptions, offer text) is always rendered verbatim — this file only holds
 // the frame around it, in the same local-dictionary pattern as offer-copy.ts.
-//
-// Door names and their one-line descriptions are chrome until the backend
-// sends a door name/description with `section.group`.
+// Door names and blurbs come from the backend (`section.group`).
 
 type Copy = {
   title: string;
   fullMenu: string;
   options: (n: number) => string;
-  doors: Record<DoorId, { name: string; sub: string }>;
   back: string;
   switchTo: string;
   combos: string;
@@ -43,12 +39,6 @@ export const CARTA_COPY: Record<Locale, Copy> = {
     title: "La carta",
     fullMenu: "Toda la carta",
     options: (n) => `${n} opciones`,
-    doors: {
-      cafe: { name: "Café", sub: "De autor, espresso y filtrados" },
-      comida: { name: "Comida", sub: "Desayunos, sándwiches y onces" },
-      dulce: { name: "Dulce", sub: "Pies, tortas y pastelería" },
-      bar: { name: "Bar", sub: "Cervezas y coctelería" }
-    },
     back: "La carta",
     switchTo: "Ir a",
     combos: "Combos y descuentos",
@@ -80,12 +70,6 @@ export const CARTA_COPY: Record<Locale, Copy> = {
     title: "The menu",
     fullMenu: "The whole menu",
     options: (n) => `${n} options`,
-    doors: {
-      cafe: { name: "Coffee", sub: "Signature, espresso and filter" },
-      comida: { name: "Food", sub: "Breakfast, sandwiches and tea time" },
-      dulce: { name: "Sweets", sub: "Pies, cakes and pastries" },
-      bar: { name: "Bar", sub: "Beer and cocktails" }
-    },
     back: "The menu",
     switchTo: "Go to",
     combos: "Combos and deals",
@@ -117,12 +101,6 @@ export const CARTA_COPY: Record<Locale, Copy> = {
     title: "O cardápio",
     fullMenu: "O cardápio completo",
     options: (n) => `${n} opções`,
-    doors: {
-      cafe: { name: "Café", sub: "Autorais, espresso e filtrados" },
-      comida: { name: "Comida", sub: "Cafés da manhã, sanduíches e lanches" },
-      dulce: { name: "Doces", sub: "Tortas, bolos e confeitaria" },
-      bar: { name: "Bar", sub: "Cervejas e coquetéis" }
-    },
     back: "O cardápio",
     switchTo: "Ir para",
     combos: "Combos e descontos",

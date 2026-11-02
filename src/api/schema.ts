@@ -950,8 +950,8 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Verify a SumUp transaction and award eligible points
-         * @description A member submits a SumUp transaction code or UUID in transaction_code. The backend retrieves the transaction from the configured merchant, verifies its status and CLP amount, then awards points once against the provider-returned transaction_code. Eligible spend excludes tip_amount from SumUp's tip-inclusive amount, known table-tip product line totals, and subtracts refunded_amount when supplied. Table-tip products use the reviewed Propina mesa prefix or exact Mesa 3 propina alias; their total_with_vat is used, falling back to total_price. An explicit refunded_amount of zero is known zero; an omitted field is unknown. Refund, chargeback, and non-collection events or statuses are rejected even when status is SUCCESSFUL. If refunded_amount is omitted, event details must be present; missing refund/event details are rejected rather than treated as zero. If the products breakdown is absent or cannot establish table-tip exclusion, verification is unavailable and no points are awarded.
+         * Submit a SumUp receipt transaction for automatic points
+         * @description Verifies the SumUp transaction server-side, derives purchase time and CLP amount from SumUp, creates an approved missing-points claim, and awards Deriva Points when the transaction is successful and unclaimed.
          */
         post: {
             parameters: {
@@ -980,14 +980,7 @@ export interface paths {
                 403: components["responses"]["Forbidden"];
                 404: components["responses"]["NotFound"];
                 500: components["responses"]["InternalServerError"];
-                /** @description SumUp transaction verification failed. */
-                502: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description SumUp verification is not configured or product details are unavailable, so table-tip exclusion cannot be verified. */
+                /** @description SumUp verification is not configured. */
                 503: {
                     headers: {
                         [name: string]: unknown;
@@ -2102,8 +2095,8 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Manual purchase submissions are disabled
-         * @description Manual purchase and manual amount submissions are disabled for staff, managers, and owners. Member earning uses SumUp-verified transaction submission through POST /me/receipt-claims.
+         * Record a manual purchase and issue Deriva Points
+         * @description Staff/admin endpoint. Actor is derived from the bearer token.
          */
         post: {
             parameters: {
@@ -2112,16 +2105,24 @@ export interface paths {
                 path?: never;
                 cookie?: never;
             };
-            requestBody?: never;
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ManualPurchaseRequest"];
+                };
+            };
             responses: {
-                401: components["responses"]["Unauthorized"];
-                /** @description Manual purchase submissions are disabled. */
-                403: {
+                /** @description Points ledger entry created. */
+                201: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": components["schemas"]["LedgerEntry"];
+                    };
                 };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                500: components["responses"]["InternalServerError"];
             };
         };
         delete?: never;
@@ -2185,10 +2186,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /**
-         * Manual missing-points submissions are disabled
-         * @description Manual receipt, purchase-date, and amount submissions are disabled for members and staff/admin roles. Existing claims remain available for review through the admin approval and rejection routes.
-         */
+        /** Create a missing-points claim */
         post: {
             parameters: {
                 query?: never;
@@ -2196,16 +2194,25 @@ export interface paths {
                 path?: never;
                 cookie?: never;
             };
-            requestBody?: never;
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateMissingPointsClaimRequest"];
+                };
+            };
             responses: {
-                401: components["responses"]["Unauthorized"];
-                /** @description Manual missing-points submissions are disabled. */
-                403: {
+                /** @description Claim created in pending state. */
+                201: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": components["schemas"]["MissingPointsClaim"];
+                    };
                 };
+                400: components["responses"]["BadRequest"];
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                500: components["responses"]["InternalServerError"];
             };
         };
         delete?: never;
@@ -2300,127 +2307,6 @@ export interface paths {
                 403: components["responses"]["Forbidden"];
                 404: components["responses"]["NotFound"];
                 500: components["responses"]["InternalServerError"];
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/admin/refund-reconciliations": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List approved claims for SumUp refund reconciliation
-         * @description Manager- and owner-only paginated queue. Award-time gross, excluded-tip, refund-baseline, and provider transaction fields are kept private and omitted from the response. Existing claims without a trusted award-time basis remain review-only.
-         */
-        get: {
-            parameters: {
-                query?: {
-                    /** @description Page size from 1 to 100; defaults to 50. */
-                    limit?: number;
-                    /** @description Zero-based row offset; defaults to 0. */
-                    offset?: number;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Paginated approved-claim queue with durable reconciliation state. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["RefundReconciliationPage"];
-                    };
-                };
-                400: components["responses"]["BadRequest"];
-                401: components["responses"]["Unauthorized"];
-                403: components["responses"]["Forbidden"];
-                500: components["responses"]["InternalServerError"];
-                /** @description Refund reconciliation is not configured. */
-                503: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/admin/refund-reconciliations/{claim_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Reconcile an approved claim against its current SumUp transaction
-         * @description Manager- and owner-only, bodyless action. The backend retrieves SumUp by the canonical receipt already stored on the claim, validates the provider snapshot against the trusted award-time basis, and applies only newly invalidated points up to the member's unused balance. SumUp's REFUNDED status alone does not establish a full refund. Partial refunds with excluded tips, uncertain events, legacy basis gaps, and other ambiguous evidence remain flagged for review.
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    claim_id: components["parameters"]["ClaimID"];
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Durable reconciliation result and any appended reversal ledger delta. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["RefundReconciliationResult"];
-                    };
-                };
-                401: components["responses"]["Unauthorized"];
-                403: components["responses"]["Forbidden"];
-                404: components["responses"]["NotFound"];
-                /** @description The claim must be approved before refund reconciliation. */
-                409: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                500: components["responses"]["InternalServerError"];
-                /** @description SumUp transaction verification failed. */
-                502: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Refund reconciliation or SumUp verification is not configured, or product details are unavailable. */
-                503: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
             };
         };
         delete?: never;
@@ -3023,8 +2909,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Read shelf-life groups and eligible menu items
-         * @description Staff, manager, and owner endpoint. Returns the currently configured lifespan groups and canonical menu items that are already eligible for stock counting, including dynamically enrolled pastries and menu items with durable stock counters or links. Choices do not include otherwise untracked menu items, so grouping cannot enroll a new product in stock visibility. Linked raw counters inherit the policy of their current canonical menu parent; unlinked raw counters remain untracked. No groups are seeded by default. The `can_manage_rules` flag reflects the authenticated Deriva role. Responses are no-store.
+         * Read shelf-life groups and eligible stock items
+         * @description Staff, manager, and owner endpoint. Returns the currently configured lifespan groups, canonical menu items already eligible for stock counting, and existing unlinked raw unit/portion counters. Choices do not enroll new stock or menu products. Linked raw counters inherit the policy of their current canonical menu parent; an unlinked raw counter receives a policy only through direct group membership. No groups are seeded by default. The `can_manage_rules` flag reflects the authenticated Deriva role. Responses are no-store.
          */
         get: {
             parameters: {
@@ -3037,7 +2923,7 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
-                /** @description Shelf-life configuration and eligible canonical menu choices. */
+                /** @description Shelf-life configuration and eligible menu and raw counter choices. */
                 200: {
                     headers: {
                         /** @example no-store */
@@ -3072,7 +2958,7 @@ export interface paths {
         put?: never;
         /**
          * Create a shelf-life group
-         * @description Manager and owner endpoint. Creates one administrator-managed lifespan group with canonical menu-item membership. `menu_item_ids` may be empty; each listed item must already be eligible for stock counting and may belong to only one group. Activating a group creates an unknown-age lot for each already-counted positive counter covered by the group. New groups have no seeded product names or defaults. The actor is derived from the bearer token; replaying `request_id` with the same actor and payload returns the original group without duplicating backfill lots, while a changed actor or payload returns 409. Responses are no-store.
+         * @description Manager and owner endpoint. Creates one administrator-managed lifespan group with menu and direct raw membership. `menu_item_ids` is required and may be empty; each listed item must already be eligible for stock counting. Optional `stock_item_ids` may name only existing unlinked raw unit/portion counters; omission means an empty list. Each menu item and raw counter may belong to only one group, and a directly grouped raw counter cannot also link to a menu item. Activating a group creates an unknown-age lot for each already-counted positive counter covered by the group without changing its quantity or revision. New groups have no seeded product names or defaults. The actor is derived from the bearer token; replaying `request_id` with the same actor and presence-aware payload returns the original group without duplicating backfill lots, while a changed actor or payload returns 409. `stock_item_ids: null` is invalid. Responses are no-store.
          */
         post: {
             parameters: {
@@ -3102,7 +2988,7 @@ export interface paths {
                 401: components["responses"]["Unauthorized"];
                 403: components["responses"]["Forbidden"];
                 404: components["responses"]["NotFound"];
-                /** @description A request ID was reused with another actor or payload, a menu item already belongs to a different group, or the mutation would leave positive stock without shelf-life tracking. */
+                /** @description A request ID was reused with another actor or payload, a menu item or raw counter already belongs to a different group, a direct raw counter is linked to a menu item, or the mutation would leave positive stock without shelf-life tracking. */
                 409: {
                     headers: {
                         [name: string]: unknown;
@@ -3130,7 +3016,7 @@ export interface paths {
         get?: never;
         /**
          * Replace a shelf-life group
-         * @description Manager and owner endpoint. Replaces the group's name, day limits, and complete canonical menu-item membership. `expected_revision` must match the current revision; stale revisions return 409 with the current group. `menu_item_ids` may be empty, but membership changes that would leave positive lots without tracking return 409. Existing lot deadlines remain fixed; the updated day limits apply to future lots. Replaying `request_id` with the same actor and payload returns the original group; changed actor or payload returns 409. Responses are no-store.
+         * @description Manager and owner endpoint. Replaces the group's name, day limits, and complete canonical menu-item membership. `expected_revision` must match the current revision; stale revisions return 409 with the current group. `menu_item_ids` remains required and may be empty. Optional `stock_item_ids` replaces direct raw membership when present; omission preserves existing raw members, while `[]` clears them subject to the positive-stock tracking guard. `null` is invalid. Membership changes that would leave positive lots without tracking return 409. Existing lot deadlines remain fixed; the updated day limits apply to future lots. Replaying `request_id` with the same actor and presence-aware payload returns the original group; changed actor, payload, or field presence returns 409. Responses are no-store.
          */
         put: {
             parameters: {
@@ -3162,7 +3048,7 @@ export interface paths {
                 401: components["responses"]["Unauthorized"];
                 403: components["responses"]["Forbidden"];
                 404: components["responses"]["NotFound"];
-                /** @description Revision, request ID, unique membership, or positive-lot tracking conflict. A revision conflict includes the current group. If current state cannot be read, the endpoint returns 500 instead of an incomplete 409. */
+                /** @description Revision, request ID, unique membership, direct raw/menu link, or positive-lot tracking conflict. A revision conflict includes the current group. If current state cannot be read, the endpoint returns 500 instead of an incomplete 409. */
                 409: {
                     headers: {
                         [name: string]: unknown;
@@ -3341,7 +3227,7 @@ export interface paths {
         };
         /**
          * Replace linked stock counters for a menu item
-         * @description Manager and owner endpoint. Replaces the full link set after an exact set comparison against expected_stock_ids. Only existing raw counters with unit or portion units are allowed, and a raw counter can link to at most one menu item. An empty stock_ids array removes the links. Link changes do not alter quantities; linked raw quantities control menu availability, and the old menu counter can no longer be adjusted while links exist. The authenticated actor is audit logged. Responses are no-store.
+         * @description Manager and owner endpoint. Replaces the full link set after an exact set comparison against expected_stock_ids. Only existing raw counters with unit or portion units are allowed, and a raw counter can link to at most one menu item. A raw counter already assigned directly to a shelf-life group cannot link to a menu item, even when its quantity is zero. An empty stock_ids array removes the links. Link changes do not alter quantities; linked raw quantities control menu availability, and the old menu counter can no longer be adjusted while links exist. The authenticated actor is audit logged. Responses are no-store.
          */
         put: {
             parameters: {
@@ -3395,7 +3281,7 @@ export interface paths {
         put?: never;
         /**
          * Set or adjust a stock quantity
-         * @description Staff, manager, and owner endpoint. `set` writes an absolute nonnegative count; `delta` adds a signed whole-number change and requires a known quantity. A negative `set` is rejected. For untracked counters, a `delta` whose result would be negative is rejected; for shelf-life-grouped counters, a negative result is clamped to zero and the oldest open lots are consumed FIFO. A positive adjustment to a grouped counter creates a dated lot using the current group durations. Linked raw counters inherit the policy of their current canonical menu parent; unlinked raw counters are untracked. Both modes require the current revision and a request ID for optimistic concurrency and idempotent retry. The reason is returned verbatim. Audit history and lot changes are written with the quantity change. Responses include `lots_affected` for tracked counters (including an empty array for a no-op); untracked counters omit it. Grouped results are limited to PostgreSQL's signed 32-bit integer range, while existing untracked counts retain the JavaScript-safe integer range. A menu item's parent counter cannot be adjusted while linked raw counters control its availability; adjust the linked raw counter instead. The actor is derived from the bearer token. There is no preview query parameter.
+         * @description Staff, manager, and owner endpoint. `set` writes an absolute nonnegative count; `delta` adds a signed whole-number change and requires a known quantity. A negative `set` is rejected. For untracked counters, a `delta` whose result would be negative is rejected; for shelf-life-grouped counters, a negative result is clamped to zero and the oldest open lots are consumed FIFO. A positive adjustment to a grouped counter creates a dated lot using the current group durations. Linked raw counters inherit the policy of their current canonical menu parent; directly grouped unlinked raw counters use their own group's policy; other unlinked raw counters are untracked. Both modes require the current revision and a request ID for optimistic concurrency and idempotent retry. The reason is returned verbatim. Audit history and lot changes are written with the quantity change. Responses include `lots_affected` for tracked counters (including an empty array for a no-op); untracked counters omit it. Grouped results are limited to PostgreSQL's signed 32-bit integer range, while existing untracked counts retain the JavaScript-safe integer range. A menu item's parent counter cannot be adjusted while linked raw counters control its availability; adjust the linked raw counter instead. The actor is derived from the bearer token. There is no preview query parameter.
          */
         post: {
             parameters: {
@@ -5307,7 +5193,7 @@ export interface components {
             menu_available?: boolean;
             /** Format: date-time */
             updated_at?: string;
-            /** @description Present only when the counter inherits an administrator-managed shelf-life group. Untracked counters omit this property. */
+            /** @description Present when the counter is directly assigned to or inherits an administrator-managed shelf-life group. Untracked counters omit this property. */
             shelf_life?: components["schemas"]["StockShelfLife"];
         };
         StockShelfLife: {
@@ -5371,12 +5257,20 @@ export interface components {
             groups: components["schemas"]["StockShelfLifeGroup"][];
             /** @description Canonical menu item choices that already qualify for stock counting. Grouping an item does not change its public-menu placement or visibility. */
             menu_items: components["schemas"]["StockShelfLifeMenuItem"][];
+            /** @description Existing unlinked raw unit/portion counters eligible for direct group membership. */
+            stock_items: components["schemas"]["StockShelfLifeStockItem"][];
             /** @description True for manager and owner actors. */
             can_manage_rules: boolean;
         };
         StockShelfLifeMenuItem: {
             id: string;
             name: string;
+        };
+        StockShelfLifeStockItem: {
+            id: string;
+            name: string;
+            /** @enum {string} */
+            unit: "unit" | "portion";
         };
         StockShelfLifeGroup: {
             id: string;
@@ -5392,6 +5286,8 @@ export interface components {
             revision: number;
             /** @description Complete canonical menu membership; may be empty, and each menu item may belong to at most one group. */
             menu_item_ids: string[];
+            /** @description Current direct membership of existing unlinked raw unit/portion counters; always returned as an array. */
+            stock_item_ids: string[];
         };
         StockShelfLifeGroupCreateRequest: {
             name: string;
@@ -5404,6 +5300,8 @@ export interface components {
             discard_days: number;
             /** @description Complete canonical menu membership; an empty array is allowed. */
             menu_item_ids: string[];
+            /** @description Optional direct raw membership. Omission means empty membership on create. Explicit null is invalid. */
+            stock_item_ids?: string[];
             request_id: string;
         };
         StockShelfLifeGroupUpdateRequest: {
@@ -5415,7 +5313,10 @@ export interface components {
              * @description Must be greater than or equal to fresh_days.
              */
             discard_days: number;
+            /** @description Complete canonical menu membership replacement. */
             menu_item_ids: string[];
+            /** @description Optional direct raw membership replacement. Omission preserves current members; an empty array clears members when no positive stock would lose tracking. Explicit null is invalid. */
+            stock_item_ids?: string[];
             /** Format: int64 */
             expected_revision: number;
             request_id: string;
@@ -5565,6 +5466,8 @@ export interface components {
         };
         PublicMenuSectionTemplate: {
             id: string;
+            /** @description Required when creating a section. Existing values are preserved when a full layout replacement omits this field. */
+            group_id?: components["schemas"]["PublicMenuGroupID"];
             numeral: string;
             title: string;
             italic_word?: string;
@@ -5586,10 +5489,27 @@ export interface components {
                 [key: string]: components["schemas"]["PublicMenuSectionTranslation"];
             };
         };
+        /** @enum {string} */
+        PublicMenuGroupID: "cafe" | "comida" | "dulce" | "bar";
+        PublicMenuSectionGroup: {
+            id: components["schemas"]["PublicMenuGroupID"];
+            label: string;
+            description: string;
+            /** Format: uri */
+            image_url?: string;
+        };
+        PublicMenuOfferGroup: {
+            id: string;
+            title: string;
+        };
         PublicMenuOffer: {
             id: string;
             title: string;
             description: string;
+            group?: components["schemas"]["PublicMenuOfferGroup"];
+            tab_label?: string;
+            price_clp?: number;
+            price_label?: string;
             /** Format: uri */
             image_url?: string;
             detail?: components["schemas"]["PublicMenuOfferDetail"];
@@ -5602,6 +5522,10 @@ export interface components {
             id: string;
             title: string;
             description: string;
+            group?: components["schemas"]["PublicMenuOfferGroup"];
+            tab_label?: string;
+            price_clp?: number;
+            price_label?: string;
             /** Format: uri */
             image_url?: string;
             section_id: string;
@@ -5700,10 +5624,14 @@ export interface components {
         PublicMenuOfferText: {
             title: string;
             description: string;
+            group_title?: string;
+            tab_label?: string;
+            price_label?: string;
             detail_title?: string;
             detail_description?: string;
         };
         PublicMenuSectionPatch: {
+            group_id?: components["schemas"]["PublicMenuGroupID"];
             title?: string;
             italic_word?: string;
             lede?: string;
@@ -5738,8 +5666,16 @@ export interface components {
             closed_label?: string;
             sections: components["schemas"]["PublicMenuSection"][];
         };
+        /** @description Today's service window for a public menu section in America/Santiago local time, clamped to the store's canonical opening hours for the day. Present only when the section has a non-empty published service_window and a recognized service window; omitted when the section is not served today. */
+        PublicMenuServiceHours: {
+            /** @example 13:00 */
+            opens: string;
+            /** @example 21:00 */
+            closes: string;
+        };
         PublicMenuSection: {
             id: string;
+            group?: components["schemas"]["PublicMenuSectionGroup"];
             numeral: string;
             title: string;
             italic_word?: string;
@@ -5748,7 +5684,14 @@ export interface components {
             emphasis: "hero" | "primary" | "utility";
             lede: string;
             lede_italic?: boolean;
+            /** @description Human-readable, localized service window copy. Display only; use service_hours and serving_now for logic. */
             service_window?: string;
+            /** @description Today's structured local service window; absent for empty or unknown windows and when the section is not served that day. */
+            service_hours?: components["schemas"]["PublicMenuServiceHours"];
+            /** @description Server-computed per request from the real current time in America/Santiago, independent of the `schedule` query parameter. Present only when a section has a non-empty published service_window and a known service window (desayunos, cocina, menu-ejecutivo, onces). False when the section is not being served right now, including days the store is closed or the section is not offered. */
+            serving_now?: boolean;
+            /** @description Localized short status. While serving, "Hasta las HH:MM" / "Until HH:MM" / "Até HH:MM"; before today's window opens, "Desde las HH:MM" / "From HH:MM" / "A partir das HH:MM". Omitted after the window has closed or when the section is not served today. */
+            serving_label?: string;
             /** Format: uri */
             banner_image_url?: string;
             schedule?: components["schemas"]["PublicMenuSchedule"][];
@@ -5805,11 +5748,11 @@ export interface components {
             chips: string[];
         };
         PublicMenuItem: {
+            /** @description Optional recipe author or signature drink creator name, returned the same way for every locale. */
+            author?: string;
             id: string;
             name: string;
             description: string;
-            /** @description Optional recipe author or signature drink creator name, returned the same way for every locale. */
-            author?: string;
             /** Format: uri */
             image_url?: string;
             highlighted?: boolean;
@@ -5826,6 +5769,8 @@ export interface components {
             schedule?: components["schemas"]["PublicMenuSchedule"][];
         };
         MenuItem: {
+            /** @description Optional locale-independent recipe author or signature drink creator name. */
+            author?: string;
             id: string;
             /** @enum {string} */
             locale?: "es-CL" | "en" | "pt-BR";
@@ -5844,8 +5789,6 @@ export interface components {
             /** @description Legacy/display section value kept for backward compatibility. */
             section: string;
             name: string;
-            /** @description Optional locale-independent recipe author or signature drink creator name. */
-            author?: string;
             description?: string;
             price_clp: number;
             tags?: string[];
@@ -5897,6 +5840,8 @@ export interface components {
             value: string;
         };
         MenuItemView: {
+            /** @description Optional recipe author or signature drink creator name, returned the same way for every locale. */
+            author?: string;
             id: string;
             /** @enum {string} */
             locale?: "es-CL" | "en" | "pt-BR";
@@ -5915,8 +5860,6 @@ export interface components {
             /** @description Legacy/display section value kept for backward compatibility. */
             section: string;
             name: string;
-            /** @description Optional recipe author or signature drink creator name, returned the same way for every locale. */
-            author?: string;
             price_clp: number;
             available: boolean;
             description: string;
@@ -5935,14 +5878,14 @@ export interface components {
             barista_note?: string;
         };
         MenuItemInput: {
+            /** @description Set or replace the locale-independent author name. On PATCH, null leaves the current value unchanged; an empty or whitespace-only string clears it. */
+            author?: string | null;
             /** @enum {string} */
             category_id?: "coffee" | "beverage" | "breakfast" | "savory" | "entree" | "dessert";
             /** @enum {string} */
             section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "cervezas-cocteles" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "onces" | "cakes-pies" | "bakes";
             section?: string;
             name?: string;
-            /** @description Set or replace the locale-independent author name. On PATCH, null leaves the current value unchanged; an empty or whitespace-only string clears it. */
-            author?: string | null;
             description?: string;
             price_clp?: number;
             tags?: string[];
@@ -5954,14 +5897,14 @@ export interface components {
         };
         /** @description Create payload for menu catalog items. Provide either section_id or section; id is generated by the backend and returned in the MenuItem response. Use translations.en and translations.pt-BR for customer-facing localized copy. */
         MenuItemCreateInput: {
+            /** @description Optional locale-independent recipe author or signature drink creator name. Omit or pass null for an empty value; empty and whitespace-only strings are stored as empty. */
+            author?: string | null;
             /** @enum {string} */
             category_id?: "coffee" | "beverage" | "breakfast" | "savory" | "entree" | "dessert";
             /** @enum {string} */
             section_id?: "espresso" | "filtered" | "cold-coffee" | "mate" | "infusions" | "cervezas-cocteles" | "breakfast" | "croissants" | "baguettes" | "toasts" | "focaccias" | "starters" | "mains" | "empanadas" | "picoteos" | "onces" | "cakes-pies" | "bakes";
             section?: string;
             name: string;
-            /** @description Optional locale-independent recipe author or signature drink creator name. Omit or pass null for an empty value; empty and whitespace-only strings are stored as empty. */
-            author?: string | null;
             description?: string;
             price_clp: number;
             tags?: string[];
@@ -6335,7 +6278,7 @@ export interface components {
             amount_clp: number;
         };
         CreateReceiptClaimRequest: {
-            /** @description SumUp transaction code printed on the receipt or the provider transaction UUID. */
+            /** @description SumUp receipt transaction code printed on the receipt. */
             transaction_code: string;
         };
         ReceiptClaimResponse: {
@@ -6353,36 +6296,6 @@ export interface components {
             created_at: string;
             /** Format: date-time */
             reviewed_at?: string;
-        };
-        RefundReconciliationPage: {
-            items: components["schemas"]["RefundReconciliationCandidate"][];
-            limit: number;
-            offset: number;
-            total: number;
-        };
-        RefundReconciliationCandidate: {
-            claim: components["schemas"]["MissingPointsClaim"];
-            awarded_points: number;
-            reconciliation: components["schemas"]["RefundReconciliation"];
-        };
-        RefundReconciliation: {
-            claim_id: string;
-            member_id: string;
-            receipt: string;
-            awarded_points: number;
-            last_refunded_clp?: number;
-            target_invalidated_points: number;
-            reversed_points: number;
-            flagged_points: number;
-            /** @enum {string} */
-            status: "pending" | "reconciled" | "review_required";
-            review_reason?: string;
-            /** Format: date-time */
-            checked_at?: string;
-        };
-        RefundReconciliationResult: {
-            reconciliation: components["schemas"]["RefundReconciliation"];
-            ledger_entry?: components["schemas"]["LedgerEntry"];
         };
         ReviewClaimRequest: {
             reason: string;

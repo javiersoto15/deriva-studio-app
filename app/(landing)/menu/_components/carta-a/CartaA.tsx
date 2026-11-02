@@ -768,8 +768,8 @@ export function CartaA({
               >
                 <span className={styles.doorText}>
                   <span className={`${styles.kicker} ${styles.doorCount}`}>{copy.options(d.itemCount)}</span>
-                  <span className={styles.doorName}>{copy.doors[d.id].name}</span>
-                  <span className={styles.doorSub}>{copy.doors[d.id].sub}</span>
+                  <span className={styles.doorName}>{d.label}</span>
+                  <span className={styles.doorSub}>{d.description}</span>
                 </span>
                 {d.photo ? (
                   <span className={styles.doorPhotoWrap}>
@@ -841,7 +841,7 @@ export function CartaA({
               <button key={d.id} type="button" className={styles.switchRow} style={doorStyle(d.id)} onClick={() => go({ kind: "door", id: d.id })}>
                 {d.photo ? <img src={d.photo} alt="" className={styles.switchThumb} /> : null}
                 <span style={{ display: "flex", flexDirection: "column", gap: 2, flex: 1 }}>
-                  <span className={styles.switchName}>{copy.doors[d.id].name}</span>
+                  <span className={styles.switchName}>{d.label}</span>
                   <span className={styles.combosMeta} style={{ color: "inherit", opacity: 0.75 }}>
                     {copy.options(d.itemCount)}
                   </span>
@@ -891,7 +891,7 @@ function FullIndex({
           <div key={door.id} className={styles.indexDoor} style={doorStyle(door.id)}>
             <button type="button" className={styles.indexDoorName} onClick={() => onDoor(door.id)}>
               <span className={styles.indexSwatch} aria-hidden="true" />
-              {copy.doors[door.id].name}
+              {door.label}
               <span aria-hidden="true">→</span>
             </button>
             {door.stops.map((stop) => {
@@ -1007,13 +1007,13 @@ function DoorView({
           </span>
         </div>
         <button type="button" className={styles.chapterTitleBtn} onClick={onSwitch} aria-haspopup="dialog">
-          <h1 className={styles.chapterTitle}>{copy.doors[door.id].name}</h1>
+          <h1 className={styles.chapterTitle}>{door.label}</h1>
           <span className={styles.caret} aria-hidden="true">
             ⌄
           </span>
         </button>
         {door.stops.length > 1 ? (
-          <div ref={chipRail} className={styles.chips} role="tablist" aria-label={copy.doors[door.id].name}>
+          <div ref={chipRail} className={styles.chips} role="tablist" aria-label={door.label}>
             {door.stops.map((stop) => (
               <button
                 key={stop.key}
@@ -1088,7 +1088,7 @@ function CombosView({
               className={`${styles.chip} ${filter === id ? styles.chipOn : ""}`}
               onClick={() => setFilter(id)}
             >
-              {id === "all" ? copy.all : copy.doors[id].name}
+              {id === "all" ? copy.all : withOffers.find((d) => d.id === id)?.label}
             </button>
           ))}
         </div>
@@ -1099,7 +1099,7 @@ function CombosView({
           return (
             <div key={d.id} className={styles.hubGroup} style={doorStyle(d.id)}>
               <h2 className={styles.subTitle} style={{ display: "flex", justifyContent: "space-between" }}>
-                <span>{copy.doors[d.id].name}</span>
+                <span>{d.label}</span>
                 <span className={styles.mono}>{groups.length}</span>
               </h2>
               <div className={styles.hubList}>
