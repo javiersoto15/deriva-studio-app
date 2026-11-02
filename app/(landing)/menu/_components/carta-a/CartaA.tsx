@@ -21,13 +21,19 @@ import {
   buildDoors,
   groupFloor,
   groupOffers,
+  indexItems,
   isAuthorSubgroup,
   parseView,
+  PICKS_STOP_KEY,
+  resolveFeatured,
+  resolvePairs,
   stopAnchor,
   stopItems,
   type CartaView,
   type Door,
   type DoorId,
+  type FeaturedCard,
+  type MenuIndex,
   type OfferGroup,
   type Stop
 } from "./doors";
@@ -57,6 +63,18 @@ function doorStyle(id: DoorId): CSSProperties {
 function priceText(item: PublicMenuItem): string {
   if (item.price_label) return item.price_label;
   return typeof item.price_clp === "number" ? clp(item.price_clp) : "";
+}
+
+// NUEVO / RECOMENDADO. Which dishes carry it, and until when, is the backend's
+// call (`item.highlight`, admin-curated); this only draws the label.
+function HighlightTag({ kind, locale }: { kind: PublicMenuItem["highlight"]; locale: Locale }) {
+  if (!kind) return null;
+  const copy = CARTA_COPY[locale];
+  return (
+    <span className={`${styles.pickTag} ${kind === "new" ? styles.pickTagNew : styles.pickTagRec}`}>
+      {kind === "new" ? copy.tagNew : copy.tagRecommended}
+    </span>
+  );
 }
 
 type SheetState =
@@ -109,8 +127,23 @@ function CloseButton({ onClose, label, className = "" }: { onClose: () => void; 
   );
 }
 
-function ItemSheet({ item, door, locale, onClose }: { item: PublicMenuItem; door: DoorId; locale: Locale; onClose: () => void }) {
+function ItemSheet({
+  item,
+  door,
+  locale,
+  index,
+  onItem,
+  onClose
+}: {
+  item: PublicMenuItem;
+  door: DoorId;
+  locale: Locale;
+  index: MenuIndex;
+  onItem: (item: PublicMenuItem, door: DoorId) => void;
+  onClose: () => void;
+}) {
   const copy = CARTA_COPY[locale];
+  const pairs = resolvePairs(item, index);
   const origins = renderableOrigins(item.origin_options);
   const perOrigin = pricesPerOrigin(item.origin_options);
   const allergens = (item.allergens ?? []).filter((a) => a && a !== "none");
@@ -129,6 +162,7 @@ function ItemSheet({ item, door, locale, onClose }: { item: PublicMenuItem; door
           </div>
         )}
         <div className={styles.tags}>
+          <HighlightTag kind={item.highlight} locale={locale} />
           {item.signature ? <span className={styles.tag}>{copy.signature}</span> : null}
           {item.author?.trim() ? (
             <span className={styles.meta}>
@@ -170,6 +204,25 @@ function ItemSheet({ item, door, locale, onClose }: { item: PublicMenuItem; door
               ))}
             </div>
           </>
+        ) : null}
+        {pairs.length ? (
+          <div className={styles.pairs}>
+            <span className={styles.sheetLabel}>{copy.pairsWith}</span>
+            {pairs.map((p) => (
+              <button key={p.item.id} type="button" className={styles.pairRow} style={doorStyle(p.door)} onClick={() => onItem(p.item, p.door)}>
+                {p.item.image_url ? (
+                  <img src={p.item.image_url} alt="" loading="lazy" className={styles.pairThumb} />
+                ) : (
+                  <span className={styles.pairThumb} aria-hidden="true" />
+                )}
+                <span className={styles.pairName}>{p.item.name}</span>
+                {!pricesPerOrigin(p.item.origin_options) ? <span className={styles.price}>{priceText(p.item)}</span> : null}
+                <span aria-hidden="true" className={styles.pairArrow}>
+                  →
+                </span>
+              </button>
+            ))}
+          </div>
         ) : null}
       </div>
     </Sheet>
@@ -337,8 +390,9 @@ function Rows({
                   ))}
                 </span>
               ) : null}
-              {item.signature || item.meta ? (
+              {item.highlight || item.signature || item.meta ? (
                 <span className={styles.tags}>
+                  <HighlightTag kind={item.highlight} locale={locale} />
                   {item.signature ? <span className={styles.tag}>{copy.signature}</span> : null}
                   {item.meta ? <span className={styles.meta}>{item.meta}</span> : null}
                 </span>
@@ -358,11 +412,18 @@ function AuthorGrid({ items, locale, onOpen }: { items: PublicMenuItem[]; locale
     <div className={styles.grid}>
       {items.map((item) => (
         <button key={item.id} type="button" className={styles.card} onClick={() => onOpen(item)}>
-          {item.image_url ? (
-            <img src={item.image_url} alt="" loading="lazy" className={styles.cardPhoto} />
-          ) : (
-            <span className={styles.cardPhoto} aria-hidden="true" />
-          )}
+          <span className={styles.cardPhotoWrap}>
+            {item.image_url ? (
+              <img src={item.image_url} alt="" loading="lazy" className={styles.cardPhoto} />
+            ) : (
+              <span className={styles.cardPhoto} aria-hidden="true" />
+            )}
+            {item.highlight ? (
+              <span className={styles.cardTag}>
+                <HighlightTag kind={item.highlight} locale={locale} />
+              </span>
+            ) : null}
+          </span>
           <span className={styles.cardName}>{item.name}</span>
           <span className={styles.cardFoot}>
             <span className={styles.meta}>{item.author?.trim() ? `${copy.by} ${item.author.trim()}` : item.meta ?? ""}</span>
@@ -630,6 +691,66 @@ function DoorBody({
   );
 }
 
+// The door's curated dishes, first, as their own stop. Each dish also stays in
+// its own section below, with the same tag.
+function PicksStop({ door, locale, onItem }: { door: Door; locale: Locale; onItem: (item: PublicMenuItem) => void }) {
+  const copy = CARTA_COPY[locale];
+  const key = `${door.id}-${PICKS_STOP_KEY}`;
+  return (
+    <section id={stopAnchor({ key: PICKS_STOP_KEY })} className={`${styles.stop} ${styles.picksStop}`} aria-labelledby={`${key}-title`}>
+      <div className={styles.stopHead}>
+        <GroupHeading id={`${key}-title`} title={copy.picksStop} count={door.picks.length} />
+      </div>
+      <Rows items={door.picks} locale={locale} onOpen={onItem} />
+    </section>
+  );
+}
+
+// ── Entrance rail: "Nuevo y recomendado" ────────────────────────────────
+// `featured[]` exactly as the backend sends it (≤ 6, admin order). Each card
+// opens its dish; there is no "see all" page — the same dishes lead their own
+// door instead (founder, 2026-11-01).
+function FeaturedRail({
+  cards,
+  doors,
+  locale,
+  onItem
+}: {
+  cards: FeaturedCard[];
+  doors: Door[];
+  locale: Locale;
+  onItem: (item: PublicMenuItem, door: DoorId) => void;
+}) {
+  const copy = CARTA_COPY[locale];
+  if (!cards.length) return null;
+  return (
+    <section className={styles.rail} aria-labelledby="nuevo-y-recomendado">
+      <h2 id="nuevo-y-recomendado" className={styles.railTitle}>
+        {copy.railTitle}
+      </h2>
+      <ul className={styles.railList}>
+        {cards.map((card) => (
+          <li key={card.item.id} className={styles.railItem}>
+            <button type="button" className={styles.railCard} style={doorStyle(card.door)} onClick={() => onItem(card.item, card.door)}>
+              {card.item.image_url ? (
+                <img src={card.item.image_url} alt="" className={styles.railPhoto} />
+              ) : (
+                <span className={styles.railPhoto} aria-hidden="true" />
+              )}
+              <span className={styles.railMeta}>
+                <HighlightTag kind={card.kind} locale={locale} />
+                <span className={styles.railDoor}>{doors.find((d) => d.id === card.door)?.label}</span>
+              </span>
+              <span className={styles.railName}>{card.item.name}</span>
+              {!pricesPerOrigin(card.item.origin_options) ? <span className={styles.railPrice}>{priceText(card.item)}</span> : null}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 // ── Main ────────────────────────────────────────────────────────────────
 export function CartaA({
   menu,
@@ -642,6 +763,9 @@ export function CartaA({
 }) {
   const copy = CARTA_COPY[locale];
   const doors = useMemo(() => buildDoors(menu), [menu]);
+  const index = useMemo(() => indexItems(doors), [doors]);
+  const featured = useMemo(() => resolveFeatured(menu.featured, index), [menu.featured, index]);
+  const openItem = useCallback((item: PublicMenuItem, door: DoorId) => setSheet({ kind: "item", item, door }), []);
   // Counted as the guest sees them: a Happy Hour family is one combo, not two.
   const comboCount = useMemo(() => doors.reduce((n, d) => n + groupOffers(d.offers).length, 0), [doors]);
   const totalItems = doors.reduce((n, d) => n + d.itemCount, 0);
@@ -754,6 +878,8 @@ export function CartaA({
             </div>
           ) : null}
 
+          <FeaturedRail cards={featured} doors={doors} locale={locale} onItem={openItem} />
+
           <nav className={styles.doors} aria-label={copy.title}>
             {doors.map((d) => (
               <a
@@ -812,7 +938,7 @@ export function CartaA({
             doors={doors}
             locale={locale}
             onDoor={(id) => go({ kind: "door", id })}
-            onItem={(item, doorId) => setSheet({ kind: "item", item, door: doorId })}
+            onItem={openItem}
           />
         </>
       )}
@@ -826,7 +952,9 @@ export function CartaA({
         <span>Lun–Vie 08:00–21:00 · Sáb 10:00–21:00</span>
       </footer>
 
-      {sheet?.kind === "item" ? <ItemSheet item={sheet.item} door={sheet.door} locale={locale} onClose={closeSheet} /> : null}
+      {sheet?.kind === "item" ? (
+        <ItemSheet key={sheet.item.id} item={sheet.item} door={sheet.door} locale={locale} index={index} onItem={openItem} onClose={closeSheet} />
+      ) : null}
       {sheet?.kind === "offer" ? <OfferSheet group={sheet.group} locale={locale} onClose={closeSheet} /> : null}
       {sheet?.kind === "switch" ? (
         <Sheet label={copy.switchTo} onClose={closeSheet}>
@@ -943,24 +1071,29 @@ function DoorView({
   onOffer: (group: OfferGroup) => void;
 }) {
   const copy = CARTA_COPY[locale];
+  // The curated stop leads the chips when the backend highlights any dish here.
+  const stops = useMemo<Stop[]>(
+    () => (door.picks.length ? [{ key: PICKS_STOP_KEY, label: `★ ${copy.picksStop}`, sectionId: "" }, ...door.stops] : door.stops),
+    [door, copy.picksStop]
+  );
   const headRef = useRef<HTMLDivElement>(null);
   const chipRail = useRef<HTMLDivElement>(null);
   const chipRefs = useRef<Record<string, HTMLButtonElement | null>>({});
-  const [active, setActive] = useState(door.stops[0]?.key ?? "");
+  const [active, setActive] = useState(stops[0]?.key ?? "");
   const [compact, setCompact] = useState(false);
   const raf = useRef(0);
 
   useEffect(() => {
-    setActive(door.stops[0]?.key ?? "");
-  }, [door]);
+    setActive(stops[0]?.key ?? "");
+  }, [stops]);
 
   useEffect(() => {
     function compute() {
       raf.current = 0;
       setCompact(window.scrollY > 60);
       const line = (headRef.current?.getBoundingClientRect().bottom ?? 160) + 16;
-      let current = door.stops[0]?.key ?? "";
-      for (const stop of door.stops) {
+      let current = stops[0]?.key ?? "";
+      for (const stop of stops) {
         const el = document.getElementById(stopAnchor(stop));
         if (el && el.getBoundingClientRect().top <= line) current = stop.key;
       }
@@ -979,7 +1112,7 @@ function DoorView({
       window.removeEventListener("resize", onScroll);
       cancelAnimationFrame(raf.current);
     };
-  }, [door]);
+  }, [stops]);
 
   useEffect(() => {
     const rail = chipRail.current;
@@ -992,7 +1125,7 @@ function DoorView({
     const el = document.getElementById(stopAnchor(stop));
     if (!el) return;
     const top = el.getBoundingClientRect().top + window.scrollY - (headRef.current?.offsetHeight ?? 0) - 56 + 8;
-    window.scrollTo({ top: stop.key === door.stops[0]?.key ? 0 : top, behavior: "smooth" });
+    window.scrollTo({ top: stop.key === stops[0]?.key ? 0 : top, behavior: "smooth" });
   }
 
   return (
@@ -1012,9 +1145,9 @@ function DoorView({
             ⌄
           </span>
         </button>
-        {door.stops.length > 1 ? (
+        {stops.length > 1 ? (
           <div ref={chipRail} className={styles.chips} role="tablist" aria-label={door.label}>
-            {door.stops.map((stop) => (
+            {stops.map((stop) => (
               <button
                 key={stop.key}
                 ref={(el) => {
@@ -1035,6 +1168,7 @@ function DoorView({
 
       <div className={styles.chapterBody}>
         <div>
+          {door.picks.length ? <PicksStop door={door} locale={locale} onItem={onItem} /> : null}
           <DoorBody door={door} locale={locale} onItem={onItem} onOffer={onOffer} />
         </div>
         {door.offers.length ? (

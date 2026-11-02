@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Bricolage_Grotesque } from "next/font/google";
 import { Suspense } from "react";
 
-import { getPublicMenuView } from "../../../src/api/server";
+import { getLivePublicMenuView } from "../../../src/api/server";
 import { getActiveLocale, getActiveBackendLocale } from "../../../src/i18n/server";
 import { SiteNav } from "../../../src/components/landing/SiteNav";
 import { MENU_URL, SITE_NAME } from "../../../src/seo/local-business";
@@ -45,7 +45,7 @@ async function CartaContent({ searchParams }: { searchParams: SearchParams }) {
     searchParams
   ]);
   const puerta = Array.isArray(params.puerta) ? params.puerta[0] : params.puerta;
-  const menu = await getPublicMenuView({ locale: backendLocale });
+  const menu = await getLivePublicMenuView({ locale: backendLocale });
   // The pricing embargo lifted on 2026-05-17 (PRICING_OPEN_AT), so the gate is
   // permanently open. Dropping the Date.now() comparison also drops the
   // `await connection()` it required under Cache Components — the cookie reads

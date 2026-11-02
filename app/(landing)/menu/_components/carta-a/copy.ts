@@ -31,6 +31,12 @@ type Copy = {
   pick: string;
   milk: string;
   languages: string;
+  /** Curated picks chrome. The picks themselves come from the backend. */
+  railTitle: string;
+  picksStop: string;
+  tagNew: string;
+  tagRecommended: string;
+  pairsWith: string;
   allergenNames: Record<string, string>;
 };
 
@@ -61,6 +67,11 @@ export const CARTA_COPY: Record<Locale, Copy> = {
     pick: "Elige una opción",
     milk: "Personaliza",
     languages: "Idioma",
+    railTitle: "Nuevo y recomendado",
+    picksStop: "Recomendados",
+    tagNew: "Nuevo",
+    tagRecommended: "Recomendado",
+    pairsWith: "Va bien con",
     allergenNames: {
       gluten: "Gluten", lacteos: "Lácteos", huevo: "Huevo", frutos_secos: "Frutos secos",
       mani: "Maní", soya: "Soya", pescado: "Pescado", mostaza: "Mostaza", mariscos: "Mariscos", sesamo: "Sésamo"
@@ -92,6 +103,11 @@ export const CARTA_COPY: Record<Locale, Copy> = {
     pick: "Pick an option",
     milk: "Customise",
     languages: "Language",
+    railTitle: "New and recommended",
+    picksStop: "Recommended",
+    tagNew: "New",
+    tagRecommended: "Recommended",
+    pairsWith: "Goes well with",
     allergenNames: {
       gluten: "Gluten", lacteos: "Dairy", huevo: "Egg", frutos_secos: "Tree nuts",
       mani: "Peanut", soya: "Soy", pescado: "Fish", mostaza: "Mustard", mariscos: "Shellfish", sesamo: "Sesame"
@@ -123,6 +139,11 @@ export const CARTA_COPY: Record<Locale, Copy> = {
     pick: "Escolha uma opção",
     milk: "Personalize",
     languages: "Idioma",
+    railTitle: "Novo e recomendado",
+    picksStop: "Recomendados",
+    tagNew: "Novo",
+    tagRecommended: "Recomendado",
+    pairsWith: "Combina com",
     allergenNames: {
       gluten: "Glúten", lacteos: "Lácteos", huevo: "Ovo", frutos_secos: "Castanhas",
       mani: "Amendoim", soya: "Soja", pescado: "Peixe", mostaza: "Mostarda", mariscos: "Frutos do mar", sesamo: "Gergelim"

@@ -759,7 +759,7 @@ export interface paths {
         };
         /**
          * Get the authenticated companion menu view
-         * @description Authenticated companion-safe alias for the canonical public menu presentation. Returns the same PublicMenuView shape and is served by the same backend PublicMenuView builder/store path as GET /public/menu, including weekday/weekend structure, Sunday closed-state, add-ons, and Menu Ejecutivo first only Monday-Friday 16:30-20:00 UTC. It applies the same stock visibility policy as GET /public/menu.
+         * @description Authenticated companion-safe alias for the canonical public menu presentation. Returns the same PublicMenuView shape and curation projection as GET /public/menu, including weekday/weekend structure, Sunday closed-state, add-ons, and Menu Ejecutivo. It applies the same final stock visibility policy and is Cache-Control: no-store.
          */
         get: {
             parameters: {
@@ -778,6 +778,11 @@ export interface paths {
                 /** @description Companion menu presentation view. Body is identical to GET /public/menu for the same locale and schedule. */
                 200: {
                     headers: {
+                        /**
+                         * @description Time-sensitive menu curation, availability, and stock responses are never cacheable.
+                         * @example no-store
+                         */
+                        "Cache-Control"?: string;
                         [name: string]: unknown;
                     };
                     content: {
@@ -1421,7 +1426,7 @@ export interface paths {
         };
         /**
          * Get the public landing menu view
-         * @description Backend-owned menu presentation view for the public landing menu. Keeps /menu as the flat companion item list while exposing the canonical weekday/weekend landing structure, including Menu Ejecutivo as the first section only Monday-Friday 16:30-20:00 UTC and the regular weekend menu split. The public view is composed from persisted menu_items plus persisted public menu presentation rows so the live site consumes backend data instead of static frontend/menu code. When DERIVA_STOCK_VISIBILITY_ENABLED is true, enrolled pastry items with unknown or zero stock are omitted; positive stock remains subject to the item's manual availability. Untracked menu items retain their existing behavior, and the default flag-off behavior is unchanged.
+         * @description Backend-owned menu presentation view for the public landing menu. Keeps /menu as the flat companion item list while exposing the canonical weekday/weekend landing structure and manually curated featured picks, row highlights, and pairings. Curation is filtered against the final selected schedule payload, item availability, and stock visibility; the backend does not select picks automatically. Public responses are Cache-Control: no-store because active dates and daily windows change over time.
          */
         get: {
             parameters: {
@@ -1440,6 +1445,11 @@ export interface paths {
                 /** @description Public menu presentation view. */
                 200: {
                     headers: {
+                        /**
+                         * @description Time-sensitive menu curation, availability, and stock responses are never cacheable.
+                         * @example no-store
+                         */
+                        "Cache-Control"?: string;
                         [name: string]: unknown;
                     };
                     content: {
@@ -2855,6 +2865,81 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/menu/featured": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read all configured featured menu picks
+         * @description Manager/owner readback for the complete ordered configuration, including scheduled and expired picks. Enriches each saved pick with the requested locale's item name and door, plus image and price. No pick is created automatically.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    locale?: "es-CL" | "en" | "pt-BR";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Complete configured pick list. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["FeaturedPickListResponse"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                500: components["responses"]["InternalServerError"];
+            };
+        };
+        /**
+         * Replace the full featured menu pick list
+         * @description Manager/owner full replacement. Item order drives the entrance rail and 1-based within-door highlight rank. Omitted active_from is saved once as today's Santiago date. active_until is inclusive through the local day and required for new. Optional windows are opening-inclusive and closing-exclusive and cannot cross midnight. At most four recommended picks may overlap in both date and daily window, including future schedules. Every successful mutation emits an audit entry.
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["FeaturedPickReplaceRequest"];
+                };
+            };
+            responses: {
+                /** @description Normalized replacement list for read-after-write. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["FeaturedPickWriteResponse"];
+                    };
+                };
+                400: components["responses"]["BadRequest"];
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                500: components["responses"]["InternalServerError"];
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/admin/stock": {
         parameters: {
             query?: never;
@@ -3505,6 +3590,85 @@ export interface paths {
                 404: components["responses"]["NotFound"];
             };
         };
+        trace?: never;
+    };
+    "/admin/menu/items/{item_id}/pairings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read a menu item's paired item IDs
+         * @description Manager/owner readback for the configured ordered pairings of a canonical menu item.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    item_id: components["parameters"]["ItemID"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Ordered pairing targets, or an empty array when none are configured. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MenuItemPairingsResponse"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                404: components["responses"]["NotFound"];
+                500: components["responses"]["InternalServerError"];
+            };
+        };
+        /**
+         * Replace a menu item's paired item IDs
+         * @description Manager/owner full replacement for up to two distinct, existing, non-self target items. Send item_ids as an empty array to clear pairings. Every successful mutation emits an audit entry.
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    item_id: components["parameters"]["ItemID"];
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["MenuItemPairingsInput"];
+                };
+            };
+            responses: {
+                /** @description Replaced pairing targets for read-after-write. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MenuItemPairingsResponse"];
+                    };
+                };
+                400: components["responses"]["BadRequest"];
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                404: components["responses"]["NotFound"];
+                500: components["responses"]["InternalServerError"];
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/admin/menu/items/{item_id}/origins": {
@@ -5664,9 +5828,11 @@ export interface components {
             current_schedule: components["schemas"]["PublicMenuSchedule"];
             closed_today: boolean;
             closed_label?: string;
+            /** @description Ordered manually configured entrance rail, limited to the first six active, present, available picks; always an array, including when empty. */
+            featured?: components["schemas"]["PublicFeaturedPick"][];
             sections: components["schemas"]["PublicMenuSection"][];
         };
-        /** @description Today's service window for a public menu section in America/Santiago local time, clamped to the store's canonical opening hours for the day. Present only when the section has a non-empty published service_window and a recognized service window; omitted when the section is not served today. */
+        /** @description Published service window in America/Santiago local time. It is resolved from the requested schedule's representative day (Monday for weekday, Saturday for weekend) and can remain present on a day the store is closed; use serving_now for current service state. */
         PublicMenuServiceHours: {
             /** @example 13:00 */
             opens: string;
@@ -5686,11 +5852,11 @@ export interface components {
             lede_italic?: boolean;
             /** @description Human-readable, localized service window copy. Display only; use service_hours and serving_now for logic. */
             service_window?: string;
-            /** @description Today's structured local service window; absent for empty or unknown windows and when the section is not served that day. */
+            /** @description Published local hours for the selected schedule, independent of whether the store is open right now. */
             service_hours?: components["schemas"]["PublicMenuServiceHours"];
-            /** @description Server-computed per request from the real current time in America/Santiago, independent of the `schedule` query parameter. Present only when a section has a non-empty published service_window and a known service window (desayunos, cocina, menu-ejecutivo, onces). False when the section is not being served right now, including days the store is closed or the section is not offered. */
+            /** @description Server-computed per request from actual Santiago store hours and section applicability. False when the store is closed, the section is not scheduled for today, or its service window is not open. */
             serving_now?: boolean;
-            /** @description Localized short status. While serving, "Hasta las HH:MM" / "Until HH:MM" / "Até HH:MM"; before today's window opens, "Desde las HH:MM" / "From HH:MM" / "A partir das HH:MM". Omitted after the window has closed or when the section is not served today. */
+            /** @description Localized short status. While serving, "Hasta las HH:MM" / "Until HH:MM" / "Até HH:MM"; before today's actual window opens, "Desde las HH:MM" / "From HH:MM" / "A partir das HH:MM". Omitted after the actual window has closed or when the section is not served today. */
             serving_label?: string;
             /** Format: uri */
             banner_image_url?: string;
@@ -5767,6 +5933,74 @@ export interface components {
             /** @description Ordered bean choices and their prices when the item supports origin-level pricing. */
             origin_options?: components["schemas"]["MenuOriginSummary"][];
             schedule?: components["schemas"]["PublicMenuSchedule"][];
+            /**
+             * @description Matching active manual featured pick, omitted when the item has no eligible pick.
+             * @enum {string}
+             */
+            highlight?: "new" | "recommended";
+            /** @description 1-based order within the item's first public door placement, including eligible picks beyond the six-item rail. */
+            highlight_rank?: number;
+            /** @description Ordered paired item IDs present and available in this final schedule payload. */
+            pairs_with?: string[];
+        };
+        PublicFeaturedPick: {
+            item_id: string;
+            /** @enum {string} */
+            kind: "new" | "recommended";
+            group_id: components["schemas"]["PublicMenuGroupID"];
+            /** @description Localized reason for later presentation surfaces; resolved in the requested locale with es-CL fallback. */
+            reason?: string;
+        };
+        /** @description Daily America/Santiago time range, opening-inclusive and closing-exclusive; overnight windows are invalid. */
+        FeaturedPickWindow: {
+            opens: string;
+            closes: string;
+        };
+        FeaturedPick: {
+            item_id: string;
+            /** @enum {string} */
+            kind: "new" | "recommended";
+            /**
+             * Format: date
+             * @description Optional Santiago calendar date; omitted values are saved as the current Santiago date.
+             */
+            active_from?: string;
+            /**
+             * Format: date
+             * @description Inclusive Santiago calendar end date; required when kind is new.
+             */
+            active_until?: string;
+            window?: components["schemas"]["FeaturedPickWindow"];
+            reason?: {
+                "es-CL"?: string;
+                en?: string;
+                "pt-BR"?: string;
+            };
+        };
+        FeaturedPickAdminView: components["schemas"]["FeaturedPick"] & {
+            name: string;
+            /** Format: uri */
+            image_url?: string;
+            price_clp: number;
+            group_id?: components["schemas"]["PublicMenuGroupID"];
+            group?: components["schemas"]["PublicMenuSectionGroup"];
+        };
+        FeaturedPickListResponse: {
+            items: components["schemas"]["FeaturedPickAdminView"][];
+        };
+        FeaturedPickReplaceRequest: {
+            /** @description Ordered full replacement; an empty array clears all featured picks. */
+            items: components["schemas"]["FeaturedPick"][];
+        };
+        FeaturedPickWriteResponse: {
+            items: components["schemas"]["FeaturedPick"][];
+        };
+        MenuItemPairingsInput: {
+            /** @description Ordered, distinct, non-self canonical target IDs; an empty array clears pairings. */
+            item_ids: string[];
+        };
+        MenuItemPairingsResponse: {
+            item_ids: string[];
         };
         MenuItem: {
             /** @description Optional locale-independent recipe author or signature drink creator name. */

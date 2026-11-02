@@ -135,22 +135,40 @@ export type PublicMenuOffer = components["schemas"]["PublicMenuOffer"];
 export type PublicMenuOfferDetailItem = components["schemas"]["PublicMenuOfferDetailItem"];
 export type PublicMenuOfferItemPricing = components["schemas"]["PublicMenuOfferItemPricing"];
 export type ExecutiveMenu = components["schemas"]["ExecutiveMenu"];
+export type PublicFeaturedPick = components["schemas"]["PublicFeaturedPick"];
 export type PublicMenuSchedule = components["schemas"]["PublicMenuSchedule"];
 
-export async function getPublicMenuView(opts?: {
+type PublicMenuOpts = {
   schedule?: PublicMenuSchedule;
   locale?: "es-CL" | "en" | "pt-BR";
-}): Promise<PublicMenuView | null> {
-  "use cache";
-  cacheLife("hours");
-  cacheTag("menu", "public-menu");
+};
+
+async function fetchPublicMenuView(opts: PublicMenuOpts | undefined, init?: RequestInit): Promise<PublicMenuView | null> {
   const params = new URLSearchParams();
   params.set("locale", opts?.locale ?? "es-CL");
   if (opts?.schedule) params.set("schedule", opts.schedule);
-  const view = await tryGetJson<PublicMenuView>(`/public/menu?${params.toString()}`);
+  const view = await tryGetJson<PublicMenuView>(`/public/menu?${params.toString()}`, init);
   // The backend's `season` is a hand-set string that goes stale; the label is
-  // derived from the calendar instead (cached "hours", so it flips same day).
+  // derived from the calendar instead.
   return view ? { ...view, season: getSeasonLabel(new Date(), opts?.locale ?? "es-CL") } : null;
+}
+
+// Cached copy for the signage and landing surfaces, which only need the
+// structure and dishes. Curated picks are not shown on those surfaces.
+export async function getPublicMenuView(opts?: PublicMenuOpts): Promise<PublicMenuView | null> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("menu", "public-menu");
+  return fetchPublicMenuView(opts);
+}
+
+// Uncached read for /menu. Since 2026-11-02 the payload carries curated picks
+// (`featured`, `highlight`, `pairs_with`) that start and stop by date and daily
+// window, plus stock-driven availability, so the backend serves it no-store
+// and asks clients not to cache it. Callers must sit inside a Suspense
+// boundary (Cache Components): this is request-time data.
+export async function getLivePublicMenuView(opts?: PublicMenuOpts): Promise<PublicMenuView | null> {
+  return fetchPublicMenuView(opts, { cache: "no-store" });
 }
 
 // Operational displays need today's published edition even when the customer

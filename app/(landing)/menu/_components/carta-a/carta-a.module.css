@@ -1178,6 +1178,181 @@
   }
 }
 
+/* ── Curated picks (D3 "Carril") ────────────────────────────────────────── */
+/* NUEVO = caramel, RECOMENDADO = espresso. Never green: the open dot keeps
+   the page's single green moment. */
+.pickTag {
+  align-self: flex-start;
+  flex-shrink: 0;
+  padding: 4px 9px;
+  border-radius: 99px;
+  font-weight: 700;
+  font-size: 11px;
+  line-height: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.pickTagNew {
+  background: var(--caramel);
+  color: var(--ink);
+}
+
+.pickTagRec {
+  background: var(--espresso);
+  color: var(--cream);
+}
+
+.rail {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 2px 0 20px;
+}
+
+.railTitle {
+  margin: 0;
+  padding: 0 20px;
+  font-weight: 800;
+  font-size: 20px;
+  line-height: 24px;
+  letter-spacing: -0.02em;
+}
+
+.railList {
+  display: flex;
+  gap: 12px;
+  margin: 0;
+  padding: 0 20px 2px;
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: 20px;
+  scrollbar-width: none;
+}
+
+.railList::-webkit-scrollbar {
+  display: none;
+}
+
+.railItem {
+  flex: 0 0 138px;
+  min-width: 0;
+  scroll-snap-align: start;
+}
+
+.railCard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.railCard:focus-visible,
+.pairRow:focus-visible {
+  outline: 3px solid var(--caramel);
+  outline-offset: 2px;
+  border-radius: 14px;
+}
+
+.railPhoto {
+  display: block;
+  width: 100%;
+  aspect-ratio: 138 / 150;
+  object-fit: cover;
+  border-radius: 14px;
+  background: var(--door-tint);
+}
+
+.railMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.railDoor {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--mono-f);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--soft);
+}
+
+.railName {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 17px;
+  overflow-wrap: anywhere;
+}
+
+.railPrice {
+  font-family: var(--mono-f);
+  font-size: 12px;
+  color: var(--soft);
+}
+
+.picksStop {
+  padding-bottom: 18px;
+}
+
+.cardPhotoWrap {
+  position: relative;
+  display: block;
+}
+
+.cardTag {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  display: flex;
+}
+
+.pairs {
+  display: flex;
+  flex-direction: column;
+  padding-top: 6px;
+}
+
+.pairs .sheetLabel {
+  padding-bottom: 6px;
+}
+
+.pairRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+
+.pairThumb {
+  display: block;
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: 12px;
+  background: var(--door-tint);
+}
+
+.pairName {
+  flex: 1 1 0;
+  min-width: 0;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.pairArrow {
+  font-weight: 700;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .scrim,
   .sheet {
@@ -1191,6 +1366,48 @@
 
 /* ── Desktop ────────────────────────────────────────────────────────────── */
 @media (min-width: 1024px) {
+  .rail {
+    max-width: 1440px;
+    margin: 0 auto;
+    gap: 14px;
+    padding: 0 0 26px;
+  }
+
+  .railTitle {
+    padding: 0 40px;
+    font-size: 24px;
+    line-height: 28px;
+  }
+
+  .railList {
+    padding: 0 40px 2px;
+    overflow-x: visible;
+  }
+
+  .railItem {
+    flex: 1 1 0;
+    max-width: 318px;
+  }
+
+  .railPhoto {
+    aspect-ratio: 318 / 200;
+  }
+
+  .railName {
+    font-size: 16px;
+    line-height: 20px;
+  }
+
+  /* With the rail above them the doors no longer claim a full viewport;
+     the photos shrink so the door columns still land in the first screen. */
+  .rail + .doors {
+    min-height: 0;
+  }
+
+  .rail + .doors .doorPhotoWrap {
+    height: clamp(200px, 28vh, 300px);
+  }
+
   .entranceHead {
     flex-direction: row;
     justify-content: space-between;

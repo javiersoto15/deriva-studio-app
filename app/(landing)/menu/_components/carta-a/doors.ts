@@ -1,4 +1,10 @@
-import type { PublicMenuItem, PublicMenuOffer, PublicMenuSection, PublicMenuView } from "../../../../../src/api/server";
+import type {
+  PublicFeaturedPick,
+  PublicMenuItem,
+  PublicMenuOffer,
+  PublicMenuSection,
+  PublicMenuView
+} from "../../../../../src/api/server";
 
 // The carta opens on four "doors" (Café · Comida · Dulce · Bar); each door
 // holds one or more backend sections. Everything inside a door — membership,
@@ -36,6 +42,9 @@ export type Door = {
   itemCount: number;
   photo?: string;
   offers: PublicMenuOffer[];
+  /** Curated dishes (`item.highlight`), in `highlight_rank` order. Shown
+   *  first in the door; they also stay in their own section. */
+  picks: PublicMenuItem[];
 };
 
 export function isDoorId(value: unknown): value is DoorId {
@@ -91,6 +100,23 @@ function countItems(sections: PublicMenuSection[]): number {
   );
 }
 
+function sectionItems(sections: PublicMenuSection[]): PublicMenuItem[] {
+  return sections.flatMap((s) => [...(s.items ?? []), ...(s.subgroups ?? []).flatMap((sg) => sg.items)]);
+}
+
+// A dish can sit in two sections (e.g. weekday and weekend breakfasts); the
+// backend ranks it once per door, so the stop lists it once.
+function picksFor(sections: PublicMenuSection[]): PublicMenuItem[] {
+  const seen = new Set<string>();
+  const picks: PublicMenuItem[] = [];
+  for (const item of sectionItems(sections)) {
+    if (!item.highlight || seen.has(item.id)) continue;
+    seen.add(item.id);
+    picks.push(item);
+  }
+  return picks.sort((a, b) => (a.highlight_rank ?? Infinity) - (b.highlight_rank ?? Infinity));
+}
+
 function firstPhoto(sections: PublicMenuSection[]): string | undefined {
   for (const s of sections) {
     for (const item of [...(s.items ?? []), ...(s.subgroups ?? []).flatMap((sg) => sg.items)]) {
@@ -120,9 +146,52 @@ export function buildDoors(menu: Pick<PublicMenuView, "sections">): Door[] {
       stops: stopsFor(sections),
       itemCount: countItems(sections),
       photo: firstPhoto(sections),
-      offers: sections.flatMap((s) => s.offers ?? [])
+      offers: sections.flatMap((s) => s.offers ?? []),
+      picks: picksFor(sections)
     };
   }).filter((door) => door.sections.length > 0);
+}
+
+// ── Curated picks (backend request #2, live 2026-11-02) ──────────────────
+// The backend decides which dishes are new or recommended, their order, dates
+// and daily windows. The carta only looks the ids up in the same payload.
+
+/** Anchor key of the per-door "Recomendados" stop that precedes the door's own stops. */
+export const PICKS_STOP_KEY = "recomendados";
+
+export type MenuIndex = Map<string, { item: PublicMenuItem; door: DoorId }>;
+
+/** Every dish by id, with the first door it appears in. */
+export function indexItems(doors: Door[]): MenuIndex {
+  const index: MenuIndex = new Map();
+  for (const door of doors) {
+    for (const item of sectionItems(door.sections)) {
+      if (!index.has(item.id)) index.set(item.id, { item, door: door.id });
+    }
+  }
+  return index;
+}
+
+export type FeaturedCard = { item: PublicMenuItem; door: DoorId; kind: PublicFeaturedPick["kind"] };
+
+/** The entrance rail: `featured[]` in backend order. A pick whose id is not
+ *  in this payload is skipped rather than shown empty. */
+export function resolveFeatured(featured: PublicFeaturedPick[] | undefined, index: MenuIndex): FeaturedCard[] {
+  const cards: FeaturedCard[] = [];
+  for (const pick of featured ?? []) {
+    const hit = index.get(pick.item_id);
+    if (!hit) continue;
+    cards.push({ item: hit.item, door: isDoorId(pick.group_id) ? pick.group_id : hit.door, kind: pick.kind });
+  }
+  return cards;
+}
+
+/** "Va bien con": the dish's `pairs_with` ids, resolved in backend order. */
+export function resolvePairs(item: PublicMenuItem, index: MenuIndex): { item: PublicMenuItem; door: DoorId }[] {
+  return (item.pairs_with ?? []).flatMap((id) => {
+    const hit = index.get(id);
+    return hit && hit.item.id !== item.id ? [hit] : [];
+  });
 }
 
 // Which view `?puerta=` asks for. Shared by the server page (first render) and

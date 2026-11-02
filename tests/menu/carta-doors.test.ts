@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import type { PublicMenuView } from "../../src/api/server";
-import { buildDoors, groupOffers, offerFloor, stopItems } from "../../app/(landing)/menu/_components/carta-a/doors";
+import { buildDoors, groupOffers, indexItems, offerFloor, resolveFeatured, resolvePairs, stopItems } from "../../app/(landing)/menu/_components/carta-a/doors";
 
 const item = (id: string, extra: Record<string, unknown> = {}) => ({
   id,
@@ -17,6 +17,11 @@ const group = (id: string, label: string, description = `${label} blurb`) => ({ 
 // Mirrors the live payload shape since 2026-10-31: every section carries its
 // door in `section.group`, and Cafetería arrives with Café de autor first.
 const menu = {
+  featured: [
+    { item_id: "pie", kind: "new", group_id: "dulce" },
+    { item_id: "ghost", kind: "recommended", group_id: "cafe" },
+    { item_id: "tropical", kind: "recommended", group_id: "cafe" }
+  ],
   sections: [
     {
       id: "cafeteria",
@@ -30,7 +35,10 @@ const menu = {
         {
           id: "cafes-autor",
           label: "Café de autor",
-          items: [item("nuevo"), item("tropical", { author: "Maria", image_url: "https://x/tropical.jpg" })]
+          items: [
+            item("nuevo", { highlight: "new", highlight_rank: 2 }),
+            item("tropical", { author: "Maria", image_url: "https://x/tropical.jpg", highlight: "recommended", highlight_rank: 1, pairs_with: ["pie", "ghost"] })
+          ]
         },
         {
           id: "espresso",
@@ -175,4 +183,28 @@ test("offerFloor uses the backend's own prices and never sums", () => {
   assert.equal(offerFloor(cafe.offers[1]), 4990);
   assert.equal(offerFloor(bar.offers[0]), 5000);
   assert.equal(offerFloor({ id: "p", title: "Plain", description: "" } as never), undefined);
+});
+
+test("each door lists its curated dishes in highlight_rank order, and only those", () => {
+  const [cafe, comida, dulce] = buildDoors(menu);
+  assert.deepEqual(cafe.picks.map((i) => i.id), ["tropical", "nuevo"]);
+  assert.deepEqual(comida.picks, []);
+  assert.deepEqual(dulce.picks, []);
+});
+
+test("featured keeps backend order and skips ids missing from this payload", () => {
+  const index = indexItems(buildDoors(menu));
+  const rail = resolveFeatured(menu.featured, index);
+  assert.deepEqual(rail.map((c) => [c.item.id, c.kind, c.door]), [
+    ["pie", "new", "dulce"],
+    ["tropical", "recommended", "cafe"]
+  ]);
+  assert.deepEqual(resolveFeatured(undefined, index), []);
+});
+
+test("pairs_with resolves in backend order and drops unknown ids", () => {
+  const index = indexItems(buildDoors(menu));
+  const tropical = index.get("tropical")!.item;
+  assert.deepEqual(resolvePairs(tropical, index).map((p) => [p.item.id, p.door]), [["pie", "dulce"]]);
+  assert.deepEqual(resolvePairs(index.get("espresso")!.item, index), []);
 });
