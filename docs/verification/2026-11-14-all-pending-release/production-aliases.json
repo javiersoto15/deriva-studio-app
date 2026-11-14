@@ -1,0 +1,49 @@
+{
+  "verified_at": "2026-11-14T23:40:57.319583+00:00",
+  "deployment_id": "dpl_7F1ccL3Jba5jhSVMDvVHwvwubRTh",
+  "promotion": "Vercel request_promote returned success; each canonical alias re-read independently with get_alias.",
+  "aliases": [
+    {
+      "alias": "admin.derivastudio.cl",
+      "deployment_id": "dpl_7F1ccL3Jba5jhSVMDvVHwvwubRTh",
+      "deployment_url": "deriva-studio-erlt764ui-javiersoto15s-projects.vercel.app",
+      "project_id": "prj_PHkZ3OMuP64BW0PCOxyqfkKAQmpP",
+      "updated_at": 1794699610852
+    },
+    {
+      "alias": "app.derivastudio.cl",
+      "deployment_id": "dpl_7F1ccL3Jba5jhSVMDvVHwvwubRTh",
+      "deployment_url": "deriva-studio-erlt764ui-javiersoto15s-projects.vercel.app",
+      "project_id": "prj_PHkZ3OMuP64BW0PCOxyqfkKAQmpP",
+      "updated_at": 1794699610836
+    },
+    {
+      "alias": "www.derivastudio.cl",
+      "deployment_id": "dpl_7F1ccL3Jba5jhSVMDvVHwvwubRTh",
+      "deployment_url": "deriva-studio-erlt764ui-javiersoto15s-projects.vercel.app",
+      "project_id": "prj_PHkZ3OMuP64BW0PCOxyqfkKAQmpP",
+      "updated_at": 1794699610847
+    },
+    {
+      "alias": "derivastudio.cl",
+      "deployment_id": "dpl_7F1ccL3Jba5jhSVMDvVHwvwubRTh",
+      "deployment_url": "deriva-studio-erlt764ui-javiersoto15s-projects.vercel.app",
+      "project_id": "prj_PHkZ3OMuP64BW0PCOxyqfkKAQmpP",
+      "updated_at": 1794699610850
+    },
+    {
+      "alias": "deriva-studio.vercel.app",
+      "deployment_id": "dpl_7F1ccL3Jba5jhSVMDvVHwvwubRTh",
+      "deployment_url": "deriva-studio-erlt764ui-javiersoto15s-projects.vercel.app",
+      "project_id": "prj_PHkZ3OMuP64BW0PCOxyqfkKAQmpP",
+      "updated_at": 1794699610837
+    },
+    {
+      "alias": "deriva-studio-javiersoto15s-projects.vercel.app",
+      "deployment_id": "dpl_7F1ccL3Jba5jhSVMDvVHwvwubRTh",
+      "deployment_url": "deriva-studio-erlt764ui-javiersoto15s-projects.vercel.app",
+      "project_id": "prj_PHkZ3OMuP64BW0PCOxyqfkKAQmpP",
+      "updated_at": 1794699610893
+    }
+  ]
+}

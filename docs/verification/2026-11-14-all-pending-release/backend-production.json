@@ -1,0 +1,34 @@
+{
+  "commit": "32b3bc095dfdc0e38da98dd9f5a7f2c8a064552a",
+  "build_id": "92aaa50b-0d41-4e67-89e4-bf2045006759",
+  "image_digest": "sha256:f719435da88988392386ea3ff69b4b4bd4a905f0f7f0b97ead753c884d2c9e3c",
+  "revision": "deriva-companion-api-all-32b3bc0-20261114",
+  "review_url": "https://all-release-review20261114---deriva-companion-api-u6ribqoyeq-tl.a.run.app",
+  "template_preserved_except_revision_image": true,
+  "existing_tags_preserved": true,
+  "serving_revision": "deriva-companion-api-all-32b3bc0-20261114",
+  "serving_percent": 100,
+  "health_status": 200,
+  "openapi_source_exact": true,
+  "migration_log_count": 2,
+  "startup_log_file": "/tmp/deriva-all-release-startup-logs.json",
+  "production_promoted": true,
+  "migrations_and_database": {
+    "migration044": true,
+    "migration045": true,
+    "salon_items": 111,
+    "salon_movements": 111,
+    "salon_requests": 111,
+    "salon_audits": 111,
+    "kitchen_items": 73,
+    "refund_queue": 0,
+    "kitchen_only_accounts": 3
+  },
+  "stage": {
+    "previous_revision_percent": 100,
+    "new_revision_percent": 0,
+    "health200": true,
+    "openapi_source_exact": true
+  },
+  "migration_startup_log_count": 2
+}

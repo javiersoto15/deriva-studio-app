@@ -1,0 +1,35 @@
+{
+  "origin": "https://deriva-companion-api-u6ribqoyeq-tl.a.run.app",
+  "mode": "live",
+  "probes": {
+    "kitchen": 200,
+    "barra": 200,
+    "shelf_life": 200,
+    "admin_menu": 200,
+    "menu_es-CL": 200,
+    "menu_en": 200,
+    "menu_pt-BR": 200,
+    "initial_histories": 111,
+    "fridge_withdrawal_rejected": 400,
+    "withdrawals": 200,
+    "refund_queue": 200,
+    "uber_oauth": 403
+  },
+  "salon_items": 111,
+  "no_valid_withdrawals_performed": true,
+  "no_refunds_or_points_issued": true,
+  "all111_source_fields_exact": true,
+  "one_initial_history_each": true,
+  "stock_movements_performed": "only111initialimports",
+  "initial_snapshot_sha256": "0b7618097d516dbe1b4c176ceacc56d7cf13a4487601c2bd0cbc395df7272950",
+  "baseline_snapshot_preserved": [
+    "kitchen",
+    "barra",
+    "shelf_life",
+    "admin_menu",
+    "menu-es-CL",
+    "menu-en",
+    "menu-pt-BR"
+  ],
+  "no_refund_reconciliation_invoked": true
+}

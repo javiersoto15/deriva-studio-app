@@ -1,0 +1,94 @@
+{
+  "verified_at": "2026-11-14T23:40:28.548009+00:00",
+  "deployment_id": "dpl_7F1ccL3Jba5jhSVMDvVHwvwubRTh",
+  "probes": [
+    {
+      "url": "https://admin.derivastudio.cl/stock-salon",
+      "method": "GET",
+      "status": 200,
+      "expected": 200,
+      "passed": true,
+      "cache_control": "public, max-age=0, must-revalidate",
+      "no_store": null,
+      "privacy_copy": null,
+      "body": null
+    },
+    {
+      "url": "https://admin.derivastudio.cl/stock-cocina",
+      "method": "GET",
+      "status": 200,
+      "expected": 200,
+      "passed": true,
+      "cache_control": "public, max-age=0, must-revalidate",
+      "no_store": null,
+      "privacy_copy": null,
+      "body": null
+    },
+    {
+      "url": "https://derivastudio.cl/privacidad",
+      "method": "GET",
+      "status": 200,
+      "expected": 200,
+      "passed": true,
+      "cache_control": "public, max-age=0, must-revalidate",
+      "no_store": null,
+      "privacy_copy": true,
+      "body": null
+    },
+    {
+      "url": "https://admin.derivastudio.cl/api/salon-stock",
+      "method": "GET",
+      "status": 401,
+      "expected": 401,
+      "passed": true,
+      "cache_control": "no-store, max-age=0",
+      "no_store": true,
+      "privacy_copy": null,
+      "body": "{\"error\":\"missing_bearer\",\"message\":\"Necesitas iniciar sesi\u00f3n para ver el stock.\"}"
+    },
+    {
+      "url": "https://admin.derivastudio.cl/api/kitchen-stock",
+      "method": "GET",
+      "status": 401,
+      "expected": 401,
+      "passed": true,
+      "cache_control": "no-store, max-age=0",
+      "no_store": true,
+      "privacy_copy": null,
+      "body": "{\"error\":\"missing_bearer\",\"message\":\"Necesitas iniciar sesi\u00f3n para ver el stock.\"}"
+    },
+    {
+      "url": "https://admin.derivastudio.cl/api/uber-eats/oauth/start",
+      "method": "POST",
+      "status": 401,
+      "expected": 401,
+      "passed": true,
+      "cache_control": "no-store, max-age=0",
+      "no_store": true,
+      "privacy_copy": null,
+      "body": "{\"error\":\"missing_bearer\",\"message\":\"Inicia sesi\u00f3n para continuar.\"}"
+    },
+    {
+      "url": "https://derivastudio.cl/api/uber-eats/oauth/start",
+      "method": "POST",
+      "status": 404,
+      "expected": 404,
+      "passed": true,
+      "cache_control": "no-store, max-age=0",
+      "no_store": true,
+      "privacy_copy": null,
+      "body": "{\"error\":\"not_found\",\"message\":\"Not found.\"}"
+    },
+    {
+      "url": "https://derivastudio.cl/api/uber-eats/oauth/callback?error=denied",
+      "method": "GET",
+      "status": 404,
+      "expected": 404,
+      "passed": true,
+      "cache_control": "no-store, max-age=0",
+      "no_store": true,
+      "privacy_copy": null,
+      "body": "{\"error\":\"not_found\",\"message\":\"Not found.\"}"
+    }
+  ]
+}

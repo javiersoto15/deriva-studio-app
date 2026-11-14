@@ -1,0 +1,25 @@
+{
+  "origin": "https://admin.derivastudio.cl",
+  "actual_firebase_login": true,
+  "salon_items": 111,
+  "kitchen_items": 73,
+  "widths": [
+    1440,
+    430,
+    390,
+    375,
+    320
+  ],
+  "no_horizontal_overflow": true,
+  "fridge_withdrawal_absent": true,
+  "scoped_duplicate_suggestions": true,
+  "full111_copy_and_whatsapp_exact": true,
+  "no_whatsapp_send": true,
+  "exact10takers": true,
+  "modal_keyboard_selection": true,
+  "overdraw_disabled": true,
+  "confirm_visible": true,
+  "no_valid_stock_mutations": true,
+  "signed_out": true,
+  "page_errors": []
+}
