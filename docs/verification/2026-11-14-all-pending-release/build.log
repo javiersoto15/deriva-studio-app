@@ -1,0 +1,115 @@
+npm notice run deriva-webapp@0.1.0 build
+npm notice run next build
+[@sentry/nextjs] DEPRECATION WARNING: disableLogger is deprecated and will be removed in a future version. Use webpack.treeshake.removeDebugLogging instead. (Not supported with Turbopack.)
+▲ Next.js 16.2.4 (Turbopack)
+- Environments: .env.local
+- Cache Components enabled
+- Experiments (use with caution):
+  · clientTraceMetadata
+  · optimizePackageImports
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+[@sentry/nextjs] DEPRECATION WARNING: disableLogger is deprecated and will be removed in a future version. Use webpack.treeshake.removeDebugLogging instead. (Not supported with Turbopack.)
+✓ Compiled successfully in 2.4s
+  Running next.config.js provided runAfterProductionCompile ...
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[serwist] Precached 357 entries, 32303.7 KiB → public/sw.js
+✓ Completed runAfterProductionCompile in 451ms
+  Running TypeScript ...
+  Finished TypeScript in 3.8s ...
+  Collecting page data using 15 workers ...
+  Generating static pages using 15 workers (0/65) ...
+  Generating static pages using 15 workers (16/65) 
+  Generating static pages using 15 workers (32/65) 
+  Generating static pages using 15 workers (48/65) 
+✓ Generating static pages using 15 workers (65/65) in 449ms
+  Finalizing page optimization ...
+
+Route (app)                                        Revalidate  Expire
+┌ ◐ /                                                      1h      1d
+├ ○ /_not-found
+├ ◐ /abierto
+├ ○ /actividad
+├ ○ /admin-console
+├ ƒ /api/barra-stock
+├ ƒ /api/barra-stock/items/[stockId]/adjustments
+├ ƒ /api/barra-stock/items/[stockId]/history
+├ ƒ /api/barra-stock/lots/[lotId]
+├ ƒ /api/barra-stock/raw-items
+├ ƒ /api/barra-stock/shelf-life
+├ ƒ /api/barra-stock/shelf-life/groups
+├ ƒ /api/barra-stock/shelf-life/groups/[groupId]
+├ ƒ /api/csp-report
+├ ƒ /api/kitchen-stock
+├ ƒ /api/kitchen-stock/items
+├ ƒ /api/kitchen-stock/items/[itemId]/adjustments
+├ ƒ /api/kitchen-stock/items/[itemId]/history
+├ ƒ /api/salon-stock
+├ ƒ /api/salon-stock/items
+├ ƒ /api/salon-stock/items/[itemId]/adjustments
+├ ƒ /api/salon-stock/items/[itemId]/history
+├ ƒ /api/salon-stock/withdrawals
+├ ƒ /api/uber-eats/oauth/callback
+├ ƒ /api/uber-eats/oauth/start
+├ ○ /apple-icon.png
+├ ◐ /canjear/[rewardId]
+│ └ /canjear/[rewardId]
+├ ○ /carta
+├ ◐ /carta/[id]
+│ └ /carta/[id]
+├ ◐ /carta/origen/[id]
+│ └ /carta/origen/[id]
+├ ○ /cartera
+├ ○ /codigo
+├ ○ /companion
+├ ○ /deriva-match-up
+├ ○ /deriva-match-up/bases
+├ ○ /estudio
+├ ○ /favoritos
+├ ○ /feedback
+├ ◐ /feedback/[orderId]
+│ └ /feedback/[orderId]
+├ ◐ /hoy
+├ ƒ /icon
+├ ○ /ingresar
+├ ○ /ingresar/consentimiento
+├ ○ /ingresar/email
+├ ○ /ingresar/preferencias
+├ ○ /ingresar/telefono
+├ ○ /ingresar/verificar
+├ ○ /inicio
+├ ○ /llms.txt
+├ ƒ /manifest.webmanifest
+├ ◐ /match-up
+├ ◐ /menu
+├ ◐ /menu-display
+├ ◐ /menu-ejecutivo
+├ ○ /offline
+├ ƒ /opengraph-image
+├ ○ /privacidad
+├ ◐ /redemptions
+├ ◐ /redemptions/[code]
+│ └ /redemptions/[code]
+├ ◐ /redemptions/wallet
+├ ◐ /resenas
+├ ƒ /robots.txt
+├ ◐ /sala
+├ ○ /sitemap.xml
+├ ○ /staff
+├ ○ /stock
+├ ○ /stock-cocina
+├ ○ /stock-salon
+├ ○ /sumar-visita
+├ ○ /sumar-visita/estado
+└ ○ /verificar-email
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)             prerendered as static content
+◐  (Partial Prerender)  prerendered as static HTML with dynamic server-streamed content
+ƒ  (Dynamic)            server-rendered on demand
+

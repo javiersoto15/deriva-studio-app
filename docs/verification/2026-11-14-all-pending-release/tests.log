@@ -1,0 +1,367 @@
+npm notice run deriva-webapp@0.1.0 test
+npm notice run npm run test:seo && npm run test:menu && npm run test:stock && npm run test:kitchen-stock && npm run test:salon-stock && npm run test:routing && npm run test:brand && npm run test:companion && npm run test:uber-eats
+npm notice run deriva-webapp@0.1.0 test:seo
+npm notice run tsx --test tests/seo/*.test.ts
+✔ the umbrella business name is Deriva Studio and the brand is unchanged (0.613333ms)
+✔ every paid landing destination renders the business name as visible text (0.380666ms)
+✔ the nav defaults to the brand and only paid pages opt into the umbrella name (0.334333ms)
+✔ non-paid page titles do not double the business name (0.227792ms)
+✔ offerings are described separately from the umbrella name (0.217542ms)
+✔ structured data names Deriva Studio consistently with no rival identity (0.158166ms)
+✔ the menu-ejecutivo page keeps its canonical and Providencia title (0.144459ms)
+✔ publishes the permanent Spanish Menú Ejecutivo route contract (0.627792ms)
+✔ keeps daily dishes and pricing API-backed (0.163417ms)
+✔ composes the focused landing page from the Carta's fixed dark primitives (0.174083ms)
+✔ links to the single Carta route with the approved CTA copy (0.226875ms)
+✔ keeps the semantic course list free of browser-default markers (0.498916ms)
+✔ keeps the long heading and service hours readable on mobile (0.204459ms)
+✔ escapes hostile closing tags before embedding JSON-LD (0.117334ms)
+✔ renders the service-window status alongside the edition (0.114416ms)
+✔ renders the fondo alternative note published by the API (0.106333ms)
+✔ the rotation explainer is labelled as illustrative, not today's edition (0.227792ms)
+✔ the no-edition fallback stays on /menu-ejecutivo with both CTAs (0.1955ms)
+✔ the visible umbrella business name is present on the page (0.121208ms)
+✔ builds an API-backed daily Menú Ejecutivo presentation (0.674333ms)
+✔ returns stable service copy without inventing a daily edition (0.147459ms)
+✔ keeps the stable graph linked without inventing a daily offer or courses (0.154334ms)
+✔ uses live API price and course names in the linked daily graph (0.110083ms)
+✔ reads the Santiago wall clock across the DST boundary (0.659583ms)
+✔ weekday before 13:00 says today's service starts at 13:00 (0.140959ms)
+✔ weekday inside 13:00–16:00 is available now (0.075ms)
+✔ weekday after 16:00 says today's service has finished (0.047084ms)
+✔ Saturday and Sunday say it returns on the next business day (0.070334ms)
+✔ never claims availability outside the weekday service window (1.766417ms)
+✔ the presentation carries the service state in both edition states (0.226667ms)
+✔ never says 'disponible ahora' when no edition is published (0.158667ms)
+✔ selects current public coffee highlights in a stable order (9.398916ms)
+✔ every rendered chip carries a photo — never a bare text placeholder (0.174208ms)
+✔ every configured candidate points at a registered photo slug (0.076541ms)
+✔ an unavailable item is backfilled by the next candidate, not left as a hole (0.0985ms)
+✔ omits missing and unavailable configured items instead of inventing fallbacks (0.067625ms)
+✔ the homepage reads public menu highlights and has no stale card prices (0.251709ms)
+✔ the homepage visibly introduces breakfast, brunch, and weekday lunch (0.110834ms)
+✔ the homepage includes a substantial visible midday editorial section (0.116916ms)
+✔ the homepage does not freeze a daily executive menu or its current price (0.145209ms)
+✔ uses current Spanish local specialty-coffee positioning (0.41325ms)
+✔ covers supporting local dining intents in cafe discovery facts (0.190375ms)
+✔ links the organization, cafe, and website without unverified claims (0.38075ms)
+✔ the app consumes canonical SEO facts instead of stale launch copy (0.17175ms)
+✔ the sitemap indexes the permanent daily Menú Ejecutivo page (0.079875ms)
+✔ llms.txt describes broad local service without a volatile daily edition (8.905666ms)
+✔ discovery surfaces contain only current canonical public routes (0.208375ms)
+✔ links the menu page, cafe, website, sections, and items (0.472042ms)
+✔ marks public prices and availability without introducing hidden products (0.122666ms)
+✔ omits offers when prices are not visible (0.05625ms)
+✔ the public menu page uses the linked graph and broad local Spanish metadata (0.207084ms)
+✔ hero text is constrained to the viewport inside its flex column (0.516875ms)
+✔ the secondary navigation cue cannot crowd compact mobile widths (0.11375ms)
+✔ the midday editorial section stays within the viewport (0.157542ms)
+✔ the midday editorial section becomes one column on mobile and compact widths (0.168166ms)
+✔ the hero enters safe document flow on short compact viewports (0.20625ms)
+✔ the midday link has a touch-sized target and visible keyboard focus (0.148458ms)
+✔ the variant tariff stacks by default and only splits on wide viewports (0.110417ms)
+✔ no fixed-width slot in the offers plate can overflow a 320px rail (0.133291ms)
+✔ flexible cells in the tariff can shrink instead of forcing overflow (0.141625ms)
+✔ service-window pills wrap rather than scroll sideways (0.099541ms)
+✔ the offers disclosure is a real button with a visible focus ring (0.070916ms)
+✔ prices line up as a column of digits (0.060625ms)
+ℹ tests 63
+ℹ suites 0
+ℹ pass 63
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 109.299833
+npm notice run deriva-webapp@0.1.0 test:menu
+npm notice run tsx --test tests/menu/*.test.ts tests/menu/*.test.tsx
+✔ omits the byline for missing, null, empty, and whitespace-only authors (1.959541ms)
+✔ trims a valid author and uses the Spanish prefix (1.13175ms)
+✔ uses the English prefix and the requested Portuguese wording (0.222792ms)
+✔ renders names as escaped text and keeps long names intact in the markup (0.174ms)
+✔ CartaBody renders known author credits and omits blank new authors (5.055333ms)
+✔ doors come from section.group, in fixed door order, with backend labels (0.896333ms)
+✔ a section without a known group joins the door of the section before it (0.123208ms)
+✔ subgroup order is the backend's — the carta never reorders it (0.105042ms)
+✔ single-section doors with subgroups use subgroups as stops; multi-section doors use sections (0.096083ms)
+✔ counts items and collects offers per door (0.065125ms)
+✔ a door without an item photo falls back to its first section banner (0.046125ms)
+✔ stopItems lists every item exactly once across a door's stops (0.09925ms)
+✔ offers sharing offer.group merge into one card, tabs from tab_label (0.10125ms)
+✔ ungrouped offers stay single under their own title, even with ' · ' in it (0.068875ms)
+✔ offerFloor uses the backend's own prices and never sums (0.120333ms)
+✔ each door lists its curated dishes in highlight_rank order, and only those (0.915209ms)
+✔ featured keeps backend order and skips ids missing from this payload (0.152875ms)
+✔ pairs_with resolves in backend order and drops unknown ids (0.10125ms)
+✔ an offer with variants takes the tariff treatment (0.473541ms)
+✔ a legacy detail offer is untouched by the variant path (0.073667ms)
+✔ a legacy offer with neither detail nor variants stays a plain row (0.042792ms)
+✔ variants win over detail when an offer carries both (0.047292ms)
+✔ an empty variants array is not a variant offer (0.037667ms)
+✔ a fixed item component resolves to the backend item name (1.217041ms)
+✔ a display_label component resolves as a controlled selection (0.08825ms)
+✔ an offer of only fixed items has no controlled selection (0.057084ms)
+✔ a component with neither item nor display_label is dropped (0.05625ms)
+✔ a blank display_label is treated as absent, not printed empty (0.080916ms)
+✔ only components identical across every variant are declared once (0.151042ms)
+✔ an offer whose variants share nothing gets no shared block (0.048583ms)
+✔ a single-variant offer treats all its components as shared (0.054208ms)
+✔ prices render in Chilean format from the backend value (8.472375ms)
+✔ every fixture price comes straight from price_clp (0.057209ms)
+✔ a contiguous run of weekdays renders as a range (0.082292ms)
+✔ a short list of weekdays renders as a list (0.036458ms)
+✔ weekdays are ordered Monday-first regardless of payload order (0.021625ms)
+✔ a closed window shows both ends (0.050334ms)
+✔ an open-ended window never invents a closing time (0.039875ms)
+✔ two windows are summarized by count and day union, never a merged time (0.065375ms)
+✔ a single window is summarized in full (0.024417ms)
+✔ an offer with no service windows summarizes to nothing (0.021834ms)
+✔ multi-variant offers report an option count (0.031875ms)
+✔ a single-variant offer reports no count (0.018917ms)
+✔ the decision layer never composes a 'from' price (0.148167ms)
+✔ each locale gets backend copy verbatim, in that locale (0.521708ms)
+✔ variant labels are backend-authored in every locale (0.165875ms)
+✔ an offer with variants but no service windows still renders (0.037166ms)
+✔ a variant with no components resolves to an empty inclusion list (0.039208ms)
+✔ today's production sections stay open at the current threshold (0.034709ms)
+✔ the plate appears once the new offers publish (0.020959ms)
+✔ main item price comes from data.price_clp (11.58475ms)
+✔ changing the backend fixture price changes the rendered price (0.244541ms)
+✔ each origin displays its own backend price (0.843792ms)
+✔ no production frontend file hardcodes 3990 or 4890 (10.74075ms)
+✔ available origins are grouped using backend tier data (0.813917ms)
+✔ backend order is preserved (0.36425ms)
+✔ unavailable origins are hidden (0.361125ms)
+✔ the default origin receives the localized marker (0.562125ms)
+✔ no radio or checkbox controls are rendered (0.361ms)
+✔ missing origin options retain the ordinary item layout (0.244625ms)
+✔ Spanish, English and Portuguese starting-price labels work (0.07ms)
+✔ long origin names do not break the mobile layout (0.168833ms)
+✔ the live backend payload renders the full origin list (0.651ms)
+✔ an origin-priced item suppresses its headline price (0.361834ms)
+✔ an ordinary item still shows its headline price (0.071666ms)
+✔ every available bean is listed with its own backend price (0.3235ms)
+✔ beans are grouped by backend tier, in backend order (0.076541ms)
+✔ an unavailable or unpriced bean drops out of the public list (0.075083ms)
+✔ an item without origin_options renders no origin lines (0.041ms)
+✔ routes join to live items in backend order (0.688917ms)
+✔ every route links to its item anchor, never a cart (0.102542ms)
+✔ backend status + label render verbatim (0.058875ms)
+✔ plain availability carries no label — only exceptions are shown (0.056792ms)
+✔ every route has a photo; a route whose item has none is dropped (0.123875ms)
+✔ a sold-out item stays a link but reads unavailable (0.07175ms)
+✔ a route whose item the schedule excluded is dropped (0.067667ms)
+✔ no field, empty field, or nothing resolvable → module hidden (0.063458ms)
+✔ never more than four routes (0.077959ms)
+ℹ tests 78
+ℹ suites 0
+ℹ pass 78
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 146.600875
+npm notice run deriva-webapp@0.1.0 test:stock
+npm notice run tsx --test tests/stock/*.test.ts
+✔ normalizes the exact stock snapshot while preserving unknown counts (1.080208ms)
+✔ tracked snapshots require a valid server clock while untracked legacy snapshots keep the fallback (0.309375ms)
+✔ extracts the item from the confirmed adjustment envelope (0.062333ms)
+✔ malformed history cannot become an empty successful panel (0.314375ms)
+✔ normalizes paged history cursors and rejects inconsistent pagination (0.200542ms)
+✔ adjustment payload keeps an explicit request id for safe retries (0.09925ms)
+✔ amounts accept digits only (0.4465ms)
+✔ set writes an absolute count, including zero, even when uncounted (0.338708ms)
+✔ add and subtract need a known count first (0.05175ms)
+✔ a count never goes below zero (0.055959ms)
+✔ a zero add/subtract is not a movement (0.04925ms)
+✔ subtract becomes a negative delta (0.046542ms)
+✔ filters combine kind, uncounted and accent-insensitive-case search (0.136667ms)
+✔ Carta filters and counts include explicitly linked raw counters only (0.088416ms)
+✔ zero warnings distinguish one linked variant from a canonical menu counter (0.072791ms)
+✔ next uncounted follows the visible order and wraps (0.096792ms)
+✔ the editor always opens in Fijar total, counted or not (0.046375ms)
+✔ counts use Chilean grouping (8.198333ms)
+✔ 409 revision conflicts expose the current row; request conflicts do not invent one (0.212375ms)
+✔ stock proxy requires the caller bearer and does not call the backend without it (2.19825ms)
+✔ stock proxy forwards only the fixed list path and preserves a 409 (0.830125ms)
+✔ adjustment proxy encodes the confirmed stock id and rejects path input (0.598042ms)
+✔ history proxy forwards only validated pagination parameters (0.519708ms)
+✔ shelf-life proxies forward only well-formed group and lot ids (3.764125ms)
+✔ omits ordinary zero counts and reports only unknown counts (0.893084ms)
+✔ uses Santiago time for AM, PM, and dates crossing local midnight (0.082125ms)
+✔ does not create a share message when the snapshot has no known quantities (0.061041ms)
+✔ stock share repeats expiry quantities and deadlines without counting detail rows as items (0.605125ms)
+✔ ordinary zero counts stay omitted and a depleted tracked item keeps its existing line only (0.071625ms)
+✔ omits ordinary zero counts and uses clear singular and plural units (0.084292ms)
+✔ does not share a snapshot containing only ordinary zero counts (0.056917ms)
+✔ shares only a zero with explicit same-day depletion evidence (0.060375ms)
+✔ places all depletion lines after positive counts while preserving each group order (0.071958ms)
+✔ finds a same-day depletion through repeated zeros but excludes null starts, old days, and restocks (0.320708ms)
+✔ bounds each scan to the snapshot revision and follows validated history pages (0.365542ms)
+✔ ignores post-read events and stops after the Santiago date boundary (0.064709ms)
+✔ uses the Santiago calendar date across winter and daylight-saving offsets (0.082792ms)
+✔ fails closed on malformed pagination and limits concurrent scans to four zero items (4.80325ms)
+✔ fails closed after the explicit ten-page history limit (1.887875ms)
+✔ builds the manual-recipient WhatsApp URL with the complete encoded message (0.053416ms)
+✔ snapshot keeps shelf_life, now and summary; untracked rows stay without it (0.89475ms)
+✔ snapshot rejects a malformed lot instead of guessing (0.122875ms)
+✔ history keeps lot snapshots for tracked adjustments (0.131625ms)
+✔ row status words the worst state first (0.196834ms)
+✔ expiry breakdown groups exact instants and orders deadlines without merging sub-millisecond differences (2.179125ms)
+✔ expiry details distinguish unknown age from a missing or invalid deadline (0.118417ms)
+✔ backend discard state never becomes a positive countdown when its recorded deadline is ahead (0.092959ms)
+✔ expiry bucket quantities use the stock unit abbreviation and Chilean grouping (0.084ms)
+✔ expiry detail floors remaining-time labels and marks the exact deadline expired (0.496083ms)
+✔ expiry dates use Santiago wall time across DST and show a year when it changes (0.163125ms)
+✔ missing or invalid snapshot time keeps tracked expiry unavailable (0.099125ms)
+✔ an increase previews one new lot dated now with the group's days (0.103ms)
+✔ a first count of a tracked item enters as one lot (0.038292ms)
+✔ a decrease consumes FIFO in backend order, unknown age last (0.061792ms)
+✔ retire preset subtracts exactly the expired units as merma (0.050208ms)
+✔ datetime-local values round-trip in café time across daylight saving (0.40825ms)
+ℹ tests 56
+ℹ suites 0
+ℹ pass 56
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 146.57675
+npm notice run deriva-webapp@0.1.0 test:kitchen-stock
+npm notice run tsx --tsconfig tsconfig.test.json --test tests/kitchen-stock/*.test.ts tests/kitchen-stock/*.test.tsx
+✔ normalization prevents accent/case/spacing duplicates without collapsing different ingredients (0.4175ms)
+✔ suggestions rank exact before singular/plural and typo matches (0.520625ms)
+✔ decimal amounts are parsed exactly and bounded; preview never rounds or goes negative (0.162958ms)
+✔ share contains all saved counts, explicit zeros, package details and honest read/count times (9.337416ms)
+✔ contract rejects malformed quantities and duplicate IDs instead of enabling writes (0.236958ms)
+✔ uncounted ingredients at revision zero remain usable and missing units are preserved (0.0735ms)
+✔ unresolved requests survive refresh, retain original ID and remain scoped to the same uid (0.705458ms)
+✔ malformed persisted requests cannot become a mutation (0.105208ms)
+✔ an auth rejection of a replay does not prove the original request failed (0.083041ms)
+✔ a replay-checked domain conflict with a valid current item resolves a never-committed request (0.068083ms)
+✔ kitchen proxy requires bearer and preserves no-store (2.33025ms)
+✔ kitchen adjustments forward exact caller body to independent endpoint and preserve conflicts (1.1155ms)
+✔ kitchen pages and API bypass service worker cache (0.08125ms)
+✔ combobox suggestions are options without nested interactive controls (3.561167ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 115.210875
+npm notice run deriva-webapp@0.1.0 test:salon-stock
+npm notice run tsx --tsconfig tsconfig.test.json --test tests/salon-stock/*.test.ts tests/salon-stock/*.test.tsx
+✔ withdrawal needs an explicitly selected item and exact server-owned taker in the chosen eligible location (0.806833ms)
+✔ duplicate suggestions are location-scoped; variants and locations never share balances (5.309458ms)
+✔ unknown and morning observations never acquire invented exact times (0.075583ms)
+✔ share uses the complete supplied saved snapshot, locations, zeros, package conditions and original precision (4.40925ms)
+✔ invalid contracts fail closed, including untrusted taker lists and broken history pagination (0.47775ms)
+✔ staff copy includes actual conditions and excludes reconciliation instructions (0.232292ms)
+✔ pending withdrawal survives same-user reload with exact person/location/item/amount/UUID and no kitchen leakage (0.731083ms)
+✔ invalid restored withdrawal never targets fridge or arbitrary text (0.135333ms)
+✔ uncertain authentication retries retain original operation; replay-checked current-item conflicts release for review (0.075083ms)
+✔ restored withdrawals reject a name outside the exact requested taker roster (0.056167ms)
+✔ salon list requires caller auth and no-store (2.385625ms)
+✔ global withdrawal proxy forwards exact immutable payload to salon only (0.874958ms)
+✔ withdrawal history rejects malformed cursors instead of broadening the query (0.220375ms)
+✔ salon routes bypass service worker caches (0.068167ms)
+✔ Registrar retiro is one global location action, absent for fridge and never repeated per row (5.773833ms)
+✔ withdrawal form offers exact server names, no fridge, positive explicitly selected item before confirm (1.338208ms)
+✔ storage/cleaning count editor cannot bypass attribution with a Restar control and requires correction reason (0.816541ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 148.097792
+npm notice run deriva-webapp@0.1.0 test:routing
+npm notice run tsx --test tests/routing/*.test.ts
+✔ development emulator CSP admits the configured loopback origin (0.554667ms)
+✔ the emulator CSP allowlist rejects public hosts and stays off in production (0.096792ms)
+✔ apex /menu-ejecutivo is served, not redirected (2.007041ms)
+✔ apex /menu-ejecutivo nested paths ride along (0.229167ms)
+✔ the /menu prefix alone never covered /menu-ejecutivo (0.221542ms)
+✔ apex /menu is unchanged (0.2075ms)
+✔ apex /menu nested detail routes are unchanged (0.188416ms)
+✔ apex root and other landing routes are unchanged (0.423291ms)
+✔ apex still bounces companion paths home (0.102792ms)
+✔ apex shared infra still passes (0.211333ms)
+✔ app subdomain bounces /menu-ejecutivo to the companion root (0.090708ms)
+✔ app subdomain sends the privacy page to the canonical landing host (0.128625ms)
+✔ app subdomain does not allow nested landing paths (0.082417ms)
+✔ app subdomain companion routes are unchanged (0.0895ms)
+✔ preview and local hosts serve /menu-ejecutivo without gating (0.169083ms)
+✔ preview /app prefix fallback is unchanged (0.066167ms)
+✔ /icon is shared infra on the apex and the companion host (0.083667ms)
+✔ a rejected member submission preserves the draft and does not navigate (0.591875ms)
+✔ a successful member submission clears the draft before navigating (0.071167ms)
+✔ stock API and stock pages stay network-only for every request method (0.332584ms)
+✔ menu reads are network-only so stock-driven availability cannot be stale (0.066958ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 115.761666
+npm notice run deriva-webapp@0.1.0 test:brand
+npm notice run tsx --test tests/brand/*.test.ts
+✔ season boundaries follow equinoxes and solstices (10.388875ms)
+✔ uses the Santiago day, not UTC (0.104708ms)
+✔ labels are localized and carry the year (0.195ms)
+✔ edition marks render the live season and Roman year (0.377417ms)
+✔ window is 2026-09-07 → 2026-09-19 (0.322916ms)
+✔ inside the window (9.531541ms)
+✔ outside the window (0.163791ms)
+✔ boundaries resolve in America/Santiago, not UTC (0.116166ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 97.181291
+npm notice run deriva-webapp@0.1.0 test:companion
+npm notice run tsx --tsconfig tsconfig.test.json --test tests/companion/*.test.ts tests/companion/*.test.tsx
+✔ author discovery reads only available items in cafes-autor and deduplicates ids (0.582667ms)
+✔ current promotions keep section context and deduplicate offer ids (0.093542ms)
+✔ daily selection is stable for a Santiago date and salted by content type (0.096667ms)
+✔ Santiago date follows the cafe calendar across UTC midnight (8.894125ms)
+✔ offer card renders backend variant price and service window without calculating a price (12.102208ms)
+✔ Today panels render the selected current offer and author item from the menu payload (1.786459ms)
+✔ Today empty states do not insert invented offers or author coffees (0.40475ms)
+✔ receipt errors explain duplicate, refunded, policy, and retryable verification failures (0.39ms)
+✔ review success envelope requires a nonempty persisted pending review ID (0.067ms)
+✔ review form SSR keeps validation errors and renders confirmation only for a valid success envelope (5.229417ms)
+✔ review rating options render localized accessible labels (2.047833ms)
+✔ rating keyboard commands map to standard next and wrapped options (0.069042ms)
+✔ receipt submission form accepts only the SumUp transaction code (0.634084ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 140.512792
+npm notice run deriva-webapp@0.1.0 test:uber-eats
+npm notice run tsx --tsconfig tsconfig.test.json --test tests/uber-eats/*.test.ts
+✔ OAuth callbacks and start requests never enter a service-worker cache (0.334083ms)
+✔ OAuth bootstrap rejects wrong hosts and missing bearer without upstream access (2.343417ms)
+✔ owner bootstrap forwards caller bearer only to fixed backend route and preserves state cookie (0.637959ms)
+✔ callback moves code/state/cookie to a POST body and never forwards browser bearer or query upstream (0.654625ms)
+✔ duplicate or denied callback values fail closed and provider error detail is sanitized (0.868875ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 104.898167
