@@ -1,0 +1,126 @@
+{
+  "status": "local_candidate_not_deployed",
+  "baseline_deployment": "dpl_FdoaJsJni7mMi988jf765UANbBXx",
+  "baseline_source_files": 430,
+  "baseline_source_manifest": "/tmp/deriva-kitchen-reconciled-staged-files.json",
+  "source_directory": "/tmp/deriva-salon-frontend-candidate-20261114-rcbj90ky",
+  "overlays": [
+    {
+      "path": "app/(admin)/stock-salon/page.tsx",
+      "sha256": "cf9acca6189e49db4a5933d0b21d6e5c4ea78ad141d2e25c762b5300d0678f31"
+    },
+    {
+      "path": "app/(admin)/stock-salon/salon.css",
+      "sha256": "dd18d6b61dabbca1bb46dce86555f683a2bfe55d5703313981d8efaf0fbe80db"
+    },
+    {
+      "path": "app/(admin)/stock-salon/_components/SalonEditors.tsx",
+      "sha256": "873371e2bd98d13674cfdb83fb2956aa185998a23d664b4566170aa8df2e24f2"
+    },
+    {
+      "path": "app/(admin)/stock-salon/_components/SalonApp.tsx",
+      "sha256": "3727c12e73b6ce2cea7db9449feec70c6e9b73507bbe7d6aad1aaf1d6b725ae8"
+    },
+    {
+      "path": "app/(admin)/stock-salon/_components/SalonWorkspace.tsx",
+      "sha256": "455ba2ea1e6d58ebea43f63d88c815a32efeab98428f0294097caee0ba3e966a"
+    },
+    {
+      "path": "app/api/salon-stock/route.ts",
+      "sha256": "4c7964ef186bf2908500c26bf125c9bf403c2028cfeab2c77795c11ace4bcdcf"
+    },
+    {
+      "path": "app/api/salon-stock/withdrawals/route.ts",
+      "sha256": "1245489ac82a402b9a1a873fc5700547d1a2481273f1a3845a9c50d7e8950b87"
+    },
+    {
+      "path": "app/api/salon-stock/items/route.ts",
+      "sha256": "438375ffba1b430dcc1c10dd25c9821132c3a18135a792a46b8f4ccf69423340"
+    },
+    {
+      "path": "app/api/salon-stock/items/[itemId]/adjustments/route.ts",
+      "sha256": "f6759649c9d68f8c269997f325923d25c70e9c162c939558c70780c16c68f18e"
+    },
+    {
+      "path": "app/api/salon-stock/items/[itemId]/history/route.ts",
+      "sha256": "a997b4f70ce6489ea56dcf04329030f6fc3ce45ea2ee3b1f58d5b5fe2dea1004"
+    },
+    {
+      "path": "src/salon-stock/model.ts",
+      "sha256": "b5e02a2a29053116b9078e65809702b2892c088ae012eb0a21ffb961f7cf151c"
+    },
+    {
+      "path": "src/salon-stock/pending.ts",
+      "sha256": "8dc033c5b7754cae64b78daa93a093d8e09790fd94d5207614c1f5346c0654f0"
+    },
+    {
+      "path": "src/salon-stock/types.ts",
+      "sha256": "2cd0a48438328a4842e7e0efc0a452cc5ece860110c9eb92fa452a657b3edc48"
+    },
+    {
+      "path": "src/salon-stock/client.ts",
+      "sha256": "e25d7a68cb36bd6ebff7e8c297e3017002c24cfbb67d28a2e27dab43d848ff0a"
+    },
+    {
+      "path": "src/server/salon-stock-proxy.ts",
+      "sha256": "b33c9a8d5c6a7c6fc6be78ba86ee89678297fe5d2f85af50a002ae54df86fbf4"
+    },
+    {
+      "path": "tests/salon-stock/model.test.ts",
+      "sha256": "7c41978f768ea5a3f1d7e5a7b48645ba1d27be5b881a3589127309473da2faab"
+    },
+    {
+      "path": "tests/salon-stock/pending.test.ts",
+      "sha256": "898834b0efd4670795b10080ef3913ce8c625b2e2618da6eb77d2228cabf3553"
+    },
+    {
+      "path": "tests/salon-stock/proxy.test.ts",
+      "sha256": "e2c56b0194044e6509656c4dfa174670b6d27c257159cd5ea29da1aac3e71116"
+    },
+    {
+      "path": "tests/salon-stock/view.test.tsx",
+      "sha256": "78f82306db14cb927f64f307711d6b94fd224a6b8c7e1a54853fca4e1031db13"
+    },
+    {
+      "path": "app/(admin)/admin-console/page.tsx",
+      "sha256": "0a55432a9d3e001701969195b64645bf1d54e6b6d649090574d74d59215ba97c"
+    },
+    {
+      "path": "src/sw/routing.ts",
+      "sha256": "f0ad6ce7973496cb141bc0d342eed99d1978bf80325d8b6df5ed80ea90eeb553"
+    },
+    {
+      "path": "package.json",
+      "sha256": "94b87c6767f5ebe3c24c7816f67891f1f7ddfb774f7dedf1ca73d67f40a0ebf1"
+    }
+  ],
+  "excluded_unrelated_local_changes": [
+    "app/(landing)/privacidad/page.tsx",
+    "app/api/uber-eats",
+    "src/server/uber-eats-oauth-proxy.ts",
+    ".env.example"
+  ],
+  "configuration": "No .env or credentials copied; no cloud calls. Public Firebase variables may be supplied by primary for authenticated candidate browser smoke.",
+  "checks": {
+    "salon_tests": {
+      "passed": 17,
+      "failed": 0
+    },
+    "production_build": "passed after installing candidate-local locked dependencies",
+    "typecheck": "passed",
+    "baseline_source_preserved": true,
+    "existing_file_changes": [
+      "app/(admin)/admin-console/page.tsx",
+      "package.json",
+      "src/sw/routing.ts"
+    ],
+    "source_overlay_files": 22,
+    "new_source_files": 19,
+    "runtime_environment": "No env/credentials copied. Candidate is source/build review only; do not deploy this local prebuilt output without intended production env."
+  },
+  "generated_not_source": [
+    "public/sw.js",
+    ".next/",
+    "node_modules/"
+  ]
+}

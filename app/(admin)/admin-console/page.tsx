@@ -11,6 +11,12 @@ export default function AdminHomePage() {
       <p style={{ marginTop: 16, fontFamily: "var(--font-mono), monospace" }}>
         <Link href="/stock">Abrir Stock de barra →</Link>
       </p>
+      <p style={{ marginTop: 16, fontFamily: "var(--font-mono), monospace" }}>
+        <Link href="/stock-cocina">Abrir Stock de cocina →</Link>
+      </p>
+      <p style={{ marginTop: 16, fontFamily: "var(--font-mono), monospace" }}>
+        <Link href="/stock-salon">Abrir Stock Salón →</Link>
+      </p>
     </main>
   );
 }

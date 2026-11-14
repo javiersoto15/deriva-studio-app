@@ -1,0 +1,38 @@
+{
+  "deploymentId": "dpl_FdoaJsJni7mMi988jf765UANbBXx",
+  "deploymentUrl": "https://deriva-studio-f5vme68i0-javiersoto15s-projects.vercel.app",
+  "projectId": "prj_PHkZ3OMuP64BW0PCOxyqfkKAQmpP",
+  "teamId": "team_xkCzA4cr1GCRtFWkqn39uHFI",
+  "readyState": "READY",
+  "productionTarget": true,
+  "rebuiltDuringPromotion": false,
+  "baselineDeploymentId": "dpl_7uSU4tgMHy534BokiTkjuYFPWr1b",
+  "priorStagedDeploymentNotPromoted": "dpl_CnEJ6JyWkq9fSyiwdYXox77Yj4G1",
+  "aliasBaselineCheckedImmediatelyBeforePromotion": true,
+  "verifiedAliases": [
+    "admin.derivastudio.cl",
+    "app.derivastudio.cl",
+    "www.derivastudio.cl",
+    "derivastudio.cl",
+    "deriva-studio.vercel.app",
+    "deriva-studio-javiersoto15s-projects.vercel.app"
+  ],
+  "baselineSourceFiles": 412,
+  "deployedSourceFiles": 430,
+  "kitchenOverlayFiles": 22,
+  "preservedConcurrentSEOFileSha1": "b96b233e5770a89cf26dec6bc2c15e4ee93ada49",
+  "stage": "/tmp/deriva-kitchen-web-release-reconciled-20261114-fc8d_ve_",
+  "stageManifest": "/tmp/deriva-kitchen-web-release-reconciled-20261114-fc8d_ve_-manifest.json",
+  "sourceVerification": "/tmp/deriva-kitchen-reconciled-staged-files.json",
+  "productionProbes": "/tmp/deriva-kitchen-production-probes.json",
+  "productionAPIAuthGuardCacheControl": "no-store, max-age=0",
+  "runtimeErrorScan": {
+    "deployment": "dpl_FdoaJsJni7mMi988jf765UANbBXx",
+    "window": "5m",
+    "levels": [
+      "error",
+      "fatal"
+    ],
+    "matchingGroups": []
+  }
+}

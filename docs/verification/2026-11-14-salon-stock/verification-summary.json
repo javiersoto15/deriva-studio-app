@@ -1,0 +1,20 @@
+{
+  "salon_frontend_tests": 17,
+  "kitchen_regression_tests": 14,
+  "barra_regression_tests": 56,
+  "routing_tests": 21,
+  "frontend_typecheck": "passed",
+  "frontend_main_build": "passed",
+  "frontend_isolated_candidate_build": "passed",
+  "backend_main_and_candidate_go_tests": "passed",
+  "backend_main_and_candidate_go_vet": "passed",
+  "targeted_postgres_and_race_tests": "passed",
+  "salon_denies_other_privileged_routes": 105,
+  "browser_actual_firebase_next_go_postgres": "passed in local disposable database",
+  "production_build_browser": "passed",
+  "commit_loss_reload_reauth_same_request": "passed",
+  "keyboard_focus_and_corrections": "passed",
+  "source_rows_exact": 111,
+  "paper_page": "https://app.paper.design/file/01KPY2FP2KH33ASDC7SKRA10K7/p-M-0",
+  "deployment": "not performed; actual-render approval required"
+}

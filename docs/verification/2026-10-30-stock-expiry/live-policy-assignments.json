@@ -1,0 +1,309 @@
+{
+  "trufas_assignment": {
+    "group": {
+      "id": "group_53f0861c-af57-4181-8efd-117a10889831",
+      "name": "Tortas 3/4",
+      "fresh_days": 3,
+      "discard_days": 4,
+      "revision": 2,
+      "menu_item_ids": [
+        "mediterranea",
+        "tres-leches",
+        "trufas"
+      ]
+    },
+    "row": {
+      "id": "menu:trufas",
+      "kind": "menu_item",
+      "menu_item_id": "trufas",
+      "name": "Trufas",
+      "unit": "unit",
+      "quantity": 10,
+      "revision": 3,
+      "menu_available": true,
+      "updated_at": "2026-10-30T10:29:46.102812Z",
+      "shelf_life": {
+        "fresh_days": 3,
+        "discard_days": 4,
+        "worst_state": "unknown",
+        "last_sale_day": false,
+        "counts": {
+          "discard": 0,
+          "sell_first": 0,
+          "fresh": 0,
+          "unknown": 10
+        },
+        "lots": [
+          {
+            "id": "lot_7a11bd1e-e62e-45cc-a5a7-2e3d5fcb3ca3",
+            "entered_at": null,
+            "quantity_left": 10,
+            "fresh_until": null,
+            "discard_at": null,
+            "state": "unknown"
+          }
+        ]
+      }
+    },
+    "server_now": "2026-10-30T23:21:54.362652582Z"
+  },
+  "pies_carrot_palmeras_assignment": {
+    "groups": [
+      {
+        "id": "group_366e61f2-36d9-457b-9724-b676cdba1e85",
+        "name": "Pies 5/6",
+        "fresh_days": 5,
+        "discard_days": 6,
+        "revision": 1,
+        "menu_item_ids": [
+          "oreo-cheesecake",
+          "pie-frambuesa",
+          "pie-limon",
+          "pollo-pesto"
+        ]
+      },
+      {
+        "id": "group_53f0861c-af57-4181-8efd-117a10889831",
+        "name": "Tortas 3/4",
+        "fresh_days": 3,
+        "discard_days": 4,
+        "revision": 3,
+        "menu_item_ids": [
+          "mediterranea",
+          "tiradito-salmon",
+          "tres-leches",
+          "trufas"
+        ]
+      },
+      {
+        "id": "group_947f8eaf-6bd1-4c33-b532-97be211fcc8c",
+        "name": "Mini tortas de palmeras 4/5",
+        "fresh_days": 4,
+        "discard_days": 5,
+        "revision": 1,
+        "menu_item_ids": [
+          "mini-torta-de-palmeras"
+        ]
+      }
+    ],
+    "rows": [
+      {
+        "id": "menu:oreo-cheesecake",
+        "kind": "menu_item",
+        "menu_item_id": "oreo-cheesecake",
+        "name": "Pie de naranja",
+        "unit": "unit",
+        "quantity": 0,
+        "revision": 1,
+        "menu_available": true,
+        "updated_at": "2026-10-03T20:38:00.495206Z",
+        "shelf_life": {
+          "fresh_days": 5,
+          "discard_days": 6,
+          "worst_state": "fresh",
+          "last_sale_day": false,
+          "counts": {
+            "discard": 0,
+            "sell_first": 0,
+            "fresh": 0,
+            "unknown": 0
+          },
+          "lots": []
+        }
+      },
+      {
+        "id": "menu:pie-frambuesa",
+        "kind": "menu_item",
+        "menu_item_id": "pie-frambuesa",
+        "name": "Pie de Frambuesa",
+        "unit": "unit",
+        "quantity": 10,
+        "revision": 28,
+        "menu_available": true,
+        "updated_at": "2026-10-30T10:28:25.47406Z",
+        "shelf_life": {
+          "fresh_days": 5,
+          "discard_days": 6,
+          "worst_state": "unknown",
+          "last_sale_day": false,
+          "counts": {
+            "discard": 0,
+            "sell_first": 0,
+            "fresh": 0,
+            "unknown": 10
+          },
+          "lots": [
+            {
+              "id": "lot_92cb75cd-7f16-4331-850e-d0f0c94c1943",
+              "entered_at": null,
+              "quantity_left": 10,
+              "fresh_until": null,
+              "discard_at": null,
+              "state": "unknown"
+            }
+          ]
+        }
+      },
+      {
+        "id": "menu:pie-limon",
+        "kind": "menu_item",
+        "menu_item_id": "pie-limon",
+        "name": "Pie de Limón",
+        "unit": "unit",
+        "quantity": 9,
+        "revision": 28,
+        "menu_available": true,
+        "updated_at": "2026-10-30T00:30:10.159228Z",
+        "shelf_life": {
+          "fresh_days": 5,
+          "discard_days": 6,
+          "worst_state": "unknown",
+          "last_sale_day": false,
+          "counts": {
+            "discard": 0,
+            "sell_first": 0,
+            "fresh": 0,
+            "unknown": 9
+          },
+          "lots": [
+            {
+              "id": "lot_1c49041c-ef17-4dad-867c-4c3598dfe939",
+              "entered_at": null,
+              "quantity_left": 9,
+              "fresh_until": null,
+              "discard_at": null,
+              "state": "unknown"
+            }
+          ]
+        }
+      },
+      {
+        "id": "menu:pollo-pesto",
+        "kind": "menu_item",
+        "menu_item_id": "pollo-pesto",
+        "name": "Pie de Maracuyá",
+        "unit": "unit",
+        "quantity": 0,
+        "revision": 13,
+        "menu_available": true,
+        "updated_at": "2026-10-22T00:12:56.377136Z",
+        "shelf_life": {
+          "fresh_days": 5,
+          "discard_days": 6,
+          "worst_state": "fresh",
+          "last_sale_day": false,
+          "counts": {
+            "discard": 0,
+            "sell_first": 0,
+            "fresh": 0,
+            "unknown": 0
+          },
+          "lots": []
+        }
+      },
+      {
+        "id": "menu:tiradito-salmon",
+        "kind": "menu_item",
+        "menu_item_id": "tiradito-salmon",
+        "name": "Carrot Cake",
+        "unit": "unit",
+        "quantity": 5,
+        "revision": 7,
+        "menu_available": true,
+        "updated_at": "2026-10-30T10:29:17.286701Z",
+        "shelf_life": {
+          "fresh_days": 3,
+          "discard_days": 4,
+          "worst_state": "unknown",
+          "last_sale_day": false,
+          "counts": {
+            "discard": 0,
+            "sell_first": 0,
+            "fresh": 0,
+            "unknown": 5
+          },
+          "lots": [
+            {
+              "id": "lot_8d343c23-42d3-4e1d-8b2f-e3ad0274e195",
+              "entered_at": null,
+              "quantity_left": 5,
+              "fresh_until": null,
+              "discard_at": null,
+              "state": "unknown"
+            }
+          ]
+        }
+      },
+      {
+        "id": "raw:raw_stock_1861ccf3385764e4",
+        "kind": "raw_item",
+        "menu_item_id": "mini-torta-de-palmeras",
+        "name": "Mini Torta de Palmeras — Lúcuma",
+        "unit": "unit",
+        "quantity": 8,
+        "revision": 22,
+        "menu_available": true,
+        "updated_at": "2026-10-30T10:30:04.682498Z",
+        "shelf_life": {
+          "fresh_days": 4,
+          "discard_days": 5,
+          "worst_state": "unknown",
+          "last_sale_day": false,
+          "counts": {
+            "discard": 0,
+            "sell_first": 0,
+            "fresh": 0,
+            "unknown": 8
+          },
+          "lots": [
+            {
+              "id": "lot_f582fe4a-0178-40d8-b9c0-6c45b8fd36b3",
+              "entered_at": null,
+              "quantity_left": 8,
+              "fresh_until": null,
+              "discard_at": null,
+              "state": "unknown"
+            }
+          ]
+        }
+      },
+      {
+        "id": "raw:raw_stock_6771087f8699e28c",
+        "kind": "raw_item",
+        "menu_item_id": "mini-torta-de-palmeras",
+        "name": "Mini Torta de Palmeras — Frambuesa",
+        "unit": "unit",
+        "quantity": 4,
+        "revision": 21,
+        "menu_available": true,
+        "updated_at": "2026-10-30T10:30:24.430703Z",
+        "shelf_life": {
+          "fresh_days": 4,
+          "discard_days": 5,
+          "worst_state": "unknown",
+          "last_sale_day": false,
+          "counts": {
+            "discard": 0,
+            "sell_first": 0,
+            "fresh": 0,
+            "unknown": 4
+          },
+          "lots": [
+            {
+              "id": "lot_e2ba28f6-f8a5-4d3a-ad35-45acc8903762",
+              "entered_at": null,
+              "quantity_left": 4,
+              "fresh_until": null,
+              "discard_at": null,
+              "state": "unknown"
+            }
+          ]
+        }
+      }
+    ],
+    "server_now": "2026-10-30T23:27:41.437882224Z",
+    "all_quantity_revision_preserved": true,
+    "other_groups_preserved": true
+  },
+  "arrival_dates_pending": true
+}

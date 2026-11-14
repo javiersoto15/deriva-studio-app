@@ -1,0 +1,35 @@
+{
+  "verified_at": "2026-11-14T20:56:16.220180+00:00",
+  "service": "deriva-companion-api",
+  "region": "southamerica-west1",
+  "project": "deriva-studio-production",
+  "build_id": "f6c95e96-e679-4acd-bb7f-161efa6eb77b",
+  "build_status": "SUCCESS",
+  "source": {
+    "storageSource": {
+      "bucket": "deriva-studio-production_cloudbuild",
+      "generation": "1794689064353497",
+      "object": "source/1794689062.08971-07dcfc5f3799408fb909918aefb44ab6.tgz"
+    }
+  },
+  "image": {
+    "artifactRegistryPackage": "projects/deriva-studio-production/locations/southamerica-west1/repositories/deriva-companion/packages/companion-api/versions/sha256:fc19579520ff3a99d4418807f32ff3e810b4bce0720efb159ecf86a2dec18ed8",
+    "digest": "sha256:fc19579520ff3a99d4418807f32ff3e810b4bce0720efb159ecf86a2dec18ed8",
+    "name": "southamerica-west1-docker.pkg.dev/deriva-studio-production/deriva-companion/companion-api:kitchen-stock-20261114",
+    "pushTiming": {
+      "endTime": "2026-11-14T20:48:19.364225554Z",
+      "startTime": "2026-11-14T20:48:14.341058964Z"
+    }
+  },
+  "revision": "deriva-companion-api-kitchen-20261114",
+  "traffic_percent": 100,
+  "rollback_revision": "deriva-companion-api-00070-naz",
+  "existing_review_tags_preserved": true,
+  "runtime_settings_equal_except_image": true,
+  "runtime_settings_sha256": "035cb157d62db9d0f946adff437209a6128c76b9454785c98db2720c26021325",
+  "migration": "042_kitchen_stock",
+  "new_migrations_applied": 1,
+  "openapi_sha256": "23a81c21ab55d6818b560bd4901455ef6a7a2c3054c30bdae6fd1848d494abea",
+  "initial_rows": 73,
+  "immediate_error_entries": 0
+}

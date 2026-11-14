@@ -1112,6 +1112,13 @@ function TopBar({ onSignOut }: { onSignOut: () => void }) {
         <span className="stock-bar__diamond" aria-hidden="true" />
         <span>Barra · Stock</span>
       </div>
+      <a
+        href="/stock-cocina"
+        className="stock-text-button"
+        style={{ marginLeft: "auto", display: "inline-flex", alignItems: "center", fontSize: 12 }}
+      >
+        Cocina
+      </a>
       <button type="button" className="stock-text-button" onClick={onSignOut}>Salir</button>
     </header>
   );

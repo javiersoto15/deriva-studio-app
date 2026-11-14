@@ -1,0 +1,72 @@
+[
+  {
+    "name": "Sal\u00f3n \u00b7 Retiro \u00b7 Mobile390 \u00b7 actual component",
+    "id": "105C-0",
+    "path": "/Users/javiersoto/Documents/Project/DerivaStudio/10_webapp/docs/verification/2026-11-14-salon-stock/frontend-fixture/modal-390.png",
+    "width": 390,
+    "height": 844
+  },
+  {
+    "name": "Sal\u00f3n \u00b7 Retiro \u00b7 Desktop1440 \u00b7 actual component",
+    "id": "105F-0",
+    "path": "/Users/javiersoto/Documents/Project/DerivaStudio/10_webapp/docs/verification/2026-11-14-salon-stock/frontend-fixture/modal-1440.png",
+    "width": 1440,
+    "height": 900
+  },
+  {
+    "id": "105I-0",
+    "name": "Sal\u00f3n \u00b7 Bodega \u00b7 Mobile390 \u00b7 actual browser",
+    "width": 390,
+    "height": 844,
+    "path": "/Users/javiersoto/Documents/Project/DerivaStudio/10_webapp/docs/verification/2026-11-14-salon-stock/production-390-storage.png"
+  },
+  {
+    "id": "105L-0",
+    "name": "Sal\u00f3n \u00b7 Bodega \u00b7 Desktop1440 \u00b7 actual browser",
+    "width": 1440,
+    "height": 900,
+    "path": "/Users/javiersoto/Documents/Project/DerivaStudio/10_webapp/docs/verification/2026-11-14-salon-stock/production-1440-storage.png"
+  },
+  {
+    "id": "105O-0",
+    "name": "Sal\u00f3n \u00b7 Refrigerador \u00b7 Mobile390 \u00b7 actual browser",
+    "width": 390,
+    "height": 844,
+    "path": "/Users/javiersoto/Documents/Project/DerivaStudio/10_webapp/docs/verification/2026-11-14-salon-stock/production-390-fridge.png"
+  },
+  {
+    "id": "105R-0",
+    "name": "Sal\u00f3n \u00b7 Limpieza \u00b7 Mobile390 \u00b7 actual browser",
+    "width": 390,
+    "height": 844,
+    "path": "/Users/javiersoto/Documents/Project/DerivaStudio/10_webapp/docs/verification/2026-11-14-salon-stock/production-390-cleaning.png"
+  },
+  {
+    "id": "1060-0",
+    "name": "Sal\u00f3n \u00b7 Compartir \u00b7 actual browser",
+    "width": 390,
+    "height": 844,
+    "path": "/Users/javiersoto/Documents/Project/DerivaStudio/10_webapp/docs/verification/2026-11-14-salon-stock/production-390-share.png"
+  },
+  {
+    "id": "1063-0",
+    "name": "Sal\u00f3n \u00b7 Retiros e historial \u00b7 actual browser",
+    "width": 390,
+    "height": 844,
+    "path": "/Users/javiersoto/Documents/Project/DerivaStudio/10_webapp/docs/verification/2026-11-14-salon-stock/production-390-withdrawal-history.png"
+  },
+  {
+    "id": "1066-0",
+    "name": "Sal\u00f3n \u00b7 Guardado incierto \u00b7 actual browser",
+    "width": 390,
+    "height": 844,
+    "path": "/Users/javiersoto/Documents/Project/DerivaStudio/10_webapp/docs/verification/2026-11-14-salon-stock/production-390-uncertain-save-review.png"
+  },
+  {
+    "id": "1069-0",
+    "name": "Sal\u00f3n \u00b7 Correcci\u00f3n con motivo \u00b7 actual browser",
+    "width": 390,
+    "height": 844,
+    "path": "/Users/javiersoto/Documents/Project/DerivaStudio/10_webapp/docs/verification/2026-11-14-salon-stock/production-390-count-correction-review.png"
+  }
+]

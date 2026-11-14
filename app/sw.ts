@@ -24,7 +24,7 @@ import {
   Serwist,
   StaleWhileRevalidate
 } from "serwist";
-import { isFreshMenuRequest, isStockNetworkOnlyRequest } from "../src/sw/routing";
+import { isFreshMenuRequest, isStockNetworkOnlyRequest, isUberEatsOAuthNetworkOnlyRequest } from "../src/sw/routing";
 
 declare global {
   interface WorkerGlobalScope extends SerwistGlobalConfig {
@@ -50,6 +50,11 @@ const runtimeCaching: RuntimeCaching[] = [
   {
     matcher: ({ url, sameOrigin, request }) =>
       sameOrigin && isStockNetworkOnlyRequest(url.pathname, request.method, request.destination),
+    handler: new NetworkOnly()
+  },
+  // OAuth callbacks carry one-time codes in their navigation URL. Never cache them.
+  {
+    matcher: ({ url, sameOrigin }) => sameOrigin && isUberEatsOAuthNetworkOnlyRequest(url.pathname),
     handler: new NetworkOnly()
   },
   // Next.js static chunks — safe forever (content-hashed filenames).

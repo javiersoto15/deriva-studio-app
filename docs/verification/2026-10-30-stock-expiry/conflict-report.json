@@ -1,0 +1,12 @@
+{
+  "pass": true,
+  "scenario": "409 revision_conflict.current followed by coherent full snapshot",
+  "snapshotReads": 2,
+  "locallyInterceptedRejectedPosts": 1,
+  "networkMutations": 0,
+  "externalRequests": 0,
+  "errors": [],
+  "notice": "El conteo cambió de 8 unid. a 7 unid. mientras editabas. No se guardó nada tuyo.",
+  "newServerNow": "2026-10-30T23:00:00Z",
+  "expiryDetail": "2 unid. · queda 1 h"
+}

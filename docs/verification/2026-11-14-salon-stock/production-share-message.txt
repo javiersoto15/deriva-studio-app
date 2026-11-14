@@ -1,0 +1,152 @@
+Stock Salón
+Consultado: 14/11/2026, 19:17
+Saldos guardados; conteos físicos indicados por separado.
+Cantidades sin unidad: base del conteo original.
+
+REFRIGERADOR
+Conteo físico: Fecha de conteo no informada
+
+AGUAS
+Agua con gas benedictino: 18
+Agua con gas porvenir: 5
+Agua sin gas benedictino: 6
+Agua sin gas porvenir: 6
+
+AGUAS SABORIZADAS
+Agua saborizada (Limonada jengibre): 3
+Agua saborizada (Mango Maracuyá): 3
+
+CERVEZAS
+Austral lager: 3
+Calafate: 2
+Cerveza Session Ipa Cannabis: 1
+Corona: 2
+Estrella Galicia: 3
+Heiniken 0: 2
+Kunstmann lager 0: 2
+Kunstmann torobayo: 0
+Leyendas Pincoya happy lager: 2
+Leyendas de origen (amber lager) trauco: 2
+Michelob ultra: 6
+Stella: 4
+
+BEBIDAS
+Bilz: 9
+Coca-cola ligth: 5
+Coca-cola normal: 9
+Coca-cola zero: 6
+Crush orange: 5
+Fanta Zero: 8
+Fanta normal: 3
+Kem xtreme: 5
+Limón soda: 3
+Pap: 5
+Pepsi normal: 3
+Pepsi zero: 2
+Schweppes Ginger original: 6
+Schweppes ginger Ale sin azúcar: 3
+Sprite zero: 8
+
+JUGOS
+Jugo sabor durazno: 11
+Jugo sabor naranja: 7
+Jugo sabor piña: 12
+Papaya watts seleccion: 8
+Piña guayaba watts seleccion: 6
+
+ENERGÉTICAS
+Red bull arandano: 1
+Red bull yellow: 13
+
+BODEGA
+Conteo físico: 14/11/2026 · mañana (sin hora exacta)
+
+BEBIDAS
+Agua con gas porvenir: 28
+Agua gasificada benedictino: 12
+Agua sin gas benedictino: 47
+Agua sin gas porvenir: 49
+Bilz: 18
+Coca-cola ligth: 0
+Coca-cola normal: 17
+Coca-cola zero: 5
+Crush orange: 30
+Fanta pero: 18
+  Nota: Nombre «Fanta pero» conservado según el inventario; pendiente de aclaración.
+Kem xtreme: 36
+Limón soda: 24
+Pap: 36
+Pepsi normal: 48
+Pepsi0: 24
+Red Bull Arándano: 19
+Red Bull original: 17
+Red Bull tropical: 11
+Red Bull zero: 24
+Schweppes Ginger original: 36
+Schweppes agua tónica sin azúcar*: 34
+  Nota: El asterisco del original no tiene un significado confirmado.
+Schweppes ginger Ale sin azúcar: 24
+Sprite zero*: 18
+  Nota: El asterisco del original no tiene un significado confirmado.
+
+CERVEZAS
+Austral calafate: 1
+Austral lager: 4
+Cerveza estrella Galicia: 23
+Cerveza pincoya: 3
+Cerveza trauco: 4
+Corona: 12
+Heineken sin alcohol: 6
+Kunstmann lager sin alcohol: 3
+Micheloub: 12
+Stella: 9
+Torobayo: 15
+
+ALCOHOLES
+Dry gin: 1
+Espumante amaranta brut: 5
+Pisco alto del Carmen: 8
+Pisco añejado en roble35g: 1
+  Nota: Especificación «35g» o «40g» conservada literalmente; significado pendiente de aclaración.
+Pisco añejado40g: 1
+  Nota: Especificación «35g» o «40g» conservada literalmente; significado pendiente de aclaración.
+Ramazzoti: 4
+
+JUGOS ENVASADOS
+Jugo durazno: 25
+Jugo naranja: 36
+Jugo piña: 18
+
+LIMPIEZA
+Conteo físico: Fecha de conteo no informada
+
+LIMPIEZA
+Alcohol 5 L: 1 unidad (5 L; abierta; queda poquísimo)
+  Nota: Envase abierto; queda poquísimo. La capacidad de 5 L no indica el volumen restante.
+Ambientador: 2
+Bolsa basura pequeña: 22
+Bolsa de basura grande: 30 unidades
+Cloro 5 L: 7 unidades (5 L)
+Crema multiuso: 4
+Eliminador de sarro 1 L: 6 unidades (1 L)
+Esponja metálica: 9
+Esponjas: 15
+Guantes multiuso talla L: 4
+Guantes multiuso talla M: 0
+Guantes nitrilo talla L: 0 cajas
+Guantes nitrilo talla M: 4
+Guantes nitrilo talla S: 2 cajas
+Lavalozas 5 L: 7 unidades (5 L)
+Limpia pisos 5 L: 8 unidad (5 L)
+Limpia vidrios 5 L: 10,5 (5 L; unidad del conteo 10 y medio no indicada)
+Pack cofias: 2
+Pack gorro clip: 1 pack (100 unidades por pack)
+Papel higiénico: 21
+Paños Esponja: 5
+Paños microfibra: 4
+Paños multiuso amarillos: 16
+Servilletas de papel: 25
+Toalla de papel doblada: 0
+Toalla papel jumbo: 4
+Trapero húmedo: 16
+Traperos: 32

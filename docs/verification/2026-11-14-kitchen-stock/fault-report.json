@@ -1,0 +1,13 @@
+{
+  "ui_create_decimal": true,
+  "committed_response_lost": true,
+  "pending_survives_reload": true,
+  "request_id_preserved": true,
+  "navigation_locked": true,
+  "same_id_retry_exactly_once": true,
+  "concurrent_latest_count_reconciled": "1.875",
+  "history": true,
+  "uncounted_revision_zero_supported": true,
+  "null_unit_preserved": true,
+  "first_zero_count": true
+}

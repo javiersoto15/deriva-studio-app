@@ -1,0 +1,47 @@
+[
+  {
+    "width": 320,
+    "height": 844,
+    "confirmBottom": 676.28125,
+    "confirmDisabled": false,
+    "confirmVisible": true,
+    "dialogHeight": 683.28125,
+    "overflow": false
+  },
+  {
+    "width": 375,
+    "height": 844,
+    "confirmBottom": 676.28125,
+    "confirmDisabled": false,
+    "confirmVisible": true,
+    "dialogHeight": 683.28125,
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "confirmBottom": 676.28125,
+    "confirmDisabled": false,
+    "confirmVisible": true,
+    "dialogHeight": 683.28125,
+    "overflow": false
+  },
+  {
+    "width": 430,
+    "height": 844,
+    "confirmBottom": 676.28125,
+    "confirmDisabled": false,
+    "confirmVisible": true,
+    "dialogHeight": 683.28125,
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "height": 900,
+    "confirmBottom": 774.46875,
+    "confirmDisabled": false,
+    "confirmVisible": true,
+    "dialogHeight": 698.9375,
+    "overflow": false
+  }
+]

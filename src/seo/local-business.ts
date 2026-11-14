@@ -20,7 +20,7 @@ export const MENU_URL = `${SITE_URL}/menu`;
 export const INSTAGRAM_URL =
   "https://www.instagram.com/deriva.coffee.studio/";
 export const MAPS_URL =
-  "https://www.google.com/maps/search/?api=1&query=Magnere+1570+Providencia+Santiago";
+  "https://www.google.com/maps?cid=4605996583207399407";
 export const LOCAL_SEO_DESCRIPTION =
   "Deriva Studio es un café de especialidad en Providencia, Santiago, con desayunos, brunch, almuerzos y Menú Ejecutivo de lunes a viernes, además de espresso, filtrados y cafés de autor.";
 export const LOCAL_SEARCH_INTENTS = [

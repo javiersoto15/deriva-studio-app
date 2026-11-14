@@ -1,0 +1,50 @@
+[
+  {
+    "url": "https://admin.derivastudio.cl/stock-cocina",
+    "status": 200,
+    "final_url": "https://admin.derivastudio.cl/stock-cocina",
+    "bytes": 19771
+  },
+  {
+    "url": "https://admin.derivastudio.cl/stock",
+    "status": 200,
+    "final_url": "https://admin.derivastudio.cl/stock",
+    "bytes": 19435
+  },
+  {
+    "url": "https://admin.derivastudio.cl/api/kitchen-stock",
+    "status": 401,
+    "final_url": "https://admin.derivastudio.cl/api/kitchen-stock",
+    "bytes": 83
+  },
+  {
+    "url": "https://derivastudio.cl/",
+    "status": 200,
+    "final_url": "https://derivastudio.cl/",
+    "bytes": 70976
+  },
+  {
+    "url": "https://www.derivastudio.cl/",
+    "status": 200,
+    "final_url": "https://www.derivastudio.cl/",
+    "bytes": 70976
+  },
+  {
+    "url": "https://app.derivastudio.cl/inicio",
+    "status": 200,
+    "final_url": "https://app.derivastudio.cl/inicio",
+    "bytes": 40932
+  },
+  {
+    "url": "https://deriva-studio.vercel.app/stock-cocina",
+    "status": 200,
+    "final_url": "https://deriva-studio.vercel.app/stock-cocina",
+    "bytes": 19771
+  },
+  {
+    "url": "https://deriva-studio-javiersoto15s-projects.vercel.app/stock-cocina",
+    "status": 200,
+    "final_url": "https://deriva-studio-javiersoto15s-projects.vercel.app/stock-cocina",
+    "bytes": 19771
+  }
+]

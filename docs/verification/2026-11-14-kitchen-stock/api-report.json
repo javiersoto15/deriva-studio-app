@@ -1,0 +1,12 @@
+{
+  "initial_items": 73,
+  "explicit_zeros": 5,
+  "exact_source_values": true,
+  "normalized_duplicate": true,
+  "decimal_adjustment": "1.5 + 0.125 = 1.625",
+  "identical_replay": true,
+  "stale_revision": true,
+  "history_entries": 2,
+  "barra_unchanged": true,
+  "menu_unchanged": true
+}

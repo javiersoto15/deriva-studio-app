@@ -1,0 +1,867 @@
+{
+  "fixture": "LOCAL ONLY; actual StockApp + stock CSS; Firebase auth stubbed; stock GETs mocked; all non-loopback browser requests blocked",
+  "viewports": [
+    {
+      "width": 320,
+      "label": "list",
+      "client": 320,
+      "scroll": 320,
+      "body": 320,
+      "rows": [
+        {
+          "name": "Brownie Chips",
+          "width": 288,
+          "scroll": 288
+        },
+        {
+          "name": "Lúcuma Manjar",
+          "width": 288,
+          "scroll": 288
+        },
+        {
+          "name": "Muffin Chips",
+          "width": 288,
+          "scroll": 288
+        },
+        {
+          "name": "Glazed Lemon Cake",
+          "width": 288,
+          "scroll": 288
+        },
+        {
+          "name": "Selección de Galletas",
+          "width": 288,
+          "scroll": 288
+        },
+        {
+          "name": "Leche entera",
+          "width": 288,
+          "scroll": 288
+        },
+        {
+          "name": "Té en hebras",
+          "width": 288,
+          "scroll": 288
+        }
+      ],
+      "counts": [
+        {
+          "width": 104,
+          "height": 48
+        },
+        {
+          "width": 104,
+          "height": 48
+        },
+        {
+          "width": 104,
+          "height": 48
+        },
+        {
+          "width": 104,
+          "height": 48
+        },
+        {
+          "width": 104,
+          "height": 48
+        },
+        {
+          "width": 104,
+          "height": 48
+        },
+        {
+          "width": 104,
+          "height": 48
+        }
+      ],
+      "preview": []
+    },
+    {
+      "width": 320,
+      "label": "share",
+      "client": 320,
+      "scroll": 320,
+      "body": 320,
+      "rows": [
+        {
+          "name": "Brownie Chips",
+          "width": 288,
+          "scroll": 288
+        },
+        {
+          "name": "Lúcuma Manjar",
+          "width": 288,
+          "scroll": 288
+        },
+        {
+          "name": "Muffin Chips",
+          "width": 288,
+          "scroll": 288
+        },
+        {
+          "name": "Glazed Lemon Cake",
+          "width": 288,
+          "scroll": 288
+        },
+        {
+          "name": "Selección de Galletas",
+          "width": 288,
+          "scroll": 288
+        },
+        {
+          "name": "Leche entera",
+          "width": 288,
+          "scroll": 288
+        },
+        {
+          "name": "Té en hebras",
+          "width": 288,
+          "scroll": 288
+        }
+      ],
+      "counts": [
+        {
+          "width": 104,
+          "height": 48
+        },
+        {
+          "width": 104,
+          "height": 48
+        },
+        {
+          "width": 104,
+          "height": 48
+        },
+        {
+          "width": 104,
+          "height": 48
+        },
+        {
+          "width": 104,
+          "height": 48
+        },
+        {
+          "width": 104,
+          "height": 48
+        },
+        {
+          "width": 104,
+          "height": 48
+        }
+      ],
+      "preview": [
+        {
+          "width": 286,
+          "scroll": 286,
+          "height": 371,
+          "scrollHeight": 371
+        }
+      ]
+    },
+    {
+      "width": 375,
+      "label": "list",
+      "client": 375,
+      "scroll": 375,
+      "body": 375,
+      "rows": [
+        {
+          "name": "Brownie Chips",
+          "width": 343,
+          "scroll": 343
+        },
+        {
+          "name": "Lúcuma Manjar",
+          "width": 343,
+          "scroll": 343
+        },
+        {
+          "name": "Muffin Chips",
+          "width": 343,
+          "scroll": 343
+        },
+        {
+          "name": "Glazed Lemon Cake",
+          "width": 343,
+          "scroll": 343
+        },
+        {
+          "name": "Selección de Galletas",
+          "width": 343,
+          "scroll": 343
+        },
+        {
+          "name": "Leche entera",
+          "width": 343,
+          "scroll": 343
+        },
+        {
+          "name": "Té en hebras",
+          "width": 343,
+          "scroll": 343
+        }
+      ],
+      "counts": [
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        }
+      ],
+      "preview": []
+    },
+    {
+      "width": 375,
+      "label": "share",
+      "client": 375,
+      "scroll": 375,
+      "body": 375,
+      "rows": [
+        {
+          "name": "Brownie Chips",
+          "width": 343,
+          "scroll": 343
+        },
+        {
+          "name": "Lúcuma Manjar",
+          "width": 343,
+          "scroll": 343
+        },
+        {
+          "name": "Muffin Chips",
+          "width": 343,
+          "scroll": 343
+        },
+        {
+          "name": "Glazed Lemon Cake",
+          "width": 343,
+          "scroll": 343
+        },
+        {
+          "name": "Selección de Galletas",
+          "width": 343,
+          "scroll": 343
+        },
+        {
+          "name": "Leche entera",
+          "width": 343,
+          "scroll": 343
+        },
+        {
+          "name": "Té en hebras",
+          "width": 343,
+          "scroll": 343
+        }
+      ],
+      "counts": [
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        }
+      ],
+      "preview": [
+        {
+          "width": 341,
+          "scroll": 341,
+          "height": 371,
+          "scrollHeight": 371
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "label": "list",
+      "client": 390,
+      "scroll": 390,
+      "body": 390,
+      "rows": [
+        {
+          "name": "Brownie Chips",
+          "width": 358,
+          "scroll": 358
+        },
+        {
+          "name": "Lúcuma Manjar",
+          "width": 358,
+          "scroll": 358
+        },
+        {
+          "name": "Muffin Chips",
+          "width": 358,
+          "scroll": 358
+        },
+        {
+          "name": "Glazed Lemon Cake",
+          "width": 358,
+          "scroll": 358
+        },
+        {
+          "name": "Selección de Galletas",
+          "width": 358,
+          "scroll": 358
+        },
+        {
+          "name": "Leche entera",
+          "width": 358,
+          "scroll": 358
+        },
+        {
+          "name": "Té en hebras",
+          "width": 358,
+          "scroll": 358
+        }
+      ],
+      "counts": [
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        }
+      ],
+      "preview": []
+    },
+    {
+      "width": 390,
+      "label": "share",
+      "client": 390,
+      "scroll": 390,
+      "body": 390,
+      "rows": [
+        {
+          "name": "Brownie Chips",
+          "width": 358,
+          "scroll": 358
+        },
+        {
+          "name": "Lúcuma Manjar",
+          "width": 358,
+          "scroll": 358
+        },
+        {
+          "name": "Muffin Chips",
+          "width": 358,
+          "scroll": 358
+        },
+        {
+          "name": "Glazed Lemon Cake",
+          "width": 358,
+          "scroll": 358
+        },
+        {
+          "name": "Selección de Galletas",
+          "width": 358,
+          "scroll": 358
+        },
+        {
+          "name": "Leche entera",
+          "width": 358,
+          "scroll": 358
+        },
+        {
+          "name": "Té en hebras",
+          "width": 358,
+          "scroll": 358
+        }
+      ],
+      "counts": [
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        }
+      ],
+      "preview": [
+        {
+          "width": 356,
+          "scroll": 356,
+          "height": 371,
+          "scrollHeight": 371
+        }
+      ]
+    },
+    {
+      "width": 430,
+      "label": "list",
+      "client": 430,
+      "scroll": 430,
+      "body": 430,
+      "rows": [
+        {
+          "name": "Brownie Chips",
+          "width": 398,
+          "scroll": 398
+        },
+        {
+          "name": "Lúcuma Manjar",
+          "width": 398,
+          "scroll": 398
+        },
+        {
+          "name": "Muffin Chips",
+          "width": 398,
+          "scroll": 398
+        },
+        {
+          "name": "Glazed Lemon Cake",
+          "width": 398,
+          "scroll": 398
+        },
+        {
+          "name": "Selección de Galletas",
+          "width": 398,
+          "scroll": 398
+        },
+        {
+          "name": "Leche entera",
+          "width": 398,
+          "scroll": 398
+        },
+        {
+          "name": "Té en hebras",
+          "width": 398,
+          "scroll": 398
+        }
+      ],
+      "counts": [
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        }
+      ],
+      "preview": []
+    },
+    {
+      "width": 430,
+      "label": "share",
+      "client": 430,
+      "scroll": 430,
+      "body": 430,
+      "rows": [
+        {
+          "name": "Brownie Chips",
+          "width": 398,
+          "scroll": 398
+        },
+        {
+          "name": "Lúcuma Manjar",
+          "width": 398,
+          "scroll": 398
+        },
+        {
+          "name": "Muffin Chips",
+          "width": 398,
+          "scroll": 398
+        },
+        {
+          "name": "Glazed Lemon Cake",
+          "width": 398,
+          "scroll": 398
+        },
+        {
+          "name": "Selección de Galletas",
+          "width": 398,
+          "scroll": 398
+        },
+        {
+          "name": "Leche entera",
+          "width": 398,
+          "scroll": 398
+        },
+        {
+          "name": "Té en hebras",
+          "width": 398,
+          "scroll": 398
+        }
+      ],
+      "counts": [
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        },
+        {
+          "width": 116,
+          "height": 48
+        }
+      ],
+      "preview": [
+        {
+          "width": 396,
+          "scroll": 396,
+          "height": 371,
+          "scrollHeight": 371
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "label": "list",
+      "client": 1440,
+      "scroll": 1440,
+      "body": 1440,
+      "rows": [
+        {
+          "name": "Brownie Chips",
+          "width": 932,
+          "scroll": 932
+        },
+        {
+          "name": "Lúcuma Manjar",
+          "width": 932,
+          "scroll": 932
+        },
+        {
+          "name": "Muffin Chips",
+          "width": 932,
+          "scroll": 932
+        },
+        {
+          "name": "Glazed Lemon Cake",
+          "width": 932,
+          "scroll": 932
+        },
+        {
+          "name": "Selección de Galletas",
+          "width": 932,
+          "scroll": 932
+        },
+        {
+          "name": "Leche entera",
+          "width": 932,
+          "scroll": 932
+        },
+        {
+          "name": "Té en hebras",
+          "width": 932,
+          "scroll": 932
+        }
+      ],
+      "counts": [
+        {
+          "width": 128,
+          "height": 40
+        },
+        {
+          "width": 128,
+          "height": 40
+        },
+        {
+          "width": 128,
+          "height": 40
+        },
+        {
+          "width": 128,
+          "height": 40
+        },
+        {
+          "width": 128,
+          "height": 40
+        },
+        {
+          "width": 128,
+          "height": 40
+        },
+        {
+          "width": 128,
+          "height": 40
+        }
+      ],
+      "preview": []
+    },
+    {
+      "width": 1440,
+      "label": "share",
+      "client": 1440,
+      "scroll": 1440,
+      "body": 1440,
+      "rows": [
+        {
+          "name": "Brownie Chips",
+          "width": 932,
+          "scroll": 932
+        },
+        {
+          "name": "Lúcuma Manjar",
+          "width": 932,
+          "scroll": 932
+        },
+        {
+          "name": "Muffin Chips",
+          "width": 932,
+          "scroll": 932
+        },
+        {
+          "name": "Glazed Lemon Cake",
+          "width": 932,
+          "scroll": 932
+        },
+        {
+          "name": "Selección de Galletas",
+          "width": 932,
+          "scroll": 932
+        },
+        {
+          "name": "Leche entera",
+          "width": 932,
+          "scroll": 932
+        },
+        {
+          "name": "Té en hebras",
+          "width": 932,
+          "scroll": 932
+        }
+      ],
+      "counts": [
+        {
+          "width": 128,
+          "height": 40
+        },
+        {
+          "width": 128,
+          "height": 40
+        },
+        {
+          "width": 128,
+          "height": 40
+        },
+        {
+          "width": 128,
+          "height": 40
+        },
+        {
+          "width": 128,
+          "height": 40
+        },
+        {
+          "width": 128,
+          "height": 40
+        },
+        {
+          "width": 128,
+          "height": 40
+        }
+      ],
+      "preview": [
+        {
+          "width": 353,
+          "scroll": 353,
+          "height": 371,
+          "scrollHeight": 371
+        }
+      ]
+    }
+  ],
+  "clockChecks": [
+    {
+      "name": "device clock + timezone drift",
+      "pass": true,
+      "client": "2028-01-02T01:23Z Asia/Tokyo",
+      "snapshot": "2026-10-30T22:00:00.000000000Z"
+    },
+    {
+      "name": "fresh share re-read",
+      "pass": true,
+      "reads": 3,
+      "heading": "Inventario PM 30/10 · 19:01"
+    }
+  ],
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/barra-stock"
+    },
+    {
+      "method": "GET",
+      "path": "/api/barra-stock"
+    },
+    {
+      "method": "GET",
+      "path": "/api/barra-stock"
+    },
+    {
+      "method": "GET",
+      "path": "/api/barra-stock"
+    },
+    {
+      "method": "GET",
+      "path": "/api/barra-stock"
+    },
+    {
+      "method": "GET",
+      "path": "/api/barra-stock"
+    },
+    {
+      "method": "GET",
+      "path": "/api/barra-stock"
+    },
+    {
+      "method": "GET",
+      "path": "/api/barra-stock"
+    },
+    {
+      "method": "GET",
+      "path": "/api/barra-stock"
+    },
+    {
+      "method": "GET",
+      "path": "/api/barra-stock"
+    },
+    {
+      "method": "GET",
+      "path": "/api/barra-stock"
+    },
+    {
+      "method": "GET",
+      "path": "/api/barra-stock"
+    },
+    {
+      "method": "GET",
+      "path": "/api/barra-stock"
+    },
+    {
+      "method": "GET",
+      "path": "/api/barra-stock"
+    },
+    {
+      "method": "GET",
+      "path": "/api/barra-stock"
+    }
+  ],
+  "errors": []
+}

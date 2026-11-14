@@ -1,0 +1,13 @@
+{
+  "actual_production_build_browser": true,
+  "local_only": true,
+  "commit_response_loss_injected": true,
+  "backend_commit_verified": true,
+  "later_receipt_preserved": true,
+  "reload_restored_original_command": true,
+  "injected401_then_actual_reauthentication": true,
+  "exact_same_payload_and_uuid_all3attempts": true,
+  "one_withdrawal_in_history": true,
+  "no_double_deduction": true,
+  "signed_out": true
+}

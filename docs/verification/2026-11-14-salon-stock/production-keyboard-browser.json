@@ -1,0 +1,11 @@
+{
+  "local_only": true,
+  "tab_arrow_home_end": true,
+  "modal_focus_trap_both_directions": true,
+  "escape_restores_trigger_focus": true,
+  "changing_location_clears_item_and_amount": true,
+  "storage_has_no_row_subtract": true,
+  "correction_requires_reason": true,
+  "no_stock_mutations": true,
+  "signed_out": true
+}

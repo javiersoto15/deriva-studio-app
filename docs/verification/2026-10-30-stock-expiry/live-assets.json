@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "assets": [
+    {
+      "url": "https://admin.derivastudio.cl/_next/static/chunks/0jj7yfc5.olr4.js",
+      "sha256": "61f2582bf7550f2f0dd313ff2c9e66494f28bce87b2dd9bd356ae25a82383140",
+      "markers": [
+        "stock-expiry__entry",
+        "Desglose de vencimientos de",
+        "plazo no disponible",
+        "invalid now for tracked inventory",
+        "vencidas",
+        "unavailable-deadline"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "barra": true,
+  "shelf-life": true,
+  "admin-menu": true,
+  "menu-es-CL-weekday": true,
+  "menu-es-CL-weekend": true,
+  "menu-en-weekday": true,
+  "menu-en-weekend": true,
+  "menu-pt-BR-weekday": true,
+  "menu-pt-BR-weekend": true
+}

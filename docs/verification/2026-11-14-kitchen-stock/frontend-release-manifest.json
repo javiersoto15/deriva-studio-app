@@ -1,0 +1,100 @@
+{
+  "baseline_git": "f8f7d7d",
+  "baseline_deployment": "dpl_7uSU4tgMHy534BokiTkjuYFPWr1b",
+  "baseline_source_files": 412,
+  "baseline_exception": {
+    "path": "src/seo/local-business.ts",
+    "sha1": "b96b233e5770a89cf26dec6bc2c15e4ee93ada49"
+  },
+  "stage": "/tmp/deriva-kitchen-web-release-reconciled-20261114-fc8d_ve_",
+  "overlays": [
+    {
+      "path": "src/kitchen-stock/model.ts",
+      "sha256": "8b288b138837743091d42b32f9cc21d7ee04aca804f4c1a58ec5edd6c35c62d4"
+    },
+    {
+      "path": "src/kitchen-stock/pending.ts",
+      "sha256": "8ab4b300f23b312b96d9d81cc2200e4c07b7a84351e7bb3458fb29b7be867eff"
+    },
+    {
+      "path": "src/kitchen-stock/types.ts",
+      "sha256": "da15a1be93743157991b51c096ec6f4f4762fafdda88a71c6083593d8db943a3"
+    },
+    {
+      "path": "src/kitchen-stock/client.ts",
+      "sha256": "2ab0115e41778f557338ffe49de6e38c67b16089e7483e12d74d3a0fbca42ba6"
+    },
+    {
+      "path": "src/server/kitchen-stock-proxy.ts",
+      "sha256": "35578ee39b4768abfff85a185ad3e6778b2449066e7158f39d6f9d1349577c6f"
+    },
+    {
+      "path": "app/(admin)/stock-cocina/kitchen.css",
+      "sha256": "b89dd97b1c16603fe4888e439f80940f21549e7e108a88deee45a0e3312a81c4"
+    },
+    {
+      "path": "app/(admin)/stock-cocina/page.tsx",
+      "sha256": "a029f72d57a1f5b1869efb1f46571f2c05b4f4aebb3cbeefc8b37dc7774d4fd7"
+    },
+    {
+      "path": "app/(admin)/stock-cocina/_components/KitchenWorkspace.tsx",
+      "sha256": "24f606ad6403548367c0b215b809dcdd1251b36f7a3f94c6d1e4b081479bfec3"
+    },
+    {
+      "path": "app/(admin)/stock-cocina/_components/IngredientSuggestions.tsx",
+      "sha256": "7d131c8374301cd662e703f621c590ddd90ea1bbe5ccd0ca2b28829202196b90"
+    },
+    {
+      "path": "app/(admin)/stock-cocina/_components/KitchenApp.tsx",
+      "sha256": "95b1f7909aec2a1400433475d213f0c84280533925297349105e4c72246088c7"
+    },
+    {
+      "path": "app/api/kitchen-stock/route.ts",
+      "sha256": "07b539fd0730dbb5bedf00c90187bb02ea5c36102ca87d63568449f22fedc9c7"
+    },
+    {
+      "path": "app/api/kitchen-stock/items/route.ts",
+      "sha256": "d477baa0fec52ac53d6667582e62d848d7229aa9c36217baec20bf471274d705"
+    },
+    {
+      "path": "app/api/kitchen-stock/items/[itemId]/adjustments/route.ts",
+      "sha256": "58e20cc76dc81cee2b62c2be508b345f83184fff1f0c885e005b7a6562cab1b1"
+    },
+    {
+      "path": "app/api/kitchen-stock/items/[itemId]/history/route.ts",
+      "sha256": "5bc40f1e82804ac5aecb870b03d21ef5b84c68c06eca1e292e3d7d5b13504512"
+    },
+    {
+      "path": "tests/kitchen-stock/model.test.ts",
+      "sha256": "230d7669d40291926955a691ed68501b41648aa3039fe36b0f09d0c14d30aa4d"
+    },
+    {
+      "path": "tests/kitchen-stock/suggestions.test.tsx",
+      "sha256": "70e3ef5798573707f84cf648fea01c6ef8564159d1ba1adb5225c00566afdb3f"
+    },
+    {
+      "path": "tests/kitchen-stock/pending.test.ts",
+      "sha256": "07c66d76c45f03b08cdbea6ee519e1970aee2bddf64988a77372241c95a8f362"
+    },
+    {
+      "path": "tests/kitchen-stock/proxy.test.ts",
+      "sha256": "5eba6a03fecb6a96fcc61e7dff5fbcc444868f07bee5a2a3121dd431c31239f0"
+    },
+    {
+      "path": "app/(admin)/admin-console/page.tsx",
+      "sha256": "bdd507e945faa1e4d863359973f4f5b58dc1b0e00c9a4810b122b9a9b7a1eb52"
+    },
+    {
+      "path": "app/(admin)/stock/_components/StockApp.tsx",
+      "sha256": "ee638f1fc83aa068717720977fae9eb9ab96d761ea5706c644db7062af88bcb2"
+    },
+    {
+      "path": "package.json",
+      "sha256": "4807641d219829a37d7d915e303688bd2c902e6600c11b228db037d58336839d"
+    },
+    {
+      "path": "src/sw/routing.ts",
+      "sha256": "feb35ea8b2fadedfae5580cd6d396739178f12842c7d672f88a7e5a7605349f4"
+    }
+  ]
+}

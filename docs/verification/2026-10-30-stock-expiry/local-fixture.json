@@ -1,0 +1,170 @@
+{
+  "now": "2026-10-30T22:00:00.000000000Z",
+  "stock_visibility_enabled": false,
+  "can_manage_raw_items": true,
+  "shelf_life_summary": {
+    "discard_items": 1,
+    "sell_first_items": 1
+  },
+  "items": [
+    {
+      "id": "brownie-chips",
+      "name": "Brownie Chips",
+      "quantity": 8,
+      "unit": "unit",
+      "kind": "menu_item",
+      "revision": 2,
+      "updated_at": "2026-10-30T21:00:00Z",
+      "menu_item_id": "brownie-chips",
+      "menu_available": true,
+      "shelf_life": {
+        "fresh_days": 2,
+        "discard_days": 3,
+        "last_sale_day": false,
+        "worst_state": "sell_first",
+        "counts": {
+          "discard": 0,
+          "sell_first": 3,
+          "fresh": 5,
+          "unknown": 0
+        },
+        "lots": [
+          {
+            "id": "local-brownie-1",
+            "quantity_left": 3,
+            "state": "sell_first",
+            "entered_at": "2026-10-26T00:00:00Z",
+            "discard_at": "2026-10-31T00:00:00Z",
+            "fresh_until": "2026-10-30T00:00:00Z"
+          },
+          {
+            "id": "local-brownie-2",
+            "quantity_left": 5,
+            "state": "fresh",
+            "entered_at": "2026-10-27T13:00:00Z",
+            "discard_at": "2026-11-01T13:00:00Z",
+            "fresh_until": "2026-10-31T13:00:00Z"
+          }
+        ]
+      }
+    },
+    {
+      "id": "lucuma-manjar",
+      "name": "Lúcuma Manjar",
+      "quantity": 4,
+      "unit": "unit",
+      "kind": "menu_item",
+      "revision": 2,
+      "updated_at": "2026-10-30T21:00:00Z",
+      "menu_item_id": "lucuma-manjar",
+      "menu_available": true,
+      "shelf_life": {
+        "fresh_days": 2,
+        "discard_days": 3,
+        "last_sale_day": false,
+        "worst_state": "discard",
+        "counts": {
+          "discard": 2,
+          "sell_first": 0,
+          "fresh": 0,
+          "unknown": 2
+        },
+        "lots": [
+          {
+            "id": "local-lucuma-1",
+            "quantity_left": 2,
+            "state": "discard",
+            "entered_at": "2026-10-27T21:00:00Z",
+            "discard_at": "2026-10-30T21:00:00Z",
+            "fresh_until": "2026-10-29T21:00:00Z"
+          },
+          {
+            "id": "local-lucuma-unknown",
+            "quantity_left": 2,
+            "state": "unknown",
+            "entered_at": null,
+            "discard_at": null,
+            "fresh_until": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "muffin-chips",
+      "name": "Muffin Chips",
+      "quantity": 0,
+      "unit": "unit",
+      "kind": "menu_item",
+      "revision": 2,
+      "updated_at": "2026-10-30T21:00:00Z",
+      "menu_item_id": "muffin-chips",
+      "menu_available": true,
+      "shelf_life": {
+        "fresh_days": 2,
+        "discard_days": 3,
+        "last_sale_day": false,
+        "worst_state": "fresh",
+        "counts": {
+          "discard": 0,
+          "sell_first": 0,
+          "fresh": 0,
+          "unknown": 0
+        },
+        "lots": []
+      }
+    },
+    {
+      "id": "glazed-lemon-cake",
+      "name": "Glazed Lemon Cake",
+      "quantity": 0,
+      "unit": "unit",
+      "kind": "menu_item",
+      "revision": 2,
+      "updated_at": "2026-10-30T21:00:00Z",
+      "menu_item_id": "glazed-lemon-cake",
+      "menu_available": true,
+      "shelf_life": {
+        "fresh_days": 2,
+        "discard_days": 3,
+        "last_sale_day": false,
+        "worst_state": "fresh",
+        "counts": {
+          "discard": 0,
+          "sell_first": 0,
+          "fresh": 0,
+          "unknown": 0
+        },
+        "lots": []
+      }
+    },
+    {
+      "id": "cookies",
+      "name": "Selección de Galletas",
+      "quantity": 6,
+      "unit": "unit",
+      "kind": "menu_item",
+      "revision": 2,
+      "updated_at": "2026-10-30T21:00:00Z",
+      "menu_item_id": "cookies",
+      "menu_available": true
+    },
+    {
+      "id": "raw-leche",
+      "name": "Leche entera",
+      "quantity": 2,
+      "unit": "l",
+      "kind": "raw_item",
+      "revision": 2,
+      "updated_at": "2026-10-30T21:00:00Z"
+    },
+    {
+      "id": "raw-te",
+      "name": "Té en hebras",
+      "quantity": null,
+      "unit": "box",
+      "kind": "raw_item",
+      "revision": 2,
+      "updated_at": "2026-10-30T21:00:00Z"
+    }
+  ]
+}

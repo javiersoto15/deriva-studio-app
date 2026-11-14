@@ -1,0 +1,26 @@
+[
+  {
+    "path": "/stock-cocina",
+    "status": 200,
+    "bytes": 19771,
+    "cache_control": "public, max-age=0, must-revalidate"
+  },
+  {
+    "path": "/stock",
+    "status": 200,
+    "bytes": 19435,
+    "cache_control": "public, max-age=0, must-revalidate"
+  },
+  {
+    "path": "/admin-console",
+    "status": 200,
+    "bytes": 20697,
+    "cache_control": "public, max-age=0, must-revalidate"
+  },
+  {
+    "path": "/api/kitchen-stock",
+    "status": 401,
+    "bytes": 83,
+    "cache_control": "no-store, max-age=0"
+  }
+]

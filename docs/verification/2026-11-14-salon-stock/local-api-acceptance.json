@@ -1,0 +1,13 @@
+{
+  "initial_items": 111,
+  "actual_http_persistence": true,
+  "prefix_location_scoped": true,
+  "withdrawal_taker_and_balance": true,
+  "immutable_replay_after_later_receipt": true,
+  "no_duplicate_deduction": true,
+  "fridge_unchanged": true,
+  "invalid_person_rejected": true,
+  "overdraw_and_stale_rejected": true,
+  "per_item_subtract_bypass_rejected": true,
+  "correction_requires_reason": true
+}

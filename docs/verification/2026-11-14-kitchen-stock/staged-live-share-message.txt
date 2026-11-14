@@ -1,0 +1,88 @@
+Inventario cocina
+Consultado: 14/11/2026, 17:53
+Conteo: 14/11/2026, 12:52
+
+VERDURAS
+Ají amarillo 0,5 kg
+Ají verde 0,5 kg
+Albahaca 6 paquetes
+Apio 0 mata
+Berenjena 5 unidades
+Camote 3 unidades
+Cebolla 41 unidades
+Cebolla morada 8 unidades
+Cebollín 2 paquetes
+Champiñones tarro 1 unidad
+Ciboulette 2 paquetes
+Lechuga costina 13 (unidad sin indicar)
+Limón 3 kg
+Paltas 40 unidades
+Papa 12 kg
+Pepino 6 unidades
+Pimentones 5 unidades
+Rúcula 0 kg
+Tomate 29 unidades
+Tomate cherry 1 kg
+Zanahoria 20 unidades
+Zapallo italiano 5 u
+Zapallo naranjo 2 kg
+
+FRUTAS
+Arándano 1 kg
+Frutilla 0 gr
+Kiwi 1,5 kg
+Mandarina 12 unidades
+Manzana roja 10 unidades
+
+OTROS
+Aceite para freír 0 L
+Aceite vegetal 5 L
+Arroz 6 kg
+Azúcar 8 kg
+Azúcar flor 2 kg (paquetes (500 c/u))
+Azúcar rubia 1 kg
+Brotes de alfalfa 1 bandeja
+Caja garbanzos wasil 2 unidades
+Crema de leche 7 L
+Durazno en conserva 2 cajas
+Fideos tallarín 77 spagueti 10 paquetes (400gr c/u)
+Helado de piña 2 unidades
+Leche condensada 1 guatero
+Leche entera 9 L
+Leche evaporada 4 tarros (390 gr)
+Maicena 1 kg
+Mantequilla 12 paquetes (250gr)
+Mayonesa bolsa 2 unidades
+Mayonesa kraft 1 pote
+Queso chanco 1,5 kg
+Queso crema 1 barra (1,3 kg)
+Queso parmesano 0,5 kg
+Ricota 1 kg
+Risotto 0 kg
+Romero fresco 1 bandeja
+Sal 2 kg
+Soya 1 botellas (1,8L c/u)
+Tomillo fresco 1 bandeja
+Yogurt 5 potes
+
+CARNES
+Asiento 6 kg
+Carne molida 1 kg
+Churrascos congelados 40 unidades (120 gr c/u)
+Jamón 1 kg
+Pechuga de pollo 20 kg
+Salmon ahumado 1 kg
+Sobrecostilla 10 kg
+Tocino 6 kg
+
+BOLLERÍA
+Bagel 42 unidades
+Croissant 32 unidades
+Croissant mini 29 unidades
+
+PAN
+Blanco 6 (unidad sin indicar)
+Focaccia 11 (unidad sin indicar)
+French 34 (unidad sin indicar)
+Integral 4 (unidad sin indicar)
+Nuez 4 (unidad sin indicar)

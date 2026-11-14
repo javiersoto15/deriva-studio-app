@@ -1,0 +1,28 @@
+{
+  "actual_firebase_password_sign_in": true,
+  "actual_next_proxy_go_postgres": true,
+  "items": 111,
+  "widths": [
+    1440,
+    430,
+    390,
+    375,
+    320
+  ],
+  "no_horizontal_overflow": true,
+  "fridge_withdrawal_action_absent": true,
+  "share_all111_ignores_filters": true,
+  "clipboard_exact": true,
+  "whatsapp_payload_exact": true,
+  "no_whatsapp_send": true,
+  "scoped_duplicate_suggestions": true,
+  "explicit_keyboard_item_selection": true,
+  "exact10_person_roster": true,
+  "overdraw_disabled": true,
+  "actual_named_withdrawal_delta": 1,
+  "withdrawal_before": "5",
+  "withdrawal_after": "4",
+  "person_and_actor_in_saved_history": true,
+  "signed_out": true,
+  "page_errors": []
+}

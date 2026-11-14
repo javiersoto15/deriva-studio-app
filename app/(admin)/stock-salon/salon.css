@@ -1,0 +1,669 @@
+.salon-shell {
+  --salon-paper: #faf5ec;
+  --salon-field: #fffdf9;
+  --salon-line: #d6c8ba;
+  --salon-muted: #67594d;
+  --salon-brown: #5e230f;
+  color: #38251a;
+  background: var(--salon-paper);
+}
+.salon-top {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  min-height: 64px;
+  border-bottom: 1px solid var(--salon-line);
+  padding: 8px clamp(16px, 4vw, 56px);
+  font-size: 12px;
+}
+.salon-top > a {
+  font-weight: 600;
+}
+.salon-top nav {
+  flex: 1;
+}
+.salon-top a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: inherit;
+  text-decoration: none;
+}
+.salon-top [aria-current] {
+  font-weight: 600;
+}
+.salon-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px clamp(16px, 4vw, 56px) 80px;
+  min-width: 0;
+}
+.salon-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+.salon-kicker {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--salon-muted);
+  margin: 0 0 8px;
+}
+.salon-heading h1 {
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1.2;
+  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+}
+.salon-heading p:not(.salon-kicker) {
+  font-size: 13px;
+  color: var(--salon-muted);
+  margin: 8px 0;
+}
+.salon-account {
+  font-size: 10px;
+  overflow-wrap: anywhere;
+  color: var(--salon-muted);
+  max-width: 260px;
+  letter-spacing: 0.02em;
+}
+.salon-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 24px 0;
+}
+.salon-actions .stock-button {
+  font-size: 13px;
+  min-height: 46px;
+  padding: 10px 16px;
+}
+.salon-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-bottom: 1px solid #a98b73;
+  margin: 24px 0 18px;
+}
+.salon-tabs button {
+  min-height: 54px;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: transparent;
+  color: var(--salon-brown);
+  font: inherit;
+  font-size: 13px;
+  padding: 10px 8px;
+  cursor: pointer;
+}
+.salon-tabs button[aria-selected="true"] {
+  background: #eee3d6;
+  border-bottom-color: var(--salon-brown);
+  font-weight: 600;
+}
+.salon-tabs span {
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  margin-left: 10px;
+  color: var(--salon-muted);
+}
+.salon-location-meta {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--salon-muted);
+}
+.salon-location-meta strong {
+  font-weight: 500;
+  color: inherit;
+}
+.salon-location-meta p {
+  margin: 5px 0;
+}
+.salon-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 230px);
+  gap: 16px;
+  margin: 24px 0;
+}
+.salon-filters label,
+.salon-history-filters label {
+  font-size: 12px;
+  display: block;
+}
+.salon-input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  border: 1px solid #b7a592;
+  padding: 10px 12px;
+  margin-top: 7px;
+  background: var(--salon-field);
+  color: inherit;
+  font: inherit;
+  font-size: 14px;
+  border-radius: 0;
+}
+.salon-input:disabled {
+  opacity: 0.65;
+}
+.salon-group {
+  margin: 24px 0;
+}
+.salon-group > h2 {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+  border-bottom: 1px solid var(--salon-line);
+  margin: 0;
+  padding: 10px 0;
+}
+.salon-group > h2 span {
+  color: var(--salon-muted);
+}
+.salon-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 100px 78px;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 1px solid var(--salon-line);
+  padding: 16px 0;
+  min-height: 80px;
+}
+.salon-row-copy {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.salon-row h3 {
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.4;
+  margin: 0 0 4px;
+}
+.salon-help,
+.salon-source-note {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--salon-muted);
+  margin: 8px 0;
+}
+.salon-row .salon-help,
+.salon-row .salon-source-note {
+  font-size: 11px;
+  margin: 4px 0;
+}
+.salon-row-copy > small {
+  display: block;
+  font-size: 10px;
+  color: var(--salon-muted);
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+}
+.salon-source-note {
+  color: #734329;
+}
+.salon-row-quantity {
+  text-align: center;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.salon-row-quantity strong {
+  font-size: 21px;
+  line-height: 1.3;
+  font-weight: 400;
+}
+.salon-row-quantity small {
+  display: block;
+  font-size: 10px;
+  color: var(--salon-muted);
+  letter-spacing: 0.02em;
+}
+.salon-row-quantity.is-zero {
+  color: #943a27;
+}
+.salon-count-action {
+  font-size: 12px;
+  min-height: 44px;
+}
+.salon-empty {
+  padding: 30px 0;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.salon-empty h2,
+.salon-empty h3 {
+  font-size: 20px;
+  font-weight: 500;
+}
+.salon-success {
+  padding: 14px;
+  background: #e7eee6;
+  color: #173b22;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.salon-alert {
+  padding: 14px;
+  background: #f8e5de;
+  border: 1px solid #c99e87;
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 14px 0;
+  overflow-wrap: anywhere;
+}
+.salon-alert p {
+  margin: 5px 0 12px;
+}
+.salon-backdrop {
+  position: fixed;
+  inset: 0;
+  background: #38251a77;
+  z-index: 40;
+}
+.salon-dialog {
+  position: fixed;
+  z-index: 41;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(560px, calc(100% - 32px));
+  max-height: calc(100dvh - 40px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  background: var(--salon-paper);
+  border: 1px solid var(--salon-line);
+  box-shadow: 0 12px 50px #25160f3d;
+  padding: 24px;
+}
+.salon-dialog--wide {
+  width: min(680px, calc(100% - 32px));
+}
+.salon-dialog-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.salon-dialog h2 {
+  font-size: 23px;
+  line-height: 1.25;
+  font-weight: 500;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.salon-dialog h2:focus {
+  outline: none;
+}
+.salon-dialog fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.salon-dialog label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  margin: 17px 0 7px;
+}
+.salon-dialog label:first-of-type {
+  margin-top: 12px;
+}
+.salon-options {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #b7a592;
+  border-top: 0;
+  max-height: 240px;
+  overflow: auto;
+}
+.salon-options li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  min-height: 60px;
+  padding: 12px;
+  background: var(--salon-field);
+  font-size: 12px;
+  cursor: pointer;
+}
+.salon-options li + li {
+  border-top: 1px solid var(--salon-line);
+}
+.salon-options li[aria-selected="true"] {
+  background: #e9ddcd;
+  outline: 2px solid var(--salon-brown);
+  outline-offset: -2px;
+}
+.salon-options li[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.salon-options li > span:first-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.salon-options li > span:last-child {
+  font-size: 10px;
+  color: var(--salon-brown);
+}
+.salon-options small {
+  display: block;
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--salon-muted);
+  margin-top: 3px;
+  letter-spacing: 0.02em;
+}
+.salon-selection {
+  padding: 14px;
+  border: 1px solid var(--salon-line);
+  background: #f4ede6;
+  margin: 12px 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.salon-selection p {
+  margin: 6px 0;
+}
+.salon-selection .stock-text-button {
+  font-size: 12px;
+  padding-left: 0;
+}
+.salon-current {
+  font-size: 13px;
+  line-height: 1.65;
+  margin: 14px 0;
+}
+.salon-modes {
+  display: flex;
+  gap: 6px;
+  margin: 20px 0;
+}
+.salon-modes button {
+  flex: 1;
+  min-height: 44px;
+  border: 1px solid var(--salon-line);
+  background: transparent;
+  color: var(--salon-brown);
+  font: inherit;
+  font-size: 12px;
+  padding: 10px 6px;
+  cursor: pointer;
+}
+.salon-modes button[aria-pressed="true"] {
+  background: var(--salon-brown);
+  color: var(--salon-paper);
+  border-color: var(--salon-brown);
+}
+.salon-modes button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.salon-balance {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  background: #eee3d6;
+  padding: 14px 16px;
+  margin: 18px 0;
+  flex-wrap: wrap;
+}
+.salon-balance > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.salon-balance span,
+.salon-balance small {
+  font-size: 12px;
+}
+.salon-balance strong {
+  font-size: 25px;
+  line-height: 1.2;
+  font-weight: 400;
+  overflow-wrap: anywhere;
+}
+.salon-balance small {
+  flex-basis: 100%;
+  color: var(--salon-muted);
+}
+.salon-validation {
+  font-size: 12px;
+  color: #8f2d1a;
+  line-height: 1.5;
+}
+.salon-submit {
+  width: 100%;
+  margin-top: 22px;
+}
+.salon-share-preview {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: var(--salon-field);
+  border: 1px solid var(--salon-line);
+  padding: 16px;
+  font:
+    12px/1.7 var(--font-mono),
+    monospace;
+  max-height: 50dvh;
+  overflow: auto;
+}
+.salon-share-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+.salon-share-actions > * {
+  flex: 1;
+  text-decoration: none;
+  font-size: 13px;
+}
+.salon-history-filters {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.salon-movements {
+  list-style: none;
+  padding: 0;
+  margin: 18px 0;
+}
+.salon-movements li {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--salon-line);
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.salon-event-type {
+  font-size: 11px;
+  color: var(--salon-brown);
+  margin-bottom: 6px;
+}
+.salon-event-name {
+  font-size: 14px;
+  font-weight: 500;
+}
+.salon-movements p {
+  margin: 6px 0;
+}
+.salon-event-balance {
+  font-size: 16px;
+}
+.salon-movements small {
+  display: block;
+  font-size: 10px;
+  color: var(--salon-muted);
+  letter-spacing: 0.02em;
+}
+.salon-signin {
+  width: min(100%, 480px);
+  padding: 48px 24px;
+  margin: 0 auto;
+}
+.salon-signin h1 {
+  font-size: 30px;
+}
+.salon-signin p {
+  font-size: 14px;
+  line-height: 1.6;
+}
+.salon-signin label {
+  display: block;
+  margin: 20px 0 8px;
+  font-size: 13px;
+}
+.salon-signin input {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  background: var(--salon-field);
+  padding: 12px;
+  border: 1px solid var(--salon-line);
+  font: inherit;
+}
+.salon-signin .stock-button {
+  width: 100%;
+  margin-top: 24px;
+}
+@media (max-width: 600px) {
+  .salon-top {
+    gap: 16px;
+    padding: 8px 16px;
+  }
+  .salon-main {
+    padding-top: 24px;
+  }
+  .salon-heading {
+    display: block;
+  }
+  .salon-heading h1 {
+    font-size: 28px;
+  }
+  .salon-account {
+    display: block;
+    margin-top: 12px;
+    max-width: 100%;
+  }
+  .salon-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .salon-actions .stock-button {
+    font-size: 12px;
+    padding: 10px 8px;
+  }
+  .salon-actions > .stock-button:first-child:not(.stock-button--outline) {
+    grid-column: 1/-1;
+  }
+  .salon-tabs button {
+    font-size: 12px;
+    padding: 10px 3px;
+  }
+  .salon-tabs span {
+    display: block;
+    margin: 4px 0 0;
+  }
+  .salon-filters {
+    grid-template-columns: minmax(0, 1fr) 115px;
+    gap: 10px;
+  }
+  .salon-filters label {
+    font-size: 11px;
+  }
+  .salon-row {
+    grid-template-columns: minmax(0, 1fr) 52px 58px;
+    gap: 9px;
+  }
+  .salon-row h3 {
+    font-size: 14px;
+  }
+  .salon-row-quantity strong {
+    font-size: 20px;
+  }
+  .salon-count-action {
+    font-size: 11px;
+    padding: 10px 0;
+  }
+  .salon-dialog,
+  .salon-dialog--wide {
+    top: 12px;
+    left: 12px;
+    transform: none;
+    width: calc(100% - 24px);
+    max-height: calc(100dvh - 24px);
+    padding: 18px;
+  }
+  .salon-dialog h2 {
+    font-size: 22px;
+  }
+  .salon-modes {
+    flex-wrap: wrap;
+  }
+  .salon-modes button {
+    font-size: 11px;
+    min-width: 90px;
+  }
+  .salon-balance {
+    padding: 12px;
+  }
+  .salon-balance strong {
+    font-size: 23px;
+  }
+  .salon-share-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .salon-shell * {
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.salon-selection-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.salon-selection-heading p {
+  margin: 0;
+}
+.salon-selection-heading .stock-text-button {
+  padding: 0;
+  min-height: 36px;
+  font-size: 11px;
+}
+.salon-dialog--withdrawal .salon-dialog-head {
+  margin-bottom: 10px;
+}
+.salon-dialog--withdrawal label {
+  margin-top: 12px;
+}
+.salon-dialog--withdrawal .salon-selection {
+  padding: 8px 12px;
+  margin: 8px 0;
+}
+.salon-dialog--withdrawal .salon-balance {
+  margin: 12px 0;
+  padding: 10px 14px;
+}
+.salon-dialog--withdrawal .salon-submit {
+  margin-top: 14px;
+}
