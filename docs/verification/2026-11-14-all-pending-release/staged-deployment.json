@@ -1,0 +1,22 @@
+{
+  "id": "dpl_7F1ccL3Jba5jhSVMDvVHwvwubRTh",
+  "url": "https://deriva-studio-erlt764ui-javiersoto15s-projects.vercel.app",
+  "ready_state": "READY",
+  "source_commit": "ca41639aca9e233fa7555ec895473431fe3e8979",
+  "target": "production",
+  "automatic_promotion": false,
+  "aliases": [],
+  "previous_production": "dpl_FdoaJsJni7mMi988jf765UANbBXx",
+  "production_aliases_preserved": [
+    "admin.derivastudio.cl",
+    "derivastudio.cl",
+    "app.derivastudio.cl",
+    "www.derivastudio.cl",
+    "deriva-studio.vercel.app",
+    "deriva-studio-javiersoto15s-projects.vercel.app"
+  ],
+  "production_env_added": [
+    "UBER_EATS_ADMIN_HOSTNAME"
+  ],
+  "secrets_or_feature_flags_changed": false
+}

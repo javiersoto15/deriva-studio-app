@@ -1,0 +1,51 @@
+[
+  {
+    "path": "/privacidad",
+    "status": 200,
+    "cache_control": "public, max-age=0, must-revalidate",
+    "privacy_uber": true,
+    "body": null
+  },
+  {
+    "path": "/stock-cocina",
+    "status": 200,
+    "cache_control": "public, max-age=0, must-revalidate",
+    "privacy_uber": null,
+    "body": null
+  },
+  {
+    "path": "/stock-salon",
+    "status": 200,
+    "cache_control": "public, max-age=0, must-revalidate",
+    "privacy_uber": null,
+    "body": null
+  },
+  {
+    "path": "/api/salon-stock",
+    "status": 401,
+    "cache_control": "no-store, max-age=0",
+    "privacy_uber": null,
+    "body": "{\"error\":\"missing_bearer\",\"message\":\"Necesitas iniciar sesi\u00f3n para ver el stock.\"}"
+  },
+  {
+    "path": "/api/kitchen-stock",
+    "status": 401,
+    "cache_control": "no-store, max-age=0",
+    "privacy_uber": null,
+    "body": "{\"error\":\"missing_bearer\",\"message\":\"Necesitas iniciar sesi\u00f3n para ver el stock.\"}"
+  },
+  {
+    "path": "/api/uber-eats/oauth/callback?error=denied",
+    "status": 404,
+    "cache_control": "no-store, max-age=0",
+    "privacy_uber": null,
+    "body": "{\"error\":\"not_found\",\"message\":\"Not found.\"}"
+  },
+  {
+    "path": "/api/uber-eats/oauth/start",
+    "status": 404,
+    "cache_control": "no-store, max-age=0",
+    "privacy_uber": null,
+    "body": "{\"error\":\"not_found\",\"message\":\"Not found.\"}"
+  }
+]
