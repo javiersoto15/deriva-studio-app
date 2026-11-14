@@ -847,18 +847,69 @@
 
 /* ── Toda la carta (index under the doors) ──────────────────────────────── */
 .index {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  padding: 36px 20px 28px;
+  display: block;
+  padding: 0 20px;
   border-top: 1px solid var(--line);
+}
+
+.index[open] {
+  padding-bottom: 28px;
+}
+
+.indexSummary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  padding: 16px 0;
+  cursor: pointer;
+  list-style: none;
+}
+
+.indexSummary::-webkit-details-marker {
+  display: none;
+}
+
+.indexSummary:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+
+.indexMeta {
+  margin-left: auto;
+  font-family: var(--mono-f);
+  font-size: 11px;
+  line-height: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--soft);
+  white-space: nowrap;
+}
+
+.indexToggle {
+  flex-shrink: 0;
+  width: 20px;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 20px;
+  text-align: center;
+  transition: transform 160ms ease;
+}
+
+.index[open] .indexToggle {
+  transform: rotate(45deg);
+}
+
+.index[open] .indexDoors {
+  margin-top: 8px;
 }
 
 .indexTitle {
   margin: 0;
+  min-width: 0;
   font-weight: 800;
-  font-size: 28px;
-  line-height: 30px;
+  font-size: 22px;
+  line-height: 26px;
   letter-spacing: -0.03em;
 }
 
@@ -1550,7 +1601,11 @@
   .index {
     max-width: 1440px;
     margin: 0 auto;
-    padding: 48px 40px 36px;
+    padding: 8px 40px;
+  }
+
+  .index[open] {
+    padding-bottom: 36px;
   }
 
   .indexDoors {
@@ -1586,5 +1641,204 @@
   .sheet {
     border-radius: 26px;
     max-height: 86vh;
+  }
+}
+
+/* ── Phone entrance: one screen down to "Toda la carta" ─────────────────────
+   The entrance is at least one small viewport tall (svh = browser bars
+   showing) and every block sizes from svh, so title, picks, the four door
+   bands, Combos and the Toda la carta row land on the first screen. The door
+   bands absorb the leftover height. Content still wins: if it cannot fit
+   (closed-day note, tiny screens) the block grows and scrolls, never overlaps. */
+@media (max-width: 1023px) {
+  .entrance {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100svh - var(--landing-nav-h, 56px));
+  }
+
+  .entranceHead {
+    gap: 8px;
+    padding: 12px 20px 10px;
+  }
+
+  .bigTitle {
+    font-size: clamp(32px, 10vw, 44px);
+  }
+
+  /* Logo, languages and the open pill share one line down to 360 px. */
+  .headTools {
+    flex-wrap: nowrap;
+    gap: 6px;
+  }
+
+  .lang {
+    padding: 5px 5px;
+    font-size: 11px;
+  }
+
+  .status {
+    gap: 6px;
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .rail {
+    gap: 8px;
+    padding: 0 0 12px;
+  }
+
+  .railTitle {
+    font-size: 17px;
+    line-height: 22px;
+  }
+
+  /* Compact pick: thumbnail left, tag / name / price right. */
+  .railItem {
+    flex: 0 0 min(224px, 62vw);
+  }
+
+  .railCard {
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+    column-gap: 10px;
+    row-gap: 2px;
+    align-items: center;
+    text-align: left;
+  }
+
+  .railPhoto {
+    grid-row: 1 / span 3;
+    width: 56px;
+    height: 56px;
+    aspect-ratio: 1;
+    border-radius: 12px;
+  }
+
+  .railName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .railPrice {
+    font-size: 11px;
+    line-height: 14px;
+  }
+
+  .doors {
+    flex: 1 0 auto;
+  }
+
+  /* Equal shares of the leftover height, never shorter than the thumbnail
+     (Dulce has no photo and would otherwise come out thinner). */
+  .door {
+    flex: 1 0 0;
+    min-height: calc(clamp(36px, 7svh, 112px) + 12px);
+    padding: 6px 16px 6px 20px;
+  }
+
+  .doorText {
+    gap: 2px;
+  }
+
+  .doorName {
+    font-size: clamp(26px, 5.4svh, 50px);
+  }
+
+  .doorPhotoWrap {
+    width: auto;
+    height: clamp(36px, 7svh, 112px);
+    aspect-ratio: 1;
+  }
+
+  .doorPhoto {
+    border-radius: 14px;
+  }
+
+  .arrow {
+    right: -4px;
+    bottom: -4px;
+    width: 26px;
+    height: 26px;
+    border-radius: 13px;
+    font-size: 14px;
+  }
+
+  .combosRow {
+    padding: 10px 20px;
+  }
+
+  .indexSummary {
+    min-height: 52px;
+    padding: 10px 0;
+  }
+}
+
+/* Mid-height phones: drop the door blurbs first. */
+@media (max-width: 1023px) and (max-height: 760px) {
+  .doorSub {
+    display: none;
+  }
+}
+
+/* Short phones (SE, small Androids): the tags already say new/recommended
+   and the door bands carry their names, so headings and counts go. */
+@media (max-width: 1023px) and (max-height: 620px) {
+  .railTitle,
+  .doorCount,
+  .combosMeta {
+    display: none;
+  }
+
+  .entranceHead .kicker {
+    display: none;
+  }
+}
+
+/* Below 360 px the isotipo steps aside so the tools keep one line. */
+@media (max-width: 359px) {
+  .headRow > svg {
+    display: none;
+  }
+
+  .headRow {
+    justify-content: flex-end;
+  }
+}
+
+/* Very short screens (iPhone SE 1st gen with bars, ~480 px): smaller picks. */
+@media (max-width: 1023px) and (max-height: 520px) {
+  .rail {
+    padding-bottom: 8px;
+  }
+
+  .railPhoto {
+    width: 44px;
+    height: 44px;
+  }
+
+  .railCard {
+    grid-template-columns: 44px minmax(0, 1fr);
+  }
+
+  .railDoor {
+    display: none;
+  }
+
+  .entranceHead {
+    padding-top: 8px;
+    padding-bottom: 6px;
+  }
+
+  .combosRow {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  .indexSummary {
+    min-height: 48px;
+    padding: 8px 0;
   }
 }

@@ -829,6 +829,9 @@ export function CartaA({
         />
       ) : (
         <>
+          {/* On phones everything from the title to "Toda la carta" fits one
+              screen (min-height = small viewport); only the footer scrolls. */}
+          <div className={styles.entrance}>
           <header className={styles.entranceHead}>
             <div className={styles.headRow}>
               <svg viewBox={ISOTIPO_VIEWBOX} width={34} height={34} role="img" aria-label="Deriva">
@@ -940,6 +943,7 @@ export function CartaA({
             onDoor={(id) => go({ kind: "door", id })}
             onItem={openItem}
           />
+          </div>
         </>
       )}
 
@@ -1010,10 +1014,21 @@ function FullIndex({
 }) {
   const copy = CARTA_COPY[locale];
   return (
-    <section className={styles.index} aria-labelledby="toda-la-carta">
-      <h2 id="toda-la-carta" className={styles.indexTitle}>
-        {copy.fullMenu}
-      </h2>
+    // Closed by default: the entrance asks for a door, not a scroll. The
+    // dishes stay in the server HTML inside <details>, so crawlers and Ads
+    // still read them; only the visitor has to tap to open the list.
+    <details className={styles.index}>
+      <summary className={styles.indexSummary}>
+        <h2 id="toda-la-carta" className={styles.indexTitle}>
+          {copy.fullMenu}
+        </h2>
+        <span className={styles.indexMeta}>
+          {copy.options(doors.reduce((n, d) => n + d.itemCount, 0))}
+        </span>
+        <span className={styles.indexToggle} aria-hidden="true">
+          +
+        </span>
+      </summary>
       <div className={styles.indexDoors}>
         {doors.map((door) => (
           <div key={door.id} className={styles.indexDoor} style={doorStyle(door.id)}>
@@ -1050,7 +1065,7 @@ function FullIndex({
           </div>
         ))}
       </div>
-    </section>
+    </details>
   );
 }
 
