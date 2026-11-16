@@ -58,6 +58,10 @@ import {
   type PendingView
 } from "./StockEditor";
 
+import { BeanWorkspace } from "./BeanWorkspace";
+import { StockSections } from "./BeanView";
+import { readPending as readBeanPending } from "../../../../src/bean-stock/pending";
+
 type AuthStatus = "loading" | "signed-out" | "signed-in" | "error";
 type LoadState = "idle" | "loading" | "ready" | "error" | "forbidden";
 
@@ -148,6 +152,8 @@ export function StockApp() {
   const [password, setPassword] = useState("");
   const [accountEmail, setAccountEmail] = useState("");
 
+  const [section, setSection] = useState<"products" | "beans">("products");
+
   const [snapshot, setSnapshot] = useState<StockSnapshot | null>(null);
   const [loadState, setLoadState] = useState<LoadState>("idle");
   const [loadError, setLoadError] = useState("");
@@ -214,6 +220,10 @@ export function StockApp() {
     [clearWorkspace]
   );
 
+  const beanSessionExpired = useCallback((uid: string) => {
+    if (sessionUidRef.current === uid && (!authRef.current?.currentUser || authRef.current.currentUser.uid === uid)) void signOutAndClear(SESSION_EXPIRED);
+  }, [signOutAndClear]);
+
   /** Background loads keep the current list on screen instead of flashing the skeleton. */
   const loadSnapshot = useCallback(
     async (options: { background?: boolean } = {}) => {
@@ -259,6 +269,7 @@ export function StockApp() {
         sessionUidRef.current = user?.uid ?? null;
         clearWorkspace();
         if (user) {
+          setSection(readBeanPending(user.uid) ? "beans" : "products");
           setAuthStatus("signed-in");
           setAuthError("");
           setAccountEmail(user.email ?? "");
@@ -873,6 +884,10 @@ export function StockApp() {
     );
   }
 
+  if (section === "beans" && sessionUidRef.current) {
+    return <StockFrame><TopBar onSignOut={() => void signOutAndClear()} /><BeanWorkspace key={`${sessionUidRef.current}:${sessionGenerationRef.current}`} uid={sessionUidRef.current} onProducts={() => { setSection("products"); void loadSnapshot({ background: true }); }} onSessionExpired={beanSessionExpired}/></StockFrame>;
+  }
+
   return (
     <StockFrame>
       <TopBar onSignOut={() => void signOutAndClear()} />
@@ -914,6 +929,8 @@ export function StockApp() {
               )}
             </div>
           </div>
+
+          <StockSections active="products" locked={busy || pending !== null || panel !== null} onProducts={() => {}} onBeans={() => setSection("beans")} />
 
           {snapshot && (
             <div className={`stock-visibility${visibilityEnabled ? " is-active" : ""}`} role="note">
@@ -1105,7 +1122,7 @@ function StockFrame({ children }: { children: React.ReactNode }) {
   return <div className="stock-shell">{children}</div>;
 }
 
-function TopBar({ onSignOut }: { onSignOut: () => void }) {
+export function TopBar({ onSignOut }: { onSignOut: () => void }) {
   return (
     <header className="stock-bar">
       <div className="stock-bar__brand">

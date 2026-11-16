@@ -1,0 +1,1461 @@
+{
+  "uuid": "9ebdf4f5-e978-4e1f-8c60-e5fdbd3b3c4a",
+  "name": "Notion — work with a wink",
+  "site": {
+    "name": "Notion",
+    "domain": "notion.com",
+    "url": "https://notion.com"
+  },
+  "overview": {
+    "intent": "An approachable software style that pairs oversized, tightly packed grotesk headlines with small, practical interface text. The mostly white and warm-gray world is punctuated by blue actions, pastel tokens, black line-drawn characters and richly tinted customer portraits. It suits collaborative tools and complex products that want to feel useful rather than intimidating, with airy page compositions surrounding dense, believable product demonstrations.",
+    "essentials": [
+      "A serious promise gets a playful interruption: centered 96px/100px weight-600 headlines with -4.6px tracking incorporate a rounded pastel word token, set at 72px/1.21 weight 500.",
+      "The product arrives before the pitch becomes long: a centered two-line promise, 20px/28px support and paired 38px-high actions lead into a roughly 960px-wide interface stage that extends beyond the first screen.",
+      "Conversion controls are compact rectangles, not oversized pills: 8px corners, 16px/24px weight-500 text, 6px 15px padding and a 16px gap between blue primary and pale-blue secondary actions.",
+      "Color behaves like a small cast of characters against paper: white and #f9f9f8 dominate the default layout; #0075de marks actions, pastel tokens interrupt type, and saturated red, blue and yellow are concentrated into a three-card proof row rather than broad decorative bands.",
+      "The software has human company: fine black line drawings peek around a softly elevated interface, while 12px-rounded feature panels frame cropped, overlapping product fragments. Include a small original line-drawn companion and a tangible interface demonstration; a simplified document or workflow mockup is the fallback.",
+      "Proof changes material: 394px × 492px portrait cards use colored screen/multiply layers and white 18px/28px serif quotations, followed by small inline icon-and-stat statements rather than giant numerals.",
+      "The last invitation is unusually unhurried: a full-width #f6f5f4 closing band is 630px tall on desktop, carrying only a 42px/48px heading and two compact actions, before a white multi-column footer."
+    ]
+  },
+  "colors": {
+    "ink": {
+      "name": "Headline ink",
+      "value": "#0d0d0d",
+      "group": "neutral",
+      "usage": [
+        "text"
+      ],
+      "use": "Primary display and major section headings; black at 0.95 alpha over white."
+    },
+    "canvas": {
+      "name": "White paper",
+      "value": "#ffffff",
+      "group": "neutral",
+      "usage": [
+        "background",
+        "surface",
+        "text"
+      ],
+      "use": "Default page and interface canvas; reversed text on colored portraits and technical bands."
+    },
+    "text": {
+      "name": "Reading ink",
+      "value": "#1a1a1a",
+      "group": "neutral",
+      "usage": [
+        "text"
+      ],
+      "use": "Body, navigation and ordinary headings; black at 0.898 alpha on white."
+    },
+    "action": {
+      "name": "Action blue",
+      "value": "#0075de",
+      "group": "brand",
+      "usage": [
+        "action",
+        "link",
+        "accent"
+      ],
+      "use": "Primary buttons, links and focus outlines."
+    },
+    "secondary": {
+      "name": "Pale action blue",
+      "value": "#e6f3fe",
+      "group": "accent",
+      "usage": [
+        "surface",
+        "action"
+      ],
+      "use": "Secondary conversion buttons."
+    },
+    "link-dark": {
+      "name": "Deep action blue",
+      "value": "#005bab",
+      "group": "accent",
+      "usage": [
+        "text",
+        "link",
+        "action"
+      ],
+      "use": "Secondary action text and compact-button hover; also the blue multiply layer for portrait proof."
+    },
+    "panel": {
+      "name": "Almost-white panel",
+      "value": "#f9f9f8",
+      "group": "neutral",
+      "usage": [
+        "surface"
+      ],
+      "use": "Large product feature backings."
+    },
+    "warm": {
+      "name": "Warm gray",
+      "value": "#f6f5f4",
+      "group": "neutral",
+      "usage": [
+        "background",
+        "surface",
+        "border"
+      ],
+      "use": "Closing band, feature panels on standalone product pages and soft plan outlines."
+    },
+    "muted": {
+      "name": "Context gray",
+      "value": "#757575",
+      "group": "neutral",
+      "usage": [
+        "text"
+      ],
+      "use": "Captions, attribution and footer labels; black at 0.54 alpha over white."
+    },
+    "rule": {
+      "name": "Hairline gray",
+      "value": "#e6e6e6",
+      "group": "neutral",
+      "usage": [
+        "border"
+      ],
+      "use": "Black at 0.1 alpha over white for compact cards, FAQ dividers and footer separators."
+    },
+    "black": {
+      "name": "Solid black",
+      "value": "#000000",
+      "group": "neutral",
+      "usage": [
+        "text",
+        "surface"
+      ],
+      "use": "Feature-card titles, line art and circular arrow controls."
+    },
+    "lavender": {
+      "name": "Word-token lavender",
+      "value": "#eadbfa",
+      "group": "accent",
+      "usage": [
+        "surface"
+      ],
+      "use": "Pastel inline word token; other token colors can change with the word."
+    },
+    "portrait-red": {
+      "name": "Portrait red light",
+      "value": "#f64932",
+      "group": "accent",
+      "usage": [
+        "accent"
+      ],
+      "use": "Screen layer at 0.42 opacity over portrait photography; also small circular feature icons."
+    },
+    "portrait-red-dark": {
+      "name": "Portrait red depth",
+      "value": "#e32d14",
+      "group": "accent",
+      "usage": [
+        "accent"
+      ],
+      "use": "Multiply layer at 0.8 opacity over red portrait proof."
+    },
+    "portrait-blue": {
+      "name": "Portrait blue light",
+      "value": "#097fe8",
+      "group": "accent",
+      "usage": [
+        "accent",
+        "link"
+      ],
+      "use": "Screen layer at 0.42 opacity over blue portrait proof and small feature icons."
+    },
+    "portrait-yellow": {
+      "name": "Portrait yellow light",
+      "value": "#ffb110",
+      "group": "accent",
+      "usage": [
+        "accent"
+      ],
+      "use": "Screen layer at 0.42 opacity over yellow portrait proof and small feature icons."
+    },
+    "portrait-yellow-dark": {
+      "name": "Portrait yellow depth",
+      "value": "#e89d01",
+      "group": "accent",
+      "usage": [
+        "accent"
+      ],
+      "use": "Multiply layer at 0.8 opacity over yellow portrait proof."
+    },
+    "pricing-wash": {
+      "name": "Recommended-plan blue",
+      "value": "#f2f9ff",
+      "group": "accent",
+      "usage": [
+        "surface"
+      ],
+      "use": "A continuous pale blue backing for the advanced plan family.",
+      "scope": "pricing pages"
+    },
+    "technical-blue": {
+      "name": "Technical ultramarine",
+      "value": "#1313ba",
+      "group": "accent",
+      "usage": [
+        "background",
+        "text",
+        "border"
+      ],
+      "use": "Full hero and footer fields, technical headings, diagrams and terminal strips.",
+      "scope": "developer-oriented pages"
+    },
+    "technical-paper": {
+      "name": "Technical lavender paper",
+      "value": "#f6f6fc",
+      "group": "neutral",
+      "usage": [
+        "background",
+        "surface"
+      ],
+      "use": "Broad technical capability backdrop and tinted demonstrations.",
+      "scope": "developer-oriented pages"
+    },
+    "technical-muted": {
+      "name": "Technical body blue",
+      "value": "#6363d1",
+      "group": "accent",
+      "usage": [
+        "text",
+        "border"
+      ],
+      "use": "Ultramarine at 0.66 alpha over white for supporting paragraphs and dashed connectors.",
+      "scope": "developer-oriented pages"
+    },
+    "code-muted": {
+      "name": "Code lavender gray",
+      "value": "#7171a8",
+      "group": "accent",
+      "usage": [
+        "text"
+      ],
+      "use": "Code text on light technical panels.",
+      "scope": "developer-oriented pages"
+    },
+    "technical-edge": {
+      "name": "Technical panel edge",
+      "value": "#e8e8f8",
+      "group": "neutral",
+      "usage": [
+        "border"
+      ],
+      "use": "Visible lavender edge from rgba(203, 203, 239, 0.44) over white.",
+      "scope": "developer-oriented pages"
+    },
+    "tile-mint": {
+      "name": "Mint tile",
+      "value": "#ddfcfa",
+      "group": "accent",
+      "usage": [
+        "surface"
+      ],
+      "use": "Small floating illustrated tokens.",
+      "scope": "standalone utility-product pages"
+    },
+    "tile-teal": {
+      "name": "Teal tile edge",
+      "value": "#03c1ba",
+      "group": "accent",
+      "usage": [
+        "border",
+        "accent"
+      ],
+      "use": "Left stripe and line drawing on mint tokens.",
+      "scope": "standalone utility-product pages"
+    },
+    "tile-peach": {
+      "name": "Peach tile",
+      "value": "#ffe9d3",
+      "group": "accent",
+      "usage": [
+        "surface"
+      ],
+      "use": "Small floating illustrated tokens.",
+      "scope": "standalone utility-product pages"
+    },
+    "tile-orange": {
+      "name": "Orange tile edge",
+      "value": "#ff6522",
+      "group": "accent",
+      "usage": [
+        "border",
+        "accent"
+      ],
+      "use": "Left stripe and drawing on peach tokens.",
+      "scope": "standalone utility-product pages"
+    },
+    "tile-purple": {
+      "name": "Lilac tile",
+      "value": "#f7e5ff",
+      "group": "accent",
+      "usage": [
+        "surface"
+      ],
+      "use": "Small floating illustrated tokens.",
+      "scope": "standalone utility-product pages"
+    },
+    "tile-violet": {
+      "name": "Violet tile edge",
+      "value": "#a361ff",
+      "group": "accent",
+      "usage": [
+        "border",
+        "accent"
+      ],
+      "use": "Left stripe and drawing on lilac tokens.",
+      "scope": "standalone utility-product pages"
+    }
+  },
+  "typography": {
+    "fonts": {
+      "sans": {
+        "family": "NotionInter",
+        "use": "All marketing headlines, navigation, body and actions.",
+        "character": "Neutral high-x-height grotesk; large text becomes tightly fitted and bold, small text stays practical.",
+        "features": "\"lnum\", \"locl\" 0",
+        "substitute": "Inter",
+        "substituteNote": "Use weights 400–700 and preserve the tight display tracking.",
+        "fallback": "Inter, -apple-system, system-ui, \"Segoe UI\", Helvetica, Arial, sans-serif"
+      },
+      "serif": {
+        "family": "Lyon Text",
+        "use": "Customer quotations and the footer's short editorial thought.",
+        "character": "Bookish serif with moderate contrast, bringing a human editorial register into the software layout.",
+        "substitute": "Lora",
+        "substituteNote": "Use regular 400; preserve narrow quotation measures.",
+        "fallback": "Georgia, serif"
+      },
+      "mono": {
+        "family": "iA Writer Mono",
+        "scope": "developer-oriented pages",
+        "use": "Code, command strips, bracketed navigation and diagram labels.",
+        "character": "Plain writerly monospace that reads like working tooling, not futuristic display lettering.",
+        "substitute": "IBM Plex Mono",
+        "fallback": "Menlo, Courier, monospace"
+      }
+    },
+    "styles": [
+      {
+        "name": "display",
+        "font": "sans",
+        "weight": 600,
+        "size": "96px",
+        "lineHeight": "100px",
+        "tracking": "-4.6px",
+        "scales": {
+          "size": "clamp(42px, -25.5px + 11.25vw, 96px)",
+          "lineHeight": "clamp(48px, -17px + 10.8333vw, 100px)",
+          "tracking": "clamp(-4.6px, 2.375px - 0.645833vw, -1.5px)"
+        },
+        "use": "Default centered marketing promise, usually in two broad lines."
+      },
+      {
+        "name": "word-token",
+        "font": "sans",
+        "weight": 500,
+        "size": "72px",
+        "lineHeight": "1.21",
+        "tracking": "-0.0278em",
+        "use": "A short action word nested into the oversized promise."
+      },
+      {
+        "name": "heading-lg",
+        "font": "sans",
+        "weight": 700,
+        "size": "54px",
+        "lineHeight": "56px",
+        "tracking": "-0.0347em",
+        "features": "\"lnum\", \"locl\" 0",
+        "use": "Left-aligned major chapter titles and proof headings."
+      },
+      {
+        "name": "heading",
+        "font": "sans",
+        "weight": 700,
+        "size": "42px",
+        "lineHeight": "48px",
+        "tracking": "-0.0357em",
+        "features": "\"lnum\", \"locl\" 0",
+        "use": "Closing invitation; centered benefit chapters on standalone utility-product pages."
+      },
+      {
+        "name": "card-title",
+        "font": "sans",
+        "weight": 700,
+        "size": "22px",
+        "lineHeight": "28px",
+        "tracking": "-0.0114em",
+        "features": "\"lnum\", \"locl\" 0",
+        "use": "Feature-card result statement and plan name or price."
+      },
+      {
+        "name": "deck",
+        "font": "sans",
+        "weight": 400,
+        "size": "20px",
+        "lineHeight": "1.4",
+        "tracking": "-0.006em",
+        "features": "\"lnum\", \"locl\" 0",
+        "use": "One-line supporting explanation below the main promise."
+      },
+      {
+        "name": "body",
+        "font": "sans",
+        "weight": 400,
+        "size": "16px",
+        "lineHeight": "1.5",
+        "tracking": "normal",
+        "features": "\"lnum\", \"locl\" 0",
+        "use": "Supporting paragraphs and explanatory answers."
+      },
+      {
+        "name": "body-strong",
+        "font": "sans",
+        "weight": 700,
+        "size": "16px",
+        "lineHeight": "1.5",
+        "tracking": "normal",
+        "features": "\"lnum\", \"locl\" 0",
+        "use": "Compact use-case tile labels."
+      },
+      {
+        "name": "button",
+        "font": "sans",
+        "weight": 500,
+        "size": "16px",
+        "lineHeight": "1.5",
+        "tracking": "normal",
+        "features": "\"lnum\", \"locl\" 0",
+        "use": "Hero and closing conversion actions."
+      },
+      {
+        "name": "navigation",
+        "font": "sans",
+        "weight": 500,
+        "size": "14px",
+        "lineHeight": "20px",
+        "tracking": "normal",
+        "use": "Global navigation, footer links and compact actions."
+      },
+      {
+        "name": "caption",
+        "font": "sans",
+        "weight": 400,
+        "size": "14px",
+        "lineHeight": "20px",
+        "tracking": "normal",
+        "features": "\"lnum\", \"locl\" 0",
+        "use": "Sentence-case card eyebrows, proof context and attributions."
+      },
+      {
+        "name": "footer-label",
+        "font": "sans",
+        "weight": 500,
+        "size": "12px",
+        "lineHeight": "16px",
+        "tracking": "0.01em",
+        "features": "\"lnum\", \"locl\" 0",
+        "use": "Muted footer column labels."
+      },
+      {
+        "name": "portrait-quote",
+        "font": "serif",
+        "weight": 400,
+        "size": "18px",
+        "lineHeight": "28px",
+        "tracking": "normal",
+        "use": "White customer quotations within tinted portrait cards."
+      },
+      {
+        "name": "footer-thought",
+        "font": "serif",
+        "weight": 400,
+        "size": "16px",
+        "lineHeight": "1.5",
+        "tracking": "normal",
+        "features": "\"liga\", \"lnum\", \"locl\" 0",
+        "use": "Short two-line editorial statement beneath the footer identity."
+      },
+      {
+        "name": "product-display",
+        "scope": "standalone product, developer and pricing pages",
+        "font": "sans",
+        "weight": 700,
+        "size": "64px",
+        "lineHeight": "1",
+        "tracking": "-0.0332em",
+        "use": "Short centered product promise or left-aligned pricing promise."
+      },
+      {
+        "name": "feature-heading",
+        "scope": "standalone product and developer pages",
+        "font": "sans",
+        "weight": 700,
+        "size": "18px",
+        "lineHeight": "28px",
+        "tracking": "-0.007em",
+        "use": "Small benefit headings above demonstrations."
+      },
+      {
+        "name": "faq-question",
+        "scope": "question-and-answer sections",
+        "font": "sans",
+        "weight": 600,
+        "size": "16px",
+        "lineHeight": "1.5",
+        "tracking": "normal",
+        "use": "Single-line collapsed question."
+      },
+      {
+        "name": "group-heading",
+        "scope": "pricing and company-story pages",
+        "font": "sans",
+        "weight": 700,
+        "size": "32px",
+        "lineHeight": "1.25",
+        "tracking": "-0.0234em",
+        "features": "\"lnum\", \"locl\" 0",
+        "use": "Plan-family promises and late editorial section headings."
+      },
+      {
+        "name": "editorial-quote",
+        "scope": "pricing pages",
+        "font": "serif",
+        "weight": 400,
+        "size": "32px",
+        "lineHeight": "1.25",
+        "tracking": "normal",
+        "features": "\"liga\", \"lnum\", \"locl\" 0",
+        "use": "A freestanding testimonial below the simpler plan family."
+      },
+      {
+        "name": "comparison",
+        "scope": "pricing comparison tables",
+        "font": "sans",
+        "weight": 400,
+        "size": "15px",
+        "lineHeight": "20px",
+        "tracking": "normal",
+        "use": "Plan-cell values and explanatory text."
+      },
+      {
+        "name": "comparison-label",
+        "scope": "pricing comparison tables",
+        "font": "sans",
+        "weight": 600,
+        "size": "15px",
+        "lineHeight": "20px",
+        "tracking": "normal",
+        "use": "Underlined feature labels with explanatory affordances."
+      },
+      {
+        "name": "technical-mono",
+        "scope": "developer-oriented pages",
+        "font": "mono",
+        "weight": 400,
+        "size": "14px",
+        "lineHeight": "20px",
+        "tracking": "-0.009em",
+        "use": "Commands, code and technical navigation."
+      }
+    ],
+    "notes": [
+      "Display tracking is dramatically tighter than body tracking; do not spread the large headline to make it feel luxurious.",
+      "Sentence case is the norm even for eyebrows and navigation. The card eyebrow is quieter and smaller than the result statement below it.",
+      "Serif is a change of speaker, not an alternate heading style. Reserve it for testimony and a small editorial footer note."
+    ]
+  },
+  "layout": {
+    "spacing": {
+      "density": "Airy outer composition with compact controls and dense, credible product views.",
+      "steps": [
+        {
+          "value": "8px",
+          "use": "Eyebrow-to-card-title spacing and gaps within compact tile rows."
+        },
+        {
+          "value": "12px",
+          "use": "Headline-to-deck spacing and small content group gaps."
+        },
+        {
+          "value": "16px",
+          "use": "Paired action gap and heading-to-paragraph spacing."
+        },
+        {
+          "value": "20px",
+          "use": "Deck-to-actions spacing."
+        },
+        {
+          "value": "24px",
+          "use": "Default card padding and feature-grid gutters."
+        },
+        {
+          "value": "32px",
+          "use": "Chapter-title-to-grid spacing; wider product and plan interior padding."
+        },
+        {
+          "value": "64px",
+          "use": "Utility hero top and bottom padding; closing-band minimum interior padding."
+        },
+        {
+          "value": "80px",
+          "use": "Hero opening inset, technical chapter spacing and footer top padding."
+        },
+        {
+          "value": "96px",
+          "use": "Major marketing chapter top and bottom breathing room."
+        },
+        {
+          "value": "140px",
+          "use": "Only for company-story pages: separation between illustrated editorial story rows."
+        }
+      ]
+    },
+    "containers": [
+      {
+        "name": "Marketing content",
+        "maxWidth": "1252px",
+        "padding": "64px",
+        "use": "Centered broad content frame. At desktop, feature and proof chapters have about 106px side margins and approximately 1229px of actual content."
+      },
+      {
+        "name": "Hero product stage",
+        "maxWidth": "960px",
+        "use": "Centered interface beneath the hero copy, narrower than the headline frame."
+      },
+      {
+        "name": "Feature bento",
+        "columns": 2,
+        "gap": "24px",
+        "use": "Two equal feature cards followed by a full-width horizontal demonstration; shift emphasis through the image rather than different card colors."
+      },
+      {
+        "name": "Compact use cases",
+        "columns": 5,
+        "gap": "8px",
+        "use": "A single desktop row of compact navigation tiles."
+      },
+      {
+        "name": "Portrait proof",
+        "columns": 3,
+        "gap": "24px",
+        "use": "Equal-height portrait cards with a small stat strip beneath."
+      },
+      {
+        "name": "Utility content",
+        "scope": "standalone utility-product pages",
+        "maxWidth": "1024px",
+        "gap": "24px",
+        "use": "Large full-width demonstrations alternate with two- and three-column feature grids."
+      },
+      {
+        "name": "Technical and pricing content",
+        "scope": "developer and pricing pages",
+        "maxWidth": "1190px",
+        "padding": "125px",
+        "use": "Desktop frame for technical demonstrations, plan families and comparison rows."
+      },
+      {
+        "name": "Editorial story",
+        "scope": "company-story pages",
+        "maxWidth": "940px",
+        "columns": 2,
+        "gap": "40px",
+        "use": "450px-wide illustrated column paired with short, top-aligned reading text."
+      },
+      {
+        "name": "FAQ measure",
+        "scope": "question-and-answer sections",
+        "maxWidth": "800px",
+        "use": "A narrow left-aligned accordion under a larger chapter heading."
+      },
+      {
+        "name": "Footer columns",
+        "columns": 4,
+        "gap": "24px",
+        "use": "Four link columns occupy the right two thirds; identity and serif thought occupy the left third."
+      }
+    ]
+  },
+  "corner_radius": [
+    {
+      "name": "Actions",
+      "value": "8px"
+    },
+    {
+      "name": "Feature and portrait cards",
+      "value": "12px"
+    },
+    {
+      "name": "Navigation hit area",
+      "value": "4px"
+    },
+    {
+      "name": "Inline word and locale selector",
+      "value": "9999px"
+    },
+    {
+      "name": "Technical panels",
+      "scope": "developer-oriented pages",
+      "value": "4px"
+    },
+    {
+      "name": "Floating illustrated tokens",
+      "scope": "standalone utility-product pages",
+      "value": "6.5px"
+    }
+  ],
+  "surfaces_and_depth": {
+    "shadows": [
+      {
+        "name": "Paper elevation",
+        "value": "0px 0.175px 1.041px 0px rgba(0,0,0,0.01), 0px 0.8px 2.925px 0px rgba(0,0,0,0.02), 0px 2.025px 7.847px 0px rgba(0,0,0,0.027), 0px 4px 18px 0px rgba(0,0,0,0.04)",
+        "use": "Soft separation of white interface fragments from pale backing, not a dramatic floating-card effect."
+      }
+    ],
+    "surfaces": [
+      {
+        "name": "Paper canvas",
+        "level": 0,
+        "use": "Default page field.",
+        "css": {
+          "background": "#ffffff",
+          "color": "#1a1a1a"
+        }
+      },
+      {
+        "name": "Feature backing",
+        "level": 1,
+        "use": "Product-led benefit panels.",
+        "css": {
+          "background": "#f9f9f8",
+          "border-radius": "12px",
+          "overflow": "hidden"
+        },
+        "observed": "The backing visually joins the text header and illustration area. Standalone utility panels use warm gray instead.",
+        "transfer": "Keep backing nearly neutral so the interface remains the visual event."
+      },
+      {
+        "name": "White interface sheet",
+        "level": 2,
+        "use": "Overlapping interface fragments.",
+        "css": {
+          "background": "#ffffff",
+          "border-radius": "12px",
+          "box-shadow": "0px 0.175px 1.041px 0px rgba(0,0,0,0.01), 0px 0.8px 2.925px 0px rgba(0,0,0,0.02), 0px 2.025px 7.847px 0px rgba(0,0,0,0.027), 0px 4px 18px 0px rgba(0,0,0,0.04)"
+        },
+        "observed": "Sheets are cropped by their surrounding panel and can have only their top corners visible.",
+        "transfer": "Show a few legible, useful interface details rather than many tiny illegible windows."
+      },
+      {
+        "name": "Closing field",
+        "level": 0,
+        "use": "Quiet final conversion section.",
+        "css": {
+          "background": "#f6f5f4",
+          "padding": "64px 32px"
+        },
+        "observed": "A tall empty field surrounds a very compact message and action group.",
+        "transfer": "Treat spare area as deliberate breathing space."
+      },
+      {
+        "name": "Portrait legibility layer",
+        "level": 2,
+        "use": "Shade under white quotation copy.",
+        "css": {
+          "background": "linear-gradient(rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, 0.55) 100%)"
+        }
+      },
+      {
+        "name": "Plan wash",
+        "level": 1,
+        "scope": "pricing pages",
+        "use": "More capable plan family.",
+        "css": {
+          "background": "#f2f9ff",
+          "border-radius": "12px",
+          "padding": "32px"
+        },
+        "observed": "The pale field continues through the feature list; the simpler family stays white with a warm-gray 2px edge."
+      },
+      {
+        "name": "Technical field",
+        "level": 0,
+        "scope": "developer-oriented pages",
+        "use": "Technical hero, terminals and playful footer.",
+        "css": {
+          "background": "#1313ba",
+          "color": "#ffffff"
+        },
+        "observed": "Hero and footer reverse to white; intervening capability fields use pale lavender and ultramarine text."
+      },
+      {
+        "name": "Technical paper",
+        "level": 1,
+        "scope": "developer-oriented pages",
+        "use": "Light technical capability areas and diagrams.",
+        "css": {
+          "background": "#f6f6fc",
+          "color": "#1313ba"
+        }
+      },
+      {
+        "name": "Technical outline",
+        "level": 2,
+        "scope": "developer-oriented pages",
+        "use": "Code and tool panels.",
+        "css": {
+          "background": "#ffffff",
+          "border": "1px solid rgba(203, 203, 239, 0.44)",
+          "border-radius": "4px"
+        }
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Global navigation",
+      "use": "Persistent orientation and compact conversion access.",
+      "css": {
+        "position": "sticky",
+        "top": "0px",
+        "height": "64px",
+        "background": "#ffffff",
+        "z-index": "100",
+        "padding": "14px 24px",
+        "display": "grid",
+        "grid-template-columns": "1fr auto 1fr",
+        "gap": "16px",
+        "align-items": "center"
+      },
+      "typography": "navigation",
+      "observed": "Small identity mark at left, sparse central links and dropdown chevrons, login and a smaller primary action at right. Technical variant replaces ordinary links with bracketed mono shortcuts and reverses over its colored hero.",
+      "transfer": "Keep the central list short; use the same compact text scale rather than a large app-style toolbar.",
+      "sample": "Product"
+    },
+    {
+      "name": "Navigation link",
+      "use": "Header and compact menu actions.",
+      "css": {
+        "border-radius": "4px",
+        "padding": "5px 10px",
+        "display": "flex",
+        "gap": "8px",
+        "align-items": "center"
+      },
+      "typography": "navigation",
+      "observed": "A small downward chevron follows expandable labels; standalone links share the same hit-area construction.",
+      "states": "Declared: hover background rgba(0,0,0,0.05), text rgba(0,0,0,0.898); focus-visible outline-color #0075de.",
+      "sample": "Resources"
+    },
+    {
+      "name": "Primary button",
+      "use": "Main marketing conversion action.",
+      "css": {
+        "background": "#0075de",
+        "color": "#ffffff",
+        "border": "1px solid transparent",
+        "border-radius": "8px",
+        "padding": "6px 15px",
+        "height": "38px",
+        "display": "flex",
+        "justify-content": "center",
+        "align-items": "center"
+      },
+      "typography": "button",
+      "observed": "Paired actions have equal width, about 156px in the opening. Header actions use the navigation recipe and 36px height. Utility-product pages use a near-black primary instead; pricing rows use compact blue controls.",
+      "states": "Declared: hover background rgba(0,0,0,0.75); focus-visible background rgba(0,0,0,0.75), outline-color #0075de; active background rgba(0,0,0,0.898).",
+      "sample": "Get started free"
+    },
+    {
+      "name": "Secondary button",
+      "use": "Assisted conversion beside the self-serve action.",
+      "css": {
+        "background": "#e6f3fe",
+        "color": "#005bab",
+        "border": "1px solid transparent",
+        "border-radius": "8px",
+        "padding": "6px 15px",
+        "height": "38px",
+        "display": "flex",
+        "align-items": "center",
+        "justify-content": "center"
+      },
+      "typography": "button",
+      "observed": "Matches the primary's size without competing for contrast. In the closing field the backing becomes white.",
+      "states": "Declared: hover background rgba(255,255,255,0.75), text #000000; focus-visible background rgba(255,255,255,0.75), outline-color #0075de; active background rgba(255,255,255,0.66).",
+      "sample": "Request a demo"
+    },
+    {
+      "name": "Inline word token",
+      "use": "Playful action-word interruption within the default hero.",
+      "css": {
+        "background": "#eadbfa",
+        "border-radius": "9999px",
+        "padding": "8px 28px",
+        "display": "inline-flex",
+        "align-items": "baseline",
+        "gap": "12px"
+      },
+      "typography": "word-token",
+      "observed": "A colored circular dot precedes one short verb. The capsule is slightly taller than the adjacent text line; changing words change its width and tint.",
+      "transfer": "Use a meaningful verb that completes the promise, not a promotion label.",
+      "sample": "Create"
+    },
+    {
+      "name": "Feature bento card",
+      "use": "Show one outcome and the product mechanism that makes it possible.",
+      "css": {
+        "background": "#f9f9f8",
+        "border-radius": "12px",
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "typography": "card-title",
+      "observed": "A 24px-padded header contains caption, title and a black 32px circular arrow; a large product montage fills the remaining area. Two tall cards lead into a wider horizontal panel.",
+      "transfer": "Keep one claim per card and make the demonstration directly substantiate it.",
+      "sample": "Find the answer, with context."
+    },
+    {
+      "name": "Compact use-case tile",
+      "use": "Link a broad product to concrete applications.",
+      "css": {
+        "background": "#ffffff",
+        "border": "1px solid rgba(0,0,0,0.1)",
+        "border-radius": "12px",
+        "padding": "24px",
+        "display": "flex",
+        "flex-wrap": "wrap",
+        "gap": "16px"
+      },
+      "typography": "body-strong",
+      "observed": "A 40px colored circular pictogram precedes a short title and inline arrow. Desktop tiles are about 239px × 161px, five across.",
+      "sample": "Prepare the weekly review"
+    },
+    {
+      "name": "Portrait proof card",
+      "use": "Let a real user carry the claim.",
+      "css": {
+        "border-radius": "12px",
+        "overflow": "hidden",
+        "position": "relative",
+        "display": "grid",
+        "color": "#ffffff"
+      },
+      "typography": "portrait-quote",
+      "observed": "Full-bleed portrait, colored layers and Portrait legibility layer sit behind a 24px-padded content layer. Identity sits at top; quote and 14px sans attribution sit at bottom.",
+      "states": "Declared: hover soft paper box-shadow; focus-visible the same shadow and outline-color #0075de.",
+      "transfer": "Use real permissioned testimony; maintain the same framing and treatment across the row.",
+      "sample": "“We spend less time searching and more time making.”"
+    },
+    {
+      "name": "FAQ row",
+      "scope": "question-and-answer sections",
+      "use": "Address adoption and purchase objections.",
+      "css": {
+        "border-bottom": "1px solid rgba(0,0,0,0.1)",
+        "max-width": "800px"
+      },
+      "typography": "faq-question",
+      "observed": "A 56px-high collapsed summary has text at left and a small plus at right. The group has a top hairline; expanded answers use body text with 16px bottom padding.",
+      "states": "Declared: hover unspecified; focus-visible outline-color #0075de.",
+      "sample": "Can I use it with my existing tools?"
+    },
+    {
+      "name": "Plan family",
+      "scope": "pricing pages",
+      "use": "Organize four tiers into two understandable product families.",
+      "css": {
+        "background": "#f2f9ff",
+        "border-radius": "12px",
+        "padding": "32px",
+        "display": "grid",
+        "gap": "32px"
+      },
+      "typography": "group-heading",
+      "observed": "Two families sit side by side; each contains two plan columns. The advanced family has the blue wash, a recommended tag and stronger primary CTA; the simpler family is white with a 2px warm-gray outline. Prices stay at 22px, not giant display numerals.",
+      "sample": "For teams doing their best work."
+    },
+    {
+      "name": "Footer",
+      "use": "End with a human note and practical routes onward.",
+      "css": {
+        "background": "#ffffff",
+        "padding": "80px 0px 24px"
+      },
+      "typography": "navigation",
+      "observed": "Identity and a two-line serif thought sit at left. Four link columns sit at right under muted 12px labels. Copyright, privacy controls and a bordered pill locale selector complete a lower row; other page types add a top hairline.",
+      "transfer": "Use a short original statement about the product's philosophy rather than another oversized sales pitch.",
+      "sample": "Explore more →"
+    },
+    {
+      "name": "Technical command strip",
+      "scope": "developer-oriented pages",
+      "use": "Offer an immediate working entry point.",
+      "css": {
+        "background": "#ffffff",
+        "color": "#1313ba",
+        "padding": "8px 16px",
+        "border-radius": "0px",
+        "display": "flex",
+        "align-items": "center",
+        "gap": "12px"
+      },
+      "typography": "technical-mono",
+      "observed": "One line of command text ends in a copy icon, with a quieter documentation line below. Repeated in hero and technical footer; light sections can invert the strip to ultramarine.",
+      "sample": "tool install workspace"
+    }
+  ],
+  "imagery_and_graphics": {
+    "imagery": [
+      {
+        "name": "Software stage with line-drawn companions",
+        "use": "Default hero and product-led feature chapters.",
+        "observed": "A pale, front-facing desktop workspace dominates the stage, with light browser chrome, soft borders and tiny pastel status details. Small black-and-white faces or figures peek from behind its edges; they do not turn the whole scene into an illustration.",
+        "transfer": "Create one accurate central workflow view for the new product. If no finished interface exists, make a restrained document/list mockup with real labels and one clear active state, then add an original small line-drawn companion.",
+        "build": "Use a centered white interface sheet around 960px wide with an 8px hero edge and fine gray border. Behind two opposite edges place small SVG figures: open black paths for face and limbs, white fill, solid black hair or clothing, no colored shadows or gradients. Keep drawing line widths visually around 2px and figures much smaller than the interface."
+      },
+      {
+        "name": "Feature interface collage",
+        "use": "Inside Feature bento card and utility-product panels.",
+        "observed": "Readable product fragments overlap on near-white or warm-gray backing: lists, a document, a chart, a prompt or result bubble. White cards have subtle layered shadows; edges fade softly or are clipped at the outer panel. Utility scenes sometimes include laptop and phone hardware with black bezels.",
+        "transfer": "Build a few purposeful layers around the product's input and output. Keep interface colors muted, with only the active point of interest saturated."
+      },
+      {
+        "name": "Duotone portrait testimony",
+        "use": "Distinctive colorful proof row.",
+        "observed": "Close head-and-shoulders portraits fill equal 394px × 492px rounded cards. Red, blue and golden-yellow treatments preserve recognizable faces and texture. White identity marks sit above serif quotations; the lower image darkens strongly.",
+        "transfer": "Use consistently framed customer or practitioner portraits, not generic lifestyle scenes. If portrait assets are unavailable, commission simple monochrome face illustrations and retain the colored card treatment and quotation layout.",
+        "build": "Within an isolated 12px-rounded wrapper, cover-fit a neutral portrait. Add an inset screen-blend layer at opacity 0.42 using #f64932, #097fe8 or #ffb110, then an inset multiply layer at opacity 0.8 using #e32d14, #005bab or #e89d01. Add Portrait legibility layer above both and text above all layers."
+      },
+      {
+        "name": "Floating illustrated tiles",
+        "scope": "standalone utility-product pages",
+        "use": "Scatter small product-metaphor tokens around short centered chapter headings.",
+        "observed": "Small pastel rectangular tiles with a saturated left stripe carry thin, friendly drawings of everyday objects and tasks. Tokens occupy the margins, leaving the centered copy readable; some are clipped at section edges.",
+        "transfer": "Choose simple metaphors for the new product's daily uses and keep the tokens secondary to the message.",
+        "build": "Draw 90px × 80px rectangles with 6.5px corners and a 10px left stripe. Use mint/teal, peach/orange and lilac/violet palette pairs. Place a simple same-color SVG line icon in each, with generous internal space. Arrange asymmetrically at the sides rather than in a visible grid."
+      },
+      {
+        "name": "Technical diagram and connector world",
+        "scope": "developer-oriented pages",
+        "use": "Make technical capabilities feel like a connected working system.",
+        "observed": "Ultramarine hero reverses an interface to white/lavender lines, with pale event cards connected by right-angle dashed paths. Light chapters pair code and product output, traversed by dotted connectors and small pixel-like symbols. The final synthesis is a wide labeled architecture diagram.",
+        "transfer": "Make the diagram reflect actual inputs, processing and outcomes, while keeping geometry orthogonal and the palette restricted.",
+        "build": "Use SVG paths composed of horizontal and vertical segments, 1px dashed ultramarine at 0.66 alpha on light lavender. Add 4px-corner pale cards and small square glyph nodes at turns; invert path color on the saturated hero. Keep lines behind text and panels."
+      },
+      {
+        "name": "Pixel-play closing scene",
+        "scope": "developer-oriented pages",
+        "use": "A distinctive playful ending below the practical footer controls.",
+        "observed": "A full-width 512px-high arcade-like world sits on ultramarine: blocky lavender clouds, a small character, a thin ground line, score labels and a centered outlined pixel title with a keyboard-start prompt.",
+        "transfer": "End technical pages with a small original toy or interactive visual related to the product, preserving the deliberately low-resolution aesthetic rather than a polished 3D scene.",
+        "build": "Draw on a low-resolution canvas or integer SVG grid and scale with crisp edges. Use translucent white/lavender blocks over Technical field; construct clouds from stepped rectangles and a ground from a horizontal line plus sparse dashes. Center a short pixel-letter title and a mono keyboard prompt; place a tiny original character near the ground."
+      },
+      {
+        "name": "Illustrated editorial history",
+        "scope": "company-story pages",
+        "use": "Long-form origin, mission or explanatory story.",
+        "observed": "Black line-drawn people, tools and documents share a 450px-wide image column with grayscale archival photographs. Some figures overlap the photographs; thin black baselines anchor the scenes. The facing text is short, unboxed and aligned near the image top.",
+        "transfer": "Pair original diagrams or drawings with relevant documentary imagery. Keep the story visual and lightly humorous rather than replacing it with a corporate team-photo wall.",
+        "build": "Use grayscale photographs with a thin dark edge and overlay simple black-and-white SVG figures. Anchor each composition to a 2px black baseline; leave the surrounding white field unframed."
+      }
+    ],
+    "icons": {
+      "observed": "Mostly small filled SVG utility marks, with 10px dropdown chevrons, 14–20px action icons, 18px comparison checks and larger 40px colored circular feature badges. Decorative character art uses outlines rather than the filled utility vocabulary.",
+      "transfer": "Use simple legible filled icons at action scale. Keep line-drawn character art distinct; do not replace every small icon with a colorful illustration."
+    }
+  },
+  "section_recipes": [
+    {
+      "name": "Playful promise above a working product",
+      "opening": true,
+      "observed": "White paper extends behind Global navigation. The copy begins 80px below the 64px header, centered across a broad content frame. Display forms two tightly packed lines, with an Inline word token interrupting the second line; the headline spans roughly two thirds of the viewport width. Deck follows after 12px, then paired Primary button and Secondary button after 20px. About 81px below the actions, a roughly 960px-wide front-facing interface stage begins, with small line-drawn companions peeking from behind. Within the first 900px the entire headline, deck and buttons are visible, together with the upper portion of the main object; the complete interface and fuller trust block continue below. A low monochrome logo strip can overlap the lower visual edge.",
+      "transfer": "Preserve the hierarchy of a compact verbal promise, one playful token and an immediately tangible product. If no interface exists, construct a useful document or workflow mockup instead. Utility-product openings use a small product emblem, a 64px short headline, centered narrow support and floating illustrated tiles; pricing opens left-aligned with a 64px promise and trust logos; company stories open with a muted label and a 54px editorial title; developer openings invert the product stage onto ultramarine and introduce a command strip.",
+      "avoid": "Do not use a split-screen text/photo hero, a full-bleed background image or a token that reads as an unrelated badge. Do not shrink the product to a thumbnail above the fold.",
+      "typography": "display"
+    },
+    {
+      "name": "Outcome bento chapter",
+      "observed": "A left-aligned heading-lg leads by 32px into Feature bento card. Two equal columns use 24px gutters; a subsequent full-width card places text at left and layered interface output toward the right. Compact use-case tile follows in a five-item row beneath a small context label.",
+      "transfer": "Choose two or three distinct outcomes and support each with a specific working scene rather than a list of abstract adjectives.",
+      "typography": "heading-lg"
+    },
+    {
+      "name": "Portrait proof and quiet statistics",
+      "observed": "A heading-lg sits 32px above a three-column Portrait proof card row. Beneath the portraits, a horizontal strip uses muted small icons and 14px medium statements; numbers stay inline with their labels, with some portions emphasized by weight rather than giant size.",
+      "transfer": "Use permissioned testimony and concise, verifiable evidence. Keep statistics secondary to people, and retain one concentrated colorful proof device.",
+      "typography": "heading-lg"
+    },
+    {
+      "name": "Utility benefit chapters",
+      "scope": "standalone utility-product pages",
+      "observed": "Centered 42px headings sit in a 750px measure, about 60px above a warm-gray full-width demonstration. Each large panel contains a small blue utility icon, an 18px bold heading and body support over the product image. Two-column smaller panels and three-column integration cards extend the chapter; illustrated tokens sit in the white margins.",
+      "transfer": "Alternate broad demonstrations with smaller supporting benefits. Group by reader outcomes, not by every product feature.",
+      "typography": "heading"
+    },
+    {
+      "name": "Technical capability chapter",
+      "scope": "developer-oriented pages",
+      "observed": "Ultramarine heading-lg and a 560px-wide supporting paragraph lead into side-by-side code and rendered output on Technical paper. 80px vertical chapter spacing and dashed right-angle connectors unify successive demonstrations. Later chapters use three bordered cards or a two-column tool catalog, followed by a centered summary heading and wide system diagram.",
+      "transfer": "Show how the system works with a real input-to-output relationship, then provide docs or an executable command. Use the technical theme consistently within this page type.",
+      "typography": "heading-lg"
+    },
+    {
+      "name": "Plan selection and comparison",
+      "scope": "pricing pages",
+      "observed": "A left-aligned product-display promise and monochrome trust logos precede a small rounded billing switch. Two Plan family groups present four tiers using compact 22px prices, feature checks and short descriptions. A serif editorial quote fills the space beneath the shorter family. A heading-lg introduces a comparison matrix: a double-width label column plus four equal plan columns, 1px row rules, 15px text, 10px vertical padding and roughly 45px standard rows. Plan titles and actions remain available above the table while scrolling.",
+      "transfer": "Separate quick plan choice from detailed comparison. Use pale tint for the advanced family without making every tier a differently colored card.",
+      "typography": "product-display"
+    },
+    {
+      "name": "Illustrated editorial sequence",
+      "scope": "company-story pages",
+      "observed": "A 940px-wide two-column story pairs 450px illustrations and grayscale history images with short body paragraphs; rows are separated by about 140px. The ending changes to a bold attributed quotation, a ruled participation block, a three-by-two press-logo grid on warm-gray tiles and a compact email signup, then Footer.",
+      "transfer": "Use a narrative of problem, historical context, point of view and invitation. Illustrate each idea without forcing a product-grid layout onto the story.",
+      "typography": "heading-lg"
+    },
+    {
+      "name": "Quiet closing invitation",
+      "observed": "Closing field runs full width for 630px at desktop. A centered heading and two compact actions occupy only a small portion of it, with 16px between title and actions. No additional long-form selling copy competes with the invitation.",
+      "transfer": "Give the reader one simple next step and one assisted alternative; keep the visual pause even when preceding content is dense.",
+      "typography": "heading"
+    },
+    {
+      "name": "Utility download close and objections",
+      "scope": "standalone utility-product pages",
+      "observed": "A centered 42px invitation, short support and blue arrow link precede two warm-gray platform cards: desktop and mobile, each with a product image and compact platform download actions. A left-aligned question heading and FAQ row group follow, then a large white gap and a hairline-separated Footer.",
+      "transfer": "When delivery is platform-specific, make the close an explicit device choice rather than repeating a generic signup band.",
+      "typography": "heading"
+    },
+    {
+      "name": "Practical editorial footer",
+      "observed": "Footer uses a broad centered content frame, with identity and footer-thought at left, four navigation columns at right and a lower legal/locale row. The developer variant condenses these practical controls onto Technical field, repeats Technical command strip and ends in Pixel-play closing scene.",
+      "transfer": "Keep useful routes and the small philosophical note together; use the playful technical ending only within the technical theme.",
+      "typography": "footer-thought"
+    }
+  ],
+  "page_flow": {
+    "storyline": "Promise → tangible product → outcome chapters → credible proof → suitable next step → practical footer; comparison and objection handling expand when the purchase needs more explanation.",
+    "pages": [
+      {
+        "purpose": "Broad marketing landing page",
+        "beats": [
+          {
+            "role": "Promise",
+            "block": "Centered oversized headline with a changing pastel verb token and paired compact actions."
+          },
+          {
+            "role": "Product demonstration",
+            "block": "Large interface stage with small line-drawn companions and monochrome trust marks."
+          },
+          {
+            "role": "Capability chapters",
+            "block": "Outcome-focused bento demonstrations followed by compact application links."
+          },
+          {
+            "role": "Social proof",
+            "block": "Three strongly tinted portrait testimonials and a quiet inline stat strip."
+          },
+          {
+            "role": "Closing call",
+            "block": "Tall warm-gray invitation field followed by the editorial multi-column footer."
+          }
+        ],
+        "transfer": "Lead with a product promise, substantiate it visually and concentrate color into the proof rather than spreading it evenly.",
+        "page": "home"
+      },
+      {
+        "purpose": "Technical product platform",
+        "beats": [
+          {
+            "role": "Promise",
+            "block": "Reversed ultramarine hero, short technical title, install command and connected interface scene."
+          },
+          {
+            "role": "Capability chapters",
+            "block": "Pale technical chapters show code, output, workflow triggers and runtime behavior with dashed connector paths."
+          },
+          {
+            "role": "Adoption paths",
+            "block": "Agent collaboration cards and a tool catalog offer docs, commands and availability labels."
+          },
+          {
+            "role": "System synthesis",
+            "block": "Centered headline and a wide architecture diagram summarize the whole system."
+          },
+          {
+            "role": "Closing call",
+            "block": "Ultramarine footer repeats the command, practical links and a low-resolution arcade scene."
+          }
+        ],
+        "transfer": "Use a restricted technical palette, truthful executable examples and a playful ending suited to builders.",
+        "page": "product-dev"
+      },
+      {
+        "purpose": "Standalone utility product",
+        "beats": [
+          {
+            "role": "Promise",
+            "block": "Emblem, short centered title and two acquisition actions surrounded by pastel illustrated tiles."
+          },
+          {
+            "role": "Product demonstration",
+            "block": "Wide video framed in desktop and phone hardware."
+          },
+          {
+            "role": "Capability chapters",
+            "block": "Centered outcome headings alternate with large demonstrations and smaller feature grids."
+          },
+          {
+            "role": "Integration proof",
+            "block": "Compact logo-and-description tiles connect the product to familiar tools."
+          },
+          {
+            "role": "Closing call",
+            "block": "Desktop and mobile platform cards make the delivery choice explicit."
+          },
+          {
+            "role": "Objection handling",
+            "block": "Short FAQ, then the standard white editorial footer."
+          }
+        ],
+        "transfer": "Organize around a few day-to-day outcomes, then make installation or access unmistakable.",
+        "page": "product-calendar"
+      },
+      {
+        "purpose": "Pricing and purchase explanation",
+        "beats": [
+          {
+            "role": "Promise",
+            "block": "Left-aligned compact display and trust logos."
+          },
+          {
+            "role": "Pricing",
+            "block": "Billing toggle, paired plan families, recommended badge and integrated feature lists."
+          },
+          {
+            "role": "Social proof",
+            "block": "A freestanding serif quote supports the plan choice."
+          },
+          {
+            "role": "Detailed comparison",
+            "block": "Long ruled matrix with persistent tier actions."
+          },
+          {
+            "role": "Objection handling",
+            "block": "A narrow FAQ closes with a help-center route, then the standard footer rather than a large CTA band."
+          }
+        ],
+        "transfer": "Provide a fast decision surface before detailed rows; keep prices compact and comparison semantics legible.",
+        "page": "pricing"
+      },
+      {
+        "purpose": "Company story and point of view",
+        "beats": [
+          {
+            "role": "Editorial opening",
+            "block": "Muted contextual label and a large left-aligned story title."
+          },
+          {
+            "role": "Narrative explanation",
+            "block": "Sequential paired illustrations, archival photography and conversational paragraphs."
+          },
+          {
+            "role": "Point of view",
+            "block": "A brief attributed bold quotation distills the argument."
+          },
+          {
+            "role": "Participation and credibility",
+            "block": "Ruled invitation section, press-logo grid and a small email signup."
+          },
+          {
+            "role": "Ending",
+            "block": "Standard white footer with serif thought and practical links."
+          }
+        ],
+        "transfer": "Tell an illustrated origin or explanatory story rather than converting the page into feature cards; finish with ways to participate.",
+        "page": "about"
+      }
+    ]
+  },
+  "writing": {
+    "voice": "Clear and useful with a confident, lightly mischievous streak. Big promises are short; support copy names concrete actions, while technical and company storytelling can become more conversational.",
+    "doNotCopy": "Do not reuse Notion names, marks, character artwork, customer logos, product-specific commands, customer quotations, user counts, rankings, prices or other claims. Use original identity, authorized assets and verifiable facts for the new product.",
+    "address": "Use you and your for the reader's work, we for the maker's point of view, and the product name only when it adds clarity.",
+    "rhythm": "Headlines are brief, sentence case and often punctuated with a period. Supporting lines tend to be a single practical sentence; feature descriptions are short enough to scan beside a demonstration. Longer editorial paragraphs use questions, direct address and occasional friendly asides.",
+    "byRole": [
+      {
+        "role": "Hero headline",
+        "pattern": "A short declarative promise or familiar phrase with a small twist.",
+        "length": "2–9 words",
+        "examples": [
+          {
+            "text": "It’s time.",
+            "source": "product-calendar"
+          },
+          {
+            "text": "One tool to run your company.",
+            "source": "pricing"
+          }
+        ]
+      },
+      {
+        "role": "Supporting line",
+        "pattern": "Concrete verbs explain what the user accomplishes and why the product belongs in the workflow.",
+        "length": "12–25 words",
+        "examples": [
+          {
+            "text": "Capture context, find answers, and automate tasks with AI built for your team.",
+            "source": "home"
+          }
+        ]
+      },
+      {
+        "role": "Chapter heading",
+        "pattern": "Outcome first, sometimes a compressed three-part cadence.",
+        "length": "4–11 words",
+        "examples": [
+          {
+            "text": "AI where your team works.",
+            "source": "home"
+          },
+          {
+            "text": "Any data. Any tool. Any agent. All in Notion.",
+            "source": "product-dev"
+          }
+        ]
+      },
+      {
+        "role": "Card heading",
+        "pattern": "Verb plus practical result, with a useful qualifier rather than a broad adjective.",
+        "length": "3–10 words",
+        "examples": [
+          {
+            "text": "Get answers, instantly—with citations.",
+            "source": "home"
+          },
+          {
+            "text": "See your schedule at a glance",
+            "source": "product-calendar"
+          }
+        ]
+      },
+      {
+        "role": "Primary action",
+        "pattern": "Direct acquisition or setup verb; distinguish self-serve from assisted action.",
+        "length": "2–5 words",
+        "examples": [
+          {
+            "text": "Get Notion free",
+            "source": "home"
+          },
+          {
+            "text": "Request a demo",
+            "source": "home"
+          },
+          {
+            "text": "Read the docs",
+            "source": "product-dev"
+          }
+        ]
+      },
+      {
+        "role": "Editorial story",
+        "pattern": "Talk to the reader as a person, then use a question to open the explanation.",
+        "length": "Short paragraphs with varied sentence lengths",
+        "examples": [
+          {
+            "text": "Hi there! If you’re reading this, you’re probably like me—spending most of your days in your office, in front of a computer.",
+            "source": "about"
+          }
+        ]
+      }
+    ],
+    "lexicon": {
+      "use": [
+        "your team",
+        "together",
+        "built for",
+        "find",
+        "bring",
+        "keep",
+        "work",
+        "tools",
+        "get started",
+        "read the docs"
+      ],
+      "avoid": [
+        "revolutionary synergy",
+        "unprecedented paradigm",
+        "effortless magic everywhere",
+        "enterprise-grade excellence",
+        "unlock limitless potential"
+      ]
+    },
+    "rules": [
+      "Anchor a benefit to a visible mechanism in the adjacent demonstration.",
+      "Keep feature eyebrows in sentence case and name a task or category, not a marketing slogan.",
+      "Use documentation links and availability labels plainly on technical pages.",
+      "Keep playfulness in a concise phrase or visual gesture; let the practical sentence below do the explaining."
+    ]
+  },
+  "dos_and_donts": {
+    "dos": [
+      "Keep the main promise tightly set at 96px/100px, weight 600, with a smaller pastel word interruption.",
+      "Use 54px/56px weight-700 chapter headings above product and proof sections.",
+      "Keep default actions at 38px high with 8px corners and a 16px paired gap.",
+      "Use 24px card padding and 24px major grid gutters; reserve 8px gutters for compact tile rows.",
+      "Give portraits a consistent 394px × 492px desktop proportion and bottom-aligned serif quotation.",
+      "Keep ordinary captions at 14px/20px and footer labels at 12px/16px rather than promoting everything into a heading.",
+      "Let the warm-gray closing field occupy 630px of desktop height while its message stays compact.",
+      "Carry the technical theme through its diagram, command strips and playful footer instead of changing just the headline color."
+    ],
+    "donts": [
+      "Do not turn standard blue conversion controls into fully rounded pills; pills belong to word tokens and locale controls.",
+      "Do not apply ultramarine full-page fields to the default marketing theme; that is a technical-page variant.",
+      "Do not use large gradient text or glowing atmospheric backgrounds as a substitute for the product stage.",
+      "Do not make the three proof cards three unrelated visual styles; keep identical framing and vary the duotone treatment.",
+      "Do not enlarge plan prices beyond the compact 22px title scale just because pricing pages often do.",
+      "Do not make the comparison table a stack of heavy bordered boxes; preserve 1px row rules and the double-width label column.",
+      "Do not turn small captions into uppercase tracked labels; this voice uses ordinary sentence case.",
+      "Do not use thick colorful cartoon outlines for decorative people; the illustration vocabulary is black linework with selective solid black shapes."
+    ]
+  },
+  "motion_and_responsive": {
+    "motion": {
+      "observed": [
+        "Primary and secondary marketing actions declare background-color and color transitions of 0.2s cubic-bezier(.42, 0, 1, 1). Navigation links declare a 0.15s background-color transition.",
+        "Portrait cards declare a 0.2s box-shadow transition with cubic-bezier(0.645, 0.045, 0.355, 1).",
+        "Utility illustrated tiles declare opacity 0.25s linear with 0.2s delay, and transform 0.5s cubic-bezier(0.25, 1, 0.33, 1) with 0.2s delay.",
+        "Technical hero connector and tool entrances declare 0.6s cubic-bezier(0.16, 1, 0.3, 1); a technical shimmer declares 1.5s linear infinite."
+      ],
+      "transfer": [
+        "Let the word token carry the hero's playful change while keeping the surrounding promise stable.",
+        "Use the declared understated color and shadow transitions for controls; keep technical connector entrances within the technical theme."
+      ],
+      "unknown": [
+        "Exact word-token cycle timing, scroll-trigger sequencing and the arcade interaction behavior are unspecified."
+      ]
+    },
+    "responsive": {
+      "observed": [
+        "The main display scales from 42px to 96px with the supplied fluid formula; line height scales from 48px to 100px and tracking from -1.5px to -4.6px.",
+        "Styles include multiple breakpoint rules around 600px, 768px, 840px, 960px, 1080px and 1200px; these are not a single unified layout switch. Compact use-case tiles declare a column layout before the wide row layout."
+      ],
+      "transfer": [
+        "Retain a centered promise and a readable inline word capsule as type shrinks; simplify the sentence before letting the token collide with adjacent text.",
+        "Stack feature panels and compact tile navigation on narrow layouts. Scale the product stage as a coherent scene and reduce decorative companions or tokens at the margins before reducing reading text.",
+        "For detailed comparison, preserve column relationships through a deliberate narrow-screen comparison treatment rather than compressing all four plans into unreadable text."
+      ],
+      "unknown": [
+        "Exact mobile navigation behavior, narrow-screen table treatment and all mobile illustration placements are unspecified."
+      ]
+    }
+  }
+}

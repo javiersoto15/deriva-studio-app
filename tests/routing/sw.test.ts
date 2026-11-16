@@ -4,6 +4,9 @@ import test from "node:test";
 import { isFreshMenuRequest, isStockNetworkOnlyRequest } from "../../src/sw/routing";
 
 test("stock API and stock pages stay network-only for every request method", () => {
+  for (const method of ["GET", "POST", "PUT"]) {
+    for (const path of ["/api/barra-stock/beans", "/api/barra-stock/beans/bean_abc/history", "/api/barra-stock/beans/bean_abc/menu-links", "/api/barra-stock/beans/bean_abc/adjustments"]) assert.equal(isStockNetworkOnlyRequest(path, method, ""), true);
+  }
   assert.equal(isStockNetworkOnlyRequest("/api/barra-stock", "GET", ""), true);
   assert.equal(isStockNetworkOnlyRequest("/api/barra-stock/items/menu%3Aespresso/adjustments", "POST", ""), true);
   assert.equal(isStockNetworkOnlyRequest("/stock", "GET", "document"), true);

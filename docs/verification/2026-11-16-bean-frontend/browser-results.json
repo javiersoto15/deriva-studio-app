@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "widths": [
+    320,
+    375,
+    390,
+    430,
+    1440
+  ],
+  "checks": [
+    "no overflow",
+    "decimal save",
+    "history",
+    "manager links",
+    "fresh full share",
+    "committed response loss / reload / 401 / same UID retry",
+    "immutable replay then fresh snapshot",
+    "conflict review",
+    "definite rejection keeps editable draft",
+    "staff read-only links",
+    "stale account response does not sign out replacement",
+    "unavailable versus empty resource",
+    "clipboard and complete WhatsApp payload"
+  ],
+  "consoleErrors": []
+}

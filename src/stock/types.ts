@@ -2,7 +2,8 @@ import type { components } from "../api/schema";
 
 export type StockItem = components["schemas"]["StockItem"];
 export type StockItemKind = StockItem["kind"];
-export type StockSnapshot = components["schemas"]["StockListResponse"];
+// Legacy product ledger deliberately ignores the separate bean resource.
+export type StockSnapshot = Omit<components["schemas"]["StockListResponse"], "beans">;
 export type StockHistoryEntry = components["schemas"]["StockHistoryEntry"];
 export type StockHistoryPage = {
   entries: StockHistoryEntry[];

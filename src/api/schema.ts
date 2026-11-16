@@ -759,7 +759,7 @@ export interface paths {
         };
         /**
          * Get the authenticated companion menu view
-         * @description Authenticated companion-safe alias for the canonical public menu presentation. Returns the same PublicMenuView shape and curation projection as GET /public/menu, including weekday/weekend structure, Sunday closed-state, add-ons, and Menu Ejecutivo. It applies the same final stock visibility policy and is Cache-Control: no-store.
+         * @description Authenticated companion-safe alias for the canonical public menu presentation. Returns the same PublicMenuView shape and curation projection as GET /public/menu, including weekday/weekend structure, Sunday closed-state, add-ons, and Menu Ejecutivo. It applies the same final pastry and bean-origin stock visibility policy and is Cache-Control: no-store.
          */
         get: {
             parameters: {
@@ -955,8 +955,8 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Submit a SumUp receipt transaction for automatic points
-         * @description Verifies the SumUp transaction server-side, derives purchase time and CLP amount from SumUp, creates an approved missing-points claim, and awards Deriva Points when the transaction is successful and unclaimed.
+         * Verify a SumUp transaction and award eligible points
+         * @description A member submits a SumUp transaction code or UUID in transaction_code. The backend retrieves the transaction from the configured merchant, verifies its status and CLP amount, then awards points once against the provider-returned transaction_code. Eligible spend excludes tip_amount from SumUp's tip-inclusive amount, known table-tip product line totals, and subtracts refunded_amount when supplied. Table-tip products use the reviewed Propina mesa prefix or exact Mesa 3 propina alias; their total_with_vat is used, falling back to total_price. An explicit refunded_amount of zero is known zero; an omitted field is unknown. Refund, chargeback, and non-collection events or statuses are rejected even when status is SUCCESSFUL. If refunded_amount is omitted, event details must be present; missing refund/event details are rejected rather than treated as zero. If the products breakdown is absent or cannot establish table-tip exclusion, verification is unavailable and no points are awarded.
          */
         post: {
             parameters: {
@@ -985,7 +985,14 @@ export interface paths {
                 403: components["responses"]["Forbidden"];
                 404: components["responses"]["NotFound"];
                 500: components["responses"]["InternalServerError"];
-                /** @description SumUp verification is not configured. */
+                /** @description SumUp transaction verification failed. */
+                502: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description SumUp verification is not configured or product details are unavailable, so table-tip exclusion cannot be verified. */
                 503: {
                     headers: {
                         [name: string]: unknown;
@@ -1426,7 +1433,7 @@ export interface paths {
         };
         /**
          * Get the public landing menu view
-         * @description Backend-owned menu presentation view for the public landing menu. Keeps /menu as the flat companion item list while exposing the canonical weekday/weekend landing structure and manually curated featured picks, row highlights, and pairings. Curation is filtered against the final selected schedule payload, item availability, and stock visibility; the backend does not select picks automatically. Public responses are Cache-Control: no-store because active dates and daily windows change over time.
+         * @description Backend-owned menu presentation view for the public landing menu. Keeps /menu as the flat companion item list while exposing the canonical weekday/weekend landing structure and manually curated featured picks, row highlights, and pairings. Curation is filtered against the final selected schedule payload, item availability, and stock visibility; the backend does not select picks automatically. Linked bean choices include only bean_id and stock_status, never kilogram balances. Unknown weights preserve manual availability; known zero disables that origin choice, while eligible alternatives keep the item available. The derived default may fall back to an eligible choice without changing saved prices or defaults. Public responses are Cache-Control: no-store because active dates, daily windows, and stock change over time.
          */
         get: {
             parameters: {
@@ -1742,7 +1749,7 @@ export interface paths {
         };
         /**
          * Get the active menu
-         * @description When stock visibility is enabled, enrolled pastry items with unknown or zero stock are omitted. Positive stock remains subject to manual availability; untracked items retain their existing behavior.
+         * @description When stock visibility is enabled, enrolled pastry items with unknown or zero stock are omitted. Positive stock remains subject to manual availability; untracked items retain their existing behavior. Linked bean-origin choices also carry bean_id and stock_status without balances; unknown weights preserve manual availability, known-zero choices are disabled, and items with no eligible choice are omitted. Responses are no-store.
          */
         get: {
             parameters: {
@@ -1789,7 +1796,7 @@ export interface paths {
         };
         /**
          * Get menu item detail
-         * @description Rich public read model for the customer carta item screen. When stock visibility is enabled, enrolled pastry items with unknown or zero stock return 404.
+         * @description Rich public read model for the customer carta item screen. When stock visibility is enabled, enrolled pastry items with unknown or zero stock return 404. Linked bean choices use the same effective availability projection as the public menu; an eligible alternative keeps the item available, while no eligible option returns 404. Bean metadata omits weights and never changes saved commercial fields. Responses are no-store.
          */
         get: {
             parameters: {
@@ -1835,7 +1842,7 @@ export interface paths {
         };
         /**
          * Get origin card detail
-         * @description Rich public read model for the customer origin-card screen.
+         * @description Rich public read model for the customer origin-card screen. Tracked origins include read-only bean_id and stock_status, never kilogram balances. A newly registered bean may provide a name-only origin card without invented supplier or tasting facts. Responses are no-store.
          */
         get: {
             parameters: {
@@ -2105,8 +2112,96 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Record a manual purchase and issue Deriva Points
-         * @description Staff/admin endpoint. Actor is derived from the bearer token.
+         * Manual purchase submissions are disabled
+         * @description Manual purchase and manual amount submissions are disabled for staff, managers, and owners. Member earning uses SumUp-verified transaction submission through POST /me/receipt-claims.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                401: components["responses"]["Unauthorized"];
+                /** @description Manual purchase submissions are disabled. */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/integrations/uber-eats/oauth/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Start Uber Eats merchant authorization
+         * @description Owner-only. Creates a cryptographically random state value, sets a short-lived signed HttpOnly state cookie, and returns the fixed Uber Eats authorization URL. The redirect URI is https://admin.derivastudio.cl/api/uber-eats/oauth/callback.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Authorization URL ready for browser navigation. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UberEatsOAuthStartResponse"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                /** @description Uber Eats OAuth credentials or state secret are not configured. */
+                503: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/integrations/uber-eats/oauth/callback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Complete Uber Eats merchant authorization
+         * @description Server-to-server callback used by the admin webapp BFF. Verifies and consumes the signed browser state cookie before exchanging the authorization code. The code, access token, and provider response are never returned. Only store IDs and names are returned after successful verification.
          */
         post: {
             parameters: {
@@ -2117,24 +2212,164 @@ export interface paths {
             };
             requestBody: {
                 content: {
-                    "application/json": components["schemas"]["ManualPurchaseRequest"];
+                    "application/json": components["schemas"]["UberEatsOAuthCallbackRequest"];
                 };
             };
             responses: {
-                /** @description Points ledger entry created. */
-                201: {
+                /** @description OAuth completed and authorized store summaries retrieved. */
+                200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["LedgerEntry"];
+                        "application/json": components["schemas"]["UberEatsStoresResponse"];
+                    };
+                };
+                400: components["responses"]["BadRequest"];
+                /** @description Uber Eats authorization or store discovery failed. Provider details and credentials are not returned. */
+                502: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Uber Eats OAuth is not configured. */
+                503: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/integrations/uber-eats/stores": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Uber Eats stores
+         * @description Manager/owner-only read. Obtains a server-side client_credentials token with the eats.store scope, reuses it until shortly before expiry, and returns only store IDs and names. The response is no-store; provider error details and credentials are not returned.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Store summaries retrieved from the environment's fixed Uber Eats API host. */
+                200: {
+                    headers: {
+                        "Cache-Control"?: string;
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UberEatsStoresResponse"];
                     };
                 };
                 401: components["responses"]["Unauthorized"];
                 403: components["responses"]["Forbidden"];
-                500: components["responses"]["InternalServerError"];
+                /** @description Uber Eats store lookup failed. Provider details and credentials are not returned. */
+                502: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Uber Eats client credentials are not configured for the selected environment. */
+                503: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
             };
         };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/integrations/uber-eats/stores/{store_id}/menu": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read an Uber Eats store menu
+         * @description Manager/owner-only read. Requests the selected store's menu using a server-side client_credentials token with the eats.store scope. Returns the bounded raw Uber Eats menu JSON; the response is no-store and provider error details and credentials are not returned.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Canonical Uber Eats store UUID. */
+                    store_id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Raw Uber Eats menu JSON. */
+                200: {
+                    headers: {
+                        "Cache-Control"?: string;
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": unknown;
+                    };
+                };
+                400: components["responses"]["BadRequest"];
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                /** @description Uber Eats menu lookup failed. Provider details and credentials are not returned. */
+                502: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Uber Eats client credentials are not configured for the selected environment. */
+                503: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -2196,7 +2431,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Create a missing-points claim */
+        /**
+         * Manual missing-points submissions are disabled
+         * @description Manual receipt, purchase-date, and amount submissions are disabled for members and staff/admin roles. Existing claims remain available for review through the admin approval and rejection routes.
+         */
         post: {
             parameters: {
                 query?: never;
@@ -2204,25 +2442,16 @@ export interface paths {
                 path?: never;
                 cookie?: never;
             };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["CreateMissingPointsClaimRequest"];
-                };
-            };
+            requestBody?: never;
             responses: {
-                /** @description Claim created in pending state. */
-                201: {
+                401: components["responses"]["Unauthorized"];
+                /** @description Manual missing-points submissions are disabled. */
+                403: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content: {
-                        "application/json": components["schemas"]["MissingPointsClaim"];
-                    };
+                    content?: never;
                 };
-                400: components["responses"]["BadRequest"];
-                401: components["responses"]["Unauthorized"];
-                403: components["responses"]["Forbidden"];
-                500: components["responses"]["InternalServerError"];
             };
         };
         delete?: never;
@@ -2949,7 +3178,7 @@ export interface paths {
         };
         /**
          * List menu and raw stock
-         * @description Staff, manager, and owner endpoint. Menu rows are discovered from the canonical dessert taxonomy plus IDs explicitly placed in the public Pastelería section; a menu item with a durable stock row remains listed and countable after recategorization or removal from that section while its canonical menu row exists. Missing quantities are returned as null. `now` is the single UTC evaluation timestamp for this snapshot. `shelf_life` is present only for items covered by an administrator-managed shelf-life group; its lots include open positive-quantity lots only. Shelf-life data does not change public-menu visibility. When stock visibility is enabled, unknown and zero quantities still hide enrolled menu items from public reads. The actor is derived from the bearer token. Responses are no-store.
+         * @description Staff, manager, and owner endpoint. Menu rows are discovered from the canonical dessert taxonomy plus IDs explicitly placed in the public Pastelería section; a menu item with a durable stock row remains listed and countable after recategorization or removal from that section while its canonical menu row exists. Missing quantities are returned as null. `now` is the single UTC evaluation timestamp for this snapshot. `shelf_life` is present only for items covered by an administrator-managed shelf-life group; its lots include open positive-quantity lots only. Shelf-life data does not change public-menu visibility. When stock visibility is enabled, unknown and zero quantities still hide enrolled menu items from public reads. The additive beans array contains separate fractional-kilogram counters; legacy items remain integer-valued. Bean stock never participates in pastry raw-counter or shelf-life aggregation. The actor is derived from the bearer token. Responses are no-store.
          */
         get: {
             parameters: {
@@ -2979,6 +3208,401 @@ export interface paths {
             };
         };
         put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/stock/beans": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Barra coffee bean stock
+         * @description Staff, manager, and owner endpoint. Returns the separate bean collection in fractional kilograms, the complete thin operational menu catalog, and bulk bean-to-menu references without changing legacy integer stock items. menu_items includes manually paused and stock-depleted canonical items omitted from customer reads; it exposes names, saved manual availability, and configured origin-option IDs only, never prices or full admin payloads. A bean link is a reference and does not publish a priced choice. Null quantity_kg means no count is known, not zero. Kitchen-stock and salon-stock roles are denied. A catalog or link-read failure fails the response instead of returning a partial or empty snapshot. All responses, including errors, are no-store.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description Resolve operational menu item names for this locale; defaults and falls back to es-CL. */
+                    locale?: "es-CL" | "en" | "pt-BR";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Current beans, server timestamp, management capability, complete thin menu catalog, and bulk references. */
+                200: {
+                    headers: {
+                        /** @example no-store */
+                        "Cache-Control"?: string;
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["BeanListResponse"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                /** @description Bean persistence is unavailable. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["BeanError"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create an uncounted coffee bean
+         * @description Manager and owner endpoint. Creates a unique normalized bean name and origin reference with unit kg, quantity_kg null, and revision zero. It registers the origin name only when that origin is new; existing origin metadata is preserved. Creation never sets a weight, invents supplier facts or prices, or changes priced menu choices. The authenticated actor, result, and audit commit atomically. The same request_id, actor, and normalized payload replay the original result; changed reuse returns 409. All responses are no-store.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["BeanCreateRequest"];
+                };
+            };
+            responses: {
+                /** @description Created bean or original immutable replay result. */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["BeanItem"];
+                    };
+                };
+                /** @description Invalid or unknown JSON fields, malformed origin, tier, name, or request ID. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["BeanError"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                /** @description Duplicate normalized name or origin, or request ID reused with a different actor or payload. */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["BeanError"];
+                    };
+                };
+                /** @description Creation did not complete; retry an uncertain result with the identical request ID and payload. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["BeanError"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/stock/beans/{bean_id}/adjustments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Set or adjust a bean's kilogram balance
+         * @description Staff, manager, and owner endpoint. quantity_kg must be a decimal string with at most three fractional places; JSON numbers, commas, exponents, plus signs, and excess precision are rejected. Set requires a nonnegative absolute balance; delta accepts a signed change and requires a known initial balance. Resulting stock cannot be negative or exceed 999999999.999 kg. expected_revision protects concurrent counts. Quantity, movement, immutable replay result, and audit commit atomically, with the actor derived from authentication. Repeating the same request ID, actor, and normalized payload returns the original result even after later counts; changed reuse returns 409. Bean counts never consume stock automatically, change prices, or affect pastry shelf-life tracking. All responses are no-store.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    bean_id: components["parameters"]["BeanID"];
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["BeanAdjustmentRequest"];
+                };
+            };
+            responses: {
+                /** @description Updated bean and movement, or original immutable replay result. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["BeanAdjustmentResponse"];
+                    };
+                };
+                /** @description Invalid input, unknown starting balance for delta, insufficient balance, overflow, or unknown JSON fields. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["BeanError"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                /** @description Bean not found. */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["BeanError"];
+                    };
+                };
+                /** @description Stale expected revision, or changed request ID replay. */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["BeanError"];
+                    };
+                };
+                /** @description Adjustment did not complete; retry an uncertain result with the identical request ID and payload. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["BeanError"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/stock/beans/{bean_id}/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read a bean's count history
+         * @description Staff, manager, and owner endpoint. Returns count movements newest revision first. Creation and link changes are audited but do not fabricate count movements. Query keys must occur at most once; limit is 1 through 100, and before_revision is an exclusive positive int64 cursor. Responses are no-store.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    limit?: number;
+                    before_revision?: number;
+                };
+                header?: never;
+                path: {
+                    bean_id: components["parameters"]["BeanID"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description History page; next_before_revision is null when no older page remains. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["BeanHistoryResponse"];
+                    };
+                };
+                /** @description Invalid or repeated pagination parameter. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["BeanError"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                /** @description Bean not found. */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["BeanError"];
+                    };
+                };
+                /** @description History persistence is unavailable. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["BeanError"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/stock/beans/{bean_id}/menu-links": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read a bean's linked menu item IDs
+         * @description Staff, manager, and owner endpoint. Returns the sorted current canonical menu-item references for this bean. References do not change the item's saved origin choices, default, price, or quantity. Responses are no-store.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    bean_id: components["parameters"]["BeanID"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Current menu links. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["BeanMenuLinksResponse"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                /** @description Bean not found. */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["BeanError"];
+                    };
+                };
+                /** @description Link persistence is unavailable. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["BeanError"];
+                    };
+                };
+            };
+        };
+        /**
+         * Replace a bean's menu item links
+         * @description Manager and owner endpoint. Both menu_item_ids and expected_menu_item_ids are required non-null arrays of unique IDs, with at most 200 entries; every new menu_item_ids reference must name an existing canonical menu item. The exact expected set must match current links; order does not matter. An empty new set clears links. One bean may serve several menu items, and several beans may serve one item. The actor, link replacement, immutable response, and audit commit atomically. Identical actor/request/payload replay returns the original sorted links, while changed reuse returns 409. Links never create guessed priced choices or change saved commercial fields, balances, legacy raw links, or shelf-life rules. Responses are no-store.
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    bean_id: components["parameters"]["BeanID"];
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["BeanMenuLinksRequest"];
+                };
+            };
+            responses: {
+                /** @description Replaced links or original immutable replay result. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["BeanMenuLinksResponse"];
+                    };
+                };
+                /** @description Missing/null arrays, unknown menu item, duplicate IDs, invalid request ID, or unknown JSON fields. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["BeanError"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                /** @description Bean not found. */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["BeanError"];
+                    };
+                };
+                /** @description Expected links no longer match, or a request ID was reused with a different actor or payload. */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["BeanError"];
+                    };
+                };
+                /** @description Link replacement did not complete; retry an uncertain result with the identical request ID and payload. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["BeanError"];
+                    };
+                };
+            };
+        };
         post?: never;
         delete?: never;
         options?: never;
@@ -4816,6 +5440,943 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/salon-stock/items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create a location-scoped salon item
+         * @description Salon_stock, staff, manager, and owner endpoint; kitchen_stock is denied. All responses no-store. Case, accents and whitespace are normalized. Unique location/name identities allow the same product in another location, never a duplicate within one location. No menu, kitchen, barra or SumUp links.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SalonStockCreate"];
+                };
+            };
+            responses: {
+                /** @description Saved salon stock response. */
+                201: {
+                    headers: {
+                        /** @example no-store */
+                        "Cache-Control"?: string;
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockResult"];
+                    };
+                };
+                /** @description Invalid input or withdrawal eligibility. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockError"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                /** @description Item not found. */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockError"];
+                    };
+                };
+                /** @description Duplicate location/name, stale revision, insufficient stock, or changed replay. */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockError"];
+                    };
+                };
+                /** @description Persistence failure; retry identical request after uncertain result. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockError"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/salon-stock/withdrawals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read global named withdrawal history
+         * @description Salon_stock, staff, manager, and owner endpoint; kitchen_stock is denied. All responses no-store. Global withdrawal-only history, newest sequence first, optionally filtered by location/taker. Stable item-name and unit snapshots, authenticated actor, and named taker are preserved.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    location?: "storage" | "cleaning";
+                    taker?: "Benja" | "Mari" | "Nacha" | "Luis" | "Cristobal" | "Marvin" | "Nadia" | "Cony" | "Macarena" | "Paulina";
+                    limit?: number;
+                    before_sequence?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Saved salon stock response. */
+                200: {
+                    headers: {
+                        /** @example no-store */
+                        "Cache-Control"?: string;
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockWithdrawalPage"];
+                    };
+                };
+                /** @description Invalid input or withdrawal eligibility. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockError"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                /** @description Item not found. */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockError"];
+                    };
+                };
+                /** @description Duplicate location/name, stale revision, insufficient stock, or changed replay. */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockError"];
+                    };
+                };
+                /** @description Persistence failure; retry identical request after uncertain result. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockError"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Record one named salon withdrawal
+         * @description Salon_stock, staff, manager, and owner endpoint; kitchen_stock is denied. All responses no-store. Strictly positive exact subtraction from storage or cleaning only. Selected person is attribution, not authentication. Balance, immutable item/movement replay, actor and taker history, and audit commit atomically; any failure rolls back. Retry identical request ID/payload after uncertain response; changed actor or payload conflicts. Stale revision and insufficient stock include latest item.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SalonStockWithdrawal"];
+                };
+            };
+            responses: {
+                /** @description Saved salon stock response. */
+                200: {
+                    headers: {
+                        /** @example no-store */
+                        "Cache-Control"?: string;
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockResult"];
+                    };
+                };
+                /** @description Invalid input or withdrawal eligibility. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockError"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                /** @description Item not found. */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockError"];
+                    };
+                };
+                /** @description Duplicate location/name, stale revision, insufficient stock, or changed replay. */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockError"];
+                    };
+                };
+                /** @description Persistence failure; retry identical request after uncertain result. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockError"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/kitchen-stock/items/{item_id}/adjustments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Set, add, or subtract a kitchen count
+         * @description Kitchen_stock, staff, manager, and owner endpoint. Uses exact fixed-point thousandths, rejects negative or excessive resulting quantities, and requires an initial count before adding/subtracting. expected_revision prevents lost updates; request ID replay returns the original snapshot. Count, history, request replay record, and audit are atomic. counted_at becomes save time.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    item_id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["KitchenStockAdjustment"];
+                };
+            };
+            responses: {
+                /** @description Saved kitchen inventory response; Cache-Control no-store. */
+                200: {
+                    headers: {
+                        /** @example no-store */
+                        "Cache-Control"?: string;
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["KitchenStockItemResponse"];
+                    };
+                };
+                /** @description Invalid ingredient, amount, request ID, or pagination. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["KitchenStockError"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                /** @description Ingredient not found. */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["KitchenStockError"];
+                    };
+                };
+                /** @description Duplicate normalized name, stale revision, or changed request replay. Duplicate and revision conflicts include the current item. */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["KitchenStockError"];
+                    };
+                };
+                /** @description Inventory persistence failed; retry the identical request ID and payload after an uncertain result. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["KitchenStockError"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/kitchen-stock": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List independent kitchen ingredients
+         * @description Kitchen_stock, staff, manager, and owner endpoint. Kitchen-only ingredients and counts; no links to menu, barra, recipes, sales, or SumUp. All responses are no-store. Quantities are decimal strings, null means not counted, and counted_at remains the actual observation time.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Saved kitchen inventory response; Cache-Control no-store. */
+                200: {
+                    headers: {
+                        /** @example no-store */
+                        "Cache-Control"?: string;
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["KitchenStockList"];
+                    };
+                };
+                /** @description Invalid ingredient, amount, request ID, or pagination. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["KitchenStockError"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                /** @description Ingredient not found. */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["KitchenStockError"];
+                    };
+                };
+                /** @description Duplicate normalized name, stale revision, or changed request replay. Duplicate and revision conflicts include the current item. */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["KitchenStockError"];
+                    };
+                };
+                /** @description Inventory persistence failed; retry the identical request ID and payload after an uncertain result. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["KitchenStockError"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/kitchen-stock/items/{item_id}/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read kitchen ingredient count history
+         * @description Kitchen_stock, staff, manager, and owner endpoint. Newest-first revision cursor with exact has_more lookahead. Includes initial counts; actor is the authenticated profile ID. Null before means the ingredient was previously uncounted.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    limit?: number;
+                    before_revision?: number;
+                };
+                header?: never;
+                path: {
+                    item_id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Saved kitchen inventory response; Cache-Control no-store. */
+                200: {
+                    headers: {
+                        /** @example no-store */
+                        "Cache-Control"?: string;
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["KitchenStockHistoryPage"];
+                    };
+                };
+                /** @description Invalid ingredient, amount, request ID, or pagination. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["KitchenStockError"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                /** @description Ingredient not found. */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["KitchenStockError"];
+                    };
+                };
+                /** @description Duplicate normalized name, stale revision, or changed request replay. Duplicate and revision conflicts include the current item. */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["KitchenStockError"];
+                    };
+                };
+                /** @description Inventory persistence failed; retry the identical request ID and payload after an uncertain result. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["KitchenStockError"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/salon-stock/items/{item_id}/adjustments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Receive stock or correct a salon count
+         * @description Salon_stock, staff, manager, and owner endpoint; kitchen_stock is denied. All responses no-store. Counts are distinct from named withdrawals. Immutable request replay, expected revision and atomic history/audit prevent duplicate or lost updates.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    item_id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SalonStockAdjustment"];
+                };
+            };
+            responses: {
+                /** @description Saved salon stock response. */
+                200: {
+                    headers: {
+                        /** @example no-store */
+                        "Cache-Control"?: string;
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockResult"];
+                    };
+                };
+                /** @description Invalid input or withdrawal eligibility. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockError"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                /** @description Item not found. */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockError"];
+                    };
+                };
+                /** @description Duplicate location/name, stale revision, insufficient stock, or changed replay. */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockError"];
+                    };
+                };
+                /** @description Persistence failure; retry identical request after uncertain result. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockError"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/salon-stock": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List independent salon stock
+         * @description Salon_stock, staff, manager, and owner endpoint; kitchen_stock is denied. All responses no-store. Omitting location and empty q returns the complete saved snapshot for sharing. Nonempty q requires location and performs normalized name-prefix search through a scoped index, with literal wildcard escaping.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    location?: "fridge" | "storage" | "cleaning";
+                    q?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Saved salon stock response. */
+                200: {
+                    headers: {
+                        /** @example no-store */
+                        "Cache-Control"?: string;
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockList"];
+                    };
+                };
+                /** @description Invalid input or withdrawal eligibility. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockError"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                /** @description Item not found. */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockError"];
+                    };
+                };
+                /** @description Duplicate location/name, stale revision, insufficient stock, or changed replay. */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockError"];
+                    };
+                };
+                /** @description Persistence failure; retry identical request after uncertain result. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockError"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/refund-reconciliations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List approved claims for SumUp refund reconciliation
+         * @description Manager- and owner-only paginated queue. Award-time gross, excluded-tip, refund-baseline, and provider transaction fields are kept private and omitted from the response. Existing claims without a trusted award-time basis remain review-only.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description Page size from 1 to 100; defaults to 50. */
+                    limit?: number;
+                    /** @description Zero-based row offset; defaults to 0. */
+                    offset?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Paginated approved-claim queue with durable reconciliation state. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["RefundReconciliationPage"];
+                    };
+                };
+                400: components["responses"]["BadRequest"];
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                500: components["responses"]["InternalServerError"];
+                /** @description Refund reconciliation is not configured. */
+                503: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/refund-reconciliations/{claim_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Reconcile an approved claim against its current SumUp transaction
+         * @description Manager- and owner-only, bodyless action. The backend retrieves SumUp by the canonical receipt already stored on the claim, validates the provider snapshot against the trusted award-time basis, and applies only newly invalidated points up to the member's unused balance. SumUp's REFUNDED status alone does not establish a full refund. Partial refunds with excluded tips, uncertain events, legacy basis gaps, and other ambiguous evidence remain flagged for review.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    claim_id: components["parameters"]["ClaimID"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Durable reconciliation result and any appended reversal ledger delta. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["RefundReconciliationResult"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                404: components["responses"]["NotFound"];
+                /** @description The claim must be approved before refund reconciliation. */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                500: components["responses"]["InternalServerError"];
+                /** @description SumUp transaction verification failed. */
+                502: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Refund reconciliation or SumUp verification is not configured, or product details are unavailable. */
+                503: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/salon-stock/items/{item_id}/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read per-item salon movement history
+         * @description Salon_stock, staff, manager, and owner endpoint; kitchen_stock is denied. All responses no-store. Newest revision first with exact lookahead pagination. Includes initial counts, receipts, corrections and withdrawals.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    limit?: number;
+                    before_revision?: number;
+                };
+                header?: never;
+                path: {
+                    item_id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Saved salon stock response. */
+                200: {
+                    headers: {
+                        /** @example no-store */
+                        "Cache-Control"?: string;
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockHistoryPage"];
+                    };
+                };
+                /** @description Invalid input or withdrawal eligibility. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockError"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                /** @description Item not found. */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockError"];
+                    };
+                };
+                /** @description Duplicate location/name, stale revision, insufficient stock, or changed replay. */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockError"];
+                    };
+                };
+                /** @description Persistence failure; retry identical request after uncertain result. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SalonStockError"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/kitchen-stock/items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create a kitchen ingredient
+         * @description Kitchen_stock, staff, manager, and owner endpoint. Normalized case, accents, and whitespace names are unique independent of category and unit. Similar names remain suggestions; no automatic merge. Request IDs bind to the authenticated actor and normalized payload; identical replay returns the original item snapshot even after later counts. Optional null quantity creates an uncounted ingredient. For an initial quantity, omitted counted_at defaults to save time; supplied observation time is preserved.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["KitchenStockCreate"];
+                };
+            };
+            responses: {
+                /** @description Saved kitchen inventory response; Cache-Control no-store. */
+                201: {
+                    headers: {
+                        /** @example no-store */
+                        "Cache-Control"?: string;
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["KitchenStockItemResponse"];
+                    };
+                };
+                /** @description Invalid ingredient, amount, request ID, or pagination. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["KitchenStockError"];
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+                /** @description Ingredient not found. */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["KitchenStockError"];
+                    };
+                };
+                /** @description Duplicate normalized name, stale revision, or changed request replay. Duplicate and revision conflicts include the current item. */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["KitchenStockError"];
+                    };
+                };
+                /** @description Inventory persistence failed; retry the identical request ID and payload after an uncertain result. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["KitchenStockError"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -4826,6 +6387,33 @@ export interface components {
         };
         ErrorResponse: {
             error: string;
+        };
+        UberEatsOAuthStartResponse: {
+            /**
+             * Format: uri
+             * @description Uber authorization URL containing the client ID, fixed redirect URI, requested scope, and one-time state.
+             */
+            authorization_url: string;
+        };
+        UberEatsOAuthCallbackRequest: {
+            /** @description Authorization code sent by Uber to the configured callback. May be empty for malformed or denied callbacks. Transmitted to this backend in the request body, never in its URL. */
+            code: string;
+            /** @description State query value returned by Uber; may be empty for malformed or denied callbacks. */
+            state: string;
+            /** @description Signed short-lived state cookie value forwarded by the admin BFF; may be empty if missing or malformed. */
+            state_cookie: string;
+            /**
+             * @description True when Uber returned an authorization denial; no provider request is made.
+             * @default false
+             */
+            denied: boolean;
+        };
+        UberEatsStoresResponse: {
+            stores: components["schemas"]["UberEatsStoreSummary"][];
+        };
+        UberEatsStoreSummary: {
+            store_id: string;
+            name: string;
         };
         /** @enum {string} */
         TodayWeekday: "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
@@ -5314,7 +6902,138 @@ export interface components {
             menu_item_id: string;
             stock_ids: string[];
         };
+        /**
+         * @description Exact nonnegative kilograms, at most three fractional places and at most 999999999.999 kg. Decimal strings avoid binary floating-point rounding; responses use canonical form without unnecessary trailing zeros.
+         * @example 0
+         * @example 0.125
+         * @example 1.5
+         */
+        BeanKilograms: string;
+        /**
+         * @description Exact signed kilogram change, at most three fractional places and absolute value at most 999999999.999 kg. No plus sign, comma, exponent, or surrounding whitespace.
+         * @example -0.125
+         * @example 0.25
+         */
+        BeanSignedKilograms: string;
+        BeanItem: {
+            id: string;
+            name: string;
+            /** @description Stable canonical origin identity; unique across beans. */
+            origin_id: string;
+            /** @enum {string} */
+            tier: "regular" | "premium";
+            /** @constant */
+            unit: "kg";
+            /** @description Canonical exact kilograms; null means never counted and differs from known zero. Maximum 999999999.999 kg. */
+            quantity_kg: string | null;
+            /**
+             * Format: int64
+             * @description Zero until the first count. Each successful adjustment advances it once.
+             */
+            revision: number;
+            /** Format: date-time */
+            updated_at: string;
+        };
+        BeanListResponse: {
+            items: components["schemas"]["BeanItem"][];
+            /** Format: date-time */
+            now: string;
+            /** @description True for the authenticated manager or owner; staff may count but cannot create or replace links. */
+            can_manage_beans: boolean;
+            /** @description Complete operational catalog, including manually paused and stock-depleted items, in canonical ID order. An empty array is a successful read of an empty catalog, not a missing or failed catalog read. */
+            menu_items: components["schemas"]["BeanMenuCatalogItem"][];
+            /** @description All current bean-to-menu references in bean ID then menu item ID order. Empty arrays are returned instead of null. */
+            links: components["schemas"]["BeanMenuLink"][];
+        };
+        BeanMenuCatalogItem: {
+            /** @description Canonical menu item ID. */
+            id: string;
+            /** @description Locale-resolved operational item name. */
+            name: string;
+            /** @description Saved manual menu-item enablement, not effective stock-derived customer availability. It can remain true when all linked bean choices are depleted. */
+            available: boolean;
+            /** @description Unique configured origin-option IDs in canonical order, including manually paused options. Bean references not configured as origin options are absent; linking does not publish a priced option. Items without configured choices return an empty array. */
+            origin_ids: string[];
+        };
+        BeanMenuLink: {
+            bean_id: string;
+            menu_item_id: string;
+        };
+        BeanCreateRequest: {
+            /** @description Nonblank name, normalized whitespace, at most 160 UTF-8 bytes. Case/accent/whitespace-equivalent names cannot be duplicated. */
+            name: string;
+            origin_id: string;
+            /** @enum {string} */
+            tier: "regular" | "premium";
+            /** @description Stable idempotency key with no surrounding whitespace, bound to the authenticated actor and normalized request. */
+            request_id: string;
+        };
+        BeanAdjustmentRequest: {
+            /** @enum {string} */
+            mode: "set" | "delta";
+            /** @description Decimal string only. Set rejects negative amounts; delta accepts signed values and requires a known starting balance. Result cannot be negative or exceed the maximum. */
+            quantity_kg: components["schemas"]["BeanSignedKilograms"];
+            /** Format: int64 */
+            expected_revision: number;
+            request_id: string;
+            /** @description Optional operator reason, at most 500 UTF-8 bytes. The actor is derived from authentication, not accepted in JSON. */
+            reason?: string;
+        };
+        BeanAdjustment: {
+            id: string;
+            bean_id: string;
+            /** @enum {string} */
+            mode: "set" | "delta";
+            quantity_kg: components["schemas"]["BeanSignedKilograms"];
+            /** @description Null only when this adjustment establishes the first count. */
+            before_kg: string | null;
+            after_kg: components["schemas"]["BeanKilograms"];
+            /** Format: int64 */
+            revision: number;
+            request_id: string;
+            /** @description Authenticated Deriva profile that recorded the adjustment. */
+            actor_id: string;
+            reason: string;
+            /** Format: date-time */
+            created_at: string;
+        };
+        BeanAdjustmentResponse: {
+            item: components["schemas"]["BeanItem"];
+            adjustment: components["schemas"]["BeanAdjustment"];
+        };
+        BeanHistoryResponse: {
+            entries: components["schemas"]["BeanAdjustment"][];
+            has_more: boolean;
+            /**
+             * Format: int64
+             * @description Exclusive revision cursor, null when there are no older entries.
+             */
+            next_before_revision: number | null;
+        };
+        BeanMenuLinksRequest: {
+            /** @description Complete replacement set of existing canonical menu item IDs; empty clears links. */
+            menu_item_ids: string[];
+            /** @description Exact current set read before replacement; order does not affect comparison. */
+            expected_menu_item_ids: string[];
+            request_id: string;
+        };
+        BeanMenuLinksResponse: {
+            bean_id: string;
+            /** @description Canonical IDs in sorted order. */
+            menu_item_ids: string[];
+        };
+        BeanError: {
+            /** @enum {string} */
+            error: "invalid_bean_stock_input" | "bean_not_found" | "bean_duplicate" | "bean_revision_conflict" | "bean_request_conflict" | "bean_links_conflict" | "bean_stock_unavailable";
+            /**
+             * @description Same sanitized machine-readable value as error; conflicts do not expose current balances.
+             * @enum {string}
+             */
+            code: "invalid_bean_stock_input" | "bean_not_found" | "bean_duplicate" | "bean_revision_conflict" | "bean_request_conflict" | "bean_links_conflict" | "bean_stock_unavailable";
+        };
         StockListResponse: {
+            /** @description Separate exact-kilogram bean collection. Legacy items keep their existing whole-number contract. */
+            beans: components["schemas"]["BeanItem"][];
             items: components["schemas"]["StockItem"][];
             /**
              * Format: date-time
@@ -6031,6 +7750,13 @@ export interface components {
             available: boolean;
         };
         MenuOriginSummary: {
+            /** @description Optional linked Barra bean identity. Public origin projections never expose kilogram balances. */
+            readonly bean_id?: string;
+            /**
+             * @description Optional derived bean stock state. Unknown preserves manual availability; known zero disables a linked origin choice, while positive stock never overrides a manual pause.
+             * @enum {string}
+             */
+            readonly stock_status?: "unknown" | "in_stock" | "out_of_stock";
             id: string;
             name: string;
             /** @description Short display label for UI surfaces, without supplier suffixes. */
@@ -6167,6 +7893,13 @@ export interface components {
             staff_note?: string;
         };
         OriginCardView: {
+            /** @description Optional linked Barra bean identity. Public origin projections never expose kilogram balances. */
+            readonly bean_id?: string;
+            /**
+             * @description Optional derived bean stock state. Unknown preserves manual availability; known zero disables a linked origin choice, while positive stock never overrides a manual pause.
+             * @enum {string}
+             */
+            readonly stock_status?: "unknown" | "in_stock" | "out_of_stock";
             id: string;
             name: string;
             country?: string;
@@ -6512,7 +8245,7 @@ export interface components {
             amount_clp: number;
         };
         CreateReceiptClaimRequest: {
-            /** @description SumUp receipt transaction code printed on the receipt. */
+            /** @description SumUp transaction code printed on the receipt or the provider transaction UUID. */
             transaction_code: string;
         };
         ReceiptClaimResponse: {
@@ -6553,6 +8286,240 @@ export interface components {
             };
             /** Format: date-time */
             created_at: string;
+        };
+        /** @description Global one-item withdrawal, strictly positive amount, known sufficient quantity, exact taker and matching location. No fridge transfer. Actor is derived from authentication. */
+        SalonStockWithdrawal: {
+            /** @enum {string} */
+            location: "storage" | "cleaning";
+            item_id: string;
+            /** @enum {string} */
+            taker: "Benja" | "Mari" | "Nacha" | "Luis" | "Cristobal" | "Marvin" | "Nadia" | "Cony" | "Macarena" | "Paulina";
+            amount: components["schemas"]["SalonStockQuantity"];
+            expected_revision: number;
+            request_id: string;
+            reason?: string;
+        };
+        /** @description Optional null quantity creates an uncounted revision0 item. Omitted observation defaults to actual time only for a supplied manual initial count; explicit unknown/partial observation is preserved. Category defaults otros, category_label defaults category. Location is immutable. */
+        SalonStockCreate: {
+            name: string;
+            /** @enum {string} */
+            location: "fridge" | "storage" | "cleaning";
+            category?: string;
+            category_label?: string;
+            category_is_inferred?: boolean;
+            unit?: string | null;
+            package_note?: string;
+            source_markers?: string[];
+            source_notes?: string[];
+            source_line?: string;
+            source_row_id?: string;
+            source_section?: string | null;
+            quantity?: components["schemas"]["SalonStockQuantity"] | null;
+            observation?: components["schemas"]["SalonStockObservation"] | null;
+            request_id: string;
+        };
+        /** @description Exact nonnegative decimal string up to999999999.999; fixed integer thousandths internally, no unit conversions. */
+        SalonStockQuantity: string;
+        SalonStockMovement: {
+            id: string;
+            sequence: number;
+            item_id: string;
+            item_name: string;
+            /** @enum {string} */
+            location: "fridge" | "storage" | "cleaning";
+            unit: string | null;
+            /** @enum {string} */
+            kind: "initial_count" | "receipt" | "count_correction" | "withdrawal";
+            /** @enum {string} */
+            mode: "set" | "add" | "subtract";
+            amount: components["schemas"]["SalonStockQuantity"];
+            before: components["schemas"]["SalonStockQuantity"] | null;
+            after: components["schemas"]["SalonStockQuantity"];
+            revision: number;
+            taker: string | null;
+            /** @description Authenticated Deriva profile ID; never accepted in the body. */
+            actor: string;
+            reason: string;
+            /** Format: date-time */
+            created_at: string;
+        };
+        KitchenStockHistoryPage: {
+            entries: components["schemas"]["KitchenStockHistory"][];
+            has_more: boolean;
+            /** @description Pass as before_revision for the next page; null at end. */
+            next_before_revision: number | null;
+        };
+        RefundReconciliationCandidate: {
+            claim: components["schemas"]["MissingPointsClaim"];
+            awarded_points: number;
+            reconciliation: components["schemas"]["RefundReconciliation"];
+        };
+        KitchenStockList: {
+            items: components["schemas"]["KitchenStockItem"][];
+            /** Format: date-time */
+            now: string;
+        };
+        RefundReconciliationPage: {
+            items: components["schemas"]["RefundReconciliationCandidate"][];
+            limit: number;
+            offset: number;
+            total: number;
+        };
+        KitchenStockItemResponse: {
+            item: components["schemas"]["KitchenStockItem"];
+        };
+        SalonStockItem: {
+            id: string;
+            name: string;
+            /** @enum {string} */
+            location: "fridge" | "storage" | "cleaning";
+            category: string;
+            category_label: string;
+            category_is_inferred: boolean;
+            unit: string | null;
+            package_note: string;
+            source_markers: string[];
+            source_notes: string[];
+            source_line: string;
+            source_row_id: string;
+            source_section: string | null;
+            quantity: components["schemas"]["SalonStockQuantity"] | null;
+            observation: components["schemas"]["SalonStockObservation"];
+            revision: number;
+            /** Format: date-time */
+            updated_at: string;
+        };
+        KitchenStockHistory: {
+            id: string;
+            item_id: string;
+            /** @enum {string} */
+            mode: "set" | "add" | "subtract";
+            amount: components["schemas"]["KitchenStockQuantity"];
+            before: components["schemas"]["KitchenStockQuantity"] | null;
+            after: components["schemas"]["KitchenStockQuantity"];
+            revision: number;
+            reason: string;
+            /** @description Authenticated Deriva actor profile ID; never accepted from request body. */
+            actor: string;
+            /** Format: date-time */
+            created_at: string;
+        };
+        SalonStockList: {
+            items: components["schemas"]["SalonStockItem"][];
+            /** Format: date-time */
+            now: string;
+            withdrawal_takers: ("Benja" | "Mari" | "Nacha" | "Luis" | "Cristobal" | "Marvin" | "Nadia" | "Cony" | "Macarena" | "Paulina")[];
+        };
+        SalonStockHistoryPage: {
+            entries: components["schemas"]["SalonStockMovement"][];
+            has_more: boolean;
+            next_before_revision: number | null;
+        };
+        KitchenStockCreate: {
+            name: string;
+            /** @enum {string} */
+            category: "verduras" | "frutas" | "otros" | "carnes" | "bolleria" | "pan";
+            unit?: string | null;
+            package_note?: string;
+            quantity?: components["schemas"]["KitchenStockQuantity"] | null;
+            /**
+             * Format: date-time
+             * @description Only with an initial quantity; must not be in the future. Original stocktake time is distinct from import time.
+             */
+            counted_at?: string | null;
+            request_id: string;
+        };
+        /** @description Typed physical observation precision. Unknown and date/morning observations never become invented exact timestamps. Manual set counts stamp actual current time; receipts and withdrawals preserve observation. */
+        SalonStockObservation: {
+            /** Format: date-time */
+            observed_at: string | null;
+            /** Format: date */
+            date: string | null;
+            /** @enum {string|null} */
+            period: "morning" | null;
+            /** @enum {string} */
+            precision: "unknown" | "date" | "date_and_period" | "exact";
+            source: string | null;
+        };
+        UberEatsOAuthStoresResponse: {
+            stores: components["schemas"]["UberEatsStoreSummary"][];
+        };
+        RefundReconciliationResult: {
+            reconciliation: components["schemas"]["RefundReconciliation"];
+            ledger_entry?: components["schemas"]["LedgerEntry"];
+        };
+        KitchenStockItem: {
+            id: string;
+            name: string;
+            /** @enum {string} */
+            category: "verduras" | "frutas" | "otros" | "carnes" | "bolleria" | "pan";
+            /** @description Supplied count unit; null when unspecified. Package counts are not converted into mass. */
+            unit: string | null;
+            package_note: string;
+            quantity: components["schemas"]["KitchenStockQuantity"] | null;
+            revision: number;
+            /** Format: date-time */
+            counted_at: string | null;
+            /** Format: date-time */
+            updated_at: string;
+        };
+        /** @description storage/cleaning allow add receipts or set count corrections requiring reason. subtract is rejected with withdrawal_required. Fridge allows ordinary count corrections but no named withdrawals. */
+        SalonStockAdjustment: {
+            /** @enum {string} */
+            mode: "set" | "add" | "subtract";
+            amount: components["schemas"]["SalonStockQuantity"];
+            expected_revision: number;
+            request_id: string;
+            reason?: string;
+        };
+        SalonStockWithdrawalPage: {
+            entries: components["schemas"]["SalonStockMovement"][];
+            has_more: boolean;
+            next_before_sequence: number | null;
+        };
+        KitchenStockAdjustment: {
+            /** @enum {string} */
+            mode: "set" | "add" | "subtract";
+            amount: components["schemas"]["KitchenStockQuantity"];
+            expected_revision: number;
+            request_id: string;
+            reason?: string;
+        };
+        /**
+         * @description Nonnegative exact decimal, at most 999999999.999. Canonical responses omit trailing fractional zeros; no unit conversion.
+         * @example 1.5
+         */
+        KitchenStockQuantity: string;
+        SalonStockError: {
+            error: string;
+            /** @enum {string} */
+            code: "duplicate_item" | "revision_conflict" | "request_conflict" | "insufficient_stock" | "item_not_found" | "invalid_input" | "quantity_unknown" | "withdrawal_location_not_allowed" | "location_mismatch" | "withdrawal_required" | "salon_stock_error";
+            item?: components["schemas"]["SalonStockItem"];
+        };
+        RefundReconciliation: {
+            claim_id: string;
+            member_id: string;
+            receipt: string;
+            awarded_points: number;
+            last_refunded_clp?: number;
+            target_invalidated_points: number;
+            reversed_points: number;
+            flagged_points: number;
+            /** @enum {string} */
+            status: "pending" | "reconciled" | "review_required";
+            review_reason?: string;
+            /** Format: date-time */
+            checked_at?: string;
+        };
+        SalonStockResult: {
+            item: components["schemas"]["SalonStockItem"];
+            movement: components["schemas"]["SalonStockMovement"] | null;
+        };
+        KitchenStockError: {
+            error: string;
+            /** @enum {string} */
+            code: "duplicate_ingredient" | "revision_conflict" | "request_conflict" | "ingredient_not_found" | "invalid_input" | "kitchen_stock_error";
+            item?: components["schemas"]["KitchenStockItem"];
         };
     };
     responses: {
@@ -6669,6 +8636,7 @@ export interface components {
         MemberID: string;
         ClaimID: string;
         ItemID: string;
+        BeanID: string;
         OriginID: string;
         RewardID: string;
         OrderID: string;

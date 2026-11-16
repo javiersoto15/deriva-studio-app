@@ -1,0 +1,164 @@
+/* Bean counts use exact kg independently of the legacy integer ledger. */
+.bean-sections {
+  width: min(100%, 358px);
+  margin: 16px 0;
+}
+.bean-sections button {
+  flex: 1;
+  min-width: 0;
+}
+.bean-controls {
+  margin-top: 18px;
+}
+.bean-table__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--stock-brown);
+  color: var(--stock-muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.bean-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 104px;
+  gap: 12px;
+  align-items: center;
+  min-height: 76px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--stock-line-strong);
+}
+.bean-row.is-selected {
+  background: var(--stock-inset);
+}
+.bean-row__name {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.bean-row .stock-row__title,
+.bean-row .stock-row__meta {
+  overflow-wrap: anywhere;
+}
+.bean-row .stock-count {
+  justify-self: end;
+  width: 100%;
+  min-width: 0;
+}
+.bean-tabs {
+  display: flex;
+  gap: 24px;
+  border-bottom: 1px solid var(--stock-line-strong);
+}
+.bean-tabs button {
+  text-decoration: none;
+  padding: 10px 0;
+}
+.bean-tabs button[aria-pressed="true"] {
+  border-bottom: 2px solid var(--stock-brown);
+}
+.bean-current {
+  font-size: 12px;
+  color: var(--stock-muted);
+  margin: 8px 0;
+  overflow-wrap: anywhere;
+}
+.bean-amount {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--stock-brown);
+  background: var(--stock-field);
+}
+.bean-amount input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  font:
+    24px var(--font-mono),
+    monospace;
+}
+.bean-amount > span {
+  padding: 0 16px;
+  color: var(--stock-muted);
+  font-family: var(--font-mono), monospace;
+}
+.bean-help {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--stock-muted);
+  overflow-wrap: anywhere;
+}
+.bean-preview {
+  background: var(--stock-inset);
+  padding: 16px;
+  overflow-wrap: anywhere;
+}
+.bean-links,
+.bean-history {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.bean-links > li {
+  border-bottom: 1px solid var(--stock-line);
+  padding: 10px 0;
+}
+.bean-links .stock-check {
+  align-items: flex-start;
+}
+.bean-links small {
+  display: block;
+  color: var(--stock-muted);
+  margin-top: 4px;
+  font-size: 11px;
+}
+.bean-history > li {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--stock-line);
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}
+.bean-history strong {
+  font-weight: 500;
+  font-size: 14px;
+}
+.bean-share-text {
+  min-height: 300px;
+  width: 100%;
+  max-width: 100%;
+  resize: vertical;
+  border: 1px solid var(--stock-line-strong);
+  padding: 14px;
+  background: var(--stock-field);
+  font-size: 12px;
+  line-height: 1.8;
+}
+.bean-workspace .stock-editor__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+@media (min-width: 1024px) {
+  .bean-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .bean-controls .stock-search {
+    flex: 1;
+    max-width: 440px;
+  }
+}
+
+.bean-row .stock-row__meta {
+  display: block;
+  font-size: 11px;
+  line-height: 1.5;
+}

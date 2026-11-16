@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "realNextRoutes": 5,
+  "noStore": true,
+  "callerBearer": true,
+  "successfulMutationsInvalidateMenuWithoutRuntimeError": true,
+  "invalidPathsRejected": true,
+  "stockPage": 200
+}

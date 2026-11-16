@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { StockApp } from "./_components/StockApp";
 import "./stock.css";
+import "./bean-stock.css";
 
 export const metadata: Metadata = {
   title: "Stock de barra",
