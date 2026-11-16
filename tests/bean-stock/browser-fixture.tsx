@@ -141,6 +141,13 @@ const api = createBeanClient({
       return Response.json(result);
     }
     if (init?.method === "PUT") {
+      if (control.failNext === "403") {
+        control.failNext = "";
+        data.snapshot.can_manage_beans = false;
+        control.persist();
+        return Response.json({ code: "forbidden" }, { status: 403 });
+      }
+
       const beanId = url.split("/").at(-2)!;
       data.snapshot.links = data.snapshot.links
         .filter((l: any) => l.bean_id !== beanId)

@@ -251,7 +251,15 @@ export function BeanWorkspace({
       ) {
         clearPending(uid);
         setPending(null);
-        await load();
+        const fresh = await load();
+        if (!live.current) return;
+        if (op.kind === "links" && fresh && !fresh.can_manage_beans) {
+          setLinkIds(
+            fresh.links
+              .filter((link) => link.bean_id === op.beanId)
+              .map((link) => link.menu_item_id),
+          );
+        }
         setError(errorText(e));
       }
     } finally {

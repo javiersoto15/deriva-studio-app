@@ -70,7 +70,9 @@ const base = `http://127.0.0.1:${server.address().port}`;
 const evidence = path.resolve("docs/verification/2026-11-16-bean-frontend");
 await mkdir(evidence, { recursive: true });
 try {
-  await context.grantPermissions(["clipboard-read", "clipboard-write"], {origin:base});
+  await context.grantPermissions(["clipboard-read", "clipboard-write"], {
+    origin: base,
+  });
   await page.goto(base);
   await page.getByRole("list", { name: "Granos de barra" }).waitFor();
   for (const width of [320, 375, 390, 430, 1440]) {
@@ -124,6 +126,22 @@ try {
     .getByRole("button", { name: "Guardar vínculos", exact: true })
     .click();
   await page.getByText("Vínculos confirmados.", { exact: true }).waitFor();
+  // Role changes while editing must show persisted links, not rejected choices.
+  await page.getByRole("checkbox", { name: /Espresso/ }).uncheck();
+  await page.evaluate(() => (window.__fixture.failNext = "403"));
+  await page
+    .getByRole("button", { name: "Guardar vínculos", exact: true })
+    .click();
+  await page
+    .getByText("Tu cuenta no tiene permiso para gestionar los granos.", {
+      exact: true,
+    })
+    .waitFor();
+  assert.equal(
+    await page.getByRole("checkbox", { name: /Espresso/ }).isChecked(),
+    true,
+  );
+
   await page.getByRole("button", { name: "Cerrar", exact: true }).click();
   // Fresh sharing includes changes by another staff member and ignores filters.
   await page.evaluate(() => {
@@ -149,9 +167,21 @@ try {
     .inputValue();
   assert.match(share, /0,875/);
   assert.match(share, /504 Tasty Roast/);
-  await page.getByRole("button", {name:"Copiar texto",exact:true}).click();
-  assert.equal(await page.evaluate(()=>navigator.clipboard.readText()),share);
-  assert.equal(decodeURIComponent((await page.getByRole("link", {name:"Abrir WhatsApp"}).getAttribute("href")).split("text=")[1]),share);
+  await page.getByRole("button", { name: "Copiar texto", exact: true }).click();
+  assert.equal(
+    await page.evaluate(() => navigator.clipboard.readText()),
+    share,
+  );
+  assert.equal(
+    decodeURIComponent(
+      (
+        await page
+          .getByRole("link", { name: "Abrir WhatsApp" })
+          .getAttribute("href")
+      ).split("text=")[1],
+    ),
+    share,
+  );
   await page.getByRole("button", { name: "Cerrar", exact: true }).click();
   await page.getByLabel("Buscar grano").fill("");
   // Commit succeeds but response is lost; reload, reauth, immutable replay and fresh read.
@@ -274,11 +304,30 @@ try {
     0,
   );
   // A valid empty resource differs from a missing backend feature.
-  await page.evaluate(()=>{const data=window.__fixture.data;data.snapshot.items=[];data.snapshot.links=[];data.receipts={};data.history=[];sessionStorage.removeItem('deriva:bean-stock:pending:fixture-staff');window.__fixture.persist();});
-  await page.reload();await page.getByText('Aún no hay granos configurados.',{exact:true}).waitFor();
-  await page.evaluate(()=>window.__fixture.failNext='unavailable');await page.getByRole('button',{name:'Compartir granos',exact:true}).click();
-  await page.getByText('Granos aún no habilitado.',{exact:true}).waitFor();
-  assert.equal(await page.getByRole('button',{name:'Copiar texto',exact:true}).isDisabled(),true);
+  await page.evaluate(() => {
+    const data = window.__fixture.data;
+    data.snapshot.items = [];
+    data.snapshot.links = [];
+    data.receipts = {};
+    data.history = [];
+    sessionStorage.removeItem("deriva:bean-stock:pending:fixture-staff");
+    window.__fixture.persist();
+  });
+  await page.reload();
+  await page
+    .getByText("Aún no hay granos configurados.", { exact: true })
+    .waitFor();
+  await page.evaluate(() => (window.__fixture.failNext = "unavailable"));
+  await page
+    .getByRole("button", { name: "Compartir granos", exact: true })
+    .click();
+  await page.getByText("Granos aún no habilitado.", { exact: true }).waitFor();
+  assert.equal(
+    await page
+      .getByRole("button", { name: "Copiar texto", exact: true })
+      .isDisabled(),
+    true,
+  );
   assert.deepEqual(errors, []);
   await writeFile(
     `${evidence}/browser-results.json`,
@@ -295,11 +344,11 @@ try {
           "committed response loss / reload / 401 / same UID retry",
           "immutable replay then fresh snapshot",
           "conflict review",
-        "definite rejection keeps editable draft",
-        "staff read-only links",
-        "stale account response does not sign out replacement",
-        "unavailable versus empty resource",
-        "clipboard and complete WhatsApp payload",
+          "definite rejection keeps editable draft",
+          "staff read-only links",
+          "stale account response does not sign out replacement",
+          "unavailable versus empty resource",
+          "clipboard and complete WhatsApp payload",
         ],
         consoleErrors: errors,
       },
