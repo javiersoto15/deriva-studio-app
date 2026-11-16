@@ -1,6 +1,6 @@
 # Barra bean frontend verification — 16 November 2026
 
-Implemented on `feat/barra-bean-stock-ui-20261116`. Approved proposal and visual reference research: `docs/plans/2026-11-16-barra-beans-frontend/`. No deployment or production bean initialization performed.
+Implemented on `feat/barra-bean-stock-ui-20261116`. Approved proposal and visual reference research: `docs/plans/2026-11-16-barra-beans-frontend/`. Initial implementation verification below preceded release. **Now released to production**, as recorded here.
 
 ## Behavior
 
@@ -28,3 +28,11 @@ Screenshots are controlled fixture data only, with no real accounts or credentia
 Actual render artboards are in [Paper](https://app.paper.design/file/01KPY2FP2KH33ASDC7SKRA10K7/p-N-0), labeled `Actual code`. Mobile390×844 and desktop1440×900 editor captures plus full lists. Paper retains the approved proposal and reference board separately. All artboards reviewed; no clipping in editor screenshots, quantity lanes aligned, configuration labels visible on desktop.
 
 Before deployment, show these actual renders for explicit approval per `10_webapp/AGENTS.md`. Both the backend metadata and the previously merged bean backend must deploy before the frontend feature can be used; initial nine-bean setup is an explicit backend operation, still not run on production.
+
+## Production release confirmed
+
+On16November2026 the user explicitly requested push, merge and deployment after reviewing the actual renders. Frontend main was fast-forwarded/pushed to5022dd3e; backend to c190984. Vercel production deployment `dpl_91k6hFxWvo6TZG4FCuFMNKFceE3s` was staged with skip-domain, verified, then promoted unchanged. https://admin.derivastudio.cl/stock is live. All five production aliases map to this build.
+
+Cloud Run revision `deriva-companion-api-beans-c190984-20261116` serves100% traffic, preserving existing runtime settings. Explicit API setup created the nine beans with unknown weights and nine Pour Over links; two premium, five configured/priced menu origins. Live frontend BFF→Go→Postgres read passed the frontend normalizer. Existing38 product counters and public menus/prices in all three locales were preserved. Anonymous access401/no-store. No production weights were entered for testing.
+
+Backend release evidence: `13_companion_backend/docs/verification/2026-11-16-bean-stock-release/` in the workspace. Current user authorization completed the deployment gate described in the historical verification section above. Bounded Cloud Run/Vercel error scans were clear.
