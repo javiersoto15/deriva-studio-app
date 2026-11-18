@@ -1,0 +1,973 @@
+/* Deriva On Wheels — /eventos. Photo-led: every sheet is a full-bleed photo
+   with the type, tickets, ticker and inset laid ON it (Escape Cafe GRAIN /
+   "When you focus" / mission; Monte board; Dinner Ladies sticker).
+   Photos get a FLAT tint (no gradient scrims — brand rule) plus a soft
+   text-shadow, as in the printed Día del Café / On Wheels pieces.
+   Single green moment: the "Servicio completo" seal on the hero. */
+
+.ev {
+  --ev-paper: #f4ede6;
+  --ev-night: #120a06;
+  --ev-ink: #201812;
+  --ev-muted: #67594d;
+  --ev-roast: #5e230f;
+  --ev-copper: #b87333;
+  --ev-ochre: #e0a155;
+  --ev-beige: #d7c7ab;
+  --ev-green: #00311f;
+  --ev-line: rgba(244, 237, 230, 0.78);
+  --ev-hair: rgba(244, 237, 230, 0.32);
+  --ev-shadow: 0 2px 14px rgba(8, 4, 2, 0.7);
+  --ev-gutter: 32px;
+  background: var(--ev-night);
+  color: var(--ev-paper);
+  overflow-x: clip;
+}
+.ev-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.ev-img {
+  object-fit: cover;
+}
+
+/* — Sheet: a full-bleed photo section ———————————————————————— */
+.ev-sheet {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--ev-night);
+  color: var(--ev-paper);
+  text-shadow: var(--ev-shadow);
+}
+.ev-bg {
+  object-fit: cover;
+  z-index: -2;
+}
+.ev-tint {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgba(18, 10, 6, 0.42);
+}
+.ev-tint--soft {
+  background: rgba(18, 10, 6, 0.3);
+}
+.ev-tint--deep {
+  background: rgba(18, 10, 6, 0.62);
+}
+
+/* Shared small type. */
+.ev-caps {
+  margin: 0;
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.ev-corner {
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.ev-corner--ochre {
+  color: var(--ev-ochre);
+}
+
+/* — 1 · Hero (Escape GRAIN) ———————————————————————————————— */
+.ev-hero {
+  min-height: max(100svh, 720px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+/* The hero photo and the machine cutout MUST share fit + position, or the
+   cutout drifts off the machine. 70% lifts the machine into the giant word. */
+.ev-bg--hero,
+.ev-cutout {
+  object-fit: cover;
+  object-position: 50% 70%;
+}
+.ev-cutout {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  /* Match the flat tint the background sits under (rgba night .42). */
+  filter: brightness(0.6) sepia(0.06);
+}
+/* Layering: photo (-2) → tint (-1) → word (0) → machine cutout (1) → UI (2). */
+.ev-word {
+  position: relative;
+  z-index: 0;
+}
+.ev-hero__pitch,
+.ev-hero__base {
+  position: relative;
+  z-index: 2;
+}
+.ev-rail {
+  z-index: 2;
+}
+/* Giant word, full width, its cap tops cut by the top edge. */
+.ev-word {
+  margin: 0;
+  padding-top: calc(var(--landing-nav-h) - 0.1em);
+  font-family: var(--mono);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 19.4vw;
+  line-height: 0.78;
+  letter-spacing: -0.075em;
+  white-space: nowrap;
+  text-align: center;
+  color: var(--ev-paper);
+  text-shadow: 0 4px 32px rgba(8, 4, 2, 0.55);
+  transform: translateY(-0.12em);
+}
+.ev-rail {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%) rotate(180deg);
+  writing-mode: vertical-rl;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+/* "Qué es On Wheels" — a solid night panel so the copy reads on any photo. */
+.ev-hero__pitch {
+  align-self: flex-end;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  width: min(440px, 42vw);
+  margin-right: calc(var(--ev-gutter) + 24px);
+  padding: 22px 24px 24px;
+  background: rgba(18, 10, 6, 0.86);
+  border-left: 3px solid var(--ev-ochre);
+  text-shadow: none;
+}
+.ev-pitch__body {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 23px;
+  line-height: 1.32;
+  color: var(--ev-paper);
+}
+.ev-pitch__why {
+  margin: 0;
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 21px;
+  line-height: 1.3;
+  color: var(--ev-ochre);
+}
+.ev-pitch__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 18px;
+  margin-top: 6px;
+}
+.ev-pitch__wa {
+  color: var(--ev-paper);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(244, 237, 230, 0.5);
+  padding-bottom: 2px;
+}
+.ev-pitch__wa:hover {
+  border-bottom-color: var(--ev-ochre);
+}
+.ev-tag {
+  display: inline-block;
+  padding: 7px 12px;
+  background: var(--ev-ochre);
+  color: var(--ev-ink);
+  text-shadow: none;
+  text-decoration: none;
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: background 150ms ease, transform 90ms ease;
+}
+.ev-tag:hover {
+  background: var(--ev-paper);
+}
+.ev-tag:active {
+  transform: scale(0.98);
+}
+
+/* The seal — the page's single green moment, crossing into the photo. */
+.ev-stamp {
+  position: absolute;
+  right: 12px;
+  top: -112px;
+  width: 140px;
+  height: 140px;
+  filter: drop-shadow(0 8px 18px rgba(8, 4, 2, 0.45));
+  animation: ev-spin 40s linear infinite;
+}
+@keyframes ev-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.ev-stamp__disc {
+  fill: var(--ev-green);
+}
+.ev-stamp__rule {
+  fill: none;
+  stroke: var(--ev-ochre);
+  stroke-width: 1.5;
+}
+.ev-stamp__ring {
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: 15.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  fill: var(--ev-paper);
+}
+.ev-stamp__core {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  fill: var(--ev-ochre);
+}
+
+/* Tickets + ticker: outlined boxes drawn directly on the photo. */
+.ev-hero__base {
+  padding: 0 calc(var(--ev-gutter) + 24px) var(--ev-gutter) var(--ev-gutter);
+  display: flex;
+  flex-direction: column;
+}
+.ev-tickets {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) repeat(3, minmax(0, 1fr));
+}
+.ev-ticket {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 16px 14px;
+  border: 1px solid var(--ev-line);
+  border-right-width: 0;
+  border-bottom-width: 0;
+  min-width: 0;
+  transition: background 150ms ease;
+}
+.ev-ticket:last-child {
+  border-right-width: 1px;
+}
+.ev-ticket:hover {
+  background: rgba(18, 10, 6, 0.35);
+}
+.ev-ticket--brand {
+  justify-content: space-between;
+}
+.ev-ticket__lead {
+  font-family: var(--display);
+  font-size: 44px;
+  line-height: 0.9;
+}
+.ev-ticket__lead em {
+  font-style: italic;
+}
+.ev-ticket__brand {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ev-ochre);
+}
+.ev-ticket__title {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.ev-ticket__row {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.ev-ticket__row span:first-child {
+  opacity: 0.7;
+}
+
+.ev-ticker {
+  overflow: hidden;
+  border: 1px solid var(--ev-line);
+}
+.ev-ticker__track {
+  display: flex;
+  width: max-content;
+  animation: ev-marquee 40s linear infinite;
+}
+.ev-ticker__run {
+  display: flex;
+  flex-shrink: 0;
+}
+.ev-ticker__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 0 11px 14px;
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+@keyframes ev-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* — 2 · Split headline (Escape "When you focus") —————————————— */
+.ev-split {
+  min-height: max(100svh, 760px);
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-rows: auto 1fr auto;
+  padding: calc(var(--landing-nav-h) + 40px) var(--ev-gutter) 48px;
+}
+.ev-bg--barista {
+  object-position: 50% 40%;
+}
+.ev-split__title {
+  display: contents;
+  font-weight: 700;
+}
+.ev-split__top,
+.ev-split__bottom {
+  font-family: var(--mono);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: clamp(52px, 8.4vw, 138px);
+  line-height: 0.88;
+  letter-spacing: -0.06em;
+  text-shadow: 0 4px 32px rgba(8, 4, 2, 0.6);
+}
+.ev-split__top {
+  grid-column: 1 / span 7;
+  grid-row: 1;
+}
+.ev-split__bottom {
+  grid-column: 6 / -1;
+  grid-row: 3;
+  text-align: right;
+}
+.ev-split__body {
+  grid-column: 9 / -1;
+  grid-row: 2;
+  align-self: center;
+  max-width: 340px;
+  justify-self: end;
+}
+
+/* — 3 · Board on the machine photo (Escape mission + Monte) ———— */
+.ev-board {
+  min-height: max(100svh, 820px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 40px;
+  padding: calc(var(--landing-nav-h) + 32px) var(--ev-gutter) 28px;
+}
+.ev-bg--machine {
+  object-position: 50% 50%;
+  transform: scale(1.04);
+  filter: blur(2px);
+}
+.ev-board__top {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.ev-board__title {
+  margin: 0;
+  max-width: 18em;
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(40px, 4.6vw, 76px);
+  line-height: 0.98;
+  letter-spacing: -0.015em;
+}
+.ev-board__title em {
+  font-style: italic;
+  color: var(--ev-ochre);
+}
+.ev-board__mid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 280px);
+  gap: 56px;
+  align-items: center;
+}
+.ev-board__cols {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 36px;
+}
+.ev-col__head {
+  margin: 0 0 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--ev-line);
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ev-ochre);
+}
+.ev-col__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.ev-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.ev-item__line {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.ev-item__name {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 1.1;
+}
+.ev-item__dots {
+  flex: 1;
+  min-width: 14px;
+  border-bottom: 1px dotted var(--ev-line);
+  transform: translateY(-4px);
+}
+.ev-item__mark,
+.ev-item__note {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.ev-item__mark {
+  color: var(--ev-ochre);
+}
+/* Add-ons read differently from "incl." at a glance. */
+.ev-item__mark--addon {
+  padding: 2px 6px;
+  border: 1px dashed var(--ev-ochre);
+  white-space: nowrap;
+}
+.ev-col__foot {
+  margin: 14px 0 0;
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 19px;
+  color: var(--ev-beige);
+}
+.ev-item__note {
+  opacity: 0.8;
+}
+.ev-inset {
+  margin: 0;
+}
+.ev-inset__img {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--ev-night);
+  box-shadow: 0 20px 44px rgba(8, 4, 2, 0.5);
+}
+.ev-board__foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--ev-hair);
+}
+.ev-coords {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+}
+
+/* — 4 · Steps band (Escape) ——————————————————————————————— */
+.ev-steps {
+  list-style: none;
+  margin: 0;
+  padding: 40px var(--ev-gutter) 44px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
+  background: var(--ev-paper);
+  color: var(--ev-ink);
+}
+.ev-step {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 2px solid var(--ev-ink);
+}
+.ev-step__head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.ev-step__n {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 40px;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  color: var(--ev-copper);
+}
+.ev-step__label {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.ev-step__body {
+  font-family: var(--display);
+  font-size: 20px;
+  line-height: 1.3;
+  color: var(--ev-muted);
+}
+
+/* — 5 · Coda ledger on roast ———————————————————————————————— */
+.ev-coda {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 56px;
+  align-items: start;
+  padding: 72px var(--ev-gutter);
+  background: var(--ev-roast);
+}
+.ev-coda__lead {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.ev-coda__title {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(56px, 7.5vw, 120px);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+}
+.ev-coda__title em {
+  font-style: italic;
+  color: var(--ev-ochre);
+}
+.ev-coda__body {
+  margin: 0;
+  max-width: 28em;
+  font-family: var(--display);
+  font-size: 22px;
+  line-height: 1.35;
+  color: var(--ev-beige);
+}
+/* Direct channels — a small ledger under the price note. */
+.ev-contact {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  border-top: 1px solid var(--ev-hair);
+}
+.ev-contact li {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 12px;
+  align-items: baseline;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--ev-hair);
+  font-family: var(--display);
+  font-size: 21px;
+}
+.ev-contact__k {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ev-ochre);
+}
+.ev-contact a {
+  color: var(--ev-paper);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid rgba(244, 237, 230, 0.4);
+}
+.ev-contact a:hover {
+  border-bottom-color: var(--ev-ochre);
+}
+
+/* Quote form — cream card on roast. */
+.ev-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 28px;
+  background: var(--ev-paper);
+  color: var(--ev-ink);
+  text-shadow: none;
+}
+.ev-form__kinds {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ev-form__label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ev-muted);
+  padding: 0;
+}
+.ev-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.ev-chip {
+  position: relative;
+  cursor: pointer;
+}
+.ev-chip input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.ev-chip span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--ev-ink);
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: background 120ms ease, color 120ms ease;
+}
+.ev-chip input:checked + span {
+  background: var(--ev-ink);
+  color: var(--ev-paper);
+}
+.ev-chip input:focus-visible + span {
+  outline: 2px solid var(--ev-copper);
+  outline-offset: 2px;
+}
+.ev-form__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 18px;
+}
+.ev-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.ev-field--wide {
+  grid-column: 1 / -1;
+}
+.ev-field input,
+.ev-field textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 0;
+  border: 0;
+  border-bottom: 1px solid var(--ev-ink);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ev-ink);
+  font-family: var(--display);
+  font-size: 20px;
+  resize: vertical;
+}
+.ev-field input:focus,
+.ev-field textarea:focus {
+  outline: none;
+  border-bottom: 2px solid var(--ev-copper);
+}
+.ev-hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.ev-form__error {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: #9b2c12;
+}
+.ev-submit {
+  align-self: flex-start;
+  min-height: 50px;
+  padding: 0 24px;
+  border: 0;
+  background: var(--ev-roast);
+  color: var(--ev-paper);
+  font-family: var(--font-tracked, "Poppins"), sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 150ms ease, transform 90ms ease;
+}
+.ev-submit:hover {
+  background: var(--ev-ink);
+}
+.ev-submit:active {
+  transform: scale(0.98);
+}
+.ev-submit:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+.ev-form--done {
+  justify-content: center;
+  min-height: 260px;
+}
+.ev-form__done {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 34px;
+  line-height: 1.1;
+}
+.ev-form__done em {
+  font-style: italic;
+  color: var(--ev-roast);
+}
+
+/* — Tablet ——————————————————————————————————————————————— */
+@media (max-width: 1100px) {
+  /* Shorter landscape viewports: lift the photo so the machine still
+     reaches the word (cutout follows — same rule). */
+  .ev-bg--hero,
+  .ev-cutout {
+    object-position: 50% 78%;
+  }
+  .ev-stamp {
+    top: -58px;
+    right: -8px;
+    width: 112px;
+    height: 112px;
+  }
+  .ev-tickets {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .ev-ticket:nth-child(2n) {
+    border-right-width: 1px;
+  }
+  .ev-board__cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .ev-board__mid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 220px);
+    gap: 32px;
+  }
+}
+
+/* — Mobile ——————————————————————————————————————————————— */
+@media (max-width: 900px) {
+  .ev {
+    --ev-gutter: 18px;
+  }
+  .ev-word {
+    font-size: 19.6vw;
+  }
+  .ev-rail {
+    display: none;
+  }
+  .ev-hero__pitch {
+    align-self: stretch;
+    width: auto;
+    margin: 0 var(--ev-gutter);
+    padding: 18px 18px 20px;
+  }
+  .ev-pitch__body {
+    font-size: 20px;
+  }
+  .ev-pitch__why {
+    font-size: 19px;
+  }
+  /* On a phone the photo fits by height, so the machine can't reach the
+     word; skip the overlap rather than fake it. */
+  .ev-cutout {
+    display: none;
+  }
+  .ev-caps {
+    font-size: 13px;
+  }
+  .ev-stamp {
+    right: 8px;
+    top: -66px;
+    width: 88px;
+    height: 88px;
+  }
+  /* The cart's own signage sits behind the tickets on a phone — give the
+     rail a flat dark backing so the mono rows stay legible. */
+  .ev-tickets,
+  .ev-ticker {
+    background: rgba(18, 10, 6, 0.62);
+  }
+  .ev-tint--soft {
+    background: rgba(18, 10, 6, 0.42);
+  }
+  .ev-hero__base {
+    padding: 20px var(--ev-gutter) var(--ev-gutter);
+  }
+  /* Tickets become a swipe rail along the bottom of the photo. */
+  .ev-tickets {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .ev-tickets::-webkit-scrollbar {
+    display: none;
+  }
+  .ev-ticket {
+    flex: 0 0 62%;
+    scroll-snap-align: start;
+  }
+  .ev-ticket:nth-child(2n) {
+    border-right-width: 0;
+  }
+  .ev-ticket:last-child {
+    border-right-width: 1px;
+  }
+  .ev-ticket__lead {
+    font-size: 36px;
+  }
+
+  .ev-split {
+    min-height: max(100svh, 640px);
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 20px;
+    padding-top: calc(var(--landing-nav-h) + 24px);
+    padding-bottom: 32px;
+  }
+  .ev-split__top,
+  .ev-split__bottom {
+    grid-column: 1;
+    font-size: clamp(40px, 13vw, 72px);
+  }
+  .ev-split__body {
+    grid-column: 1;
+    justify-self: start;
+    align-self: end;
+  }
+
+  .ev-board {
+    gap: 28px;
+    padding-top: calc(var(--landing-nav-h) + 24px);
+  }
+  .ev-board__mid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+  .ev-board__cols {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+  .ev-inset {
+    width: 56%;
+    justify-self: end;
+    transform: rotate(2deg);
+  }
+  .ev-board__foot {
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+  }
+  .ev-board__foot .ev-corner {
+    display: none;
+  }
+
+  .ev-steps {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    padding: 36px var(--ev-gutter);
+  }
+  .ev-coda {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+    padding: 56px var(--ev-gutter);
+  }
+  .ev-form {
+    padding: 22px 18px;
+  }
+  .ev-form__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ev-contact li {
+    grid-template-columns: 96px minmax(0, 1fr);
+    font-size: 19px;
+  }
+  .ev .landing-footer {
+    flex-direction: column;
+    gap: 12px;
+    padding: 32px 20px;
+    text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ev-ticker__track,
+  .ev-stamp {
+    animation: none;
+  }
+}

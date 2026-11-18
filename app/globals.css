@@ -3098,6 +3098,18 @@ address {
   top: calc(var(--landing-nav-h) + 16px);
 }
 
+/* Five tabs (Eventos joined 2026-11) collide with the hours cue between
+   the mobile breakpoint and ~1200px — tighten the rhythm there. */
+@media (min-width: 901px) and (max-width: 1200px) {
+  .landing-nav {
+    padding-inline: 28px;
+    letter-spacing: 0.16em;
+  }
+  .landing-nav__tabs {
+    gap: 20px;
+  }
+}
+
 /* — Mobile ————————————————————————————————————————————————————— */
 @media (max-width: 900px) {
   .landing-nav {

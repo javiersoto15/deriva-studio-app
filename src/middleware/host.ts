@@ -53,6 +53,9 @@ const LANDING_PREFIXES = [
   "/privacidad",
   "/resenas",
   "/deriva-match-up",
+  // Deriva On Wheels — the coffee-cart events page every flyer/roll-up/tent
+  // card QR points at. Print collateral hard-codes this URL; never rename.
+  "/eventos",
   "/unsubscribe",
   "/companion"
 ] as const;

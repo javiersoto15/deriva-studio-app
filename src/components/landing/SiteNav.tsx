@@ -8,7 +8,7 @@ import { BRAND_NAME } from "../../seo/local-business";
 // "match-up" intentionally matches no rendered tab — standalone campaign
 // pages (reached via QR / Instagram) keep the nav for orientation but
 // highlight none.
-type Tab = "inicio" | "carta" | "resenas" | "visita" | "match-up";
+type Tab = "inicio" | "carta" | "eventos" | "resenas" | "visita" | "match-up";
 
 export function SiteNav({
   active = "inicio",
@@ -63,6 +63,12 @@ export function SiteNav({
           className={`landing-nav__tab ${active === "carta" ? "is-active" : ""}`}
         >
           La carta
+        </Link>
+        <Link
+          href="/eventos"
+          className={`landing-nav__tab ${active === "eventos" ? "is-active" : ""}`}
+        >
+          Eventos
         </Link>
         <Link
           href="/resenas"

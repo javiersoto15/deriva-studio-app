@@ -61,7 +61,7 @@ test("apex /menu nested detail routes are unchanged", () => {
 });
 
 test("apex root and other landing routes are unchanged", () => {
-  for (const path of ["/", "/sala", "/abierto", "/resenas", "/privacidad", "/menu-display"]) {
+  for (const path of ["/", "/sala", "/abierto", "/resenas", "/privacidad", "/menu-display", "/eventos"]) {
     assert.equal(call("derivastudio.cl", path).status, 200, path);
   }
 });

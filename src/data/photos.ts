@@ -17,6 +17,9 @@ export type PhotoSlug =
   | "bar"
   | "brunch"
   | "cappuccino"
+  | "cart-barista"
+  | "cart-frente"
+  | "cart-maquina"
   | "citrus-bloom"
   | "croissant-kasler"
   | "espresso-tropical"
@@ -42,6 +45,9 @@ export const derivaPhotos: Record<PhotoSlug, PhotoEntry> = {
   "bar": { slug: "bar", aspect: 1.5002, widths: [480, 960, 1440, 1920] },
   "brunch": { slug: "brunch", aspect: 0.5625, widths: [480, 960, 1440, 1920] },
   "cappuccino": { slug: "cappuccino", aspect: 0.6665, widths: [480, 960, 1440, 1920] },
+  "cart-barista": { slug: "cart-barista", aspect: 0.6665, widths: [480, 960, 1440, 1920] },
+  "cart-frente": { slug: "cart-frente", aspect: 0.6665, widths: [480, 960, 1440, 1920] },
+  "cart-maquina": { slug: "cart-maquina", aspect: 0.6665, widths: [480, 960, 1440, 1920] },
   "citrus-bloom": { slug: "citrus-bloom", aspect: 0.6665, widths: [480, 960, 1440, 1920] },
   "croissant-kasler": { slug: "croissant-kasler", aspect: 0.6667, widths: [480, 960, 1440, 1920] },
   "espresso-tropical": { slug: "espresso-tropical", aspect: 0.5625, widths: [480, 960, 1440, 1920] },
